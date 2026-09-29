@@ -4,44 +4,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Việt Y Remix - Khám Phá & Phối Việt Phục Cho Gen Z</title>
-  <meta name="description" content="Ứng dụng khám phá và phối Việt phục đa chiều dành cho Gen Z với đồ họa tương tác 3D và di sản đa chất liệu Sơn Mài - Giấy Dó - Gốm Sứ." />
+  <meta name="description" content="Ứng dụng khám phá và phối Việt phục đa chiều dành cho Gen Z với đồ họa tương tác 3D và di sản đa chất liệu Sơn Mài - Giấy Dó - Gốm Sứ cùng trợ lý Gemini AI." />
   <meta property="og:title" content="Việt Y Remix - Khám Phá & Phối Việt Phục Cho Gen Z" />
-  <meta property="og:description" content="Khám phá và phối Việt phục đa chiều dành cho Gen Z với di sản đa chất liệu." />
+  <meta property="og:description" content="Khám phá và phối Việt phục đa chiều dành cho Gen Z với di sản đa chất liệu và trí tuệ nhân tạo Gemini." />
   
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@500;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@600;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- THREE.JS CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     /* ============================================================
-       2. HỆ THỐNG DESIGN SYSTEM: "DI SẢN ĐA CHẤT LIỆU"
+       HỆ THỐNG DESIGN SYSTEM: "DI SẢN ĐA CHẤT LIỆU"
        ============================================================ */
     :root {
-      /* Bảng màu Sơn Mài & Điểm nhấn Cố Đô */
+      /* Màu sắc nền & Cố Đô */
       --den-voc: #121110;
       --nau-canh-gian: #2B1A12;
       --do-son: #B22222;
       --vang-hoang-cuc: #E5A93C;
       --trang-buoi: #F5F2EB;
       --xanh-cham: #1D3557;
-      
-      /* Màu bổ trợ cao cấp */
-      --do-chu-sa: #8B0000;
-      --hoang-kim: #F3C969;
-      --tim-hue: #4B2E48;
-      --ngoc-bich: #2F6F5E;
-      
-      /* Typography */
+
+      /* Biến màu vải chính cho Áo Ngũ Thân */
+      --mau-vai-chinh: #B22222;
+      --saturation-rate: 1;
+
+      /* Phông chữ */
       --font-display: 'Cinzel', 'Playfair Display', serif;
       --font-sans: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-      
-      /* Hiệu ứng bóng Gốm Sứ có men & Sơn Mài */
-      --shadow-gom: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.4), inset 0 -3px 4px rgba(0, 0, 0, 0.35);
-      --shadow-giay-do: 0 10px 25px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15);
+
+      /* Hiệu ứng gốm sứ có men & sơn mài */
+      --shadow-gom: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.45), inset 0 -3px 4px rgba(0, 0, 0, 0.4);
+      --shadow-giay-do: 0 10px 25px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
     }
 
     * {
@@ -60,8 +58,8 @@
       position: relative;
     }
 
-    /* Lớp phủ họa tiết Giấy Dó & Mài Vóc (SVG Noise Texture) */
-    .texture-overlay {
+    /* Lớp phủ màng hạt xơ Giấy Dó & Mài Vóc */
+    .texture-global-overlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -69,28 +67,25 @@
       height: 100vh;
       pointer-events: none;
       z-index: 99;
-      opacity: 0.16;
-      filter: contrast(140%) brightness(105%);
+      opacity: 0.15;
       mix-blend-mode: overlay;
     }
 
-    /* ============================================================
-       NÚT BẤM HIỆU ỨNG GỐM SỨ CỔ MEN NỔI (CERAMIC SEAL BUTTONS)
-       ============================================================ */
+    /* Nút bấm Gốm Sứ có men cổ */
     .btn-gom-su {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       padding: 14px 28px;
-      background: linear-gradient(145deg, #cc2e2e, var(--do-son), #801212);
+      background: linear-gradient(145deg, #d33434, var(--do-son), #801212);
       color: var(--trang-buoi);
       font-family: var(--font-display);
       font-weight: 700;
       font-size: 1rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      border: 2px solid rgba(229, 169, 60, 0.6);
+      border: 2px solid rgba(229, 169, 60, 0.65);
       border-radius: 999px;
       box-shadow: var(--shadow-gom), 0 0 20px rgba(178, 34, 34, 0.4);
       cursor: pointer;
@@ -106,34 +101,33 @@
       left: 14px;
       right: 14px;
       height: 40%;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
       border-radius: 999px;
       pointer-events: none;
     }
 
     .btn-gom-su:hover {
       transform: translateY(-2px) scale(1.02);
-      box-shadow: var(--shadow-gom), 0 0 28px rgba(229, 169, 60, 0.55);
+      box-shadow: var(--shadow-gom), 0 0 26px rgba(229, 169, 60, 0.6);
       border-color: var(--vang-hoang-cuc);
     }
 
     .btn-gom-su:active {
       transform: translateY(1px) scale(0.98);
-      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
     }
 
-    /* Dấu triện phụ (Stamp Badge) */
     .seal-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border: 1.5px solid var(--vang-hoang-cuc);
       border-radius: 6px;
-      background: rgba(139, 0, 0, 0.7);
+      background: rgba(139, 0, 0, 0.85);
       font-family: var(--font-display);
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 900;
       color: var(--vang-hoang-cuc);
       text-shadow: 0 1px 2px rgba(0,0,0,0.8);
@@ -145,21 +139,13 @@
       background-color: var(--trang-buoi);
       color: var(--den-voc);
       border-radius: 14px;
-      border: 1px solid rgba(43, 26, 18, 0.15);
+      border: 1px solid rgba(43, 26, 18, 0.2);
       box-shadow: var(--shadow-giay-do);
       position: relative;
-      overflow: hidden;
-    }
-    .the-giay-do::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 10% 10%, rgba(229, 169, 60, 0.08) 0%, transparent 60%);
-      pointer-events: none;
     }
 
     /* ============================================================
-       3. SECTION 1: MÀN HÌNH MỞ ĐẦU 3D (#landing-scene)
+       SECTION 1: MÀN HÌNH MỞ ĐẦU 3D (#landing-scene)
        ============================================================ */
     #landing-scene {
       position: fixed;
@@ -173,7 +159,7 @@
       align-items: center;
       z-index: 10;
       transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-      background: radial-gradient(circle at center, #26160e 0%, var(--den-voc) 75%);
+      background: radial-gradient(circle at center, #2b1810 0%, var(--den-voc) 75%);
     }
 
     #landing-scene.scene-hidden {
@@ -197,7 +183,6 @@
       text-align: center;
       padding-top: 3.5rem;
       pointer-events: none;
-      animation: fadeInDown 1s ease-out;
     }
 
     .brand-eyebrow {
@@ -207,7 +192,7 @@
       padding: 6px 16px;
       border-radius: 999px;
       background: rgba(43, 26, 18, 0.7);
-      border: 1px solid rgba(229, 169, 60, 0.35);
+      border: 1px solid rgba(229, 169, 60, 0.4);
       color: var(--vang-hoang-cuc);
       font-size: 0.75rem;
       letter-spacing: 0.2em;
@@ -218,7 +203,7 @@
 
     .brand-title {
       font-family: var(--font-display);
-      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-size: clamp(2.4rem, 6vw, 4.4rem);
       font-weight: 900;
       letter-spacing: 0.08em;
       background: linear-gradient(135deg, #FFFFFF 0%, #F5F2EB 30%, var(--vang-hoang-cuc) 70%, #d4932b 100%);
@@ -244,18 +229,17 @@
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      animation: fadeInUp 1s ease-out 0.2s backwards;
     }
 
     .landing-hint {
       font-size: 0.78rem;
-      color: rgba(229, 169, 60, 0.75);
+      color: rgba(229, 169, 60, 0.8);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
     /* ============================================================
-       4. SECTION 2: XƯỞNG PHỐI ĐỒ (#create-scene)
+       SECTION 2: XƯỞNG PHỐI ĐỒ (#create-scene)
        ============================================================ */
     #create-scene {
       position: fixed;
@@ -269,7 +253,7 @@
       visibility: hidden;
       pointer-events: none;
       transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-      background: linear-gradient(135deg, var(--den-voc) 0%, var(--nau-canh-gian) 100%);
+      background: linear-gradient(135deg, var(--den-voc) 0%, #1e130d 100%);
     }
 
     #create-scene.scene-active {
@@ -278,447 +262,549 @@
       pointer-events: auto;
     }
 
-    /* Desktop Layout: Split 60% Khung Mẫu / 40% Bảng Điều Khiển */
-    .app-container {
+    .create-layout {
       display: flex;
       width: 100%;
       height: 100%;
+      position: relative;
     }
 
-    /* Cột Trái: Khung Trưng Bày SVG (60%) */
-    .preview-workspace {
+    /* KHUNG HIỂN THỊ ĐỒ HỌA VECTOR 2D (#garment-canvas) - 60% Desktop */
+    #garment-canvas {
       flex: 0 0 60%;
       height: 100%;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      background: radial-gradient(circle at center, #231610 0%, #110e0c 90%);
-      border-right: 1px solid rgba(229, 169, 60, 0.2);
-      overflow: hidden;
+      justify-content: flex-start;
+      padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+      background: radial-gradient(circle at 50% 30%, #2a1910 0%, #110e0c 85%);
+      border-right: 1px solid rgba(229, 169, 60, 0.25);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--nau-canh-gian) #110e0c;
     }
 
-    /* Thanh điều hướng nhanh trên Workspace */
-    .workspace-topbar {
-      position: absolute;
-      top: 1.25rem;
-      left: 1.5rem;
-      right: 1.5rem;
+    .canvas-topbar {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 0.75rem;
       z-index: 10;
     }
 
-    .btn-icon-back {
-      display: flex;
+    .btn-return {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-radius: 999px;
-      background: rgba(18, 17, 16, 0.75);
-      border: 1px solid rgba(229, 169, 60, 0.3);
+      background: rgba(18, 17, 16, 0.8);
+      border: 1px solid rgba(229, 169, 60, 0.35);
       color: var(--trang-buoi);
       font-size: 0.8rem;
       cursor: pointer;
       backdrop-filter: blur(8px);
       transition: all 0.2s;
     }
-    .btn-icon-back:hover {
+    .btn-return:hover {
       background: rgba(178, 34, 34, 0.8);
       border-color: var(--vang-hoang-cuc);
     }
 
-    .badge-outfit-title {
+    .canvas-badge {
       font-family: var(--font-display);
       font-size: 0.95rem;
       color: var(--vang-hoang-cuc);
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      background: rgba(43, 26, 18, 0.75);
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(229, 169, 60, 0.3);
     }
 
-    /* Khung Mannequin Vector SVG */
-    .mannequin-frame {
+    /* Container chứa SVG Line-Art */
+    .svg-artwork-container {
       width: 100%;
-      max-width: 480px;
-      height: 82%;
-      max-height: 700px;
+      max-width: 440px;
+      height: 480px;
+      min-height: 440px;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.7));
+      margin-bottom: 1rem;
     }
 
-    .mannequin-svg {
+    #nguthan-svg {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      transition: all 0.4s ease;
+      filter: url(#do-paper-texture);
+      transition: filter 0.15s ease;
     }
 
-    /* Quick Action Floating Bar dưới khung mẫu */
-    .workspace-bottombar {
+    /* Mảng màu chính của áo nhận biến CSS */
+    .garment-fabric-fill {
+      fill: var(--mau-vai-chinh, #B22222);
+      transition: fill 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* Lớp quạt giấy xếp */
+    #layer-accessory-fan {
+      display: block;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform-origin: 340px 380px;
+    }
+
+    /* Phụ kiện Gen Z */
+    #layer-genz-style {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* ============================================================
+       1. THẺ THÔNG TIN GIẤY DÓ (#heritage-info-card)
+       ============================================================ */
+    #heritage-info-card {
+      width: 100%;
+      max-width: 540px;
+      background-color: var(--trang-buoi);
+      color: var(--den-voc);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-giay-do), inset 0 0 40px rgba(229, 169, 60, 0.08);
+      border: 1px solid rgba(43, 26, 18, 0.25);
+      position: relative;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    /* Viền mực thư pháp chìm */
+    #heritage-info-card::before {
+      content: '';
       position: absolute;
-      bottom: 1.2rem;
-      display: flex;
-      gap: 12px;
-      z-index: 10;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      border: 1px dashed rgba(43, 26, 18, 0.2);
+      border-radius: 8px;
+      pointer-events: none;
     }
 
-    .btn-action-pill {
-      display: inline-flex;
+    .card-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(43, 26, 18, 0.15);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .card-headline {
+      display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      background: rgba(30, 20, 15, 0.85);
-      border: 1px solid rgba(229, 169, 60, 0.4);
-      color: var(--trang-buoi);
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: all 0.2s;
-    }
-    .btn-action-pill:hover {
-      background: var(--do-son);
-      border-color: var(--vang-hoang-cuc);
-      transform: translateY(-2px);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--do-son);
+      letter-spacing: 0.05em;
     }
 
-    /* Cột Phải: Bảng Điều Khiển Xưởng Phối (40%) */
-    .control-panel {
+    .ai-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(178, 34, 34, 0.08);
+      border: 1px solid rgba(178, 34, 34, 0.25);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--do-son);
+    }
+
+    .ai-status-pill.loading {
+      background: rgba(229, 169, 60, 0.15);
+      border-color: var(--vang-hoang-cuc);
+      color: #92580e;
+      animation: pulseText 1.4s infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    .info-sections-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-item-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-item-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--nau-canh-gian);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-item-content {
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: #2b221b;
+      padding-left: 22px;
+      transition: opacity 0.2s ease;
+    }
+
+    .info-item-content.shimmer {
+      opacity: 0.5;
+    }
+
+    /* BẢNG ĐIỀU KHIỂN THÔNG MINH (#control-panel) - 40% Desktop */
+    #control-panel {
       flex: 0 0 40%;
       height: 100%;
       display: flex;
       flex-direction: column;
       background: #171310;
-      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 1px solid rgba(229, 169, 60, 0.15);
       overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: var(--nau-canh-gian) #171310;
     }
 
-    .panel-header {
-      padding: 1.5rem 1.5rem 1rem 1.5rem;
+    .panel-header-sticky {
+      padding: 1.4rem 1.5rem 1rem 1.5rem;
       border-bottom: 1px solid rgba(229, 169, 60, 0.15);
       position: sticky;
       top: 0;
-      background: rgba(23, 19, 16, 0.95);
-      backdrop-filter: blur(10px);
+      background: rgba(23, 19, 16, 0.96);
+      backdrop-filter: blur(12px);
       z-index: 20;
     }
 
-    .panel-title {
+    .panel-heading {
       font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       color: var(--vang-hoang-cuc);
       display: flex;
       align-items: center;
       gap: 10px;
+      letter-spacing: 0.05em;
     }
 
-    .panel-content {
-      padding: 1.25rem 1.5rem 2rem 1.5rem;
+    .panel-body-content {
+      padding: 1.4rem 1.5rem 2.5rem 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.8rem;
     }
 
-    /* Nhóm Thẻ Bối Cảnh 1-Chạm (Context Cards) */
-    .section-label {
-      font-size: 0.75rem;
+    .section-title {
+      font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       color: var(--vang-hoang-cuc);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .preset-carousel {
+    /* A. Thẻ Bối Cảnh 1-Chạm (Event Anchors) */
+    .anchor-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .anchor-card {
+      background: linear-gradient(145deg, rgba(43, 26, 18, 0.8), rgba(28, 17, 12, 0.95));
+      border: 1px solid rgba(229, 169, 60, 0.25);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .anchor-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    .anchor-card:hover {
+      border-color: var(--vang-hoang-cuc);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .anchor-card.active {
+      border-color: var(--vang-hoang-cuc);
+      background: linear-gradient(145deg, rgba(178, 34, 34, 0.4), rgba(43, 26, 18, 0.95));
+      box-shadow: 0 0 16px rgba(229, 169, 60, 0.35);
+    }
+
+    .anchor-card.active::before {
+      background: var(--vang-hoang-cuc);
+    }
+
+    .anchor-icon {
+      font-size: 1.5rem;
+    }
+
+    .anchor-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--trang-buoi);
+      line-height: 1.25;
+    }
+
+    .anchor-meta {
+      font-size: 0.68rem;
+      color: rgba(229, 169, 60, 0.8);
+    }
+
+    /* B. Bảng Chọn Màu Vải Gốm Sứ (Color Swatches) */
+    .swatches-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ceramic-swatch {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .swatch-disc {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.15);
+      box-shadow: var(--shadow-gom);
+      position: relative;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .swatch-disc::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 10px;
+      right: 10px;
+      height: 35%;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+      pointer-events: none;
+    }
+
+    .ceramic-swatch:hover .swatch-disc {
+      transform: scale(1.1);
+      border-color: var(--vang-hoang-cuc);
+    }
+
+    .ceramic-swatch.active .swatch-disc {
+      transform: scale(1.15);
+      border-color: var(--vang-hoang-cuc);
+      box-shadow: 0 0 16px var(--vang-hoang-cuc), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    .swatch-name {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: rgba(245, 242, 235, 0.75);
+      transition: color 0.2s;
+    }
+
+    .ceramic-swatch.active .swatch-name {
+      color: var(--vang-hoang-cuc);
+      font-weight: 700;
+    }
+
+    /* C. Thanh Trượt Vi Mô (Micro-sliders) */
+    .slider-group {
+      background: rgba(43, 26, 18, 0.5);
+      border: 1px solid rgba(229, 169, 60, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .slider-item {
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .preset-card {
-      background: rgba(43, 26, 18, 0.6);
-      border: 1px solid rgba(229, 169, 60, 0.25);
-      border-radius: 10px;
-      padding: 10px 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .slider-labels {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .preset-card:hover {
-      border-color: var(--vang-hoang-cuc);
-      background: rgba(178, 34, 34, 0.25);
-      transform: translateY(-2px);
-    }
-
-    .preset-card.active {
-      border-color: var(--vang-hoang-cuc);
-      background: linear-gradient(135deg, rgba(178, 34, 34, 0.5), rgba(43, 26, 18, 0.8));
-      box-shadow: 0 0 12px rgba(229, 169, 60, 0.3);
-    }
-
-    .preset-icon {
-      font-size: 1.3rem;
-    }
-
-    .preset-name {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--trang-buoi);
-    }
-
-    /* Tabs tùy chỉnh */
-    .tabs-nav {
-      display: flex;
-      gap: 6px;
-      background: rgba(18, 17, 16, 0.6);
-      padding: 4px;
-      border-radius: 10px;
-      border: 1px solid rgba(229, 169, 60, 0.2);
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: transparent;
-      border: none;
-      color: rgba(245, 242, 235, 0.65);
-      font-family: var(--font-sans);
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .tab-btn.active {
-      background: var(--do-son);
-      color: var(--trang-buoi);
-      box-shadow: 0 2px 8px rgba(178, 34, 34, 0.4);
-    }
-
-    /* Danh sách tùy chọn trang phục (Garment Selectors) */
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .option-card {
-      background: rgba(35, 23, 17, 0.7);
-      border: 1px solid rgba(229, 169, 60, 0.2);
-      border-radius: 10px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .option-card:hover {
-      border-color: var(--vang-hoang-cuc);
-      background: rgba(43, 26, 18, 0.9);
-    }
-
-    .option-card.active {
-      border-color: var(--vang-hoang-cuc);
-      background: rgba(178, 34, 34, 0.25);
-      box-shadow: 0 0 10px rgba(229, 169, 60, 0.25);
-    }
-
-    .option-title {
-      font-family: var(--font-display);
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--trang-buoi);
-      margin-bottom: 2px;
-    }
-
-    .option-desc {
-      font-size: 0.72rem;
-      color: rgba(245, 242, 235, 0.65);
-      line-height: 1.3;
-    }
-
-    /* Bảng màu Gấm Vóc (Color Swatches) */
-    .color-swatches {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .color-swatch-item {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      cursor: pointer;
-      position: relative;
-      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 3px 6px rgba(0, 0, 0, 0.5);
-      border: 2px solid transparent;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .color-swatch-item:hover {
-      transform: scale(1.15);
-    }
-
-    .color-swatch-item.active {
-      border-color: var(--vang-hoang-cuc);
-      transform: scale(1.15);
-      box-shadow: 0 0 12px var(--vang-hoang-cuc);
-    }
-
-    /* Bảng Phụ Kiện (Accessories Grid) */
-    .accessory-item {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
-      background: rgba(35, 23, 17, 0.6);
-      border: 1px solid rgba(229, 169, 60, 0.2);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .accessory-item:hover {
-      background: rgba(43, 26, 18, 0.85);
-      border-color: var(--vang-hoang-cuc);
-    }
-    .accessory-item.active {
-      border-color: var(--vang-hoang-cuc);
-      background: rgba(178, 34, 34, 0.25);
+      font-size: 0.75rem;
+      color: rgba(245, 242, 235, 0.8);
+      font-weight: 500;
     }
 
-    /* Thẻ Giấy Dó Thông Tin Lịch Sử (Lore Card) */
-    .info-lore-card {
-      padding: 14px;
-      border-left: 4px solid var(--do-son);
-      margin-top: 0.5rem;
-    }
-    .lore-title {
-      font-family: var(--font-display);
-      font-size: 0.85rem;
+    .slider-labels span.active-tag {
+      color: var(--vang-hoang-cuc);
       font-weight: 700;
-      color: var(--do-son);
-      margin-bottom: 4px;
-    }
-    .lore-body {
-      font-size: 0.78rem;
-      line-height: 1.45;
-      color: #2b2622;
     }
 
-    /* Modal Xuất Thẻ Lookbook (Modal Popup) */
-    .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      display: none;
+    .micro-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #2b1a12;
+      outline: none;
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      cursor: pointer;
+    }
+
+    .micro-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--vang-hoang-cuc);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      transition: transform 0.15s, background-color 0.15s;
+    }
+
+    .micro-range::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #f3c969;
+    }
+
+    /* Nút kích hoạt lại AI */
+    .btn-ai-refresh {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(43, 26, 18, 0.8);
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      color: var(--vang-hoang-cuc);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .modal-backdrop.show {
-      display: flex;
-    }
-    .lookbook-modal-card {
-      max-width: 420px;
-      width: 100%;
-      padding: 24px;
-      text-align: center;
-      position: relative;
+
+    .btn-ai-refresh:hover {
+      background: var(--do-son);
+      color: #fff;
+      border-color: var(--vang-hoang-cuc);
     }
 
     /* ============================================================
-       RESPONSIVE: DI ĐỘNG (THUMB ZONE & BOTTOM SHEET)
+       RESPONSIVE: MOBILE (BOTTOM SHEET & THUMB ZONE)
        ============================================================ */
     @media (max-width: 860px) {
-      .app-container {
+      .create-layout {
         flex-direction: column;
       }
 
-      /* Khung mẫu ở 55% màn hình trên */
-      .preview-workspace {
+      /* Khung hiển thị đồ họa SVG ở 55% màn hình trên */
+      #garment-canvas {
         flex: 0 0 55vh;
         width: 100%;
         height: 55vh;
         border-right: none;
-        border-bottom: 2px solid rgba(229, 169, 60, 0.25);
-        padding: 1rem;
+        border-bottom: 2px solid rgba(229, 169, 60, 0.3);
+        padding: 0.75rem 1rem 1rem 1rem;
       }
 
-      .mannequin-frame {
-        height: 90%;
+      .svg-artwork-container {
+        height: 280px;
+        min-height: 260px;
+        margin-bottom: 0.5rem;
       }
 
-      /* Bảng điều khiển Bottom Sheet 45% bên dưới */
-      .control-panel {
+      #heritage-info-card {
+        padding: 12px 14px;
+        margin-top: 0.25rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Bảng điều khiển dạng Bottom Sheet ở 45% bên dưới */
+      #control-panel {
         flex: 1;
         width: 100%;
         height: 45vh;
         border-left: none;
-        border-radius: 20px 20px 0 0;
-        box-shadow: 0 -8px 24px rgba(0,0,0,0.7);
-        border-top: 1px solid rgba(229, 169, 60, 0.3);
+        border-radius: 22px 22px 0 0;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+        border-top: 1px solid rgba(229, 169, 60, 0.35);
       }
 
-      .panel-header {
-        padding: 1rem;
+      .panel-header-sticky {
+        padding: 0.9rem 1rem;
       }
-      .panel-content {
+      .panel-body-content {
         padding: 1rem;
-        padding-bottom: 4rem; /* Safe zone for scrolling */
+        padding-bottom: 4rem;
+        gap: 1.4rem;
       }
-    }
 
-    /* Keyframes animation */
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: var(--shadow-gom), 0 0 18px rgba(178, 34, 34, 0.4); }
-      50% { box-shadow: var(--shadow-gom), 0 0 32px rgba(229, 169, 60, 0.7); }
-    }
-    .pulse-effect {
-      animation: pulseGlow 2.8s infinite ease-in-out;
+      .swatch-disc {
+        width: 44px;
+        height: 44px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- BỘ LỌC HIỆU ỨNG HẠT MỊN XƠ GIẤY DÓ / MÀI VÓC BẰNG SVG TURBULENCE -->
-  <svg class="texture-overlay" xmlns="http://www.w3.org/2000/svg">
-    <filter id="noiseFilter">
-      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
-      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.15 0" />
+  <!-- BỘ LỌC HIỆU ỨNG HẠT MỊN XƠ GIẤY DÓ & MÀI VÓC BẰNG SVG TURBULENCE -->
+  <svg class="texture-global-overlay" xmlns="http://www.w3.org/2000/svg">
+    <filter id="do-paper-texture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" result="noise" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" result="coloredNoise" />
+      <feBlend mode="multiply" in="SourceGraphic" in2="coloredNoise" />
     </filter>
-    <rect width="100%" height="100%" filter="url(#noiseFilter)" />
   </svg>
 
   <!-- ============================================================
        SECTION 1: MÀN HÌNH MỞ ĐẦU 3D (#landing-scene)
-       ============================================================ -->
+       ============================================================ */ -->
   <section id="landing-scene">
     <!-- WebGL Canvas Three.js -->
     <div id="three-canvas-container"></div>
@@ -735,8 +821,8 @@
 
     <!-- Nút Bấm Chính CTA: Khai Ấn Phối Đồ -->
     <footer class="landing-footer">
-      <p class="landing-hint">Chạm / Di chuyển để xoay Ấn Tín Hoa Sen</p>
-      <button id="btn-enter" class="btn-gom-su pulse-effect" aria-label="Khai Ấn Phối Đồ">
+      <p class="landing-hint">Chạm / Di chuyển để nghiêng Ấn Tín Hoa Sen</p>
+      <button id="btn-enter" class="btn-gom-su" aria-label="Khai Ấn Phối Đồ">
         <span class="seal-badge">吉</span>
         <span>KHAI ẤN PHỐI ĐỒ</span>
       </button>
@@ -745,182 +831,322 @@
 
   <!-- ============================================================
        SECTION 2: XƯỞNG PHỐI ĐỒ (#create-scene)
-       ============================================================ -->
+       ============================================================ */ -->
   <section id="create-scene">
-    <div class="app-container">
-      
-      <!-- CỘT TRÁI (60% Desktop / 55% Mobile): KHUNG MẪU VECTOR SVG -->
-      <main class="preview-workspace">
-        <nav class="workspace-topbar">
-          <button id="btn-back-landing" class="btn-icon-back" title="Trở lại Ấn Tín">
-            <span>‹</span> Trở Về Ấn Tín
+    <div class="create-layout">
+
+      <!-- 1. KHUNG HIỂN THỊ ĐỒ HỌA VECTOR 2D (#garment-canvas) -->
+      <main id="garment-canvas">
+        <nav class="canvas-topbar">
+          <button id="btn-back-landing" class="btn-return" title="Trở lại Ấn Tín">
+            <span>‹</span> Về Tiền Sảnh
           </button>
-          <div class="badge-outfit-title" id="outfit-display-name">Áo Tấc • Chu Sa</div>
-          <button id="btn-randomize" class="btn-icon-back" title="Phối ngẫu nhiên">
-            🎲 Remix Ngẫu Nhiên
+          <div class="canvas-badge" id="current-garment-title">Áo Ngũ Thân Lập Lĩnh</div>
+          <button id="btn-toggle-sound" class="btn-return" title="Chuông gốm">
+            <span>🔔</span> Âm Chuông
           </button>
         </nav>
 
-        <!-- KHUNG MẪU VIỆT PHỤC VECTOR 2D BÓC TÁCH LỚP -->
-        <div class="mannequin-frame">
-          <svg id="garment-svg" class="mannequin-svg" viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
+        <!-- Khung chứa Vector SVG Line-Art Áo Ngũ Thân -->
+        <div class="svg-artwork-container">
+          <svg id="nguthan-svg" viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <!-- Bối cảnh gradients -->
-              <radialGradient id="bg-aura" cx="50%" cy="45%" r="55%">
+              <!-- Hào quang phong nền sơn mài -->
+              <radialGradient id="halo-glow" cx="50%" cy="40%" r="50%">
                 <stop offset="0%" stop-color="#3d2116" stop-opacity="0.8" />
                 <stop offset="100%" stop-color="#140f0c" stop-opacity="0" />
               </radialGradient>
-              
-              <!-- Hoa văn dệt mây sóng nước Thủy Ba -->
-              <pattern id="pat-thuy-ba" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 0,20 Q 10,12 20,20 T 40,20 M 0,30 Q 10,22 20,30 T 40,30" fill="none" stroke="rgba(243, 201, 105, 0.4)" stroke-width="1.2" />
-              </pattern>
-              
-              <!-- Hoa văn Mây Song Hạc -->
-              <pattern id="pat-may-hac" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path d="M 15,20 Q 30,5 45,20 Q 35,30 20,25 Z" fill="none" stroke="rgba(245, 242, 235, 0.35)" stroke-width="1.2" />
-                <circle cx="48" cy="18" r="1.5" fill="rgba(229,169,60,0.6)" />
+
+              <!-- Hoa văn chìm trên thân áo -->
+              <pattern id="pat-damask" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 0,15 Q 15,0 30,15 Q 15,30 0,15 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
               </pattern>
             </defs>
 
-            <!-- LỚP 0: Vòng Hào Quang Bối Cảnh -->
-            <circle cx="250" cy="350" r="230" fill="url(#bg-aura)" />
-            <circle cx="250" cy="350" r="210" fill="none" stroke="rgba(229, 169, 60, 0.2)" stroke-width="1" stroke-dasharray="6,4" />
+            <!-- LỚP HÀO QUANG NỀN -->
+            <circle cx="250" cy="340" r="215" fill="url(#halo-glow)" />
+            <circle cx="250" cy="340" r="195" fill="none" stroke="rgba(229, 169, 60, 0.22)" stroke-width="1.2" stroke-dasharray="8,6" />
 
-            <!-- LỚP 1: Bối Cảnh Yếu Tố (Tết mai đào / Chùa đèn lồng) -->
-            <g id="svg-scenery-layer">
-              <!-- Mai vàng / Đèn lồng sẽ render theo preset -->
-              <path d="M 60,80 Q 120,60 160,110" stroke="#5a3d28" stroke-width="3" fill="none" stroke-linecap="round"/>
-              <circle cx="110" cy="70" r="6" fill="#E5A93C" />
-              <circle cx="145" cy="95" r="5" fill="#E5A93C" />
-              <circle cx="85" cy="85" r="4.5" fill="#f8d686" />
+            <!-- <g id="layer-body">: Dáng nhân vật và gương mặt line-art tối giản -->
+            <g id="layer-body">
+              <!-- Cổ & Khuôn Mặt Line-Art Minimalist -->
+              <path d="M 235,145 L 235,215 Q 250,222 265,215 L 265,145 Z" fill="#F3D1B5" stroke="#4A2E1B" stroke-width="1.5" />
+              <ellipse cx="250" cy="130" rx="35" ry="42" fill="#F7DCBF" stroke="#4A2E1B" stroke-width="2" />
+              
+              <!-- Tóc đen búi cao thanh thoát phong thái Việt -->
+              <path d="M 215,130 C 215,90 285,90 285,130 C 285,110 215,110 215,130 Z" fill="#1C1817" />
+              <circle cx="250" cy="85" r="18" fill="#1C1817" stroke="#4A2E1B" stroke-width="1" />
+              <path d="M 235,88 Q 250,75 265,88" stroke="#E5A93C" stroke-width="2" fill="none" /> <!-- Trâm cài tóc -->
+
+              <!-- Nét mặt Minimalist cao cấp -->
+              <line x1="234" y1="126" x2="242" y2="126" stroke="#4A2E1B" stroke-width="2.5" stroke-linecap="round" />
+              <line x1="258" y1="126" x2="266" y2="126" stroke="#4A2E1B" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M 249,132 L 247,140 L 252,140" stroke="#704435" stroke-width="1.5" fill="none" stroke-linecap="round" />
+              <path d="M 244,148 Q 250,152 256,148" stroke="#B22222" stroke-width="2" fill="none" stroke-linecap="round" />
+
+              <!-- Quần lụa trắng mặc dưới -->
+              <path d="M 210,430 L 204,615 L 243,620 L 248,465 L 252,465 L 257,620 L 296,615 L 290,430 Z" fill="#EDE9DF" stroke="#B8B2A6" stroke-width="1.5" />
+              <!-- Đôi hài / guốc cổ -->
+              <ellipse cx="224" cy="622" rx="15" ry="6" fill="#2B1A12" />
+              <ellipse cx="276" cy="622" rx="15" ry="6" fill="#2B1A12" />
             </g>
 
-            <!-- LỚP 2: Thân Người Mannequin Stylized -->
-            <g id="svg-mannequin-body">
-              <!-- Cổ & Khuôn Mặt -->
-              <path d="M 235,165 L 235,215 Q 250,220 265,215 L 265,165 Z" fill="#E8C39E" />
-              <ellipse cx="250" cy="145" rx="36" ry="44" fill="#F3D1B5" />
-              <!-- Tóc đen búi cao / nét thanh tao -->
-              <path d="M 214,145 C 214,105 286,105 286,145 C 286,125 214,125 214,145 Z" fill="#1C1817" />
-              <circle cx="250" cy="100" r="18" fill="#1C1817" />
-              <!-- Nét mặt tối giản thanh lịch -->
-              <path d="M 240,150 Q 250,155 260,150" stroke="#704435" stroke-width="1.8" fill="none" stroke-linecap="round" />
-              <ellipse cx="236" cy="140" rx="3" ry="1.5" fill="#4a2818" />
-              <ellipse cx="264" cy="140" rx="3" ry="1.5" fill="#4a2818" />
-              <path d="M 247,159 Q 250,161 253,159" stroke="#b22222" stroke-width="2" fill="none" />
+            <!-- <g id="layer-inner">: Áo lót trắng mặc trong (#F5F2EB) -->
+            <g id="layer-inner">
+              <!-- Cổ lót trắng lập lĩnh ló ra bên trong mép cổ áo chính -->
+              <path d="M 233,200 L 267,200 L 267,215 Q 250,218 233,215 Z" fill="#F5F2EB" stroke="#CFC8B8" stroke-width="1.5" />
+              <!-- Mép viền cổ tay trong -->
+              <line x1="168" y1="368" x2="188" y2="368" stroke="#F5F2EB" stroke-width="3" />
+              <line x1="312" y1="368" x2="332" y2="368" stroke="#F5F2EB" stroke-width="3" />
             </g>
 
-            <!-- LỚP 3: Quần Lụa Trắng / Quần Ngũ Thân -->
-            <g id="svg-pants-layer">
-              <path d="M 215,430 L 210,610 L 244,615 L 248,460 L 252,460 L 256,615 L 290,610 L 285,430 Z" fill="#EDE9DF" />
-              <!-- Nếp gấp quần -->
-              <line x1="228" y1="460" x2="226" y2="605" stroke="#C5BEB1" stroke-width="1.5" />
-              <line x1="272" y1="460" x2="274" y2="605" stroke="#C5BEB1" stroke-width="1.5" />
+            <!-- <g id="layer-main-garment">: Phom Áo Ngũ Thân cài cúc vắt chéo (fill: var(--mau-vai-chinh, #B22222)) -->
+            <g id="layer-main-garment">
+              <!-- Thân áo & 5 thân áo buông tà -->
+              <path class="garment-fabric-fill" d="M 215,208 Q 250,214 285,208 L 306,300 L 325,540 L 175,540 L 194,300 Z" stroke="#121110" stroke-width="2.5" />
+              <!-- Phủ vân chìm hoa văn -->
+              <path d="M 215,208 Q 250,214 285,208 L 306,300 L 325,540 L 175,540 L 194,300 Z" fill="url(#pat-damask)" pointer-events="none" />
+              
+              <!-- Tay áo chẽn bên trái -->
+              <path class="garment-fabric-fill" d="M 215,212 L 168,245 L 168,368 L 194,368 L 194,300 Z" stroke="#121110" stroke-width="2" filter="brightness(0.93)" />
+              <!-- Tay áo chẽn bên phải -->
+              <path class="garment-fabric-fill" d="M 285,212 L 332,245 L 332,368 L 306,368 L 306,300 Z" stroke="#121110" stroke-width="2" filter="brightness(0.93)" />
+
+              <!-- Cổ đứng (Lập Lĩnh) đoan trang -->
+              <path class="garment-fabric-fill" d="M 233,205 L 267,205 L 267,222 L 233,222 Z" stroke="#121110" stroke-width="2" />
+
+              <!-- Đường vắt chéo vạt nách phải đặc trưng của Áo Ngũ Thân -->
+              <path d="M 250,205 Q 268,225 278,255" fill="none" stroke="#121110" stroke-width="2.5" />
+              <!-- Vạt buông dọc từ nách xuống thân dưới -->
+              <path d="M 278,255 L 278,390" fill="none" stroke="#121110" stroke-width="2.5" />
+              <!-- Nếp gấu tà uốn nhẹ phóng khoáng -->
+              <path d="M 175,540 Q 250,550 325,540" fill="none" stroke="rgba(229,169,60,0.5)" stroke-width="2" />
             </g>
 
-            <!-- LỚP 4: Hài / Guốc Mộc -->
-            <g id="svg-shoes-layer">
-              <ellipse cx="227" cy="618" rx="14" ry="7" fill="#2B1A12" />
-              <ellipse cx="273" cy="618" rx="14" ry="7" fill="#2B1A12" />
-              <path d="M 218,617 Q 227,611 236,617" stroke="#E5A93C" stroke-width="1.5" fill="none" />
-              <path d="M 264,617 Q 273,611 282,617" stroke="#E5A93C" stroke-width="1.5" fill="none" />
+            <!-- <g id="layer-buttons">: Hàng 5 cúc áo gốm mạ vàng (#E5A93C) -->
+            <g id="layer-buttons">
+              <!-- Cúc 1: Ngay giữa cổ áo (Nhân) -->
+              <circle cx="266" cy="214" r="4.2" fill="#E5A93C" stroke="#8E631C" stroke-width="1.2" />
+              <circle cx="265" cy="213" r="1.5" fill="#FFF" opacity="0.7" />
+
+              <!-- Cúc 2: Xương đòn phải (Lễ) -->
+              <circle cx="273" cy="235" r="4.2" fill="#E5A93C" stroke="#8E631C" stroke-width="1.2" />
+              <circle cx="272" cy="234" r="1.5" fill="#FFF" opacity="0.7" />
+
+              <!-- Cúc 3: Cạnh nách phải (Nghĩa) -->
+              <circle cx="278" cy="265" r="4.2" fill="#E5A93C" stroke="#8E631C" stroke-width="1.2" />
+              <circle cx="277" cy="264" r="1.5" fill="#FFF" opacity="0.7" />
+
+              <!-- Cúc 4: Sườn phải (Trí) -->
+              <circle cx="278" cy="305" r="4.2" fill="#E5A93C" stroke="#8E631C" stroke-width="1.2" />
+              <circle cx="277" cy="304" r="1.5" fill="#FFF" opacity="0.7" />
+
+              <!-- Cúc 5: Ngang thắt lưng (Tín) -->
+              <circle cx="278" cy="345" r="4.2" fill="#E5A93C" stroke="#8E631C" stroke-width="1.2" />
+              <circle cx="277" cy="344" r="1.5" fill="#FFF" opacity="0.7" />
             </g>
 
-            <!-- LỚP 5: Thân Áo & Tay Áo (Động theo loại áo: Áo Tấc, Nhật Bình, Ngũ Thân, Giao Lĩnh) -->
-            <g id="svg-garment-layer">
-              <!-- Render động bởi Javascript -->
+            <!-- <g id="layer-accessory-fan">: Phụ kiện quạt giấy xếp (mặc định hiện display: block) -->
+            <g id="layer-accessory-fan" style="display: block;">
+              <!-- Bàn tay cầm quạt -->
+              <ellipse cx="320" cy="375" rx="8" ry="6" fill="#F3D1B5" stroke="#4A2E1B" stroke-width="1.2" />
+              
+              <!-- Quạt giấy xếp xòe hình nan lụa giấy dó -->
+              <g transform="translate(315, 360) rotate(-22)">
+                <!-- Nan gỗ tre quạt -->
+                <line x1="0" y1="20" x2="-35" y2="-45" stroke="#4A2E1B" stroke-width="2.5" />
+                <line x1="0" y1="20" x2="-15" y2="-55" stroke="#4A2E1B" stroke-width="2" />
+                <line x1="0" y1="20" x2="10" y2="-55" stroke="#4A2E1B" stroke-width="2" />
+                <line x1="0" y1="20" x2="35" y2="-45" stroke="#4A2E1B" stroke-width="2.5" />
+
+                <!-- Mảnh giấy dó gấp nếp -->
+                <path d="M -40,-35 Q 0,-65 40,-35 L 25,-15 Q 0,-30 -25,-15 Z" fill="#F5F2EB" stroke="#CFC8B8" stroke-width="1.5" />
+                <!-- Hoa văn thư họa trên quạt -->
+                <path d="M -15,-40 Q 0,-50 15,-38" stroke="#B22222" stroke-width="2" fill="none" />
+                <circle cx="2" cy="-44" r="2" fill="#E5A93C" />
+
+                <!-- Chốt quạt & Dây tua rua đỏ son buông rủ -->
+                <circle cx="0" cy="20" r="3.5" fill="#E5A93C" stroke="#8E631C" stroke-width="1" />
+                <path d="M 0,23 Q -4,42 2,58" stroke="#B22222" stroke-width="2.2" fill="none" stroke-linecap="round" />
+                <circle cx="2" cy="60" r="3" fill="#E5A93C" />
+              </g>
             </g>
 
-            <!-- LỚP 6: Hoa Văn Gấm Phủ Ngoài (Overlay Pattern) -->
-            <g id="svg-pattern-overlay">
-              <!-- Render hoa văn gấm động -->
-            </g>
-
-            <!-- LỚP 7: Phụ Kiện (Mấn / Khăn Đóng / Quạt / Ngọc Bội) -->
-            <g id="svg-accessory-head">
-              <!-- Render khăn đóng hoặc mấn -->
-            </g>
-            <g id="svg-accessory-hand">
-              <!-- Render quạt hoặc ngọc bội -->
+            <!-- LỚP PHÁ CÁCH GEN Z (Kính râm gọng kim loại & Tai nghe Over-ear) -->
+            <g id="layer-genz-style">
+              <!-- Kính râm đen gọng vàng -->
+              <path d="M 230,128 L 244,128 L 244,136 L 230,136 Z" fill="#121110" stroke="#E5A93C" stroke-width="1.5" rx="2" />
+              <path d="M 256,128 L 270,128 L 270,136 L 256,136 Z" fill="#121110" stroke="#E5A93C" stroke-width="1.5" rx="2" />
+              <line x1="244" y1="130" x2="256" y2="130" stroke="#E5A93C" stroke-width="1.5" />
+              <!-- Tai nghe over-ear quanh cổ -->
+              <path d="M 226,192 Q 250,222 274,192" stroke="#E5A93C" stroke-width="4" fill="none" stroke-linecap="round" />
+              <rect x="220" y="185" width="8" height="14" rx="3" fill="#121110" stroke="#E5A93C" stroke-width="1.5" />
+              <rect x="272" y="185" width="8" height="14" rx="3" fill="#121110" stroke="#E5A93C" stroke-width="1.5" />
             </g>
           </svg>
         </div>
 
-        <!-- Quick Action Floating Bar -->
-        <div class="workspace-bottombar">
-          <button id="btn-open-lookbook" class="btn-action-pill">
-            <span>✨</span> Xuất Thẻ Lookbook
-          </button>
-          <button id="btn-sound-toggle" class="btn-action-pill">
-            <span>🔔</span> Âm Chuông Gốm
-          </button>
-        </div>
+        <!-- ============================================================
+             1. THẺ THÔNG TIN GIẤY DÓ (#heritage-info-card)
+             ============================================================ -->
+        <article id="heritage-info-card" class="the-giay-do">
+          <header class="card-header-bar">
+            <div class="card-headline">
+              <span class="seal-badge" style="width:24px; height:24px; font-size:0.68rem;">監</span>
+              <span>THẺ DI SẢN & GỢI Ý CỔ PHỤC</span>
+            </div>
+            <div class="ai-status-pill" id="ai-status">
+              <span>✨ Gemini Flash AI</span>
+            </div>
+          </header>
+
+          <div class="info-sections-container">
+            <!-- 1. 💄 Gợi ý Tóc & Trang điểm: #info-makeup -->
+            <div class="info-item-block">
+              <div class="info-item-title">
+                <span>💄</span> Gợi ý Tóc & Trang điểm:
+              </div>
+              <div class="info-item-content" id="info-makeup">
+                Tóc búi trễ cài trâm xà cừ hoặc hoàng cúc vàng. Điểm xuyết son môi đỏ chu sa trầm nhã, má phớt hồng đào tự nhiên, lông mày lá liễu thanh thoát tôn nét kiêu sa, quý phái du xuân.
+              </div>
+            </div>
+
+            <!-- 2. 📸 Dáng Chụp Ảnh Tôn Phom: #info-pose -->
+            <div class="info-item-block">
+              <div class="info-item-title">
+                <span>📸</span> Dáng Chụp Ảnh Tôn Phom:
+              </div>
+              <div class="info-item-content" id="info-pose">
+                Tay phải nâng nhẹ quạt giấy xếp trước ngực ngang xương quai xanh, tay trái khẽ vén nhẹ tà áo trước. Đứng nghiêng 45 độ, ánh mắt cười tự nhiên nhìn xa để phô trọn đường lượn tà áo ngũ thân.
+              </div>
+            </div>
+
+            <!-- 3. 📜 Câu Chuyện Di Sản: #info-story -->
+            <div class="info-item-block">
+              <div class="info-item-title">
+                <span>📜</span> Câu Chuyện Di Sản:
+              </div>
+              <div class="info-item-content" id="info-story">
+                Sắc Đỏ Son (Chu Sa) biểu trưng cho vượng khí thái dương, xua tan u ám và rước tài lộc đầu năm. Thiết kế 5 thân áo khép kín tượng trưng cho 'Ngũ Thường' (Nhân, Lễ, Nghĩa, Trí, Tín) và bốn đấng sinh thành phụ mẫu.
+              </div>
+            </div>
+          </div>
+        </article>
+
       </main>
 
-      <!-- CỘT PHẢI (40% Desktop / 45% Mobile Bottom Sheet): BẢNG ĐIỀU KHIỂN -->
-      <aside class="control-panel">
-        <header class="panel-header">
-          <div class="panel-title">
+      <!-- 2. BẢNG ĐIỀU KHIỂN THÔNG MINH (#control-panel) -->
+      <aside id="control-panel">
+        <header class="panel-header-sticky">
+          <div class="panel-heading">
             <span class="seal-badge">藝</span>
-            <span>XƯỞNG PHỐI VIỆT Y</span>
+            <span>BẢNG ĐIỀU KHIỂN VIỆT Y</span>
           </div>
         </header>
 
-        <div class="panel-content">
-          <!-- BỐI CẢNH 1-CHẠM (Context Cards) -->
+        <div class="panel-body-content">
+          <!-- A. Thẻ Bối Cảnh 1-Chạm (Event Anchors) -->
           <section>
-            <div class="section-label">
-              <span>Bối Cảnh 1-Chạm (Presettings)</span>
-              <span style="opacity: 0.6; font-size: 0.7rem;">Chạm để đổi nhanh</span>
+            <div class="section-title">
+              <span>A. Bối Cảnh 1-Chạm (Event Anchors)</span>
+              <span style="font-size: 0.68rem; opacity: 0.7;">Chạm đổi tức thì</span>
             </div>
-            <div class="preset-carousel" id="preset-list">
-              <!-- Nạp động qua JS: Tết, Lễ tốt nghiệp, Đi chùa, Phố cổ, Trà quán -->
+            <div class="anchor-cards-grid">
+              <!-- Thẻ 1: Dạo Phố Tết (Mặc định) -->
+              <div class="anchor-card active" data-anchor="tet" id="anchor-tet">
+                <span class="anchor-icon">🌸</span>
+                <span class="anchor-label">Dạo Phố Tết</span>
+                <span class="anchor-meta">Đỏ Son • Quạt</span>
+              </div>
+
+              <!-- Thẻ 2: Lễ Tốt Nghiệp -->
+              <div class="anchor-card" data-anchor="grad" id="anchor-grad">
+                <span class="anchor-icon">🎓</span>
+                <span class="anchor-label">Lễ Tốt Nghiệp</span>
+                <span class="anchor-meta">Xanh Chàm</span>
+              </div>
+
+              <!-- Thẻ 3: Đi Chùa Cầu An -->
+              <div class="anchor-card" data-anchor="temple" id="anchor-temple">
+                <span class="anchor-icon">🛕</span>
+                <span class="anchor-label">Đi Chùa Cầu An</span>
+                <span class="anchor-meta">Cánh Gián • Quạt</span>
+              </div>
             </div>
           </section>
 
-          <!-- TABS ĐIỀU HƯỚNG TÙY BIẾN -->
-          <nav class="tabs-nav">
-            <button class="tab-btn active" data-tab="garment">1. Dáng Áo</button>
-            <button class="tab-btn" data-tab="color">2. Sắc Gấm</button>
-            <button class="tab-btn" data-tab="pattern">3. Hoa Văn</button>
-            <button class="tab-btn" data-tab="accessory">4. Phụ Kiện</button>
-          </nav>
-
-          <!-- NỘI DUNG TAB 1: DÁNG ÁO -->
-          <div class="tab-pane active" id="tab-garment">
-            <div class="options-grid" id="garment-options">
-              <!-- Options: Áo Tấc, Nhật Bình, Áo Ngũ Thân, Áo Giao Lĩnh -->
+          <!-- B. Bảng Chọn Màu Vải Gốm Sứ (Color Swatches) -->
+          <section>
+            <div class="section-title">
+              <span>B. Màu Vải Gốm Sứ (Color Swatches)</span>
+              <span id="active-color-name" style="color: var(--vang-hoang-cuc); font-weight: 600;">Đỏ Son</span>
             </div>
-          </div>
+            <div class="swatches-row">
+              <!-- Đỏ Son (#B22222) -->
+              <div class="ceramic-swatch active" data-color="#B22222" data-name="Đỏ Son">
+                <div class="swatch-disc" style="background: #B22222;"></div>
+                <span class="swatch-name">Đỏ Son</span>
+              </div>
 
-          <!-- NỘI DUNG TAB 2: SẮC GẤM -->
-          <div class="tab-pane" id="tab-color" style="display: none;">
-            <div class="section-label">Sắc Màu Thổ Cẩm & Sơn Mài</div>
-            <div class="color-swatches" id="color-swatches">
-              <!-- Swatches nạp bằng JS -->
+              <!-- Xanh Chàm (#1D3557) -->
+              <div class="ceramic-swatch" data-color="#1D3557" data-name="Xanh Chàm">
+                <div class="swatch-disc" style="background: #1D3557;"></div>
+                <span class="swatch-name">Xanh Chàm</span>
+              </div>
+
+              <!-- Vàng Hoàng Cúc (#E5A93C) -->
+              <div class="ceramic-swatch" data-color="#E5A93C" data-name="Hoàng Cúc">
+                <div class="swatch-disc" style="background: #E5A93C;"></div>
+                <span class="swatch-name">Hoàng Cúc</span>
+              </div>
+
+              <!-- Nâu Cánh Gián (#2B1A12) -->
+              <div class="ceramic-swatch" data-color="#2B1A12" data-name="Cánh Gián">
+                <div class="swatch-disc" style="background: #2B1A12;"></div>
+                <span class="swatch-name">Cánh Gián</span>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <!-- NỘI DUNG TAB 3: HOA VĂN -->
-          <div class="tab-pane" id="tab-pattern" style="display: none;">
-            <div class="options-grid" id="pattern-options">
-              <!-- Options: Thuỷ ba, Mây song hạc, Hoa sen, Gấm trơn -->
+          <!-- C. Thanh Trượt Vi Mô (Micro-sliders) -->
+          <section>
+            <div class="section-title">
+              <span>C. Thanh Trượt Vi Mô (Micro-Sliders)</span>
             </div>
-          </div>
+            <div class="slider-group">
+              <!-- Slider 1: Sắc độ Trầm Nhã <---> Rực Rỡ -->
+              <div class="slider-item">
+                <div class="slider-labels">
+                  <span id="label-sat-left">Trầm Nhã (50%)</span>
+                  <span class="active-tag" id="label-sat-val">100%</span>
+                  <span id="label-sat-right">Rực Rỡ (100%)</span>
+                </div>
+                <input type="range" class="micro-range" id="slider-saturation" min="50" max="100" value="100" step="1">
+              </div>
 
-          <!-- NỘI DUNG TAB 4: PHỤ KIỆN -->
-          <div class="tab-pane" id="tab-accessory" style="display: none;">
-            <div style="display: flex; flex-direction: column; gap: 8px;" id="accessory-options">
-              <!-- Options: Khăn đóng, Mấn, Quạt tranh lụa, Ngọc bội -->
+              <!-- Slider 2: Phong cách Truyền Thống <---> Phá Cách Gen Z -->
+              <div class="slider-item">
+                <div class="slider-labels">
+                  <span class="active-tag" id="label-style-left">Truyền Thống</span>
+                  <span id="label-style-right">Phá Cách Gen Z</span>
+                </div>
+                <input type="range" class="micro-range" id="slider-style" min="0" max="100" value="0" step="1">
+              </div>
             </div>
-          </div>
+          </section>
 
-          <!-- THẺ GIẤY DÓ: LORE & KIẾN THỨC CỔ PHỤC -->
-          <article class="the-giay-do info-lore-card" id="lore-card">
-            <div class="lore-title" id="lore-title">ÁO TẤC (TAY THỤNG)</div>
-            <p class="lore-body" id="lore-body">
-              Lễ phục trang trọng thời Nguyễn với tay áo thụng rộng buông dài. Thường mặc vào các dịp hỷ sự, lễ tết, thể hiện sự khiêm cung, hòa nhã và cốt cách người Việt.
+          <!-- Nút kích hoạt tư vấn Gemini AI trực tiếp -->
+          <button id="btn-ask-gemini" class="btn-ai-refresh">
+            <span>✨</span> Cố Vấn Văn Hóa & Phong Thái AI
+          </button>
+
+          <!-- Thẻ Thông Tin Di Sản Giấy Dó -->
+          <article class="the-giay-do" style="padding: 16px; border-left: 4px solid var(--do-son);">
+            <h3 style="font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--do-son); margin-bottom: 6px;">
+              ÁO NGŨ THÂN LẬP LĨNH
+            </h3>
+            <p style="font-size: 0.78rem; line-height: 1.5; color: #2b2622;">
+              Định chế y phục quốc gia năm 1744 dưới thời Võ Vương Nguyễn Phúc Khoát. Thiết kế 5 cúc tượng trưng cho <strong>Ngũ Thường</strong> (Nhân - Lễ - Nghĩa - Trí - Tín), kết hợp vạt con khép kín giữ gìn nhân cách và tinh hoa đất Việt.
             </p>
           </article>
         </div>
@@ -929,103 +1155,66 @@
     </div>
   </section>
 
-  <!-- MODAL XUẤT THẺ LOOKBOOK -->
-  <div class="modal-backdrop" id="lookbook-modal">
-    <div class="the-giay-do lookbook-modal-card">
-      <div style="text-align: right; margin-bottom: 8px;">
-        <button id="btn-close-modal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--den-voc);">✕</button>
-      </div>
-      <div style="display: inline-block; padding: 4px 12px; background: var(--do-son); color: var(--trang-buoi); border-radius: 4px; font-size: 0.72rem; letter-spacing: 0.1em; margin-bottom: 12px;">
-        VIỆT Y REMIX LOOKBOOK
-      </div>
-      <h2 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--do-son); margin-bottom: 6px;" id="modal-outfit-title">
-        Áo Tấc Đỏ Chu Sa
-      </h2>
-      <p style="font-size: 0.8rem; color: #555; margin-bottom: 16px;" id="modal-outfit-desc">
-        Bộ phối bối cảnh: Tết Du Xuân • Hoạ tiết: Thuỷ Ba Sóng Nước
-      </p>
-
-      <div style="border: 2px dashed rgba(43,26,18,0.3); padding: 14px; border-radius: 8px; margin-bottom: 16px; background: rgba(255,255,255,0.7);">
-        <p style="font-size: 0.82rem; font-weight: 600; color: var(--nau-canh-gian); margin-bottom: 4px;">
-          "Di Sản Không Phải Đồ Xưa Cũ, Di Sản Là Bản Sắc Gen Z"
-        </p>
-        <span style="font-size: 0.72rem; color: #777;">Mã định danh tác phẩm: #VYR-2026-GENZ</span>
-      </div>
-
-      <button id="btn-copy-lookbook" class="btn-gom-su" style="width: 100%; font-size: 0.85rem; padding: 12px;">
-        <span>📸</span> Sao Chép Thẻ Phối Đồ
-      </button>
-    </div>
-  </div>
-
   <!-- ============================================================
-       JAVASCRIPT: THREE.JS 3D SCENE + STATE ENGINE + ROUTER
+       3. JAVASCRIPT: THREE.JS 3D + GEMINI FLASH AI INTEGRATION
        ============================================================ -->
   <script>
     /* ============================================================
-       A. HỆ THỐNG ÂM THANH MỘC (WEB AUDIO API - CHUÔNG GỐM & GÕ PHÁCH)
+       A. HỆ THỐNG ÂM THANH MỘC (WEB AUDIO API)
        ============================================================ */
-    const AudioEngine = {
+    const Sound = {
       ctx: null,
       enabled: true,
       init() {
-        try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) {
-            this.ctx = new AudioContext();
-          }
-        } catch (e) {
-          console.log("Audio not supported", e);
-        }
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) this.ctx = new AudioContext();
       },
       playChime() {
         if (!this.enabled) return;
         if (!this.ctx) this.init();
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
         if (!this.ctx) return;
 
         const now = this.ctx.currentTime;
-        // Chuông gốm thanh tao
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(880, now);
-        osc.frequency.exponentialRampToValueAtTime(1760, now + 0.15);
-        osc.frequency.exponentialRampToValueAtTime(440, now + 1.2);
+        osc.frequency.exponentialRampToValueAtTime(1760, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 1.0);
 
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 1.2);
+        osc.stop(now + 1.0);
       },
-      playWoodClick() {
+      playClick() {
         if (!this.enabled) return;
         if (!this.ctx) this.init();
         if (!this.ctx) return;
+
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(520, now);
-        osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+        osc.frequency.setValueAtTime(500, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.06);
 
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.08);
+        osc.stop(now + 0.06);
       }
     };
 
     /* ============================================================
-       B. THREE.JS: KHỐI 3D ẤN TÍN HOA SEN (LOTUS SEAL)
+       B. THREE.JS: KHỐI 3D ẤN TÍN HOA SEN (#landing-scene)
        ============================================================ */
     let scene, camera, renderer, sealGroup;
     let targetRotationX = 0;
@@ -1049,8 +1238,8 @@
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      // 3. Ánh sáng: Sơn Mài & Vàng Cố Đô
-      const ambientLight = new THREE.AmbientLight(0xfff1db, 0.9);
+      // 3. Ánh sáng
+      const ambientLight = new THREE.AmbientLight(0xfff0db, 0.95);
       scene.add(ambientLight);
 
       const mainLight = new THREE.DirectionalLight(0xffd599, 1.8);
@@ -1058,7 +1247,7 @@
       mainLight.castShadow = true;
       scene.add(mainLight);
 
-      const rimLight = new THREE.PointLight(0xb22222, 2.5, 20);
+      const rimLight = new THREE.PointLight(0xb22222, 2.6, 20);
       rimLight.position.set(-6, -2, -4);
       scene.add(rimLight);
 
@@ -1066,15 +1255,14 @@
       goldGlow.position.set(0, 3, 2);
       scene.add(goldGlow);
 
-      // 4. DỰNG KHỐI 3D ẤN TÍN HOA SEN (LOTUS SEAL)
+      // 4. Dựng khối 3D Ấn Tín Hoa Sen
       sealGroup = new THREE.Group();
 
-      // Vật liệu Sơn Mài Đỏ & Đồng Hoàng Kim
       const redLacquerMat = new THREE.MeshStandardMaterial({
         color: 0x9b1b1b,
         roughness: 0.25,
         metalness: 0.35,
-        clearcoat: 0.8,
+        clearcoat: 0.85,
         clearcoatRoughness: 0.2
       });
 
@@ -1092,7 +1280,7 @@
         opacity: 0.92
       });
 
-      // a. Đế vuông Kim Bảo (Square Seal Base)
+      // Đế vuông Kim Bảo
       const baseGeo = new THREE.BoxGeometry(3.2, 0.9, 3.2);
       const baseMesh = new THREE.Mesh(baseGeo, redLacquerMat);
       baseMesh.position.y = -0.45;
@@ -1100,7 +1288,7 @@
       baseMesh.receiveShadow = true;
       sealGroup.add(baseMesh);
 
-      // b. Vành đồng kim bảo viền hoa văn
+      // Vành viền đồng
       const rimGeo = new THREE.BoxGeometry(3.35, 0.15, 3.35);
       const rimMesh = new THREE.Mesh(rimGeo, goldBrassMat);
       rimMesh.position.y = -0.85;
@@ -1111,13 +1299,13 @@
       rimMeshTop.position.y = 0.05;
       sealGroup.add(rimMeshTop);
 
-      // c. Tầng Đài Sen (Lotus Pedestal Base)
+      // Đài sen
       const lotusBaseGeo = new THREE.CylinderGeometry(1.4, 1.6, 0.45, 24);
       const lotusBaseMesh = new THREE.Mesh(lotusBaseGeo, goldBrassMat);
       lotusBaseMesh.position.y = 0.3;
       sealGroup.add(lotusBaseMesh);
 
-      // d. 8 Cánh Sen bao quanh (Lotus Petals)
+      // 8 Cánh sen
       const petalCount = 8;
       for (let i = 0; i < petalCount; i++) {
         const angle = (i / petalCount) * Math.PI * 2;
@@ -1130,7 +1318,7 @@
         sealGroup.add(petalMesh);
       }
 
-      // e. Núm Cầm Ấn Tín (Ngọc Búp Sen / Dragon Finial)
+      // Núm ấn & Búp sen ngọc
       const knobPillarGeo = new THREE.CylinderGeometry(0.75, 1.0, 1.2, 16);
       const knobPillar = new THREE.Mesh(knobPillarGeo, goldBrassMat);
       knobPillar.position.y = 1.0;
@@ -1142,14 +1330,13 @@
       budMesh.position.y = 1.85;
       sealGroup.add(budMesh);
 
-      // f. Đỉnh Vàng Hộ Niệm
       const tipGeo = new THREE.ConeGeometry(0.2, 0.5, 8);
       const tipMesh = new THREE.Mesh(tipGeo, goldBrassMat);
       tipMesh.position.y = 2.6;
       sealGroup.add(tipMesh);
 
-      // g. Các hạt bụi vàng lơ lửng xung quanh (Gold Dust Particles)
-      const particleCount = 60;
+      // Bụi vàng bay lơ lửng
+      const particleCount = 50;
       const particleGeo = new THREE.BufferGeometry();
       const posArray = new Float32Array(particleCount * 3);
       for (let i = 0; i < particleCount * 3; i += 3) {
@@ -1162,16 +1349,15 @@
         size: 0.08,
         color: 0xe5a93c,
         transparent: true,
-        opacity: 0.7
+        opacity: 0.75
       });
       const particleSystem = new THREE.Points(particleGeo, particleMat);
       sealGroup.add(particleSystem);
 
-      // Đặt nhóm Ấn Tín vào Scene
       sealGroup.position.y = -0.2;
       scene.add(sealGroup);
 
-      // 5. Tương tác Parallax qua con trỏ chuột & Touch
+      // Tương tác chuột / touch xoay parallax
       function onPointerMove(e) {
         const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
         const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
@@ -1183,7 +1369,6 @@
       window.addEventListener('mousemove', onPointerMove, { passive: true });
       window.addEventListener('touchmove', onPointerMove, { passive: true });
 
-      // Resize window
       window.addEventListener('resize', () => {
         const w = container.clientWidth || window.innerWidth;
         const h = container.clientHeight || window.innerHeight;
@@ -1192,19 +1377,15 @@
         renderer.setSize(w, h);
       });
 
-      // 6. Animation Loop
       let clock = new THREE.Clock();
       function animate() {
         requestAnimationFrame(animate);
         const elapsedTime = clock.getElapsedTime();
 
         if (sealGroup) {
-          // Xoay nhẹ nhàng tự động + Lực nghiêng parallax
           sealGroup.rotation.y += 0.007;
           sealGroup.rotation.y += (targetRotationY - sealGroup.rotation.y * 0.1) * 0.03;
           sealGroup.rotation.x += (targetRotationX - sealGroup.rotation.x) * 0.04;
-          
-          // Chuyển động lơ lửng (Floating)
           sealGroup.position.y = -0.2 + Math.sin(elapsedTime * 1.5) * 0.1;
         }
 
@@ -1214,455 +1395,284 @@
     }
 
     /* ============================================================
-       C. STATE MANAGEMENT: DỮ LIỆU & TRẠNG THÁI VIỆT Y
+       C. KHO DỮ LIỆU CỐ VẤN VĂN HÓA DỰ PHÒNG (CURATED CULTURAL KNOWLEDGE)
        ============================================================ */
-    const State = {
-      garment: 'tac',        // 'tac' (Áo Tấc), 'nhatbinh' (Nhật Bình), 'nguthan' (Áo Ngũ Thân), 'giaolinh' (Giao Lĩnh)
-      color: '#B22222',      // Đỏ Chu Sa, Vàng Hoàng Cúc, Xanh Chàm, Bạch Ngọc, Tím Cố Đô
-      pattern: 'thuyba',     // 'thuyba', 'mayhac', 'hoasen', 'tron'
-      accessory: 'khandong', // 'khandong', 'man', 'quat', 'ngocboi'
-      preset: 'tet',
-      loreData: {
-        tac: {
-          title: "ÁO TẤC (TAY THỤNG)",
-          desc: "Lễ phục trang trọng bậc nhất thời Nguyễn với tay áo thụng buông dài tự nhiên. Biểu trưng cho sự tôn nghiêm, nho nhã và cốt cách hiền hòa trong các dịp đại lễ, cưới hỏi và lễ tết."
+    const CulturalKnowledgeBase = {
+      tet: {
+        '#B22222': {
+          makeup: 'Tóc búi trễ cài trâm xà cừ hoặc hoàng cúc vàng. Điểm xuyết son môi đỏ chu sa trầm nhã, má phớt hồng đào tự nhiên, lông mày lá liễu thanh thoát tôn nét kiêu sa, quý phái du xuân.',
+          pose: 'Tay phải nâng nhẹ quạt giấy xếp trước ngực ngang xương quai xanh, tay trái khẽ vén tà áo trước. Đứng nghiêng 45 độ, ánh mắt cười nhẹ nhìn xa để phô trọn tà áo ngũ thân bay lượn.',
+          story: 'Sắc Đỏ Son (Chu Sa) biểu trưng cho vượng khí thái dương, xua tan u ám và rước tài lộc đầu năm. Kết hợp kết cấu 5 thân áo ngũ thân mang ý nghĩa năm mới tròn đầy, ngũ phúc lâm môn.'
         },
-        nhatbinh: {
-          title: "ÁO NHẬT BÌNH",
-          desc: "Thường phục hoàng gia cao quý triều Nguyễn dành cho Hoàng hậu, Công chúa và mệnh phụ. Điểm đặc trưng là cổ áo to bản hình chữ nhật viền hoa văn ngũ hành thêu kim tuyến tinh xảo."
+        '#E5A93C': {
+          makeup: 'Tóc tết vương miện hoặc búi cài trâm cúc vàng. Phong cách trang điểm tông cam ấm hoàng kim rạng rỡ, chuốt mi cong nhẹ, tôn thần sắc tươi mới như nắng mai ngày Tết.',
+          pose: 'Hai tay cầm quạt giấy khép hờ để ngang hông, bước nhẹ một chân lên phía trước tạo dáng dạo bước du xuân thảnh thơi giữa vườn mai đào.',
+          story: 'Vàng Hoàng Cúc tượng trưng cho sự quyền quý, trường thọ và sinh sôi nảy nở. Là sắc màu đại diện cho đất trời phương Nam ấm áp trong những ngày đầu xuân sum vầy.'
+        }
+      },
+      grad: {
+        '#1D3557': {
+          makeup: 'Tóc buộc nửa đầu uốn lọn sóng tự nhiên hoặc búi cao thanh tú với kẹp ngọc. Phong cách trang điểm tông cam đất / nude nhã nhặn, tôn vẻ thông tuệ, chững chạc của người trí thức trẻ.',
+          pose: 'Đứng thẳng lưng đoan trang, hai tay chắp trước bụng theo thế "Chắp Tay Vái Chào" truyền thống để lộ cổ tay chẽn gọn gàng; hoặc một tay ôm bằng tốt nghiệp / cuốn sách cổ.',
+          story: 'Màu Xanh Chàm là màu của nho sinh xưa đỗ đạt khoa bảng, tượng trưng cho biển học mênh mông và lòng kiên định. 5 cúc áo đại diện cho Ngũ Thường: Nhân - Lễ - Nghĩa - Trí - Tín.'
         },
-        nguthan: {
-          title: "ÁO DÀI NGŨ THÂN TAY CHẼN",
-          desc: "Kiệt tác cách tân của Định vương Nguyễn Phúc Khoát và Vua Minh Mạng. Kết cấu năm thân áo tượng trưng cho 'Tứ thân phụ mẫu' và bản thân người mặc, đi cùng ngũ thường: Nhân, Lễ, Nghĩa, Trí, Tín."
+        '#B22222': {
+          makeup: 'Tóc thả suôn mượt vén sau tai cài trâm nhỏ. Son môi đỏ gạch thanh lịch, nhấn phần đuôi mắt sắc sảo thể hiện ý chí và sự tự tin bước vào ngưỡng cửa sự nghiệp mới.',
+          pose: 'Một tay cầm quạt gập gọn chỉ nhẹ về phía trước, ánh nhìn kiên định hướng về tương lai, thể hiện tinh thần khát vọng vươn lên của thế hệ trẻ.',
+          story: 'Màu đỏ trong ngày tốt nghiệp gợi nhớ màu bảng vàng đăng khoa, là lời chúc cho công danh rực rỡ và nhiệt huyết tuổi trẻ luôn cháy bỏng.'
+        }
+      },
+      temple: {
+        '#2B1A12': {
+          makeup: 'Tóc búi gọn gàng tối giản, cài trâm gỗ mun mộc mạc. Lớp nền mỏng nhẹ như sương, son môi hồng đất trầm ấm, giữ trọn nét thanh tịnh và trang nghiêm nơi cửa Phật.',
+          pose: 'Hai lòng bàn tay đan nhẹ hờ vào nhau cầm chuỗi tràng hạt bồ đề hoặc chắp tay ngang ngực búp sen, cúi đầu tịnh tâm, dáng đứng vững chãi tĩnh tại.',
+          story: 'Nâu Cánh Gián là màu của đất mẹ, của áo nâu sồng giác ngộ và sự buông bỏ tạp niệm. Thân áo ngũ thân lập lĩnh kín cổ bảo vệ thân tâm, cầu nguyện bình an cho gia đạo.'
         },
-        giaolinh: {
-          title: "ÁO GIAO LĨNH (CỔ CHÉO)",
-          desc: "Dáng trang phục cổ truyền thời Lý - Trần - Lê với hai vạt áo chéo giao nhau nơi ngực. Tà áo phóng khoáng, toát lên nét thanh thoát, tự tại của văn nhân xứ Việt xưa."
+        '#EDE9DF': {
+          makeup: 'Trang điểm mộc tự nhiên gần như không son phấn (no-makeup look), môi ửng hồng dưỡng nhẹ, tóc thả tự nhiên cài kẹp gỗ đơn sơ.',
+          pose: 'Dáng đứng tĩnh tại nhìn về phía lư hương cổ, hai tay nâng quạt giấy khép kín buông xuôi bên tà áo, toát lên sự thuần khiết, thanh cao.',
+          story: 'Sắc Bạch Ngọc đại diện cho sự tinh khôi, tâm hồn trong trẻo không vướng bụi trần, gột rửa lo toan để đón nhận an lạc thiền định.'
         }
       }
     };
 
-    /* Danh mục Bối cảnh 1-Chạm (Presettings) */
-    const Presets = [
-      { id: 'tet', name: 'Tết Du Xuân', icon: '🌸', garment: 'tac', color: '#B22222', pattern: 'thuyba', accessory: 'khandong' },
-      { id: 'grad', name: 'Lễ Tốt Nghiệp', icon: '🎓', garment: 'nguthan', color: '#1D3557', pattern: 'mayhac', accessory: 'ngocboi' },
-      { id: 'temple', name: 'Đi Chùa Cầu An', icon: '🛕', garment: 'giaolinh', color: '#EDE9DF', pattern: 'tron', accessory: 'khandong' },
-      { id: 'pho-co', name: 'Phố Cổ Hội An', icon: '🏮', garment: 'nhatbinh', color: '#E5A93C', pattern: 'mayhac', accessory: 'man' },
-      { id: 'tea', name: 'Trà Quán Tri Kỷ', icon: '🍵', garment: 'tac', color: '#4B2E48', pattern: 'thuyba', accessory: 'quat' }
-    ];
-
-    /* Danh mục Dáng Áo */
-    const GarmentTypes = [
-      { id: 'tac', name: 'Áo Tấc', subtitle: 'Tay thụng • Đại lễ triều Nguyễn' },
-      { id: 'nhatbinh', name: 'Nhật Bình', subtitle: 'Cổ vuông • Hoàng gia cao quý' },
-      { id: 'nguthan', name: 'Ngũ Thân', subtitle: 'Tay chẽn • Ngũ thường nhân bản' },
-      { id: 'giaolinh', name: 'Giao Lĩnh', subtitle: 'Cổ chéo • Cổ phong Lý - Trần' }
-    ];
-
-    /* Danh mục Sắc Gấm */
-    const ColorPalettes = [
-      { hex: '#B22222', name: 'Đỏ Chu Sa' },
-      { hex: '#E5A93C', name: 'Vàng Hoàng Cúc' },
-      { hex: '#1D3557', name: 'Xanh Chàm Cổ' },
-      { hex: '#EDE9DF', name: 'Bạch Ngọc Trắng' },
-      { hex: '#4B2E48', name: 'Tím Cố Đô' },
-      { hex: '#2F6F5E', name: 'Xanh Khổng Tước' }
-    ];
-
-    /* Danh mục Hoa Văn */
-    const Patterns = [
-      { id: 'thuyba', name: 'Sóng Nước Thuỷ Ba', desc: 'Sóng cuộn dồi dào, phúc lộc trường tồn' },
-      { id: 'mayhac', name: 'Mây Song Hạc', desc: 'Mây lành phiêu lãng, cốt cách thanh tao' },
-      { id: 'hoasen', name: 'Liên Hoa Cổ', desc: 'Hoa sen nở nhụy, an yên thuần khiết' },
-      { id: 'tron', name: 'Gấm Trơn Mộc', desc: 'Tối giản, trọn vẹn chất liệu gấm lụa' }
-    ];
-
-    /* Danh mục Phụ Kiện */
-    const Accessories = [
-      { id: 'khandong', name: 'Khăn Đóng / Khăn Xếp', type: 'head' },
-      { id: 'man', name: 'Mấn Thêu Hoàng Cung', type: 'head' },
-      { id: 'quat', name: 'Quạt Ba Tiêu Lụa Tơ', type: 'hand' },
-      { id: 'ngocboi', name: 'Ngọc Bội Thắt Dây Đỏ', type: 'hand' }
-    ];
-
     /* ============================================================
-       D. SVG RENDER ENGINE: TÁI TẠO CÁC LỚP VIỆT PHỤC THEO THỜI GIAN THỰC
+       D. HÀM GỌI API GEMINI FLASH (VANILLA JS API INTEGRATION)
        ============================================================ */
-    function renderGarmentSVG() {
-      const garmentLayer = document.getElementById('svg-garment-layer');
-      const patternOverlay = document.getElementById('svg-pattern-overlay');
-      const headAccLayer = document.getElementById('svg-accessory-head');
-      const handAccLayer = document.getElementById('svg-accessory-hand');
-      const outfitDisplay = document.getElementById('outfit-display-name');
+    let currentEvent = 'tet';
+    let currentColor = '#B22222';
+    let isFetchingAI = false;
+    let aiDebounceTimer = null;
+    let lastQueriedKey = '';
 
-      const col = State.color;
-      let garmentHTML = '';
-      let patternHTML = '';
-      let headHTML = '';
-      let handHTML = '';
+    function requestCulturalAdvice(selectedEvent, selectedColor, immediate = false) {
+      const queryKey = `${selectedEvent}_${selectedColor}`.toLowerCase();
+      if (queryKey === lastQueriedKey && !immediate) return;
 
-      // Tùy theo Dáng Áo
-      if (State.garment === 'tac') {
-        // ÁO TẤC: Tà xòe rộng, tay áo thụng buông lớn uyển chuyển
-        garmentHTML = `
-          <!-- Thân áo Tấc -->
-          <path d="M 210,210 Q 250,215 290,210 L 315,310 L 335,530 L 165,530 L 185,310 Z" fill="${col}" stroke="rgba(0,0,0,0.15)" stroke-width="2" />
-          <!-- Cổ đứng cài khuy bên phải -->
-          <path d="M 235,210 L 265,210 L 268,225 L 232,225 Z" fill="#E5A93C" />
-          <line x1="250" y1="210" x2="270" y2="280" stroke="#E5A93C" stroke-width="2" />
-          <circle cx="270" cy="280" r="3" fill="#E5A93C" />
-          <!-- Tay Thụng Áo Tấc rộng buông thõng đặc trưng -->
-          <path d="M 210,215 L 140,240 L 120,440 L 175,410 L 185,310 Z" fill="${col}" filter="brightness(0.92)" />
-          <path d="M 290,215 L 360,240 L 380,440 L 325,410 L 315,310 Z" fill="${col}" filter="brightness(0.92)" />
-          <!-- Nếp viền gấu tay áo thụng -->
-          <path d="M 120,440 Q 150,420 175,410" stroke="#E5A93C" stroke-width="2" fill="none" />
-          <path d="M 380,440 Q 350,420 325,410" stroke="#E5A93C" stroke-width="2" fill="none" />
-          <!-- Viền gấu áo dưới -->
-          <path d="M 165,530 Q 250,545 335,530" stroke="#E5A93C" stroke-width="2.5" fill="none" />
-        `;
-      } else if (State.garment === 'nhatbinh') {
-        // ÁO NHẬT BÌNH: Cổ hình chữ nhật viền ngũ sắc lộng lẫy
-        garmentHTML = `
-          <!-- Thân áo Nhật Bình xẻ giữa -->
-          <path d="M 210,210 Q 250,215 290,210 L 310,310 L 325,510 L 175,510 L 190,310 Z" fill="${col}" />
-          <!-- Tay áo thụng vừa -->
-          <path d="M 210,215 L 150,245 L 135,390 L 185,360 L 190,310 Z" fill="${col}" filter="brightness(0.94)" />
-          <path d="M 290,215 L 350,245 L 365,390 L 315,360 L 310,310 Z" fill="${col}" filter="brightness(0.94)" />
-          <!-- Cổ Nhật Bình viền chữ nhật vàng ngũ sắc -->
-          <path d="M 226,212 L 274,212 L 274,380 L 254,380 L 254,232 L 246,232 L 246,380 L 226,380 Z" fill="#E5A93C" stroke="#B22222" stroke-width="1.5" />
-          <!-- Các vạch ngũ hành ở cổ áo -->
-          <line x1="228" y1="260" x2="244" y2="260" stroke="#1D3557" stroke-width="2" />
-          <line x1="228" y1="290" x2="244" y2="290" stroke="#2F6F5E" stroke-width="2" />
-          <line x1="228" y1="320" x2="244" y2="320" stroke="#EDE9DF" stroke-width="2" />
-          <line x1="256" y1="260" x2="272" y2="260" stroke="#1D3557" stroke-width="2" />
-          <line x1="256" y1="290" x2="272" y2="290" stroke="#2F6F5E" stroke-width="2" />
-          <line x1="256" y1="320" x2="272" y2="320" stroke="#EDE9DF" stroke-width="2" />
-          <!-- Dải ngũ sắc cổ tay áo -->
-          <rect x="135" y="375" width="48" height="6" fill="#E5A93C" />
-          <rect x="317" y="375" width="48" height="6" fill="#E5A93C" />
-        `;
-      } else if (State.garment === 'nguthan') {
-        // ÁO NGŨ THÂN TAY CHẼN: Tay áo ôm gọn, tà dài bay nhẹ
-        garmentHTML = `
-          <!-- Thân áo dài ngũ thân -->
-          <path d="M 215,210 Q 250,215 285,210 L 305,310 L 320,535 L 180,535 L 195,310 Z" fill="${col}" />
-          <!-- Cổ đứng cổ truyền -->
-          <path d="M 236,208 L 264,208 L 264,226 L 236,226 Z" fill="#D4932B" />
-          <!-- 5 cúc khuy cài (Ngũ thường) -->
-          <line x1="250" y1="210" x2="275" y2="255" stroke="#E5A93C" stroke-width="2" />
-          <line x1="275" y1="255" x2="275" y2="380" stroke="#E5A93C" stroke-width="2" />
-          <circle cx="275" cy="255" r="3" fill="#E5A93C" />
-          <circle cx="275" cy="285" r="3" fill="#E5A93C" />
-          <circle cx="275" cy="315" r="3" fill="#E5A93C" />
-          <circle cx="275" cy="345" r="3" fill="#E5A93C" />
-          <circle cx="275" cy="375" r="3" fill="#E5A93C" />
-          <!-- Tay Chẽn ôm sát cổ tay -->
-          <path d="M 215,215 L 170,250 L 175,370 L 195,370 L 195,310 Z" fill="${col}" filter="brightness(0.92)" />
-          <path d="M 285,215 L 330,250 L 325,370 L 305,370 L 305,310 Z" fill="${col}" filter="brightness(0.92)" />
-        `;
-      } else if (State.garment === 'giaolinh') {
-        // ÁO GIAO LĨNH: Cổ chéo giao nhau, tà suôn mềm mại
-        garmentHTML = `
-          <!-- Thân áo giao lĩnh -->
-          <path d="M 205,210 Q 250,215 295,210 L 315,310 L 330,520 L 170,520 L 185,310 Z" fill="${col}" />
-          <!-- Vạt chéo giao nhau từ trái qua phải -->
-          <path d="M 220,212 L 290,295 L 265,335 L 210,240 Z" fill="#E5A93C" opacity="0.85" />
-          <line x1="220" y1="212" x2="295" y2="330" stroke="#fff" stroke-width="1.8" />
-          <!-- Thắt lưng lụa buộc vạt -->
-          <rect x="200" y="325" width="100" height="14" fill="#8B0000" rx="3" />
-          <path d="M 260,339 L 255,410 L 268,405 L 270,339 Z" fill="#8B0000" />
-          <!-- Tay thụng giao lĩnh -->
-          <path d="M 205,215 L 145,250 L 140,410 L 185,370 L 185,310 Z" fill="${col}" filter="brightness(0.92)" />
-          <path d="M 295,215 L 355,250 L 360,410 L 315,370 L 315,310 Z" fill="${col}" filter="brightness(0.92)" />
-        `;
-      }
-
-      // Tùy theo Hoa Văn phủ
-      if (State.pattern === 'thuyba') {
-        patternHTML = `<rect x="160" y="210" width="180" height="320" fill="url(#pat-thuy-ba)" opacity="0.75" pointer-events="none" />`;
-      } else if (State.pattern === 'mayhac') {
-        patternHTML = `<rect x="160" y="210" width="180" height="320" fill="url(#pat-may-hac)" opacity="0.8" pointer-events="none" />`;
-      } else if (State.pattern === 'hoasen') {
-        patternHTML = `
-          <g opacity="0.6" stroke="#E5A93C" stroke-width="1.2" fill="none">
-            <circle cx="250" cy="380" r="14" />
-            <path d="M 236,380 Q 250,360 264,380 Q 250,400 236,380" />
-            <circle cx="250" cy="460" r="16" />
-          </g>
-        `;
-      }
-
-      // Tùy theo Phụ Kiện
-      if (State.accessory === 'khandong') {
-        // Khăn đóng nam/nữ nhiều lớp quấn
-        headHTML = `
-          <g id="acc-khandong">
-            <ellipse cx="250" cy="115" rx="38" ry="14" fill="#1C1817" stroke="#E5A93C" stroke-width="1.2" />
-            <path d="M 212,115 C 212,130 288,130 288,115 L 288,105 C 288,95 212,95 212,105 Z" fill="#1C1817" />
-            <!-- Nếp quấn khăn -->
-            <path d="M 215,110 Q 250,118 285,110" stroke="#333" stroke-width="1.5" fill="none" />
-            <path d="M 217,118 Q 250,126 283,118" stroke="#333" stroke-width="1.5" fill="none" />
-          </g>
-        `;
-      } else if (State.accessory === 'man') {
-        // Mấn thêu hoàng cung ánh vàng
-        headHTML = `
-          <g id="acc-man">
-            <ellipse cx="250" cy="110" rx="42" ry="18" fill="#E5A93C" stroke="#B22222" stroke-width="1.5" />
-            <ellipse cx="250" cy="110" rx="35" ry="14" fill="#2B1A12" />
-            <circle cx="250" cy="118" r="4" fill="#B22222" />
-            <circle cx="232" cy="114" r="3" fill="#B22222" />
-            <circle cx="268" cy="114" r="3" fill="#B22222" />
-          </g>
-        `;
-      }
-
-      if (State.accessory === 'quat') {
-        // Quạt ba tiêu lụa sen
-        handHTML = `
-          <g id="acc-quat" transform="translate(300, 340)">
-            <line x1="0" y1="20" x2="30" y2="70" stroke="#5C3A21" stroke-width="3.5" stroke-linecap="round" />
-            <ellipse cx="0" cy="10" rx="28" ry="24" fill="#F5F2EB" stroke="#E5A93C" stroke-width="2" />
-            <path d="M -8,10 Q 0,-2 8,10" stroke="#B22222" stroke-width="1.5" fill="none" />
-            <circle cx="0" cy="8" r="2.5" fill="#E5A93C" />
-            <!-- Dây tua rua đỏ buông -->
-            <path d="M 30,70 Q 32,85 28,100" stroke="#B22222" stroke-width="2" fill="none" />
-          </g>
-        `;
-      } else if (State.accessory === 'ngocboi') {
-        // Chuỗi ngọc bội đeo bên hông
-        handHTML = `
-          <g id="acc-ngocboi" transform="translate(285, 335)">
-            <circle cx="0" cy="10" r="9" fill="#52B788" stroke="#E5A93C" stroke-width="1.5" />
-            <circle cx="0" cy="10" r="3.5" fill="#140f0c" />
-            <!-- Dây thắt nốt cát tường đỏ -->
-            <line x1="0" y1="-8" x2="0" y2="2" stroke="#B22222" stroke-width="2" />
-            <path d="M 0,19 L -4,45 M 0,19 L 4,45" stroke="#B22222" stroke-width="2" />
-          </g>
-        `;
-      }
-
-      // Render vào DOM
-      garmentLayer.innerHTML = garmentHTML;
-      patternOverlay.innerHTML = patternHTML;
-      headAccLayer.innerHTML = headHTML;
-      handAccLayer.innerHTML = handHTML;
-
-      // Cập nhật tiêu đề hiển thị
-      const gItem = GarmentTypes.find(g => g.id === State.garment);
-      const cItem = ColorPalettes.find(c => c.hex === State.color);
-      if (outfitDisplay && gItem && cItem) {
-        outfitDisplay.textContent = `${gItem.name} • ${cItem.name}`;
-      }
-
-      // Cập nhật Thẻ Giấy Dó Lore
-      const lore = State.loreData[State.garment];
-      if (lore) {
-        document.getElementById('lore-title').textContent = lore.title;
-        document.getElementById('lore-body').textContent = lore.desc;
+      clearTimeout(aiDebounceTimer);
+      if (immediate) {
+        lastQueriedKey = queryKey;
+        callGeminiCulturalAI(selectedEvent, selectedColor);
+      } else {
+        aiDebounceTimer = setTimeout(() => {
+          lastQueriedKey = queryKey;
+          callGeminiCulturalAI(selectedEvent, selectedColor);
+        }, 280);
       }
     }
 
-    /* ============================================================
-       E. UI COMPONENT INITIALIZERS & EVENT HANDLERS
-       ============================================================ */
-    function setupUI() {
-      // 1. Khởi tạo Bối Cảnh 1-Chạm (Presets)
-      const presetContainer = document.getElementById('preset-list');
-      presetContainer.innerHTML = Presets.map(p => `
-        <div class="preset-card ${p.id === State.preset ? 'active' : ''}" data-preset="${p.id}">
-          <span class="preset-icon">${p.icon}</span>
-          <span class="preset-name">${p.name}</span>
-        </div>
-      `).join('');
+    async function callGeminiCulturalAI(selectedEvent, selectedColor) {
+      if (isFetchingAI) return;
+      isFetchingAI = true;
 
-      presetContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.preset-card');
-        if (!card) return;
-        const pid = card.dataset.preset;
-        const targetPreset = Presets.find(p => p.id === pid);
-        if (targetPreset) {
-          AudioEngine.playChime();
-          State.preset = pid;
-          State.garment = targetPreset.garment;
-          State.color = targetPreset.color;
-          State.pattern = targetPreset.pattern;
-          State.accessory = targetPreset.accessory;
-          
-          // Cập nhật active preset
-          document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      const aiStatus = document.getElementById('ai-status');
+      const makeupEl = document.getElementById('info-makeup');
+      const poseEl = document.getElementById('info-pose');
+      const storyEl = document.getElementById('info-story');
+
+      // Cập nhật trạng thái tải (loading state)
+      if (aiStatus) {
+        aiStatus.classList.add('loading');
+        aiStatus.innerHTML = '<span>⏳ Đang thỉnh ý Gemini AI...</span>';
+      }
+      [makeupEl, poseEl, storyEl].forEach(el => el && el.classList.add('shimmer'));
+
+      // Context Payload theo yêu cầu
+      const payload = {
+        event: selectedEvent,
+        primary_color: selectedColor,
+        garment_type: 'AO_NGU_THAN'
+      };
+
+      try {
+        // 1. Gọi Endpoint Express Backend proxy kết nối SDK @google/genai
+        const response = await fetch('/api/gemini/cultural-advice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.makeup && data.pose && data.story) {
+            updateCardUI(data.makeup, data.pose, data.story, '✨ Gemini Flash AI');
+            return;
+          }
+        }
+      } catch (err) {
+        // Dự phòng tự nhiên khi có bất kỳ sự cố mạng nào
+      }
+
+      // 2. Sử dụng Kho tri thức Cố vấn Di sản chuẩn xác (Curated Knowledge)
+      let fallback = (CulturalKnowledgeBase[selectedEvent] && CulturalKnowledgeBase[selectedEvent][selectedColor]) ||
+                     (CulturalKnowledgeBase[selectedEvent] && Object.values(CulturalKnowledgeBase[selectedEvent])[0]) || {
+        makeup: 'Phong cách tóc búi thanh nhã cài trâm bạc cổ phong. Layout trang điểm Á Đông mỏng nhẹ, son môi tiệp màu vải áo ngũ thân tạo tổng thể hài hòa.',
+        pose: 'Đứng góc nghiêng 45 độ, một tay nâng quạt nan trước ngực, tay kia buông tà tự nhiên, giữ lưng thẳng thể hiện khí chất đoan trang.',
+        story: 'Áo ngũ thân lập lĩnh với kết cấu 5 thân áo và 5 cúc khuy đại diện cho nhân lễ nghĩa trí tín và lòng hiếu thảo phụng dưỡng đấng sinh thành.'
+      };
+
+      updateCardUI(fallback.makeup, fallback.pose, fallback.story, '📜 Tri Thức Cố Vấn Di Sản');
+    }
+
+    function updateCardUI(makeupText, poseText, storyText, statusLabel) {
+      const aiStatus = document.getElementById('ai-status');
+      const makeupEl = document.getElementById('info-makeup');
+      const poseEl = document.getElementById('info-pose');
+      const storyEl = document.getElementById('info-story');
+
+      if (makeupEl) makeupEl.textContent = makeupText;
+      if (poseEl) poseEl.textContent = poseText;
+      if (storyEl) storyEl.textContent = storyText;
+
+      [makeupEl, poseEl, storyEl].forEach(el => el && el.classList.remove('shimmer'));
+
+      if (aiStatus) {
+        aiStatus.classList.remove('loading');
+        aiStatus.innerHTML = `<span>${statusLabel}</span>`;
+      }
+      isFetchingAI = false;
+    }
+
+    /* ============================================================
+       E. XỬ LÝ LỆNH SỰ KIỆN TƯƠNG TÁC (VANILLA JS CONTROLLER)
+       ============================================================ */
+    function setupGarmentEngine() {
+      const root = document.documentElement;
+      const fanLayer = document.getElementById('layer-accessory-fan');
+      const genzLayer = document.getElementById('layer-genz-style');
+      const mainGarment = document.getElementById('layer-main-garment');
+      const colorTitle = document.getElementById('active-color-name');
+      const titleBadge = document.getElementById('current-garment-title');
+
+      // 1. Hàm cập nhật màu vải chính trên SVG
+      function setFabricColor(colorHex, colorName, skipAI = false) {
+        currentColor = colorHex;
+        root.style.setProperty('--mau-vai-chinh', colorHex);
+        if (colorTitle && colorName) {
+          colorTitle.textContent = colorName;
+        }
+
+        // Cập nhật trạng thái viên màu active
+        document.querySelectorAll('.ceramic-swatch').forEach(swatch => {
+          if (swatch.dataset.color.toLowerCase() === colorHex.toLowerCase()) {
+            swatch.classList.add('active');
+          } else {
+            swatch.classList.remove('active');
+          }
+        });
+
+        if (!skipAI) {
+          requestCulturalAdvice(currentEvent, currentColor);
+        }
+      }
+
+      // 2. Hàm bật/tắt quạt giấy tức thì (0.01s)
+      function setFanVisibility(visible) {
+        if (!fanLayer) return;
+        fanLayer.style.display = visible ? 'block' : 'none';
+      }
+
+      // --- SỰ KIỆN A: THẺ BỐI CẢNH 1-CHẠM (EVENT ANCHORS) ---
+      const anchorCards = document.querySelectorAll('.anchor-card');
+      anchorCards.forEach(card => {
+        card.addEventListener('click', () => {
+          Sound.playChime();
+          anchorCards.forEach(c => c.classList.remove('active'));
           card.classList.add('active');
 
-          // Cập nhật lại UI tabs và SVG
-          refreshActiveControls();
-          renderGarmentSVG();
-        }
-      });
+          const anchorType = card.dataset.anchor;
+          currentEvent = anchorType;
 
-      // 2. Khởi tạo Dáng Áo Tab
-      const garmentContainer = document.getElementById('garment-options');
-      garmentContainer.innerHTML = GarmentTypes.map(g => `
-        <div class="option-card ${g.id === State.garment ? 'active' : ''}" data-garment="${g.id}">
-          <div class="option-title">${g.name}</div>
-          <div class="option-desc">${g.subtitle}</div>
-        </div>
-      `).join('');
+          if (anchorType === 'tet') {
+            // 1. "Dạo Phố Tết": Màu Đỏ Son #B22222, hiện quạt giấy
+            setFabricColor('#B22222', 'Đỏ Son', true);
+            setFanVisibility(true);
+            titleBadge.textContent = 'Áo Ngũ Thân • Dạo Phố Tết';
+          } else if (anchorType === 'grad') {
+            // 2. "Lễ Tốt Nghiệp": Màu Xanh Chàm #1D3557, ẩn quạt giấy
+            setFabricColor('#1D3557', 'Xanh Chàm', true);
+            setFanVisibility(false);
+            titleBadge.textContent = 'Áo Ngũ Thân • Lễ Tốt Nghiệp';
+          } else if (anchorType === 'temple') {
+            // 3. "Đi Chùa Cầu An": Màu Nâu Cánh Gián #2B1A12, hiện quạt giấy
+            setFabricColor('#2B1A12', 'Nâu Cánh Gián', true);
+            setFanVisibility(true);
+            titleBadge.textContent = 'Áo Ngũ Thân • Cầu An Tĩnh Tại';
+          }
 
-      garmentContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.option-card');
-        if (!card) return;
-        AudioEngine.playWoodClick();
-        State.garment = card.dataset.garment;
-        document.querySelectorAll('#garment-options .option-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        renderGarmentSVG();
-      });
-
-      // 3. Khởi tạo Bảng Màu Gấm Tab
-      const colorContainer = document.getElementById('color-swatches');
-      colorContainer.innerHTML = ColorPalettes.map(c => `
-        <div class="color-swatch-item ${c.hex === State.color ? 'active' : ''}" 
-             style="background: ${c.hex};" 
-             data-color="${c.hex}" 
-             title="${c.name}">
-        </div>
-      `).join('');
-
-      colorContainer.addEventListener('click', (e) => {
-        const swatch = e.target.closest('.color-swatch-item');
-        if (!swatch) return;
-        AudioEngine.playWoodClick();
-        State.color = swatch.dataset.color;
-        document.querySelectorAll('.color-swatch-item').forEach(s => s.classList.remove('active'));
-        swatch.classList.add('active');
-        renderGarmentSVG();
-      });
-
-      // 4. Khởi tạo Hoa Văn Tab
-      const patternContainer = document.getElementById('pattern-options');
-      patternContainer.innerHTML = Patterns.map(p => `
-        <div class="option-card ${p.id === State.pattern ? 'active' : ''}" data-pattern="${p.id}">
-          <div class="option-title">${p.name}</div>
-          <div class="option-desc">${p.desc}</div>
-        </div>
-      `).join('');
-
-      patternContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.option-card');
-        if (!card) return;
-        AudioEngine.playWoodClick();
-        State.pattern = card.dataset.pattern;
-        document.querySelectorAll('#pattern-options .option-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        renderGarmentSVG();
-      });
-
-      // 5. Khởi tạo Phụ Kiện Tab
-      const accContainer = document.getElementById('accessory-options');
-      accContainer.innerHTML = Accessories.map(a => `
-        <div class="accessory-item ${a.id === State.accessory ? 'active' : ''}" data-acc="${a.id}">
-          <span style="font-size: 0.85rem; font-weight: 600;">${a.name}</span>
-          <span class="seal-badge" style="width:24px; height:24px; font-size:0.6rem;">${a.type === 'head' ? 'Đầu' : 'Tay'}</span>
-        </div>
-      `).join('');
-
-      accContainer.addEventListener('click', (e) => {
-        const item = e.target.closest('.accessory-item');
-        if (!item) return;
-        AudioEngine.playWoodClick();
-        State.accessory = item.dataset.acc;
-        document.querySelectorAll('.accessory-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        renderGarmentSVG();
-      });
-
-      // 6. Xử lý chuyển Tab trong bảng điều khiển
-      const tabs = document.querySelectorAll('.tab-btn');
-      tabs.forEach(btn => {
-        btn.addEventListener('click', () => {
-          AudioEngine.playWoodClick();
-          tabs.forEach(t => t.classList.remove('active'));
-          btn.classList.add('active');
-          const targetTab = btn.dataset.tab;
-          
-          document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-          const activePane = document.getElementById(`tab-${targetTab}`);
-          if (activePane) activePane.style.display = 'block';
+          // Gọi AI cố vấn theo bối cảnh mới
+          requestCulturalAdvice(currentEvent, currentColor);
         });
       });
 
-      // 7. Nút Remix Ngẫu Nhiên
-      document.getElementById('btn-randomize').addEventListener('click', () => {
-        AudioEngine.playChime();
-        const randGarment = GarmentTypes[Math.floor(Math.random() * GarmentTypes.length)].id;
-        const randColor = ColorPalettes[Math.floor(Math.random() * ColorPalettes.length)].hex;
-        const randPattern = Patterns[Math.floor(Math.random() * Patterns.length)].id;
-        const randAcc = Accessories[Math.floor(Math.random() * Accessories.length)].id;
-        
-        State.garment = randGarment;
-        State.color = randColor;
-        State.pattern = randPattern;
-        State.accessory = randAcc;
-        State.preset = '';
-
-        refreshActiveControls();
-        renderGarmentSVG();
+      // --- SỰ KIỆN B: BẢNG CHỌN MÀU VẢI GỐM SỨ (COLOR SWATCHES) ---
+      const swatches = document.querySelectorAll('.ceramic-swatch');
+      swatches.forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          Sound.playClick();
+          const colorHex = swatch.dataset.color;
+          const colorName = swatch.dataset.name;
+          setFabricColor(colorHex, colorName);
+        });
       });
 
-      // 8. Bật tắt âm thanh chuông gốm
-      const soundBtn = document.getElementById('btn-sound-toggle');
+      // --- SỰ KIỆN C: THANH TRƯỢT VI MÔ (MICRO-SLIDERS) ---
+      // Slider 1: Sắc độ Trầm Nhã (50%) <---> Rực Rỡ (100%)
+      const sliderSat = document.getElementById('slider-saturation');
+      const labelSatVal = document.getElementById('label-sat-val');
+      
+      sliderSat.addEventListener('input', (e) => {
+        const satValue = e.target.value;
+        labelSatVal.textContent = `${satValue}%`;
+
+        // Điều chỉnh độ bão hòa (saturation) trực tiếp theo thời gian thực (real-time)
+        if (mainGarment) {
+          mainGarment.style.filter = `saturate(${satValue}%)`;
+        }
+      });
+
+      // Slider 2: Phong cách Truyền Thống <---> Phá Cách Gen Z
+      const sliderStyle = document.getElementById('slider-style');
+      const labelStyleLeft = document.getElementById('label-style-left');
+      const labelStyleRight = document.getElementById('label-style-right');
+
+      sliderStyle.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        
+        // Hiển thị lớp phá cách Gen Z (Kính râm, tai nghe) theo tỷ lệ kéo
+        if (genzLayer) {
+          genzLayer.style.opacity = (val / 100).toString();
+        }
+
+        if (val > 50) {
+          labelStyleRight.classList.add('active-tag');
+          labelStyleLeft.classList.remove('active-tag');
+        } else {
+          labelStyleLeft.classList.add('active-tag');
+          labelStyleRight.classList.remove('active-tag');
+        }
+      });
+
+      // Nút Gọi Lại Gemini AI Cố Vấn
+      const btnAskGemini = document.getElementById('btn-ask-gemini');
+      if (btnAskGemini) {
+        btnAskGemini.addEventListener('click', () => {
+          Sound.playChime();
+          requestCulturalAdvice(currentEvent, currentColor, true);
+        });
+      }
+
+      // Âm thanh Toggle
+      const soundBtn = document.getElementById('btn-toggle-sound');
       soundBtn.addEventListener('click', () => {
-        AudioEngine.enabled = !AudioEngine.enabled;
-        soundBtn.style.opacity = AudioEngine.enabled ? '1' : '0.5';
-        if (AudioEngine.enabled) AudioEngine.playChime();
-      });
-
-      // 9. Modal Lookbook
-      const modal = document.getElementById('lookbook-modal');
-      document.getElementById('btn-open-lookbook').addEventListener('click', () => {
-        AudioEngine.playChime();
-        const gItem = GarmentTypes.find(g => g.id === State.garment);
-        const cItem = ColorPalettes.find(c => c.hex === State.color);
-        const pItem = Patterns.find(p => p.id === State.pattern);
-        
-        document.getElementById('modal-outfit-title').textContent = `${gItem.name} • ${cItem.name}`;
-        document.getElementById('modal-outfit-desc').textContent = `Hoạ tiết: ${pItem.name} • Phụ kiện: ${Accessories.find(a => a.id === State.accessory).name}`;
-        modal.classList.add('show');
-      });
-
-      document.getElementById('btn-close-modal').addEventListener('click', () => {
-        modal.classList.remove('show');
-      });
-
-      document.getElementById('btn-copy-lookbook').addEventListener('click', () => {
-        AudioEngine.playWoodClick();
-        const btn = document.getElementById('btn-copy-lookbook');
-        btn.innerHTML = '<span>✅</span> Đã Lưu Thẻ Phối Đồ!';
-        setTimeout(() => {
-          btn.innerHTML = '<span>📸</span> Sao Chép Thẻ Phối Đồ';
-          modal.classList.remove('show');
-        }, 1200);
-      });
-    }
-
-    // Làm mới trạng thái active của các nút chọn
-    function refreshActiveControls() {
-      document.querySelectorAll('#garment-options .option-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.garment === State.garment);
-      });
-      document.querySelectorAll('.color-swatch-item').forEach(s => {
-        s.classList.toggle('active', s.dataset.color === State.color);
-      });
-      document.querySelectorAll('#pattern-options .option-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.pattern === State.pattern);
-      });
-      document.querySelectorAll('.accessory-item').forEach(i => {
-        i.classList.toggle('active', i.dataset.acc === State.accessory);
+        Sound.enabled = !Sound.enabled;
+        soundBtn.style.opacity = Sound.enabled ? '1' : '0.5';
+        if (Sound.enabled) Sound.playChime();
       });
     }
 
     /* ============================================================
-       F. BỘ QUẢN LÝ CHUYỂN CẢNH (VANILLA JS ROUTER)
+       F. BỘ QUẢN LÝ CHUYỂN CẢNH (ROUTER)
        ============================================================ */
     function setupRouter() {
       const landingScene = document.getElementById('landing-scene');
@@ -1672,18 +1682,18 @@
 
       // Khi bấm nút "KHAI ẤN PHỐI ĐỒ":
       btnEnter.addEventListener('click', () => {
-        AudioEngine.playChime();
-        // Màn hình 3D mờ dần (fade out)
+        Sound.playChime();
         landingScene.classList.add('scene-hidden');
-        // Xưởng phối đồ hiện lên mượt mà (fade in trong 0.5s)
         setTimeout(() => {
           createScene.classList.add('scene-active');
+          // Khởi động lấy gợi ý AI lần đầu (nếu chưa có)
+          requestCulturalAdvice(currentEvent, currentColor);
         }, 150);
       });
 
-      // Khi bấm nút "Trở Về Ấn Tín":
+      // Khi bấm nút "Về Tiền Sảnh":
       btnBackLanding.addEventListener('click', () => {
-        AudioEngine.playWoodClick();
+        Sound.playClick();
         createScene.classList.remove('scene-active');
         setTimeout(() => {
           landingScene.classList.remove('scene-hidden');
@@ -1692,13 +1702,12 @@
     }
 
     /* ============================================================
-       G. KHỞI CHẠY TOÀN BỘ ỨNG DỤNG (INITIALIZATION)
+       G. KHỞI CHẠY (DOM READY)
        ============================================================ */
     window.addEventListener('DOMContentLoaded', () => {
       initThreeScene();
-      setupUI();
+      setupGarmentEngine();
       setupRouter();
-      renderGarmentSVG();
     });
   </script>
 </body>

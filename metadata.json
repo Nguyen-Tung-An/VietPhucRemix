@@ -1,0 +1,7 @@
+{
+  "name": "Việt Y Remix - Phối Việt Phục Gen Z",
+  "description": "Ứng dụng khám phá và phối Việt phục đa chiều dành cho Gen Z với đồ họa tương tác 3D và di sản đa chất liệu Sơn Mài - Giấy Dó - Gốm Sứ.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

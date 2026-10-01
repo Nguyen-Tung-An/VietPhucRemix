@@ -1,0 +1,372 @@
+/* Nút bấm Gốm Sứ có men cổ */
+.btn-gom-su {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(145deg, #d33434, var(--do-son), #801212);
+  color: var(--trang-buoi);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 2px solid rgba(229, 169, 60, 0.65);
+  border-radius: 999px;
+  box-shadow: var(--shadow-gom), 0 0 20px rgba(178, 34, 34, 0.4);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+}
+
+.btn-gom-su::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  right: 14px;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.btn-gom-su:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-gom), 0 0 26px rgba(229, 169, 60, 0.6);
+  border-color: var(--vang-hoang-cuc);
+}
+
+.btn-gom-su:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.6);
+}
+
+.seal-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--vang-hoang-cuc);
+  border-radius: 6px;
+  background: rgba(139, 0, 0, 0.85);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--vang-hoang-cuc);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.4);
+  flex-shrink: 0;
+}
+
+/* Thẻ phong cách Giấy Dó sáng mộc */
+.the-giay-do {
+  background-color: var(--trang-buoi);
+  color: var(--den-voc);
+  border-radius: 14px;
+  border: 1.5px solid rgba(43, 26, 18, 0.25);
+  box-shadow: var(--shadow-giay-do);
+  position: relative;
+}
+
+/* LƯỚI AN TOÀN VĂN HÓA & TRÁT CẢNH BÁO GIẤY DÓ DÁT VÀNG MỜ */
+@keyframes goldLeafGlint {
+  0%, 100% {
+    box-shadow: 0 0 12px #E5A93C, inset 0 0 8px rgba(229, 169, 60, 0.3);
+    border-color: #E5A93C;
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(229, 169, 60, 0.9), 0 0 35px rgba(212, 147, 43, 0.4), inset 0 0 14px rgba(229, 169, 60, 0.6);
+    border-color: #FFF2B2;
+  }
+}
+
+.cultural-warning-border {
+  animation: goldLeafGlint 2s infinite ease-in-out !important;
+  border: 2px solid #E5A93C !important;
+}
+
+/* Con dấu thẩm định văn hóa góc SVG Canvas */
+.cultural-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  user-select: none;
+}
+
+.cultural-seal-safe {
+  background: linear-gradient(135deg, rgba(29, 120, 60, 0.85), rgba(15, 75, 35, 0.95));
+  border: 1.5px solid #48c774;
+  color: #ebffef;
+  box-shadow: 0 0 10px rgba(72, 199, 116, 0.4);
+}
+
+.cultural-seal-warn {
+  background: linear-gradient(135deg, rgba(178, 34, 34, 0.9), rgba(100, 15, 15, 0.95));
+  border: 1.5px solid #E5A93C;
+  color: #FFF3C4;
+  box-shadow: 0 0 14px rgba(229, 169, 60, 0.5);
+  animation: pulseWarn 1.6s infinite alternate;
+}
+
+@keyframes pulseWarn {
+  0% { transform: scale(0.98); }
+  100% { transform: scale(1.02); }
+}
+
+.cultural-seal-genz {
+  background: linear-gradient(135deg, rgba(110, 45, 180, 0.85), rgba(50, 15, 100, 0.95));
+  border: 1.5px solid #d4a373;
+  color: #f7e1d7;
+  box-shadow: 0 0 10px rgba(180, 110, 255, 0.4);
+}
+
+/* Nút bấm dạng trát giấy cuộn cổ điển */
+.btn-scroll-warning {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: linear-gradient(145deg, #F5F2EB, #E3D9C6);
+  color: #121110;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  border: 1.5px solid #B22222;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 14px rgba(229, 169, 60, 0.6);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+  animation: bounceScroll 2s infinite ease-in-out;
+}
+
+.btn-scroll-warning.visible {
+  display: inline-flex;
+}
+
+.btn-scroll-warning:hover {
+  transform: translateY(-2px) scale(1.04);
+  background: #FFFFFF;
+  box-shadow: 0 6px 20px rgba(229, 169, 60, 0.8);
+  border-color: #E5A93C;
+}
+
+@keyframes bounceScroll {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* TRÁT GIẤY DÓ DÁT VÀNG MỜ MODAL (#cultural-warning-toast) */
+#cultural-warning-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  width: 90%;
+  max-width: 520px;
+  background: #F5F2EB;
+  color: #121110;
+  border-radius: 16px;
+  border: 2px solid #E5A93C;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 25px rgba(229, 169, 60, 0.45);
+  padding: 24px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#cultural-warning-toast.toast-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.toast-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 17, 16, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.toast-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.toast-scroll-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px dashed rgba(43, 26, 18, 0.25);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.toast-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-seal {
+  width: 36px;
+  height: 36px;
+  background: #B22222;
+  color: #E5A93C;
+  border: 1.5px solid #E5A93C;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.toast-heading {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #8B1E0F;
+  letter-spacing: 0.05em;
+}
+
+.toast-close-x {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #6E6359;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.toast-close-x:hover {
+  color: #B22222;
+  background: rgba(43, 26, 18, 0.08);
+}
+
+.toast-content-box {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(43, 26, 18, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.toast-msg-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #121110;
+  margin-bottom: 10px;
+}
+
+.toast-fix-hint {
+  font-size: 0.78rem;
+  color: #7A5338;
+  background: rgba(229, 169, 60, 0.15);
+  border-left: 3px solid #E5A93C;
+  padding: 6px 10px;
+  border-radius: 0 6px 6px 0;
+}
+
+.toast-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-toast-fix {
+  flex: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: linear-gradient(145deg, #1f7a3f, #13552a);
+  color: #ffffff;
+  border: 1.5px solid #48c774;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(19, 85, 42, 0.35);
+  transition: all 0.2s ease;
+}
+.btn-toast-fix:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(19, 85, 42, 0.5);
+}
+
+.btn-toast-genz {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, #4a2c5a, #2b1437);
+  color: #f7e1d7;
+  border: 1.5px solid #d4a373;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+.btn-toast-genz:hover {
+  transform: translateY(-2px);
+  border-color: #E5A93C;
+}
+
+/* Toast thông báo đồng bộ gu thẩm mỹ khi chuyển tab */
+.pref-sync-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background: linear-gradient(145deg, #2B1A12, #140E0A);
+  border: 1.5px solid var(--vang-hoang-cuc);
+  color: var(--trang-buoi);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 16px rgba(229, 169, 60, 0.4);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pref-sync-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

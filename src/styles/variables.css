@@ -1,0 +1,24 @@
+/* ============================================================
+   HỆ THỐNG DESIGN SYSTEM: "DI SẢN ĐA CHẤT LIỆU" - VARIABLES
+   ============================================================ */
+:root {
+  /* Màu sắc nền & Cố Đô */
+  --den-voc: #121110;
+  --nau-canh-gian: #2B1A12;
+  --do-son: #B22222;
+  --vang-hoang-cuc: #E5A93C;
+  --trang-buoi: #F5F2EB;
+  --xanh-cham: #1D3557;
+
+  /* Biến màu vải chính cho Áo Ngũ Thân */
+  --mau-vai-chinh: #B22222;
+  --saturation-rate: 1;
+
+  /* Phông chữ */
+  --font-display: 'Cinzel', 'Playfair Display', serif;
+  --font-sans: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Hiệu ứng gốm sứ có men & sơn mài */
+  --shadow-gom: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.45), inset 0 -3px 4px rgba(0, 0, 0, 0.4);
+  --shadow-giay-do: 0 10px 25px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+}

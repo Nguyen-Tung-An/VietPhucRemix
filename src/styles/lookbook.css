@@ -1,0 +1,429 @@
+/* ============================================================
+   PIPELINE SINH ẢNH LOOKBOOK AI & HIỆU ỨNG CHỜ MÀI VÓC
+   ============================================================ */
+.ai-fashion-cta-wrapper {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  z-index: 10;
+}
+
+/* Nút con dấu gốm Đỏ Son (#B22222) viền dát vàng mờ (#btn-generate-ai-image) */
+.btn-generate-ai-image {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 26px;
+  background: linear-gradient(145deg, #B22222 0%, #7E1515 100%);
+  border: 1.5px solid rgba(229, 169, 60, 0.7);
+  border-radius: 999px;
+  color: #FFFFFF;
+  font-family: var(--font-display);
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 20px rgba(178, 34, 34, 0.5), 0 0 14px rgba(229, 169, 60, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.btn-generate-ai-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-generate-ai-image:hover::before {
+  left: 100%;
+}
+
+.btn-generate-ai-image:hover {
+  transform: translateY(-2px);
+  border-color: #FFFFFF;
+  box-shadow: 0 8px 28px rgba(178, 34, 34, 0.65), 0 0 24px rgba(229, 169, 60, 0.55), inset 0 1px 4px rgba(255, 255, 255, 0.4);
+}
+
+.btn-generate-ai-image:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(178, 34, 34, 0.4);
+}
+
+.btn-generate-ai-image:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  filter: grayscale(0.2);
+  transform: none !important;
+}
+
+.btn-ai-sparkle {
+  color: var(--vang-hoang-cuc);
+  font-size: 1.1rem;
+  animation: sparkleRotate 2.5s infinite linear;
+}
+
+@keyframes sparkleRotate {
+  0% { transform: scale(0.9) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.9) rotate(360deg); opacity: 0.8; }
+}
+
+/* Thanh gạt chế độ xem (Bản phác thảo SVG vs Ảnh Lookbook AI) */
+.artwork-mode-pills {
+  display: inline-flex;
+  background: rgba(20, 13, 9, 0.75);
+  border: 1px solid rgba(229, 169, 60, 0.35);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.mode-pill {
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 14px;
+  color: rgba(245, 242, 235, 0.7);
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-pill.active {
+  background: linear-gradient(135deg, #B22222, #801212);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(178, 34, 34, 0.4);
+}
+
+/* Tem thông báo bản phác thảo Giấy Dó */
+.vintage-sketch-badge {
+  display: none;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 25;
+  background: rgba(245, 242, 235, 0.95);
+  border: 1px solid rgba(178, 34, 34, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  color: #7A1A1A;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  align-items: center;
+  gap: 6px;
+  animation: fadeInDown 0.35s ease;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Lớp phủ hiệu ứng Thẻ Giấy Dó hoài cổ cho khung SVG khi kích hoạt Fallback */
+.svg-artwork-container.do-paper-vintage {
+  border-radius: 16px;
+  background: radial-gradient(circle at center, rgba(245, 242, 235, 0.12) 0%, rgba(30, 20, 15, 0.5) 100%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), inset 0 0 25px rgba(229, 169, 60, 0.25);
+  border: 1.5px solid rgba(229, 169, 60, 0.45);
+  transition: all 0.4s ease;
+}
+
+.svg-artwork-container.do-paper-vintage #nguthan-svg {
+  filter: sepia(0.22) contrast(1.05) drop-shadow(0 8px 24px rgba(229, 169, 60, 0.2));
+}
+
+/* ============================================================
+   HIỆU ỨNG CHỜ MÀI VÓC (.polishing-overlay)
+   ============================================================ */
+.polishing-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: rgba(18, 17, 16, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  border: 1.5px solid rgba(229, 169, 60, 0.45);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+}
+
+.polishing-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.polishing-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Vệt sáng dát vàng mờ lướt ngang bề mặt với CSS Keyframe mài vóc */
+.polishing-gold-sweep {
+  position: absolute;
+  top: -60%;
+  left: -120%;
+  width: 340%;
+  height: 220%;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(229, 169, 60, 0.06) 38%,
+    rgba(255, 238, 180, 0.42) 50%,
+    rgba(229, 169, 60, 0.12) 62%,
+    transparent 75%
+  );
+  transform: rotate(-18deg);
+  animation: polishingSweepAnim 2.2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes polishingSweepAnim {
+  0% {
+    transform: translateX(-55%) rotate(-18deg);
+  }
+  100% {
+    transform: translateX(55%) rotate(-18deg);
+  }
+}
+
+.polishing-ambient-glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 169, 60, 0.22) 0%, transparent 70%);
+  filter: blur(25px);
+  pointer-events: none;
+  animation: pulseAmbient 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseAmbient {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+.polishing-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 360px;
+}
+
+.polishing-seal-wrapper {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polishing-artisan-seal {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #B22222, #801212);
+  border: 1.5px solid var(--vang-hoang-cuc);
+  color: var(--vang-hoang-cuc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  box-shadow: 0 6px 18px rgba(178, 34, 34, 0.6);
+  animation: sealGentleRock 2s infinite ease-in-out alternate;
+}
+
+@keyframes sealGentleRock {
+  0% { transform: rotate(-5deg) scale(0.96); }
+  100% { transform: rotate(5deg) scale(1.04); }
+}
+
+.polishing-gold-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(229, 169, 60, 0.6);
+  animation: orbitSpin 6s infinite linear;
+}
+
+@keyframes orbitSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.polishing-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--vang-hoang-cuc);
+  letter-spacing: 0.1em;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.polishing-quote {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #F5F2EB;
+  line-height: 1.55;
+  margin: 0 0 16px 0;
+  opacity: 0.95;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.polishing-gold-line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--vang-hoang-cuc), transparent);
+  margin-bottom: 12px;
+}
+
+.polishing-loading-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(43, 26, 18, 0.6);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  font-size: 0.72rem;
+  color: rgba(245, 242, 235, 0.85);
+}
+
+.polishing-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vang-hoang-cuc);
+  animation: dotPulse 1.2s infinite ease-in-out;
+}
+.polishing-dot:nth-child(2) { animation-delay: 0.2s; }
+.polishing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(0.6); opacity: 0.4; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+/* KHUNG HIỂN THỊ ẢNH LOOKBOOK AI HOÀN THIỆN */
+.ai-lookbook-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  overflow: hidden;
+  animation: fadeInLookbook 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInLookbook {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ai-lookbook-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid rgba(229, 169, 60, 0.75);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(229, 169, 60, 0.3);
+  display: block;
+}
+
+.ai-lookbook-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(18, 17, 16, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(229, 169, 60, 0.5);
+  border-radius: 999px;
+  padding: 4px 12px;
+  color: var(--vang-hoang-cuc);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.ai-lookbook-actions {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 10;
+}
+
+.btn-lookbook-action {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(18, 17, 16, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(229, 169, 60, 0.45);
+  color: var(--trang-buoi);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.btn-lookbook-action:hover {
+  background: linear-gradient(145deg, #B22222, #801212);
+  border-color: #FFFFFF;
+  transform: translateY(-1px);
+}

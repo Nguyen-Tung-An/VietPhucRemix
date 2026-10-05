@@ -1,25 +1,29 @@
-/* ============================================================
-   1. THANH ĐIỀU HƯỚNG CỐ ĐỊNH (#main-nav-bar)
-   ============================================================ */
+/* ==========================================================================
+   VIỆT Y REMIX — THANH ĐIỀU HƯỚNG (#main-nav-bar)
+   Concept: "LỤA THANH"
+   Responsive: Mobile (Compact Top Bar) & Desktop (Elevated Studio Header)
+   ========================================================================== */
+
 #main-nav-bar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: 56px;
-  background: rgba(18, 17, 16, 0.94);
-  backdrop-filter: blur(14px);
-  border-bottom: 1.5px solid rgba(229, 169, 60, 0.28);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  height: 54px;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--color-card-border);
+  box-shadow: 0 4px 20px rgba(74, 133, 119, 0.08);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
+  justify-content: center;
   z-index: 90;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.35s ease, visibility 0.35s;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  padding: 0 16px;
 }
 
 #main-nav-bar.nav-active {
@@ -28,29 +32,63 @@
   pointer-events: auto;
 }
 
+/* Container bên trong: co giãn linh hoạt, trên desktop căn giữa max 1280px */
+.nav-inner-container {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Brand Logo */
 .nav-brand-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+
+.nav-brand-group:hover {
+  transform: translateY(-1px);
 }
 
 .nav-logo-text {
-  font-family: var(--font-display);
+  font-family: var(--font-title);
   font-size: 1.05rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #FFFFFF, var(--vang-hoang-cuc));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  white-space: nowrap;
 }
 
+.seal-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(74, 133, 119, 0.15);
+  border: 1px solid var(--color-accent-secondary);
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  color: var(--color-accent-secondary);
+  font-weight: 600;
+}
+
+/* Tabs điều hướng chính (Xưởng Phối / Khám Phá) */
 .nav-tabs-group {
   display: flex;
   align-items: center;
-  background: rgba(43, 26, 18, 0.85);
-  border: 1px solid rgba(229, 169, 60, 0.3);
-  border-radius: 999px;
+  background: rgba(74, 133, 119, 0.08);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-pill, 9999px);
   padding: 3px;
   gap: 4px;
 }
@@ -59,70 +97,152 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 18px;
+  padding: 6px 14px;
+  min-height: 36px;
   border: none;
   background: transparent;
-  border-radius: 999px;
-  color: rgba(245, 242, 235, 0.75);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
+  border-radius: var(--border-radius-pill, 9999px);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  white-space: nowrap;
 }
 
 .nav-tab-btn:hover {
-  color: var(--trang-buoi);
-  background: rgba(229, 169, 60, 0.15);
+  color: var(--color-text-primary);
 }
 
 .nav-tab-btn.active {
-  background: linear-gradient(145deg, #B22222, #801212);
-  color: #FFFFFF;
-  box-shadow: 0 2px 10px rgba(178, 34, 34, 0.45);
-  border: 1px solid rgba(229, 169, 60, 0.45);
+  background: var(--color-card-bg);
+  color: var(--color-accent-secondary);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.15);
 }
 
+/* Nhóm nút bên phải */
 .nav-actions-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .nav-wardrobe-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
-  background: linear-gradient(145deg, rgba(178, 34, 34, 0.35), rgba(43, 26, 18, 0.85));
-  border: 1.5px solid rgba(229, 169, 60, 0.45);
-  border-radius: 999px;
-  color: var(--trang-buoi);
-  font-family: var(--font-display);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  min-height: 36px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1px solid var(--color-card-border);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .nav-wardrobe-btn:hover {
-  background: linear-gradient(145deg, #B22222, #801212);
-  border-color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(229, 169, 60, 0.5);
-  transform: translateY(-1px);
+  background: rgba(74, 133, 119, 0.16);
+  color: var(--color-accent-secondary);
 }
 
 .nav-stats-pill {
-  font-size: 0.72rem;
-  color: var(--vang-hoang-cuc);
-  background: rgba(43, 26, 18, 0.6);
-  border: 1px solid rgba(229, 169, 60, 0.25);
-  padding: 5px 12px;
-  border-radius: 999px;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(244, 201, 214, 0.15);
+  border: 1px solid rgba(244, 201, 214, 0.3);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-accent-secondary);
+  white-space: nowrap;
+}
+
+/* Nút demo nhanh trạng thái Tải & Lỗi dùng chung */
+.nav-feedback-demo-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  min-height: 34px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1px solid var(--color-card-border);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.nav-demo-btn:hover {
+  background: rgba(74, 133, 119, 0.18);
+  color: var(--color-accent-secondary);
+  transform: translateY(-1px);
+}
+
+.nav-demo-btn:active {
+  transform: scale(0.97);
+}
+
+/* ==========================================================================
+   DESKTOP ADAPTATION (>= 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  #main-nav-bar {
+    height: 64px;
+    padding: 0 32px;
+  }
+
+  .nav-logo-text {
+    font-size: 1.25rem;
+  }
+
+  .seal-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .nav-tabs-group {
+    padding: 4px;
+    gap: 8px;
+  }
+
+  .nav-tab-btn {
+    padding: 8px 24px;
+    font-size: 0.92rem;
+    min-height: 40px;
+  }
+
+  .nav-actions-right {
+    gap: 12px;
+  }
+
+  .nav-wardrobe-btn {
+    padding: 7px 16px;
+    min-height: 40px;
+    font-size: 0.88rem;
+  }
+
+  .nav-stats-pill {
+    display: inline-flex;
+  }
 }

@@ -29,28 +29,28 @@ export function initThreeScene(): void {
   container.innerHTML = '';
   container.appendChild(renderer.domElement);
 
-  // 3. Ánh sáng
-  const ambientLight = new THREE.AmbientLight(0xfff0db, 0.95);
+  // 3. Ánh sáng theo Concept Lụa Thanh
+  const ambientLight = new THREE.AmbientLight(0xE8F3EE, 0.95);
   scene.add(ambientLight);
 
-  const mainLight = new THREE.DirectionalLight(0xffd599, 1.8);
+  const mainLight = new THREE.DirectionalLight(0xFAF7F0, 1.8);
   mainLight.position.set(5, 10, 7);
   mainLight.castShadow = true;
   scene.add(mainLight);
 
-  const rimLight = new THREE.PointLight(0xb22222, 2.6, 20);
+  const rimLight = new THREE.PointLight(0xF4C9D6, 2.6, 20); // Hồng Phấn Sen nhẹ ửng
   rimLight.position.set(-6, -2, -4);
   scene.add(rimLight);
 
-  const goldGlow = new THREE.PointLight(0xe5a93c, 1.6, 15);
+  const goldGlow = new THREE.PointLight(0xC9A66B, 1.6, 15); // Vàng Đất
   goldGlow.position.set(0, 3, 2);
   scene.add(goldGlow);
 
   // 4. Dựng khối 3D Ấn Tín Hoa Sen
   sealGroup = new THREE.Group();
 
-  const redLacquerMat = new THREE.MeshStandardMaterial({
-    color: 0x9b1b1b,
+  const lacquerBaseMat = new THREE.MeshStandardMaterial({
+    color: 0x1C2B26, // Rêu Đêm
     roughness: 0.25,
     metalness: 0.35,
     clearcoat: 0.85,
@@ -58,28 +58,35 @@ export function initThreeScene(): void {
   });
 
   const goldBrassMat = new THREE.MeshStandardMaterial({
-    color: 0xe5a93c,
+    color: 0xC9A66B, // Vàng Đất
     roughness: 0.3,
     metalness: 0.85
   });
 
   const jadeGreenMat = new THREE.MeshStandardMaterial({
-    color: 0x2c5e50,
+    color: 0x4A8577, // Xanh Ngọc Đậm
     roughness: 0.2,
     metalness: 0.1,
     transparent: true,
     opacity: 0.92
   });
 
+  const lotusPetalMat = new THREE.MeshStandardMaterial({
+    color: 0xF4C9D6, // Cánh sen Hồng Phấn Sen
+    roughness: 0.3,
+    metalness: 0.2,
+    clearcoat: 0.6
+  });
+
   // Đế vuông Kim Bảo
   const baseGeo = new THREE.BoxGeometry(3.2, 0.9, 3.2);
-  const baseMesh = new THREE.Mesh(baseGeo, redLacquerMat);
+  const baseMesh = new THREE.Mesh(baseGeo, lacquerBaseMat);
   baseMesh.position.y = -0.45;
   baseMesh.castShadow = true;
   baseMesh.receiveShadow = true;
   sealGroup.add(baseMesh);
 
-  // Vành viền đồng
+  // Vành viền đồng Vàng Đất
   const rimGeo = new THREE.BoxGeometry(3.35, 0.15, 3.35);
   const rimMesh = new THREE.Mesh(rimGeo, goldBrassMat);
   rimMesh.position.y = -0.85;
@@ -96,13 +103,13 @@ export function initThreeScene(): void {
   lotusBaseMesh.position.y = 0.3;
   sealGroup.add(lotusBaseMesh);
 
-  // 8 Cánh sen
+  // 8 Cánh sen Hồng Phấn Sen
   const petalCount = 8;
   for (let i = 0; i < petalCount; i++) {
     const angle = (i / petalCount) * Math.PI * 2;
     const petalGeo = new THREE.ConeGeometry(0.55, 1.1, 5);
     petalGeo.scale(1, 0.4, 1.8);
-    const petalMesh = new THREE.Mesh(petalGeo, redLacquerMat);
+    const petalMesh = new THREE.Mesh(petalGeo, lotusPetalMat);
     petalMesh.position.set(Math.cos(angle) * 1.35, 0.5, Math.sin(angle) * 1.35);
     petalMesh.rotation.y = -angle;
     petalMesh.rotation.x = 0.45;
@@ -138,7 +145,7 @@ export function initThreeScene(): void {
   particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particleMat = new THREE.PointsMaterial({
     size: 0.08,
-    color: 0xe5a93c,
+    color: 0xC9A66B, // Vàng Đất
     transparent: true,
     opacity: 0.75
   });

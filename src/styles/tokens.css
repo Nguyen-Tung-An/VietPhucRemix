@@ -1,0 +1,264 @@
+/* ==========================================================================
+   VIỆT Y REMIX — DESIGN TOKENS & SYSTEM FOUNDATION
+   Concept: "LỤA THANH"
+   Frontend Design Lead System Configuration
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. TYPOGRAPHY IMPORT
+   - Tiêu đề: Playfair Display (weight 500, 600)
+   - Nội dung: Be Vietnam Pro (weight 400, 500, 700)
+   -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+
+/* --------------------------------------------------------------------------
+   2. DESIGN TOKENS (LIGHT MODE MẶC ĐỊNH)
+   Bảng màu bắt buộc:
+   - Nền sáng: #E8F3EE (Ngọc Sương)
+   - Accent chính: #F4C9D6 (Hồng Phấn Sen)
+   - Accent phụ: #4A8577 (Xanh Ngọc Đậm)
+   - Text chính: #2B2B28
+   - Nhấn quý hiếm: #C9A66B (Vàng Đất - chỉ dùng tiểu tiết)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Bảng màu chính - Light Mode (Ngọc Sương) */
+  --color-bg: #E8F3EE;
+  --color-bg-subtle: #F2F8F5;
+  --color-text-primary: #2B2B28;
+  --color-text-muted: #5C635F;
+
+  /* Accent tokens */
+  --color-accent-primary: #F4C9D6;     /* Hồng Phấn Sen */
+  --color-accent-secondary: #4A8577;   /* Xanh Ngọc Đậm */
+  --color-accent-rare: #C9A66B;        /* Vàng Đất (chỉ tiểu tiết nhỏ) */
+
+  /* Gradient nút & tương tác */
+  --gradient-btn-primary: linear-gradient(135deg, #F4C9D6 0%, #4A8577 100%);
+  --color-btn-text: #0D1714;           /* Đảm bảo độ tương phản > 4.5:1 trên dải gradient */
+
+  /* Mặt thẻ & Hiệu ứng kính mờ (Frosted glass) */
+  --color-card-bg: rgba(255, 255, 255, 0.72);
+  --color-card-border: rgba(74, 133, 119, 0.18);
+  --shadow-card: 0 8px 24px -4px rgba(74, 133, 119, 0.12), 0 2px 6px -1px rgba(28, 43, 38, 0.05);
+
+  /* Typography Variables */
+  --font-title: 'Playfair Display', Georgia, serif;
+  --font-body: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Quy chuẩn kích thước UX & Thumb Zone */
+  --touch-target-min: 44px;
+  --space-block-gap: 24px;
+  --bottom-thumb-zone: 350px;
+  --border-radius-card: 16px;
+  --border-radius-pill: 9999px;
+}
+
+/* --------------------------------------------------------------------------
+   3. DESIGN TOKENS (DARK MODE - RÊU ĐÊM)
+   Tự động kích hoạt qua prefers-color-scheme: dark (hoặc data-theme="dark")
+   - Nền tối: #1C2B26 (Rêu Đêm)
+   - Text chính: #F3EFE8
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1C2B26;
+    --color-bg-subtle: #16221E;
+    --color-text-primary: #F3EFE8;
+    --color-text-muted: #A3B5AE;
+
+    /* Thẻ kính mờ trong không gian tối */
+    --color-card-bg: rgba(22, 34, 30, 0.75);
+    --color-card-border: rgba(244, 201, 214, 0.16);
+    --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(74, 133, 119, 0.2);
+  }
+}
+
+/* Hỗ trợ ép theme thủ công nếu cần */
+[data-theme="dark"] {
+  --color-bg: #1C2B26;
+  --color-bg-subtle: #16221E;
+  --color-text-primary: #F3EFE8;
+  --color-text-muted: #A3B5AE;
+  --color-card-bg: rgba(22, 34, 30, 0.75);
+  --color-card-border: rgba(244, 201, 214, 0.16);
+  --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(74, 133, 119, 0.2);
+}
+
+[data-theme="light"] {
+  --color-bg: #E8F3EE;
+  --color-bg-subtle: #F2F8F5;
+  --color-text-primary: #2B2B28;
+  --color-text-muted: #5C635F;
+  --color-card-bg: rgba(255, 255, 255, 0.72);
+  --color-card-border: rgba(74, 133, 119, 0.18);
+  --shadow-card: 0 8px 24px -4px rgba(74, 133, 119, 0.12), 0 2px 6px -1px rgba(28, 43, 38, 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   4. RESET CSS CƠ BẢN
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Quy tắc bắt buộc: Tiêu đề dùng Playfair Display, weight 500-600, KHÔNG viết hoa toàn bộ */
+h1, h2, h3, h4, .font-title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  text-transform: none !important;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+p, span, li, button, input, textarea {
+  font-family: var(--font-body);
+}
+
+/* --------------------------------------------------------------------------
+   5. ROOT MOBILE-FIRST CONTAINER
+   - Max-width chuẩn điện thoại (430px)
+   - Căn giữa viewport
+   - Tôn trọng safe-area-inset-top và safe-area-inset-bottom
+   -------------------------------------------------------------------------- */
+.app-container,
+.lua-thanh-container {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  position: relative;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+   6. HAI CLASS DÙNG CHUNG BẮT BUỘC CHO TOÀN DỰ ÁN
+   -------------------------------------------------------------------------- */
+
+/**
+ * 6.1. .btn-primary
+ * - Nút pill: border-radius: 9999px
+ * - Gradient: Hồng Phấn Sen (#F4C9D6) sang Xanh Ngọc Đậm (#4A8577)
+ * - Vùng chạm: Tối thiểu 44x44px (min-height: 48px)
+ * - Trông rõ ràng là "bấm được" và có phản hồi thị giác ngay lập tức
+ * - Tương phản đạt chuẩn accessibility (> 4.5:1)
+ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--touch-target-min, 48px);
+  min-width: var(--touch-target-min, 44px);
+  padding: 12px 28px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--gradient-btn-primary);
+  color: var(--color-btn-text, #0D1714);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.28), 0 1px 3px rgba(13, 23, 20, 0.1);
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.16s ease,
+              filter 0.16s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.36), 0 2px 4px rgba(13, 23, 20, 0.12);
+  filter: brightness(1.03);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 6px rgba(74, 133, 119, 0.24);
+  filter: brightness(0.97);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-accent-secondary);
+  outline-offset: 3px;
+}
+
+/**
+ * 6.2. .card-base
+ * - Thẻ bo góc 16px (border-radius: 16px)
+ * - Nền kính mờ nhẹ (backdrop-filter: blur)
+ * - Viền mảnh tinh tế (border: 1px solid)
+ * - Đảm bảo khoảng cách tối thiểu 24px giữa các khối chức năng
+ */
+.card-base {
+  background: var(--color-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-card, 16px);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   7. KEYFRAMES ANIMATION CÓ CHU KỲ THẬT (RULE 10)
+   -------------------------------------------------------------------------- */
+@keyframes luaThanhBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.96;
+  }
+  50% {
+    transform: scale(1.015);
+    opacity: 1;
+  }
+}
+
+@keyframes silkFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes subtleShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

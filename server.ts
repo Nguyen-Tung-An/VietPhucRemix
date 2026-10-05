@@ -328,7 +328,7 @@ function generateEditorialLookbookDataUri(promptText: string): string {
   return `data:image/svg+xml;base64,${base64Svg}`;
 }
 
-// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene)
+// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Chế độ Mock Bảo Vệ Quota
 app.post('/api/gemini/cultural-ai', async (req, res) => {
   const { event, primary_color, garment_type, accessory, region } = req.body;
 
@@ -340,135 +340,26 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
     region: region || 'TOAN_QUOC',
   };
 
-  // Nếu không có AI client, sử dụng bộ thẩm định di sản nội bộ
-  if (!ai) {
-    return res.json(getLocalCulturalAnalysis(contextPayload));
-  }
-
-  try {
-    const systemInstruction =
-      "Bạn là Chuyên gia Di sản & Thời trang Việt Y dành cho Gen Z. Hãy phân tích bộ trang phục và sự kiện người dùng chọn. Đề xuất kiểu tóc, tông trang điểm và dáng chụp ảnh tôn vóc dáng. Viết 1 đoạn thuyết minh ngắn (tối đa 3 câu) về ý nghĩa văn hóa, từ ngữ trẻ trung, truyền cảm hứng. Nếu tổ hợp trang phục và phụ kiện/sự kiện bị sai lệch văn hóa vùng miền hoặc thời kỳ, hãy đặt is_culturally_accurate = false, warning_level = 'WARNING' và viết lời khuyên nhã nhặn, tôn trọng sáng tạo của người trẻ nhưng định hướng chuẩn mực. Ngược lại đặt warning_level = 'SAFE'. BẮT BUỘC TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON KHÔNG KÈM VĂN BẢN NGOÀI.";
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: JSON.stringify(contextPayload),
-      config: {
-        systemInstruction,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            is_culturally_accurate: { type: Type.BOOLEAN },
-            warning_level: { type: Type.STRING },
-            cultural_warning_msg: { type: Type.STRING },
-            suggested_fix: { type: Type.STRING },
-            kieu_toc_va_trang_diem: { type: Type.STRING },
-            dang_chup_anh: { type: Type.STRING },
-            cau_chuyen_di_san: { type: Type.STRING },
-          },
-          required: [
-            'is_culturally_accurate',
-            'warning_level',
-            'cultural_warning_msg',
-            'suggested_fix',
-            'kieu_toc_va_trang_diem',
-            'dang_chup_anh',
-            'cau_chuyen_di_san',
-          ],
-        },
-      },
-    });
-
-    const outputText = response.text?.trim() || '{}';
-    const parsedData = JSON.parse(outputText);
-    return res.json(parsedData);
-  } catch (err: any) {
-    // Khi chạm giới hạn 429 Quota hoặc mạng lỗi, tự động chuyển đổi sang bộ thẩm định chuẩn mực
-    return res.json(getLocalCulturalAnalysis(contextPayload));
-  }
+  // Trả về dữ liệu thẩm định di sản nội bộ (Zero quota consumption)
+  return res.json(getLocalCulturalAnalysis(contextPayload));
 });
 
-// Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI
+// Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI - Chế độ Mock Bảo Vệ Quota
 app.post('/api/gemini/generate-pattern', async (req, res) => {
   const { keyword, overlay_mode } = req.body;
   const userKeyword = keyword || 'chiều mưa xứ Huế';
   const userMode = overlay_mode || 'SEAMLESS_JACQUARD';
 
-  if (!ai) {
-    return res.json(getLocalPattern(userKeyword, userMode));
-  }
-
-  try {
-    const contextPayload = {
-      keyword: userKeyword,
-      overlay_mode: userMode,
-    };
-
-    const systemInstruction =
-      'Bạn là Nghệ nhân Thiết kế Họa tiết Di sản. Hãy chuyển đổi từ khóa cảm xúc của người dùng thành một họa tiết thời trang mang hơi hướng mỹ thuật cổ truyền Việt Nam (như nét mây vờn Nguyễn, sóng nước Thủy ba, hoa gốm Chu Đậu, hoặc nét khắc Đông Hồ). Trả về cấu trúc JSON chứa đường nét SVG Path hoặc mã thuộc tính họa tiết để vẽ.';
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: JSON.stringify(contextPayload),
-      config: {
-        systemInstruction,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            pattern_name: { type: Type.STRING },
-            pattern_type: { type: Type.STRING },
-            svg_path_data: { type: Type.STRING },
-            pattern_color: { type: Type.STRING },
-            pattern_story: { type: Type.STRING },
-          },
-          required: [
-            'pattern_name',
-            'pattern_type',
-            'svg_path_data',
-            'pattern_color',
-            'pattern_story',
-          ],
-        },
-      },
-    });
-
-    const outputText = response.text?.trim() || '{}';
-    const parsedData = JSON.parse(outputText);
-    return res.json(parsedData);
-  } catch (err: any) {
-    // Khi 429 hoặc lỗi mạng, trả về hoa văn di sản tinh tế tương ứng với từ khóa
-    return res.json(getLocalPattern(userKeyword, userMode));
-  }
+  // Trả về hoa văn di sản nội bộ theo từ khóa (Zero quota consumption)
+  return res.json(getLocalPattern(userKeyword, userMode));
 });
 
-// Endpoint API Gemini/Imagen: Sinh Ảnh Lookbook Thời Trang AI
+// Endpoint API Gemini/Imagen: Sinh Ảnh Lookbook Thời Trang AI - Chế độ Mock Bảo Vệ Quota
 app.post('/api/gemini/fashion-image', async (req, res) => {
   const { prompt } = req.body;
   const fashionPrompt = prompt || '';
 
-  // Thử sinh ảnh bằng Imagen 3 nếu tài khoản có hạn mức
-  if (ai) {
-    try {
-      const imageRes = await (ai.models as any).generateImages({
-        model: 'imagen-3.0-generate-002',
-        prompt: fashionPrompt,
-        config: {
-          numberOfImages: 1,
-          aspectRatio: '3:4',
-          outputMimeType: 'image/jpeg',
-        },
-      });
-      const imgBytes = imageRes?.generatedImages?.[0]?.image?.imageBytes;
-      if (imgBytes) {
-        return res.json({ imageUrl: `data:image/jpeg;base64,${imgBytes}` });
-      }
-    } catch {
-      // Bỏ qua lỗi quota để chuyển sang bộ tạo ảnh Lookbook nghệ thuật
-    }
-  }
-
-  // Tự động cung cấp bức ảnh Lookbook thời trang di sản cao cấp
+  // Trả về ảnh Lookbook thời trang di sản cao cấp tức thì (Zero quota consumption)
   const editorialImage = generateEditorialLookbookDataUri(fashionPrompt);
   return res.json({ imageUrl: editorialImage });
 });

@@ -1,6 +1,7 @@
 import { PatternItem } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import { fetchPatternAI } from '../services/api.ts';
+import { feedbackState } from '../services/feedbackState.ts';
 
 export const DEFAULT_CURATED_PATTERNS: PatternItem[] = [
   {
@@ -8,7 +9,7 @@ export const DEFAULT_CURATED_PATTERNS: PatternItem[] = [
     pattern_name: 'Mây Vờn Triều Nguyễn',
     pattern_type: 'SEAMLESS_JACQUARD',
     svg_path_data: 'M 10,30 Q 20,15 35,22 Q 50,10 60,25 Q 50,45 35,38 Q 20,50 10,30 Z',
-    pattern_color: '#E5A93C',
+    pattern_color: '#C9A66B',
     pattern_story: 'Họa tiết mây cuộn uyển chuyển thời Nguyễn, tượng trưng cho thiên thời tường thụy và tâm hồn tự do phóng khoáng.'
   },
   {
@@ -16,7 +17,7 @@ export const DEFAULT_CURATED_PATTERNS: PatternItem[] = [
     pattern_name: 'Sóng Nước Thủy Ba',
     pattern_type: 'SEAMLESS_JACQUARD',
     svg_path_data: 'M 0,35 Q 15,10 30,35 T 60,35 M 10,50 Q 25,25 40,50 T 70,50',
-    pattern_color: '#64B5F6',
+    pattern_color: '#4A8577',
     pattern_story: 'Dòng sóng thủy ba cuộn trào dưới chân áo triều phục, mang ước vọng bình an, mưa thuận gió hòa.'
   },
   {
@@ -25,7 +26,7 @@ export const DEFAULT_CURATED_PATTERNS: PatternItem[] = [
     pattern_type: 'CENTRAL_EMBLEM',
     svg_path_data:
       'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M 0,-14 C 9,-14 14,-9 14,0 C 14,9 9,14 0,14 C -9,14 -14,9 -14,0 C -14,-9 -9,-14 0,-14 Z M -18,0 L 18,0 M 0,-18 L 0,18',
-    pattern_color: '#FFD700',
+    pattern_color: '#C9A66B',
     pattern_story: 'Huy hiệu kim khánh cách điệu đặt giữa ngực áo, tôn vinh phẩm hạnh cao quý và cốt cách hoàng gia.'
   }
 ];
@@ -72,9 +73,9 @@ export class PatternEngine {
       bead.title = `${pat.pattern_name} (${pat.pattern_type === 'SEAMLESS_JACQUARD' ? 'Gấm chìm' : 'Huy hiệu'})`;
       bead.setAttribute('aria-label', pat.pattern_name);
 
-      bead.style.background = pat.pattern_color || '#E5A93C';
+      bead.style.background = pat.pattern_color || '#C9A66B';
       bead.innerHTML = pat.pattern_type === 'SEAMLESS_JACQUARD' ? '❖' : '✹';
-      bead.style.color = '#121110';
+      bead.style.color = '#0D1714';
 
       bead.addEventListener('click', () => {
         Sound.playChime();
@@ -97,7 +98,7 @@ export class PatternEngine {
     if (patternData.pattern_type === 'SEAMLESS_JACQUARD') {
       if (dynPatternPath) {
         dynPatternPath.setAttribute('d', patternData.svg_path_data);
-        dynPatternPath.setAttribute('stroke', patternData.pattern_color || '#E5A93C');
+        dynPatternPath.setAttribute('stroke', patternData.pattern_color || '#C9A66B');
       }
       if (overlayPath) {
         overlayPath.style.display = 'block';
@@ -112,7 +113,7 @@ export class PatternEngine {
         overlayPath.style.display = 'none';
       }
       if (emblemGroup) {
-        const color = patternData.pattern_color || '#FFD700';
+        const color = patternData.pattern_color || '#C9A66B';
         emblemGroup.innerHTML = `
           <circle cx="0" cy="0" r="32" fill="none" stroke="${color}" stroke-width="2.2" stroke-dasharray="5,3" filter="drop-shadow(0 0 6px ${color})" />
           <circle cx="0" cy="0" r="27" fill="rgba(30, 20, 15, 0.65)" stroke="${color}" stroke-width="1.2" />
@@ -143,6 +144,19 @@ export class PatternEngine {
       btnGen.innerHTML = '<span>⏳</span> Đang Mài Vóc...';
     }
 
+    feedbackState.showLoading({
+      message: 'Đang thêu hoa văn Lụa Thanh...',
+      submessage: `Nghệ nhân đang dệt nét chạm theo cảm hứng "${keyword}"...`,
+      allowCancel: true,
+      onCancel: () => {
+        if (mainGarment) mainGarment.classList.remove('is-polishing');
+        if (btnGen) {
+          btnGen.disabled = false;
+          btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
+        }
+      }
+    });
+
     const fallbackResult: PatternItem = {
       pattern_name: mode === 'SEAMLESS_JACQUARD' ? 'Gấm Mây Thủy Ba' : 'Nhật Bình Kim Khánh',
       pattern_type: mode,
@@ -150,38 +164,55 @@ export class PatternEngine {
         mode === 'SEAMLESS_JACQUARD'
           ? 'M 10,30 Q 25,12 40,28 T 60,30 M 5,45 Q 25,25 45,45'
           : 'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M -16,0 L 16,0 M 0,-16 L 0,16',
-      pattern_color: '#E5A93C',
+      pattern_color: '#C9A66B',
       pattern_story: `Khởi phát từ cảm hứng "${keyword}", hoa văn kết hợp dòng nước nguồn cội và nét chạm gốm mạ vàng tôn vinh cốt cách người mặc.`
     };
 
-    let finalPattern: PatternItem | null = await fetchPatternAI(keyword, mode);
-    if (!finalPattern) {
-      finalPattern = fallbackResult;
-    }
-
-    // Giữ hiệu ứng mài vóc tối thiểu 1.2s để tạo cảm giác đúc men thủ công
-    await new Promise((r) => setTimeout(r, 1200));
-
-    if (mainGarment) {
-      mainGarment.classList.remove('is-polishing');
-    }
-    if (btnGen) {
-      btnGen.disabled = false;
-      btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
-    }
-
-    this.applyPatternToGarment(finalPattern);
-
-    finalPattern.id = 'pat-' + Date.now();
-    this.savedPatterns.unshift(finalPattern);
-    if (this.savedPatterns.length > 12) this.savedPatterns.pop();
-
     try {
-      localStorage.setItem('viet_y_saved_patterns', JSON.stringify(this.savedPatterns));
-    } catch {}
+      let finalPattern: PatternItem | null = await fetchPatternAI(keyword, mode);
+      if (!finalPattern) {
+        finalPattern = fallbackResult;
+      }
 
-    this.renderSavedPatternList();
-    Sound.playChime();
+      // Giữ hiệu ứng mài vóc tối thiểu 900ms để người dùng cảm nhận trọn vẹn nhịp thở Lụa Thanh
+      await new Promise((r) => setTimeout(r, 900));
+
+      feedbackState.hideLoading();
+
+      if (mainGarment) {
+        mainGarment.classList.remove('is-polishing');
+      }
+      if (btnGen) {
+        btnGen.disabled = false;
+        btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
+      }
+
+      this.applyPatternToGarment(finalPattern);
+
+      finalPattern.id = 'pat-' + Date.now();
+      this.savedPatterns.unshift(finalPattern);
+      if (this.savedPatterns.length > 12) this.savedPatterns.pop();
+
+      try {
+        localStorage.setItem('viet_y_saved_patterns', JSON.stringify(this.savedPatterns));
+      } catch {}
+
+      this.renderSavedPatternList();
+      Sound.playChime();
+    } catch {
+      feedbackState.hideLoading();
+      if (mainGarment) mainGarment.classList.remove('is-polishing');
+      if (btnGen) {
+        btnGen.disabled = false;
+        btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
+      }
+
+      feedbackState.showError({
+        title: 'Tơ Lụa Tạm Lắng',
+        message: 'Hệ thống thêu hoa văn AI tạm thời gián đoạn kết nối hoặc hết hạn mức phục vụ. Bạn chạm thử lại để tiếp tục dệt nhé.',
+        onRetry: () => this.generateAIPattern(userKeyword, overlayMode)
+      });
+    }
   }
 
   private setupUI(): void {

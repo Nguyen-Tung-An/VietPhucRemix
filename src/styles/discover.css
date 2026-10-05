@@ -1,318 +1,802 @@
-/* ============================================================
-   2. MÀN HÌNH KHÁM PHÁ THẺ SƠN MÀI (#discover-scene)
-   ============================================================ */
+/* ==========================================================================
+   VIỆT Y REMIX — MÀN HÌNH KHÁM PHÁ (DISCOVERY SCREEN)
+   Concept: "LỤA THANH"
+   Responsive Architecture:
+   - Mobile (< 768px): Bố cục dọc chuẩn Thumb Zone (2x2 Grid Bối Cảnh, Card-Stack đơn cột + 3 nút tròn đáy)
+   - Desktop (>= 768px): Bố cục Showroom 2 Cột (Trái: Card Stack & Phím tắt / Phải: Hồ sơ di sản & Gợi ý phối Gen Z)
+   ========================================================================== */
+
 #discover-scene {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  padding-top: 56px;
+  height: 100dvh;
+  padding-top: max(54px, env(safe-area-inset-top));
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at center, #26160e 0%, var(--den-voc) 85%);
-  z-index: 8;
+  justify-content: flex-start;
+  background-color: var(--color-bg);
+  z-index: 15;
   opacity: 0;
+  transform: translateY(8px);
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.4s ease, visibility 0.4s;
-  overflow: hidden;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
   user-select: none;
 }
 
 #discover-scene.scene-active {
   opacity: 1;
+  transform: translateY(0);
   visibility: visible;
   pointer-events: auto;
 }
 
-.discover-header-sub {
-  text-align: center;
-  margin-bottom: 12px;
-  z-index: 5;
-}
-
-.discover-heading {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  color: var(--vang-hoang-cuc);
-  letter-spacing: 0.08em;
+/* ==========================================================================
+   KHUNG CHỨA NỘI DUNG — MOBILE (< 768px) & DESKTOP (>= 768px)
+   ========================================================================== */
+.discover-container {
+  width: 100%;
+  max-width: 440px;
+  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - 70px);
+  margin: 0 auto;
+  padding: 12px 20px 24px 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.discover-hint {
-  font-size: 0.75rem;
-  color: rgba(245, 242, 235, 0.7);
-  margin-top: 2px;
-}
-
-/* Vùng chứa xấp thẻ Sơn Mài (.lacquer-card-stack) */
-.lacquer-card-stack {
   position: relative;
-  width: 330px;
-  height: 480px;
-  max-width: 90vw;
-  max-height: 65vh;
+  transition: max-width 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .discover-container {
+    max-width: 1240px;
+    padding: 24px 36px 40px 36px;
+  }
+}
+
+/* Header chung của Khám Phá */
+.discover-header-group {
+  text-align: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.discover-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.65rem, 3.5vw, 2.3rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.discover-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   PHẦN 1 — CHỌN BỐI CẢNH (HIỆN TRƯỚC)
+   - Mobile: Lưới 2x2 trong Thumb Zone
+   - Desktop: Lưới 4 cột rộng rãi dàn ngang (4 cards in 1 row)
+   ========================================================================== */
+#discover-context-step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeInStep 0.35s ease-out;
+}
+
+#discover-context-step.step-hidden {
+  display: none;
+}
+
+.context-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+  .context-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+  }
+}
+
+.context-card-item {
+  background: var(--color-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-card, 16px);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+  min-height: 120px;
+}
+
+@media (min-width: 768px) {
+  .context-card-item {
+    min-height: 180px;
+    padding: 36px 20px;
+    gap: 18px;
+  }
+}
+
+.context-card-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 14px 32px -4px rgba(74, 133, 119, 0.22);
+}
+
+.context-card-item:active {
+  transform: scale(0.96);
+  border-color: var(--color-accent-primary);
+  background: rgba(244, 201, 214, 0.2);
+}
+
+.context-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(74, 133, 119, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-accent-secondary);
+  transition: transform 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .context-card-icon {
+    width: 68px;
+    height: 68px;
+    font-size: 2rem;
+  }
+}
+
+.context-card-item:hover .context-card-icon {
+  transform: scale(1.12);
+}
+
+.context-card-name {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: 0.01em;
+}
+
+@media (min-width: 768px) {
+  .context-card-name {
+    font-size: 1.15rem;
+  }
+}
+
+/* ==========================================================================
+   PHẦN 2 — CARD-STACK GỢI Ý & SHOWROOM
+   - Mobile: Xếp dọc (Chip bối cảnh -> Card stack -> 3 nút tròn)
+   - Desktop: Bố cục Showroom 2 Cột (Trái: Card Stack & Nút bấm / Phải: Hồ sơ di sản)
+   ========================================================================== */
+#discover-stack-step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: fadeInStep 0.4s ease-out;
+}
+
+#discover-stack-step.step-hidden {
+  display: none;
+}
+
+/* Thanh chip bối cảnh & nút đổi */
+.active-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 440px;
+  padding: 8px 18px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  backdrop-filter: blur(10px);
+}
+
+.active-context-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+}
+
+.btn-change-context {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-change-context:hover {
+  color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.08);
+}
+
+/* Ẩn context bar desktop ở mobile */
+.desktop-context-bar {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   BỐ CỤC SHOWROOM: MOBILE (1 CỘT DỌC) / DESKTOP (2 CỘT NGANG)
+   -------------------------------------------------------------------------- */
+.discover-showroom-layout {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .mobile-context-bar {
+    display: none;
+  }
+
+  .desktop-context-bar {
+    display: flex;
+    max-width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .discover-showroom-layout {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 12px;
+  }
+}
+
+/* Cột Trái: Card Stack & Bộ 3 nút hành động */
+.discover-stack-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (min-width: 768px) {
+  .discover-stack-column {
+    flex: 0 0 380px;
+  }
+}
+
+/* Khung Card Stack */
+.card-stack-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  height: 440px;
+  margin: 6px auto 10px auto;
   perspective: 1000px;
 }
 
-/* Thẻ Sơn Mài (.lacquer-card) */
-.lacquer-card {
+@media (min-width: 768px) {
+  .card-stack-viewport {
+    max-width: 380px;
+    height: 480px;
+    margin: 0;
+  }
+}
+
+/* Thẻ chính (.card-base & .discovery-card) */
+.discovery-card {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(160deg, #2B1A12 0%, #170F0A 100%);
-  border: 2px solid rgba(229, 169, 60, 0.45);
-  border-radius: 20px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), inset 0 2px 4px rgba(255, 255, 255, 0.15), 0 0 16px rgba(229, 169, 60, 0.18);
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 16px 36px -6px rgba(74, 133, 119, 0.18),
+              0 4px 12px -2px rgba(28, 43, 38, 0.06);
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px;
   cursor: grab;
   touch-action: none;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s;
-  overflow: hidden;
-  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.25s ease,
+              box-shadow 0.25s ease;
+  will-change: transform, opacity;
 }
 
-.lacquer-card:active {
+.discovery-card:active {
   cursor: grabbing;
 }
 
-/* Thẻ lớp sau trong xấp */
-.lacquer-card.card-behind-1 {
-  transform: translateY(12px) scale(0.95);
+/* Xếp lớp 3D của xấp thẻ */
+.discovery-card.card-top {
+  z-index: 5;
+  transform: translate3d(0, 0, 0) scale(1);
+  opacity: 1;
+}
+
+.discovery-card.card-behind-1 {
+  z-index: 4;
+  transform: translate3d(0, 10px, -20px) scale(0.95);
   opacity: 0.85;
   pointer-events: none;
-  z-index: 1;
 }
 
-.lacquer-card.card-behind-2 {
-  transform: translateY(24px) scale(0.9);
-  opacity: 0.55;
+.discovery-card.card-behind-2 {
+  z-index: 3;
+  transform: translate3d(0, 20px, -40px) scale(0.90);
+  opacity: 0.65;
   pointer-events: none;
-  z-index: 0;
 }
 
-.lacquer-card.card-top {
-  z-index: 10;
-}
-
-/* Con dấu gốm góc trên thẻ */
-.card-top-bar {
+/* Nội dung bên trong thẻ */
+.card-inner-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 3;
+  width: 100%;
 }
 
-.card-event-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--vang-hoang-cuc);
-  background: rgba(18, 17, 16, 0.75);
-  border: 1px solid rgba(229, 169, 60, 0.35);
+.card-match-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 4px 10px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid rgba(74, 133, 119, 0.22);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
 }
 
-/* Khung preview đồ họa của thẻ */
-.card-preview-area {
+.card-tag-subtle {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.card-illustration-box {
   flex: 1;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin: 8px 0;
-  border-radius: 12px;
-  background: radial-gradient(circle at center, rgba(65, 38, 26, 0.5) 0%, rgba(18, 17, 16, 0.85) 75%);
-  border: 1px solid rgba(229, 169, 60, 0.15);
   overflow: hidden;
+  padding: 8px 0;
 }
 
-.card-svg-preview {
+.card-garment-svg {
   width: 100%;
   height: 100%;
-  max-height: 280px;
+  max-height: 270px;
   object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(74, 133, 119, 0.14));
 }
 
-/* Phần thông tin thẻ ở đáy */
-.card-info-bottom {
-  background: rgba(18, 17, 16, 0.85);
-  border: 1px solid rgba(229, 169, 60, 0.2);
-  border-radius: 12px;
-  padding: 10px 14px;
-  z-index: 3;
+@media (min-width: 768px) {
+  .card-garment-svg {
+    max-height: 300px;
+  }
 }
 
-.card-outfit-title {
-  font-family: var(--font-display);
+.card-inner-bottom {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-garment-name {
+  font-family: var(--font-title);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  letter-spacing: -0.01em;
+}
+
+.card-short-desc {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* Con dấu đóng dấu khi quẹt (Like / Dislike) */
+.card-stamp-feedback {
+  position: absolute;
+  top: 24px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: var(--font-title);
   font-size: 1rem;
   font-weight: 700;
-  color: var(--trang-buoi);
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
-}
-
-.card-palette-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.72rem;
-  color: rgba(245, 242, 235, 0.75);
-}
-
-.card-color-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1.5px solid #FFFFFF;
-  box-shadow: 0 0 6px rgba(0,0,0,0.5);
-}
-
-/* Các nhãn dán bay khi lướt (Swipe Stamps) */
-.swipe-stamp {
-  position: absolute;
-  top: 36px;
-  padding: 8px 18px;
-  border-radius: 10px;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 900;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.1s ease;
   z-index: 20;
 }
 
-.stamp-like {
-  right: 20px;
-  color: #48c774;
-  border: 3px solid #48c774;
-  transform: rotate(15deg);
-  background: rgba(15, 75, 35, 0.75);
-  box-shadow: 0 0 16px rgba(72, 199, 116, 0.6);
+.card-stamp-like {
+  right: 18px;
+  border: 2px solid var(--color-accent-secondary);
+  color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.12);
+  transform: rotate(12deg);
 }
 
-.stamp-dislike {
-  left: 20px;
-  color: #ff4757;
-  border: 3px solid #ff4757;
-  transform: rotate(-15deg);
-  background: rgba(120, 20, 30, 0.75);
-  box-shadow: 0 0 16px rgba(255, 71, 87, 0.6);
+.card-stamp-dislike {
+  left: 18px;
+  border: 2px solid var(--color-text-muted, #5C635F);
+  color: var(--color-text-muted, #5C635F);
+  background: rgba(92, 99, 95, 0.12);
+  transform: rotate(-12deg);
 }
 
-.stamp-remix {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(0deg);
-  color: var(--vang-hoang-cuc);
-  border: 3px solid var(--vang-hoang-cuc);
-  background: rgba(43, 26, 18, 0.9);
-  box-shadow: 0 0 20px rgba(229, 169, 60, 0.8);
-}
-
-/* Hệ thống nút thao tác nhanh bên dưới thẻ (.swipe-actions-row) */
-.swipe-actions-row {
+/* ==========================================================================
+   BỘ 3 NÚT HÀNH ĐỘNG
+   - Mobile: 3 nút tròn trong Thumb Zone (< 350px từ đáy)
+   - Desktop: 3 nút có kèm nhãn chữ và hiệu ứng tương tác cao cấp
+   ========================================================================== */
+.swipe-actions-trio {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  margin-top: 18px;
-  z-index: 10;
+  gap: 18px;
+  width: 100%;
 }
 
-.btn-swipe-action {
-  width: 58px;
-  height: 58px;
+.action-btn-desktop-text {
+  display: none;
+}
+
+.btn-circle-action {
+  width: 52px;
+  height: 52px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
-  border: 2px solid;
-  background: rgba(28, 17, 12, 0.9);
+  border: 1px solid var(--color-card-border);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.12);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.18s ease,
+              background-color 0.18s ease,
+              border-color 0.18s ease;
 }
 
-.btn-swipe-action:hover {
-  transform: translateY(-3px) scale(1.12);
+@media (min-width: 768px) {
+  .swipe-actions-trio {
+    gap: 14px;
+  }
+
+  .btn-circle-action {
+    width: auto;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: var(--border-radius-pill, 9999px);
+    gap: 8px;
+  }
+
+  .action-btn-desktop-text {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
 }
 
-.btn-swipe-action:active {
-  transform: translateY(1px) scale(0.95);
+.btn-circle-action:hover {
+  transform: translateY(-2px);
 }
 
+.btn-circle-action:active {
+  transform: scale(0.92);
+}
+
+/* Nút Bỏ qua */
 .btn-action-dislike {
-  border-color: rgba(255, 71, 87, 0.6);
-  color: #ff4757;
-  box-shadow: 0 4px 14px rgba(255, 71, 87, 0.25);
+  color: var(--color-text-muted);
 }
+
 .btn-action-dislike:hover {
-  background: rgba(120, 20, 30, 0.85);
-  border-color: #ff4757;
-  box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
+  color: var(--color-text-primary, #2B2B28);
+  border-color: var(--color-text-muted, #5C635F);
+  background: rgba(92, 99, 95, 0.1);
 }
 
-.btn-action-remix {
-  width: 68px;
-  height: 68px;
-  border-color: var(--vang-hoang-cuc);
-  color: var(--vang-hoang-cuc);
-  background: linear-gradient(145deg, #3d2416, #1c100a);
-  box-shadow: 0 4px 16px rgba(229, 169, 60, 0.4);
-}
-.btn-action-remix:hover {
-  border-color: #FFFFFF;
-  box-shadow: 0 8px 24px rgba(229, 169, 60, 0.8);
-  background: linear-gradient(145deg, #57331f, #2b1810);
+/* Nút Xáo lại */
+.btn-action-reshuffle {
+  color: var(--color-accent-secondary);
 }
 
+.btn-action-reshuffle:hover {
+  border-color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.1);
+}
+
+/* Nút Thích */
 .btn-action-like {
-  border-color: rgba(255, 107, 129, 0.6);
-  color: #ff6b81;
-  box-shadow: 0 4px 14px rgba(255, 107, 129, 0.25);
+  color: var(--color-accent-primary, #F4C9D6);
+  background: rgba(74, 133, 119, 0.08);
 }
+
 .btn-action-like:hover {
-  background: rgba(160, 30, 60, 0.85);
-  border-color: #ff6b81;
-  box-shadow: 0 6px 20px rgba(255, 107, 129, 0.5);
+  border-color: var(--color-accent-primary);
+  background: rgba(244, 201, 214, 0.22);
 }
 
-.btn-view-wardrobe-hint {
-  margin-top: 14px;
-  background: transparent;
-  border: 1px dashed rgba(229, 169, 60, 0.4);
-  color: var(--vang-hoang-cuc);
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 10;
+/* ==========================================================================
+   CỘT 2: HỒ SƠ CỔ PHỤC & GỢI Ý PHỐI GEN Z (DÀNH CHO DESKTOP)
+   ========================================================================== */
+.discover-desktop-dossier {
+  display: none;
 }
 
-.btn-view-wardrobe-hint:hover {
-  background: rgba(229, 169, 60, 0.15);
-  border-style: solid;
-  border-color: var(--vang-hoang-cuc);
+@media (min-width: 768px) {
+  .discover-desktop-dossier {
+    display: flex;
+    flex: 1;
+    max-width: 580px;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px 28px;
+    border-radius: var(--border-radius-card, 16px);
+  }
+
+  .dossier-card-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .dossier-pill-tag {
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent-secondary);
+    background: rgba(74, 133, 119, 0.12);
+    border: 1px solid rgba(74, 133, 119, 0.2);
+    padding: 4px 12px;
+    border-radius: var(--border-radius-pill, 9999px);
+  }
+
+  .dossier-outfit-title {
+    font-family: var(--font-title);
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-transform: none !important;
+  }
+
+  .dossier-outfit-desc {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  /* Grid thông số */
+  .dossier-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .dossier-spec-box {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid var(--color-card-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dossier-spec-box {
+      background: rgba(22, 34, 30, 0.5);
+    }
+  }
+
+  .spec-label {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+  }
+
+  .spec-value {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .spec-success {
+    color: var(--color-accent-secondary, #4A8577);
+  }
+
+  /* Box Gen Z Remix Tips */
+  .dossier-remix-box {
+    background: rgba(244, 201, 214, 0.14);
+    border: 1px solid rgba(244, 201, 214, 0.35);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .remix-box-title {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-accent-secondary);
+  }
+
+  .remix-box-text {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+  }
+
+  /* Footer hành động Desktop */
+  .dossier-actions-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .btn-dossier-action {
+    width: 100%;
+    min-height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .desktop-keyboard-shortcuts {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .desktop-keyboard-shortcuts strong {
+    color: var(--color-accent-secondary);
+  }
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cử chỉ vuốt qua keyframes */
+.card-anim-like {
+  animation: cardSlideLike 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.card-anim-dislike {
+  animation: cardSlideDislike 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.card-anim-reshuffle {
+  animation: cardReshuffleSpin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cardSlideLike {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translate3d(25px, -6px, 0) scale(1.03) rotate(3deg);
+  }
+  100% {
+    transform: translate3d(140%, 15px, 0) scale(0.92) rotate(18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cardSlideDislike {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translate3d(-25px, -6px, 0) scale(1.03) rotate(-3deg);
+  }
+  100% {
+    transform: translate3d(-140%, 15px, 0) scale(0.92) rotate(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cardReshuffleSpin {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(0.94) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }

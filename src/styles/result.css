@@ -1,0 +1,599 @@
+/* ==========================================================================
+   VIỆT Y REMIX — MÀN HÌNH KẾT QUẢ (RESULT SCREEN)
+   Concept: "LỤA THANH"
+   Architecture: 3 Lớp Xếp Chồng (Progressive Disclosure)
+   - Lớp 1: Hình ảnh kết quả hoàn chỉnh + Badge góc trên
+   - Lớp 2: Khung cảnh báo văn hóa (chỉ hiện NẾU có cảnh báo)
+   - Lớp 3: Thẻ tri thức văn hóa (hé lộ khi chạm "Tìm hiểu thêm")
+   - Chân màn hình: 2 nút "Lưu vào Lookbook" (chính) & "Phối lại" (phụ)
+   Responsive: Mobile (Stacked Vertical & Thumb Zone) / Desktop (2-Column Studio)
+   ========================================================================== */
+
+#result-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-bg);
+  opacity: 0;
+  transform: translateY(8px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+#result-scene.scene-active {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   1. KHUNG CHỨA NỘI DUNG CHÍNH
+   - Mobile: Max 440px
+   - Desktop: Max 1240px
+   ========================================================================== */
+.result-container {
+  width: 100%;
+  max-width: 440px;
+  height: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)) 16px;
+  transition: max-width 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .result-container {
+    max-width: 1240px;
+    height: auto;
+    min-height: calc(100vh - 40px);
+    padding: 24px 36px 36px 36px;
+    justify-content: center;
+  }
+}
+
+/* Thanh điều hướng đỉnh màn hình kết quả */
+.result-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+  z-index: 10;
+}
+
+.btn-result-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  color: var(--color-accent-secondary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-result-back:hover {
+  transform: translateX(-2px);
+  background: rgba(74, 133, 119, 0.14);
+}
+
+.result-nav-title {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+}
+
+/* Bố cục khung 2 cột trên Desktop */
+.result-layout-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .result-layout-frame {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 36px;
+    margin-top: 12px;
+  }
+}
+
+/* ==========================================================================
+   LỚP 1 — HÌNH ẢNH KẾT QUẢ (Luôn hiện đầu tiên, chiếm phần lớn màn hình)
+   ========================================================================== */
+.result-illustration-layer {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 320px;
+  max-height: 48vh;
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow: hidden;
+  animation: fadeInArtwork 0.4s ease-out;
+}
+
+@media (min-width: 768px) {
+  .result-illustration-layer {
+    flex: 1 1 50%;
+    min-height: 540px;
+    max-height: 640px;
+    padding: 24px;
+  }
+}
+
+/* Badge nhỏ góc trên ghi % phù hợp hoặc tên bộ đồ */
+.result-badge-top {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid rgba(74, 133, 119, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.08);
+}
+
+.result-badge-top .badge-icon {
+  font-size: 0.85rem;
+}
+
+.result-badge-top .badge-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  letter-spacing: 0.01em;
+}
+
+/* Vùng hiển thị Vector Croquis SVG hoàn chỉnh */
+.result-artwork-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.result-croquis-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-croquis-art svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 28px rgba(74, 133, 119, 0.18));
+  animation: floatArtGentle 4.5s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   CỘT PHẢI (DESKTOP) / CỤM DƯỚI (MOBILE): LỚP 2, LỚP 3 & NÚT HÀNH ĐỘNG
+   ========================================================================== */
+.result-details-column {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .result-details-column {
+    flex: 1 1 50%;
+    max-width: 540px;
+    gap: 18px;
+    justify-content: center;
+  }
+}
+
+.result-desktop-headline {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .result-desktop-headline {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .result-title {
+    font-family: var(--font-title);
+    font-size: 1.85rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-transform: none !important;
+    letter-spacing: -0.015em;
+  }
+
+  .result-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
+  }
+}
+
+/* ==========================================================================
+   LỚP 2 — KHUNG CẢNH BÁO VĂN HÓA (Chỉ hiện NẾU có cảnh báo, nằm ngay dưới hình)
+   - Nền màu Vàng Đất nhạt
+   - Viền 1px Vàng Đất
+   - Icon nhỏ bên trái
+   - Tối đa 1-2 câu nhắc nhở nhẹ nhàng, không gay gắt
+   - Nếu không có cảnh báo: display: none (không để trống rỗng)
+   ========================================================================== */
+.result-cultural-warning-layer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(201, 166, 107, 0.12);
+  border: 1px solid rgba(201, 166, 107, 0.45);
+  box-shadow: 0 2px 10px rgba(201, 166, 107, 0.08);
+  animation: fadeInWarning 0.3s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .result-cultural-warning-layer {
+    background: rgba(201, 166, 107, 0.16);
+    border: 1px solid rgba(201, 166, 107, 0.38);
+  }
+}
+
+.warning-icon-box {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  background: rgba(201, 166, 107, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.warning-icon {
+  font-size: 0.9rem;
+}
+
+.warning-text-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.warning-title {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-accent-rare, #C9A66B);
+}
+
+@media (prefers-color-scheme: dark) {
+  .warning-title {
+    color: var(--color-accent-rare, #C9A66B);
+  }
+}
+
+.warning-desc {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ==========================================================================
+   LỚP 3 — THẺ TRI THỨC VĂN HÓA (Hé lộ dần - Progressive Disclosure)
+   - Ẩn mặc định, chỉ hiện khi người dùng vuốt lên hoặc chạm "Tìm hiểu thêm"
+   - Nền kính mờ nhẹ, bo góc 20px phía trên
+   - Đoạn văn tối đa 60 từ
+   - Từ khóa quan trọng (tên thời kỳ, vùng miền) bôi đậm màu Vàng Đất (#C9A66B)
+   ========================================================================== */
+.result-knowledge-layer {
+  width: 100%;
+  border-radius: 20px 20px 14px 14px;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 4px 16px rgba(74, 133, 119, 0.08);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .result-knowledge-layer {
+    border-radius: var(--border-radius-card, 16px);
+  }
+}
+
+/* Nút Trigger bật/tắt hé lộ tri thức */
+.btn-knowledge-toggle {
+  width: 100%;
+  min-height: 48px;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  cursor: pointer;
+  position: relative;
+  color: var(--color-text-primary);
+  transition: background-color 0.15s ease;
+}
+
+.btn-knowledge-toggle:hover {
+  background: rgba(74, 133, 119, 0.06);
+}
+
+/* Vạch kéo nhỏ kiểu iOS Sheet */
+.toggle-indicator-bar {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(74, 133, 119, 0.25);
+}
+
+@media (min-width: 768px) {
+  .toggle-indicator-bar {
+    display: none;
+  }
+}
+
+.toggle-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.knowledge-icon {
+  font-size: 1rem;
+}
+
+.toggle-label {
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+}
+
+.chevron-toggle-icon {
+  color: var(--color-text-muted);
+  transition: transform 0.25s ease;
+}
+
+/* Nội dung Tri Thức ẩn mặc định, bung ra khi .layer-knowledge-revealed */
+.knowledge-content-box {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.3s ease,
+              padding 0.3s ease;
+  padding: 0 18px;
+}
+
+.result-knowledge-layer.layer-knowledge-revealed .knowledge-content-box {
+  max-height: 220px;
+  opacity: 1;
+  padding: 0 18px 16px 18px;
+}
+
+.result-knowledge-layer.layer-knowledge-revealed .chevron-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.knowledge-scroll-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--color-card-border);
+  padding-top: 12px;
+}
+
+.knowledge-title {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+}
+
+.knowledge-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* TỪ KHÓA QUAN TRỌNG: Bôi đậm màu Vàng Đất (#C9A66B) theo luật */
+.kw-gold {
+  color: var(--color-accent-rare, #C9A66B) !important;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   CUỐI MÀN HÌNH: 2 NÚT HÀNH ĐỘNG
+   - Nút chính: "Lưu vào Lookbook" (Pill Gradient)
+   - Nút phụ: "Phối lại" (Viền mảnh, nền trong suốt)
+   ========================================================================== */
+.result-actions-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+@media (min-width: 768px) {
+  .result-actions-footer {
+    flex-direction: row;
+    gap: 14px;
+    margin-top: 10px;
+  }
+}
+
+/* NÚT CHÍNH: "Lưu vào Lookbook" (Pill Gradient) */
+.btn-result-primary {
+  flex: 1;
+  width: 100%;
+  min-height: 50px;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* NÚT PHỤ: "Phối lại" (Viền mảnh, nền trong suốt) */
+.btn-result-secondary {
+  flex: 1;
+  width: 100%;
+  min-height: 48px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: transparent;
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.18s ease;
+}
+
+.btn-result-secondary:hover {
+  border-color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.08);
+  color: var(--color-accent-secondary);
+  transform: translateY(-1px);
+}
+
+.btn-result-secondary:active {
+  transform: scale(0.97);
+}
+
+/* Nút mở màn hình kết quả từ stage xưởng phối */
+.btn-view-result {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 36px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--gradient-btn-primary);
+  border: none;
+  color: var(--color-btn-text, #0D1714);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(74, 133, 119, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-view-result:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.28);
+}
+
+.btn-view-result:active {
+  transform: scale(0.96);
+}
+
+/* Keyframe animations */
+@keyframes fadeInArtwork {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInWarning {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatArtGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}

@@ -1,24 +1,25 @@
 /* ============================================================
-   HỆ THỐNG DESIGN SYSTEM: "DI SẢN ĐA CHẤT LIỆU" - VARIABLES
+   HỆ THỐNG DESIGN TOKENS CHUẨN HÓA: CONCEPT "LỤA THANH"
+   Ánh xạ đồng bộ các biến kế thừa về nguồn Design Tokens duy nhất
    ============================================================ */
 :root {
-  /* Màu sắc nền & Cố Đô */
-  --den-voc: #121110;
-  --nau-canh-gian: #2B1A12;
-  --do-son: #B22222;
-  --vang-hoang-cuc: #E5A93C;
-  --trang-buoi: #F5F2EB;
-  --xanh-cham: #1D3557;
+  /* Ánh xạ biến kế thừa sang bảng màu Lụa Thanh bắt buộc */
+  --den-voc: var(--color-text-primary, #2B2B28);
+  --nau-canh-gian: var(--color-text-muted, #5C635F);
+  --do-son: var(--color-accent-secondary, #4A8577);       /* Thay thế màu đỏ bằng Xanh Ngọc Đậm */
+  --vang-hoang-cuc: var(--color-accent-rare, #C9A66B);     /* Vàng Đất #C9A66B quý hiếm */
+  --trang-buoi: #FAF7F0;
+  --xanh-cham: var(--color-accent-secondary, #4A8577);
 
-  /* Biến màu vải chính cho Áo Ngũ Thân */
-  --mau-vai-chinh: #B22222;
+  /* Biến màu vải mặc định cho Áo Ngũ Thân */
+  --mau-vai-chinh: var(--color-accent-primary, #F4C9D6);  /* Hồng Phấn Sen #F4C9D6 */
   --saturation-rate: 1;
 
-  /* Phông chữ */
-  --font-display: 'Cinzel', 'Playfair Display', serif;
-  --font-sans: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Chuẩn hóa phông chữ theo quy tắc Lụa Thanh */
+  --font-display: var(--font-title, 'Playfair Display', serif);
+  --font-sans: var(--font-body, 'Be Vietnam Pro', sans-serif);
 
-  /* Hiệu ứng gốm sứ có men & sơn mài */
-  --shadow-gom: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.45), inset 0 -3px 4px rgba(0, 0, 0, 0.4);
-  --shadow-giay-do: 0 10px 25px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+  /* Bóng đổ mờ nhẹ nhàng */
+  --shadow-gom: var(--shadow-card);
+  --shadow-giay-do: var(--shadow-card);
 }

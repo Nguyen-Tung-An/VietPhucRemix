@@ -5,16 +5,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  background-color: var(--den-voc);
-  color: var(--trang-buoi);
-  font-family: var(--font-sans);
+html, body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
   overflow-x: hidden;
   min-height: 100vh;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Lớp phủ màng hạt xơ Giấy Dó & Mài Vóc */
+/* Lớp phủ màng hạt xơ Giấy Dó tinh tế */
 .texture-global-overlay {
   position: fixed;
   top: 0;
@@ -23,6 +25,24 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 99;
-  opacity: 0.15;
+  opacity: 0.12;
   mix-blend-mode: overlay;
 }
+
+/* ==========================================================================
+   QUY CHUẨN CHUYỂN TIẾP MÀN HÌNH LIỀN MẠCH (CONCEPT LỤA THANH)
+   - Thời gian: 250ms (không quá 300ms theo đúng ràng buộc)
+   - Gia tốc: cubic-bezier(0.16, 1, 0.3, 1) mượt như dải lụa buông
+   - Fade kết hợp trượt nhẹ (slide 8px) chống giật hoặc nhảy cóc đột ngột
+   ========================================================================== */
+#landing-scene,
+#create-scene,
+#discover-scene,
+#result-scene,
+#lookbook-scene {
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease !important;
+  will-change: opacity, transform;
+}
+

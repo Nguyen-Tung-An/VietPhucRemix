@@ -5,6 +5,9 @@ import { wardrobeManager } from './discover/wardrobeManager.ts';
 import { swipeEngine } from './discover/swipeEngine.ts';
 import { garmentEngine } from './workshop/garmentEngine.ts';
 import { appRouter } from './navigation/router.ts';
+import { resultEngine } from './result/resultEngine.ts';
+import { lookbookEngine } from './lookbook/lookbookEngine.ts';
+import { feedbackState } from './services/feedbackState.ts';
 
 function initializeApp(): void {
   // 1. Khởi tạo 3D Lotus Seal Scene
@@ -22,7 +25,17 @@ function initializeApp(): void {
   // 5. Khởi tạo Xưởng Phối Đồ, Áo Ngũ Thân Croquis, Hoa Văn AI, Lookbook AI
   garmentEngine.init();
 
-  // 6. Khởi tạo Bộ điều hướng chuyển cảnh (Router)
+  // 6. Khởi tạo Màn hình Kết Quả Lụa Thanh
+  resultEngine.init();
+
+  // 7. Khởi tạo Màn hình Lookbook Lụa Thanh
+  lookbookEngine.init();
+
+  // 8. Khởi tạo Bộ quản lý trạng thái Tải & Lỗi dùng chung (Concept Lụa Thanh)
+  feedbackState.init();
+  (window as unknown as { feedbackState: typeof feedbackState }).feedbackState = feedbackState;
+
+  // 9. Khởi tạo Bộ điều hướng chuyển cảnh (Router)
   appRouter.init();
 }
 

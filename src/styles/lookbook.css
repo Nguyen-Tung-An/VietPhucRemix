@@ -1,429 +1,476 @@
-/* ============================================================
-   PIPELINE SINH ẢNH LOOKBOOK AI & HIỆU ỨNG CHỜ MÀI VÓC
-   ============================================================ */
-.ai-fashion-cta-wrapper {
-  margin-top: 14px;
+/* ==========================================================================
+   VIỆT Y REMIX — MÀN HÌNH LOOKBOOK (LOOKBOOK SCREEN)
+   Concept: "LỤA THANH"
+   Architecture:
+   1. Tiêu đề "Lookbook của bạn" và số lượng bộ đồ đã lưu
+   2. Lưới ảnh (Grid) 2 cột (Mobile) / 4 cột (Desktop), bo góc 16px đồng nhất
+   3. Phản hồi thị giác tức thì khi chạm: scale nhẹ xuống (scale(0.96)) rồi trở lại
+   4. Nút nổi (Floating Button) góc dưới phải, icon chia sẻ, trong Thumb Zone
+   5. Trạng thái rỗng (Empty State) với minh họa khung dệt tơ lụa mềm mại
+   ========================================================================== */
+
+#lookbook-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  padding-top: max(56px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 440px;
-  z-index: 10;
-}
-
-/* Nút con dấu gốm Đỏ Son (#B22222) viền dát vàng mờ (#btn-generate-ai-image) */
-.btn-generate-ai-image {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 13px 26px;
-  background: linear-gradient(145deg, #B22222 0%, #7E1515 100%);
-  border: 1.5px solid rgba(229, 169, 60, 0.7);
-  border-radius: 999px;
-  color: #FFFFFF;
-  font-family: var(--font-display);
-  font-size: 0.96rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  cursor: pointer;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 6px 20px rgba(178, 34, 34, 0.5), 0 0 14px rgba(229, 169, 60, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.3);
-  position: relative;
-  overflow: hidden;
+  justify-content: flex-start;
+  background-color: var(--color-bg);
+  z-index: 15;
+  opacity: 0;
+  transform: translateY(8px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
   user-select: none;
 }
 
-.btn-generate-ai-image::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+#lookbook-scene.scene-active {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   1. KHUNG CHỨA NỘI DUNG — MOBILE (< 768px) & DESKTOP (>= 768px)
+   ========================================================================== */
+.lookbook-container {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
-  transition: left 0.6s ease;
-}
-
-.btn-generate-ai-image:hover::before {
-  left: 100%;
-}
-
-.btn-generate-ai-image:hover {
-  transform: translateY(-2px);
-  border-color: #FFFFFF;
-  box-shadow: 0 8px 28px rgba(178, 34, 34, 0.65), 0 0 24px rgba(229, 169, 60, 0.55), inset 0 1px 4px rgba(255, 255, 255, 0.4);
-}
-
-.btn-generate-ai-image:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 10px rgba(178, 34, 34, 0.4);
-}
-
-.btn-generate-ai-image:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-  filter: grayscale(0.2);
-  transform: none !important;
-}
-
-.btn-ai-sparkle {
-  color: var(--vang-hoang-cuc);
-  font-size: 1.1rem;
-  animation: sparkleRotate 2.5s infinite linear;
-}
-
-@keyframes sparkleRotate {
-  0% { transform: scale(0.9) rotate(0deg); opacity: 0.8; }
-  50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
-  100% { transform: scale(0.9) rotate(360deg); opacity: 0.8; }
-}
-
-/* Thanh gạt chế độ xem (Bản phác thảo SVG vs Ảnh Lookbook AI) */
-.artwork-mode-pills {
-  display: inline-flex;
-  background: rgba(20, 13, 9, 0.75);
-  border: 1px solid rgba(229, 169, 60, 0.35);
-  border-radius: 999px;
-  padding: 3px;
-  gap: 4px;
-}
-
-.mode-pill {
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-  padding: 5px 14px;
-  color: rgba(245, 242, 235, 0.7);
-  font-family: var(--font-display);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mode-pill.active {
-  background: linear-gradient(135deg, #B22222, #801212);
-  color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(178, 34, 34, 0.4);
-}
-
-/* Tem thông báo bản phác thảo Giấy Dó */
-.vintage-sketch-badge {
-  display: none;
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 25;
-  background: rgba(245, 242, 235, 0.95);
-  border: 1px solid rgba(178, 34, 34, 0.45);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  color: #7A1A1A;
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  align-items: center;
-  gap: 6px;
-  animation: fadeInDown 0.35s ease;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Lớp phủ hiệu ứng Thẻ Giấy Dó hoài cổ cho khung SVG khi kích hoạt Fallback */
-.svg-artwork-container.do-paper-vintage {
-  border-radius: 16px;
-  background: radial-gradient(circle at center, rgba(245, 242, 235, 0.12) 0%, rgba(30, 20, 15, 0.5) 100%);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), inset 0 0 25px rgba(229, 169, 60, 0.25);
-  border: 1.5px solid rgba(229, 169, 60, 0.45);
-  transition: all 0.4s ease;
-}
-
-.svg-artwork-container.do-paper-vintage #nguthan-svg {
-  filter: sepia(0.22) contrast(1.05) drop-shadow(0 8px 24px rgba(229, 169, 60, 0.2));
-}
-
-/* ============================================================
-   HIỆU ỨNG CHỜ MÀI VÓC (.polishing-overlay)
-   ============================================================ */
-.polishing-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  background: rgba(18, 17, 16, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 60;
+  max-width: 440px;
+  min-height: calc(100vh - 72px);
+  min-height: calc(100dvh - 72px);
+  margin: 0 auto;
+  padding: 16px 20px 80px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-  border: 1.5px solid rgba(229, 169, 60, 0.45);
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
-}
-
-.polishing-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-  visibility: visible;
-}
-
-.polishing-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-/* Vệt sáng dát vàng mờ lướt ngang bề mặt với CSS Keyframe mài vóc */
-.polishing-gold-sweep {
-  position: absolute;
-  top: -60%;
-  left: -120%;
-  width: 340%;
-  height: 220%;
-  background: linear-gradient(
-    115deg,
-    transparent 25%,
-    rgba(229, 169, 60, 0.06) 38%,
-    rgba(255, 238, 180, 0.42) 50%,
-    rgba(229, 169, 60, 0.12) 62%,
-    transparent 75%
-  );
-  transform: rotate(-18deg);
-  animation: polishingSweepAnim 2.2s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes polishingSweepAnim {
-  0% {
-    transform: translateX(-55%) rotate(-18deg);
-  }
-  100% {
-    transform: translateX(55%) rotate(-18deg);
-  }
-}
-
-.polishing-ambient-glow {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(229, 169, 60, 0.22) 0%, transparent 70%);
-  filter: blur(25px);
-  pointer-events: none;
-  animation: pulseAmbient 2.5s infinite alternate ease-in-out;
-}
-
-@keyframes pulseAmbient {
-  0% { transform: scale(0.85); opacity: 0.6; }
-  100% { transform: scale(1.2); opacity: 1; }
-}
-
-.polishing-content {
   position: relative;
-  z-index: 2;
+  transition: max-width 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .lookbook-container {
+    max-width: 1240px;
+    padding: 28px 40px 90px 40px;
+  }
+}
+
+/* Header màn hình Lookbook */
+.lookbook-header-group {
+  text-align: center;
+  margin-bottom: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.lookbook-title-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lookbook-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.75rem, 3.5vw, 2.4rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+/* Số lượng bộ đồ đã lưu */
+.lookbook-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid rgba(74, 133, 119, 0.22);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+}
+
+.lookbook-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.3vw, 0.98rem);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   2. LƯỚI ẢNH (GRID) 2 CỘT — BO GÓC 16PX ĐỒNG NHẤT
+   - Mobile: 2 cột (repeat(2, 1fr))
+   - Desktop: 4 cột rộng rãi (repeat(4, 1fr))
+   ========================================================================== */
+.lookbook-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .lookbook-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+/* Ô bộ đồ đã lưu (.lookbook-card) */
+.lookbook-card {
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  touch-action: manipulation;
+  /* Quy chuẩn phản hồi thị giác tức thì (Rule 3) */
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.18s ease,
+              border-color 0.18s ease;
+}
+
+@media (min-width: 768px) {
+  .lookbook-card {
+    padding: 20px 16px;
+    gap: 14px;
+  }
+}
+
+/* Phản hồi thị giác: Hover nhấc nhẹ, Active scale nhẹ xuống rồi trở lại */
+.lookbook-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--color-accent-secondary);
+  box-shadow: 0 12px 28px -4px rgba(74, 133, 119, 0.22);
+}
+
+.lookbook-card:active {
+  transform: scale(0.96);
+  border-color: var(--color-accent-primary);
+  background: rgba(244, 201, 214, 0.16);
+}
+
+/* Badge góc trên của thẻ */
+.lookbook-card-top-tag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.1);
+  border: 1px solid rgba(74, 133, 119, 0.18);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+}
+
+/* Khung hiển thị Vector Croquis SVG trong ô */
+.lookbook-card-thumb-box {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .lookbook-card-thumb-box {
+    height: 200px;
+  }
+}
+
+.lookbook-card-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(74, 133, 119, 0.15));
+}
+
+/* Thông tin chân thẻ */
+.lookbook-card-meta {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 24px;
-  max-width: 360px;
+  gap: 2px;
 }
 
-.polishing-seal-wrapper {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 16px;
+.lookbook-card-name {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  line-height: 1.3;
+}
+
+.lookbook-card-desc {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+/* Hàng nút hành động trong thẻ */
+.lookbook-card-actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.polishing-artisan-seal {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #B22222, #801212);
-  border: 1.5px solid var(--vang-hoang-cuc);
-  color: var(--vang-hoang-cuc);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 900;
-  box-shadow: 0 6px 18px rgba(178, 34, 34, 0.6);
-  animation: sealGentleRock 2s infinite ease-in-out alternate;
-}
-
-@keyframes sealGentleRock {
-  0% { transform: rotate(-5deg) scale(0.96); }
-  100% { transform: rotate(5deg) scale(1.04); }
-}
-
-.polishing-gold-orbit {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1.5px dashed rgba(229, 169, 60, 0.6);
-  animation: orbitSpin 6s infinite linear;
-}
-
-@keyframes orbitSpin {
-  100% { transform: rotate(360deg); }
-}
-
-.polishing-title {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--vang-hoang-cuc);
-  letter-spacing: 0.1em;
-  margin: 0 0 8px 0;
-  text-transform: uppercase;
-}
-
-.polishing-quote {
-  font-family: var(--font-display);
-  font-size: 0.88rem;
-  font-style: italic;
-  color: #F5F2EB;
-  line-height: 1.55;
-  margin: 0 0 16px 0;
-  opacity: 0.95;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
-}
-
-.polishing-gold-line {
-  width: 80px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--vang-hoang-cuc), transparent);
-  margin-bottom: 12px;
-}
-
-.polishing-loading-pill {
-  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: rgba(43, 26, 18, 0.6);
-  border: 1px solid rgba(229, 169, 60, 0.3);
-  font-size: 0.72rem;
-  color: rgba(245, 242, 235, 0.85);
-}
-
-.polishing-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--vang-hoang-cuc);
-  animation: dotPulse 1.2s infinite ease-in-out;
-}
-.polishing-dot:nth-child(2) { animation-delay: 0.2s; }
-.polishing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes dotPulse {
-  0%, 100% { transform: scale(0.6); opacity: 0.4; }
-  50% { transform: scale(1.3); opacity: 1; }
-}
-
-/* KHUNG HIỂN THỊ ẢNH LOOKBOOK AI HOÀN THIỆN */
-.ai-lookbook-container {
   width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  overflow: hidden;
-  animation: fadeInLookbook 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  margin-top: 4px;
 }
 
-@keyframes fadeInLookbook {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.ai-lookbook-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 2px solid rgba(229, 169, 60, 0.75);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(229, 169, 60, 0.3);
-  display: block;
-}
-
-.ai-lookbook-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  background: rgba(18, 17, 16, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(229, 169, 60, 0.5);
-  border-radius: 999px;
-  padding: 4px 12px;
-  color: var(--vang-hoang-cuc);
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.ai-lookbook-actions {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  right: 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  z-index: 10;
-}
-
-.btn-lookbook-action {
+.btn-card-remix {
   flex: 1;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(18, 17, 16, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(229, 169, 60, 0.45);
-  color: var(--trang-buoi);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 700;
+  min-height: 34px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--gradient-btn-primary);
+  border: none;
+  color: var(--color-btn-text, #0D1714);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  gap: 4px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.btn-lookbook-action:hover {
-  background: linear-gradient(145deg, #B22222, #801212);
-  border-color: #FFFFFF;
+.btn-card-remix:hover {
   transform: translateY(-1px);
+}
+
+.btn-card-remove {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 50%;
+  background: rgba(74, 133, 119, 0.1);
+  border: 1px solid rgba(74, 133, 119, 0.2);
+  color: var(--color-accent-secondary, #4A8577);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-card-remove:hover {
+  background: rgba(74, 133, 119, 0.2);
+  transform: scale(1.08);
+}
+
+/* ==========================================================================
+   4. NÚT NỔI (FLOATING BUTTON) GÓC DƯỚI PHẢI TRONG THUMB ZONE
+   - Vùng an toàn ngón tay cái (< 350px từ đáy màn hình)
+   - Icon chia sẻ
+   ========================================================================== */
+.lookbook-floating-share-btn {
+  position: fixed;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right));
+  z-index: 85;
+  width: 56px;
+  height: 56px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 50%;
+  background: var(--gradient-btn-primary);
+  border: none;
+  color: var(--color-btn-text, #0D1714);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -2px rgba(74, 133, 119, 0.38),
+              0 2px 10px rgba(244, 201, 214, 0.45);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease;
+}
+
+.lookbook-floating-share-btn:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 12px 30px -2px rgba(74, 133, 119, 0.45);
+}
+
+.lookbook-floating-share-btn:active {
+  transform: scale(0.92);
+}
+
+.share-btn-desktop-text {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .lookbook-floating-share-btn {
+    width: auto;
+    height: 52px;
+    padding: 0 24px;
+    border-radius: var(--border-radius-pill, 9999px);
+    gap: 8px;
+    bottom: 32px;
+    right: 40px;
+  }
+
+  .share-btn-desktop-text {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+}
+
+/* ==========================================================================
+   5. TRẠNG THÁI RỖNG (EMPTY STATE)
+   - Hình minh họa nhẹ nhàng: Khung dệt tơ lụa trống (Loom of silk)
+   - Dòng chữ mời gọi thân thiện
+   - 1 nút quay lại màn hình khám phá để bắt đầu phối đồ đầu tiên
+   ========================================================================== */
+.lookbook-empty-state {
+  display: none;
+  width: 100%;
+  max-width: 480px;
+  margin: 32px auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 24px;
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+  gap: 18px;
+  animation: fadeInEmpty 0.4s ease-out;
+}
+
+.lookbook-empty-state.show {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .lookbook-empty-state {
+    max-width: 560px;
+    margin: 48px auto;
+    padding: 48px 36px;
+    gap: 22px;
+  }
+}
+
+.empty-illustration-box {
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .empty-illustration-box {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+.empty-loom-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: floatLoomGentle 4s ease-in-out infinite;
+}
+
+.empty-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.empty-title {
+  font-family: var(--font-title);
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  margin: 0;
+}
+
+.empty-desc {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.btn-empty-discover {
+  min-height: 50px;
+  min-width: 220px;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  margin-top: 6px;
+}
+
+@keyframes fadeInEmpty {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatLoomGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }

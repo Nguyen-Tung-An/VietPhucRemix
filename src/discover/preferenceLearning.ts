@@ -2,7 +2,7 @@ import { UserPreferenceVector, DiscoveryOutfit } from '../types/index.ts';
 
 export class PreferenceEngine {
   public userPreferenceVector: UserPreferenceVector = {
-    colors: { '#B22222': 4, '#1D3557': 2, '#E5A93C': 1, '#2B1A12': 1, '#F5F2EB': 1 },
+    colors: { '#F4C9D6': 4, '#4A8577': 3, '#E8F3EE': 2, '#1C2B26': 1, '#C9A66B': 1 },
     garments: { 'AO_NGU_THAN': 5, 'AO_BA_BA': 2 },
     events: { 'tet': 3, 'grad': 1, 'temple': 2 }
   };
@@ -32,7 +32,7 @@ export class PreferenceEngine {
     const pillText = document.getElementById('nav-pref-text');
     if (!pillText) return;
 
-    let topColor = '#B22222';
+    let topColor = '#F4C9D6';
     let maxCScore = -Infinity;
     for (const [col, score] of Object.entries(this.userPreferenceVector.colors || {})) {
       if (score > maxCScore) {
@@ -51,18 +51,18 @@ export class PreferenceEngine {
     }
 
     const colorNames: Record<string, string> = {
-      '#B22222': 'Đỏ Son',
-      '#1D3557': 'Xanh Chàm',
-      '#E5A93C': 'Hoàng Cúc',
-      '#2B1A12': 'Cánh Gián',
-      '#F5F2EB': 'Trắng Bưởi'
+      '#F4C9D6': 'Hồng Sen',
+      '#4A8577': 'Xanh Ngọc',
+      '#E8F3EE': 'Ngọc Sương',
+      '#1C2B26': 'Rêu Đêm',
+      '#C9A66B': 'Vàng Đất'
     };
     const garmentNames: Record<string, string> = {
       'AO_NGU_THAN': 'Ngũ Thân',
       'AO_BA_BA': 'Bà Ba'
     };
 
-    pillText.textContent = `${colorNames[topColor] || 'Đỏ Son'} • ${garmentNames[topGarment] || 'Ngũ Thân'}`;
+    pillText.textContent = `${colorNames[topColor] || 'Hồng Sen'} • ${garmentNames[topGarment] || 'Ngũ Thân'}`;
   }
 
   public calculateOutfitScore(outfit: DiscoveryOutfit): number {
@@ -89,7 +89,7 @@ export class PreferenceEngine {
   }
 
   public getTopPreferences(): { topColor: string; topGarment: string; topEvent: string } {
-    let topColor = '#B22222';
+    let topColor = '#F4C9D6';
     let maxCScore = -Infinity;
     for (const [col, score] of Object.entries(this.userPreferenceVector.colors || {})) {
       if (score > maxCScore) {

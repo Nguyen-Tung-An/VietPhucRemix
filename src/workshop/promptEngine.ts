@@ -14,13 +14,13 @@ export function assembleFashionPrompt(currentOutfitState: CurrentOutfitState): s
       'Vietnamese traditional Ao Ba Ba (southern flowing silk tunic with graceful round neckline, split hem, and authentic center button placket)';
   }
 
-  // 2. Màu sắc vải lụa [COLOR_NAME]
+  // 2. Màu sắc vải lụa [COLOR_NAME] - Concept Lụa Thanh
   const colorMap: Record<string, string> = {
-    '#B22222': 'Crimson Vermilion (Đỏ Son)',
-    '#1D3557': 'Deep Indigo Blue (Xanh Chàm)',
-    '#E5A93C': 'Imperial Chrysanthemum Yellow (Hoàng Cúc)',
-    '#2B1A12': 'Warm Lacquer Brown (Cánh Gián)',
-    '#F5F2EB': 'Pomelo Blossom Ivory White (Trắng Bưởi)'
+    '#F4C9D6': 'Lotus Silk Blossom Pink (Hồng Phấn Sen)',
+    '#4A8577': 'Deep Jade Green (Xanh Ngọc Đậm)',
+    '#E8F3EE': 'Mist Jade White (Ngọc Sương)',
+    '#1C2B26': 'Night Moss Deep Green (Rêu Đêm)',
+    '#C9A66B': 'Earthen Gold (Vàng Đất)'
   };
   const colorName = colorMap[state.color] || `${state.colorName || 'heritage traditional'} silk`;
 

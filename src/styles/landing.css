@@ -1,93 +1,294 @@
-/* ============================================================
-   SECTION 1: MÀN HÌNH MỞ ĐẦU 3D (#landing-scene)
-   ============================================================ */
+/* ==========================================================================
+   VIỆT Y REMIX — MÀN HÌNH MỞ ĐẦU (LANDING SCREEN)
+   Concept: "LỤA THANH"
+   Responsive Architecture:
+   - Mobile (< 768px): Bố cục dọc chuẩn Thumb Zone (Top text, Center blob, Bottom CTA)
+   - Desktop (>= 768px): Bố cục 2 cột Split Hero Editorial (Trái: Text & CTA, Phải: Blob lớn "thở")
+   ========================================================================== */
+
 #landing-scene {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
+  z-index: 50;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  z-index: 10;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
-  background: radial-gradient(circle at center, #2b1810 0%, var(--den-voc) 75%);
+  background-color: var(--color-bg);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s ease;
+  overflow: hidden;
+  user-select: none;
 }
 
 #landing-scene.scene-hidden {
   opacity: 0;
+  transform: translateY(-8px);
   visibility: hidden;
   pointer-events: none;
 }
 
-#three-canvas-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* ==========================================================================
+   1. BỐ CỤC MOBILE-FIRST (< 768px): STACKED THEO CHIỀU DỌC
+   ========================================================================== */
+.landing-content-frame {
   width: 100%;
+  max-width: 440px;
   height: 100%;
-  z-index: 1;
-}
-
-.landing-header {
-  position: relative;
-  z-index: 5;
-  text-align: center;
-  padding-top: 3.5rem;
-  pointer-events: none;
-}
-
-.brand-eyebrow {
-  display: inline-flex;
+  margin: 0 auto;
+  padding: max(28px, env(safe-area-inset-top)) 24px max(32px, env(safe-area-inset-bottom)) 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  background: rgba(43, 26, 18, 0.7);
-  border: 1px solid rgba(229, 169, 60, 0.4);
-  color: var(--vang-hoang-cuc);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  backdrop-filter: blur(8px);
-  margin-bottom: 0.8rem;
-}
-
-.brand-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.4rem, 6vw, 4.4rem);
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #FFFFFF 0%, #F5F2EB 30%, var(--vang-hoang-cuc) 70%, #d4932b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  line-height: 1.15;
-}
-
-.brand-sub {
-  color: rgba(245, 242, 235, 0.8);
-  font-size: clamp(0.9rem, 2vw, 1.15rem);
-  margin-top: 0.5rem;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-}
-
-.landing-footer {
   position: relative;
-  z-index: 5;
-  padding-bottom: 3.5rem;
+  text-align: center;
+}
+
+.landing-text-column {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 14px;
+  width: 100%;
 }
 
-.landing-hint {
-  font-size: 0.78rem;
-  color: rgba(229, 169, 60, 0.8);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 18px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.08);
+}
+
+.landing-badge span {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-accent-secondary);
+}
+
+.landing-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.landing-title {
+  font-family: var(--font-title);
+  font-size: clamp(2.3rem, 8.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.landing-tagline {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  max-width: 320px;
+  margin: 0;
+}
+
+/* KHỐI MỀM BLOB (ĐIỂM NHẤN THỊ GIÁC CHÍNH DUY NHẤT) */
+.landing-hero-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  padding: 16px 0;
+}
+
+.silk-blob-hero {
+  width: clamp(190px, 48vw, 240px);
+  height: clamp(190px, 48vw, 240px);
+  background: var(--gradient-btn-primary);
+  border-radius: 62% 38% 52% 48% / 48% 58% 42% 52%;
+  box-shadow: 0 24px 50px -10px rgba(74, 133, 119, 0.38),
+              0 10px 24px -6px rgba(244, 201, 214, 0.4);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: silkBlobBreathe 5s ease-in-out infinite;
+  will-change: transform, border-radius;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.silk-blob-hero:hover {
+  transform: scale(1.05);
+}
+
+.silk-blob-inner-sheen {
+  position: absolute;
+  top: 12%;
+  left: 15%;
+  width: 45%;
+  height: 45%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+@keyframes silkBlobBreathe {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    border-radius: 62% 38% 52% 48% / 48% 58% 42% 52%;
+  }
+  50% {
+    transform: scale(1.045) rotate(3deg);
+    border-radius: 46% 54% 60% 40% / 54% 44% 56% 46%;
+  }
+}
+
+/* Nút CTA Desktop: Mặc định ẩn trên Mobile */
+.landing-desktop-cta {
+  display: none;
+}
+
+/* Nút CTA Mobile: Nằm trong vùng ngón tay cái (< 350px đáy) */
+.landing-mobile-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-landing-cta {
+  width: 100%;
+  max-width: 320px;
+  min-height: 52px;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.btn-arrow-icon {
+  margin-left: 6px;
+  transition: transform 0.2s ease;
+}
+
+.btn-landing-cta:hover .btn-arrow-icon {
+  transform: translateX(5px);
+}
+
+.landing-desktop-hint {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   2. BỐ CỤC DESKTOP (>= 768px): 2-COLUMN SPLIT HERO EDITORIAL
+   - Cột trái: Badge, Tiêu đề lớn sang trọng, Tagline, Nút CTA đặt ngay dưới
+   - Cột phải: Khối mềm tơ lụa kích thước lớn bồng bềnh nghệ thuật
+   ========================================================================== */
+@media (min-width: 768px) {
+  .landing-content-frame {
+    max-width: 1200px;
+    height: auto;
+    min-height: 580px;
+    padding: 60px 48px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 64px;
+    text-align: left;
+  }
+
+  /* Cột Trái: Thông điệp và Nút bấm theo dòng đọc tự nhiên (F-pattern) */
+  .landing-text-column {
+    flex: 1;
+    align-items: flex-start;
+    text-align: left;
+    max-width: 540px;
+    gap: 24px;
+  }
+
+  .landing-badge {
+    align-self: flex-start;
+    padding: 9px 22px;
+  }
+
+  .landing-badge span {
+    font-size: 0.9rem;
+  }
+
+  .landing-header {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  .landing-title {
+    font-size: clamp(3.2rem, 5vw, 4.4rem);
+    line-height: 1.12;
+  }
+
+  .landing-tagline {
+    font-size: 1.12rem;
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  /* Kích hoạt CTA Desktop */
+  .landing-desktop-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .landing-desktop-cta .btn-landing-cta {
+    width: auto;
+    min-width: 250px;
+    min-height: 54px;
+    font-size: 1.1rem;
+    padding: 14px 34px;
+  }
+
+  /* Cột Phải: Khối lụa mềm nghệ thuật */
+  .landing-hero-center {
+    flex: 1;
+    min-height: 440px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .silk-blob-hero {
+    width: clamp(320px, 32vw, 420px);
+    height: clamp(320px, 32vw, 420px);
+    box-shadow: 0 32px 70px -12px rgba(74, 133, 119, 0.35),
+                0 16px 36px -8px rgba(244, 201, 214, 0.45);
+  }
+
+  /* Ẩn footer nút bấm ở dưới cùng của Mobile */
+  .landing-mobile-footer {
+    display: none;
+  }
 }

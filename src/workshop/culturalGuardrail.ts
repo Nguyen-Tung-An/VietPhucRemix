@@ -12,7 +12,7 @@ export const MOCK_HERITAGE_DATA: Record<string, CulturalGuardrailResult> = {
     dang_chup_anh:
       'Nghiêng người 45 độ, một tay khẽ xòe quạt giấy xếp ngang ngực, tay kia buông tà tự nhiên, ánh mắt nhìn nghiêng thanh thoát đón ánh sáng tự nhiên trên tà áo.',
     cau_chuyen_di_san:
-      'Sắc Đỏ Son trên tà áo Ngũ Thân tượng trưng cho hành Hỏa và điềm cát tường nghênh tân. Năm cúc áo cài chéo nhắc nhở đạo hiếu và nếp nhà bền vững qua từng mùa Tết.'
+      'Sắc Hồng Phấn Sen trên tà áo Ngũ Thân tượng trưng cho sự thanh nhã và cốt cách tươi mới. Năm cúc áo cài chéo nhắc nhở đạo hiếu và nếp nhà bền vững qua từng mùa Tết.'
   },
   grad: {
     is_culturally_accurate: true,
@@ -24,7 +24,7 @@ export const MOCK_HERITAGE_DATA: Record<string, CulturalGuardrailResult> = {
     dang_chup_anh:
       'Đứng thẳng người đoan chính, hai tay nâng nhẹ cuốn kỷ yếu hoặc hoa tươi ngang eo, tà áo ngũ thân buông thẳng tắp tạo phom dáng cao ráo và vững chãi.',
     cau_chuyen_di_san:
-      'Màu Xanh Chàm thâm trầm như ngọc bích biểu trưng cho tri thức uyên bác và chí hướng thanh vân. Khoác áo ngũ thân trong ngày cử nghiệp là lời khẳng định bản lĩnh cội nguồn kiêu hãnh của Gen Z.'
+      'Màu Xanh Ngọc Đậm thâm trầm như ngọc bích biểu trưng cho tri thức uyên bác và chí hướng thanh vân. Khoác áo ngũ thân trong ngày cử nghiệp là lời khẳng định bản lĩnh cội nguồn kiêu hãnh của Gen Z.'
   },
   temple: {
     is_culturally_accurate: true,
@@ -36,7 +36,7 @@ export const MOCK_HERITAGE_DATA: Record<string, CulturalGuardrailResult> = {
     dang_chup_anh:
       'Hai tay chắp nhẹ trước ngực hoặc bước chậm khoan thai bên thềm đá rêu phong, nếp tà buông mềm mại giữ vẻ trang nghiêm, tĩnh tại và an nhiên.',
     cau_chuyen_di_san:
-      'Nâu Cánh Gián là gam màu trầm mặc của đất mẹ và cửa thiền, gợi nhắc tâm hồn hướng thiện và đức khiêm cung. Cấu trúc năm thân khép kín ôm lấy cơ thể tượng trưng cho sự chở che của tổ tiên và tứ thân phụ mẫu.'
+      'Rêu Đêm và Vàng Đất là gam màu trầm mặc của đất mẹ và cửa thiền, gợi nhắc tâm hồn hướng thiện và đức khiêm cung. Cấu trúc năm thân khép kín ôm lấy cơ thể tượng trưng cho sự chở che của tổ tiên và tứ thân phụ mẫu.'
   }
 };
 

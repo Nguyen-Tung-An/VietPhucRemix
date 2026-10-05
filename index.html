@@ -34,666 +34,444 @@
        1. THANH ĐIỀU HƯỚNG CỐ ĐỊNH (#main-nav-bar)
        ============================================================ -->
   <header id="main-nav-bar">
-    <div class="nav-brand-group" id="btn-nav-home" title="Về Tiền Sảnh 3D">
-      <span class="seal-badge">印</span>
-      <span class="nav-logo-text">VIỆT Y REMIX</span>
-    </div>
+    <div class="nav-inner-container">
+      <div class="nav-brand-group" id="btn-nav-home" title="Về Tiền Sảnh Việt Y Remix">
+        <span class="seal-badge">印</span>
+        <span class="nav-logo-text">VIỆT Y REMIX</span>
+      </div>
 
-    <nav class="nav-tabs-group" aria-label="Điều hướng chính">
-      <button type="button" class="nav-tab-btn active" id="tab-create">
-        <span>🎨</span> Xưởng Phối
-      </button>
-      <button type="button" class="nav-tab-btn" id="tab-discover">
-        <span>📜</span> Khám Phá
-      </button>
-    </nav>
+      <nav class="nav-tabs-group" aria-label="Điều hướng chính">
+        <button type="button" class="nav-tab-btn active" id="tab-create">
+          <span>🎨</span> Xưởng Phối
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab-discover">
+          <span>📜</span> Khám Phá
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab-lookbook">
+          <span>📖</span> Lookbook
+        </button>
+      </nav>
 
-    <div class="nav-actions-right">
-      <button type="button" class="nav-wardrobe-btn" id="btn-open-wardrobe" title="Mở Tủ Đồ Yêu Thích">
-        <span>👘</span> Tủ Đồ (<span id="wardrobe-count">0</span>)
-      </button>
-      <div class="nav-stats-pill" id="nav-pref-pill" title="Gu thời trang yêu thích">
-        <span>✨ Gu:</span> <strong id="nav-pref-text">Đỏ Son • Ngũ Thân</strong>
+      <div class="nav-actions-right">
+        <!-- Hai nút kiểm thử nhanh 2 trạng thái Tải & Lỗi dùng chung toàn app -->
+        <div class="nav-feedback-demo-group" role="group" aria-label="Kiểm thử trạng thái Lụa Thanh">
+          <button type="button" class="nav-demo-btn" id="btn-demo-loading" title="Xem thử Trạng Thái Đang Tải (Concept Lụa Thanh)">
+            <span>⏳ Tải</span>
+          </button>
+          <button type="button" class="nav-demo-btn" id="btn-demo-error" title="Xem thử Trạng Thái Lỗi (Concept Lụa Thanh)">
+            <span>⚠️ Lỗi</span>
+          </button>
+        </div>
+
+        <button type="button" class="nav-wardrobe-btn" id="btn-open-wardrobe" title="Mở Tủ Đồ Yêu Thích">
+          <span>👘</span> Tủ Đồ (<span id="wardrobe-count">0</span>)
+        </button>
+        <div class="nav-stats-pill" id="nav-pref-pill" title="Gu thời trang yêu thích">
+          <span>✨ Gu:</span> <strong id="nav-pref-text">Hồng Sen • Ngũ Thân</strong>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- ============================================================
-       SECTION 1: MÀN HÌNH MỞ ĐẦU 3D (#landing-scene)
+       MÀN HÌNH MỞ ĐẦU (LANDING SCREEN) — CONCEPT "LỤA THANH"
+       Hai phiên bản bố cục:
+       - Mobile: Dọc (Stacked), Nút nằm trong 350px đáy (Thumb Zone)
+       - Desktop: 2 Cột Split Hero (Trái: Text & CTA, Phải: Khối lụa mềm "thở")
        ============================================================ -->
-  <section id="landing-scene">
-    <!-- WebGL Canvas Three.js -->
-    <div id="three-canvas-container"></div>
+  <section id="landing-scene" aria-label="Màn hình mở đầu Việt Y Remix">
+    <div class="landing-content-frame">
+      <!-- Cột Trái (Desktop) / Cụm Trên (Mobile) -->
+      <div class="landing-text-column">
+        <div class="landing-badge">
+          <span>Di sản mềm mại · Gen Z remix</span>
+        </div>
 
-    <!-- Header Tiêu Đề -->
-    <header class="landing-header">
-      <div class="brand-eyebrow">
-        <span class="seal-badge">印</span>
-        <span>Di Sản Đa Chất Liệu</span>
+        <header class="landing-header">
+          <h1 class="landing-title">Việt Y Remix</h1>
+          <p class="landing-tagline">
+            Không gian phối Việt phục đương đại từ cảm hứng tơ lụa mềm mại dành cho thế hệ mới.
+          </p>
+        </header>
+
+        <!-- CTA dành riêng cho giao diện Desktop (nằm ngay dưới chữ theo F-Pattern) -->
+        <div class="landing-desktop-cta">
+          <button id="btn-enter" class="btn-primary btn-landing-cta" aria-label="Remix ngay">
+            <span>Remix ngay</span>
+            <svg class="btn-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+          <span class="landing-desktop-hint">Trải nghiệm không gian phối Việt phục đương đại</span>
+        </div>
       </div>
-      <h1 class="brand-title">VIỆT Y REMIX</h1>
-      <p class="brand-sub">Sơn Mài • Giấy Dó • Cổ Phục Gen Z</p>
-    </header>
 
-    <!-- Nút Bấm Chính CTA: Khai Ấn Phối Đồ -->
-    <footer class="landing-footer">
-      <p class="landing-hint">Chạm / Di chuyển để nghiêng Ấn Tín Hoa Sen</p>
-      <button id="btn-enter" class="btn-gom-su" aria-label="Khai Ấn Phối Đồ">
-        <span class="seal-badge">吉</span>
-        <span>KHAI ẤN PHỐI ĐỒ</span>
-      </button>
-    </footer>
+      <!-- Cột Phải (Desktop) / Khối Giữa (Mobile): Điểm nhấn thị giác chính duy nhất -->
+      <div class="landing-hero-center">
+        <div class="silk-blob-hero" role="img" aria-label="Điểm nhấn tơ lụa mềm mại">
+          <div class="silk-blob-inner-sheen"></div>
+        </div>
+      </div>
+
+      <!-- Nút CTA Mobile: Nằm trong vùng ngón tay cái (< 350px đáy màn hình) -->
+      <footer class="landing-mobile-footer">
+        <button id="btn-enter-mobile" class="btn-primary btn-landing-cta" aria-label="Remix ngay">
+          <span>Remix ngay</span>
+          <svg class="btn-arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </footer>
+    </div>
   </section>
 
   <!-- ============================================================
-       SECTION 2: XƯỞNG PHỐI ĐỒ (#create-scene)
+       SECTION 2: MÀN HÌNH PHỐI ĐỒ TƯƠNG TÁC — CONCEPT "LỤA THANH"
+       Bố cục dọc 2 tầng chuẩn Mobile-First (60% Stage / 40% Bento Sheet)
        ============================================================ -->
-  <section id="create-scene">
-    <div class="create-layout">
+  <section id="create-scene" aria-label="Màn hình phối đồ tương tác">
+    <div class="workshop-container">
 
-      <!-- 1. KHUNG HIỂN THỊ ĐỒ HỌA VECTOR 2D (#garment-canvas) -->
-      <main id="garment-canvas">
-        <nav class="canvas-topbar">
-          <button id="btn-back-landing" class="btn-return" title="Trở lại Ấn Tín">
-            <span>‹</span> Về Tiền Sảnh
-          </button>
-          
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div class="canvas-badge" id="current-garment-title">Áo Ngũ Thân Lập Lĩnh</div>
-            <!-- Con dấu thẩm định văn hóa góc màn hình -->
-            <div id="cultural-status-badge" class="cultural-status-badge cultural-seal-safe">
-              <span>✓ Việt Y Khớp Quy Chuẩn</span>
-            </div>
-            <!-- Nút bấm dạng trát giấy cuộn -->
-            <button id="btn-scroll-warning" class="btn-scroll-warning" title="Mở trát thẩm định văn hóa">
-              <span>📜 Đọc Trát Cảnh Báo Di Sản</span>
-            </button>
+      <!-- ==========================================================
+           TẦNG TRÊN (KHOẢNG 60% CHIỀU CAO MÀN HÌNH)
+           Khung hiển thị lớn hình minh họa trang phục đang được phối
+           ========================================================== -->
+      <header class="workshop-stage-tier" id="garment-canvas">
+        <div class="stage-top-bar">
+          <div class="stage-title-pill">
+            <span class="stage-title-text" id="current-garment-title">Áo Ngũ Thân Lập Lĩnh</span>
           </div>
+          <button type="button" id="btn-view-result" class="btn-view-result" title="Xem kết quả phối đồ hoàn chỉnh" aria-label="Xem kết quả phối đồ">
+            <span>✨ Xem Kết Quả</span>
+          </button>
+        </div>
 
-          <button id="btn-toggle-sound" class="btn-return" title="Chuông gốm">
-            <span>🔔</span> Âm Chuông
+        <!-- Khung Vector SVG minh họa trang phục High-Fashion Croquis -->
+        <div class="stage-svg-wrapper" id="artwork-display-frame">
+          <svg id="nguthan-svg" class="croquis-svg-art" viewBox="0 0 500 680" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Ánh sáng bóng mờ lướt trên tơ lụa -->
+              <linearGradient id="silk-sheen-sheer" x1="20%" y1="0%" x2="80%" y2="100%">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.32" />
+                <stop offset="40%" stop-color="#FFFFFF" stop-opacity="0.08" />
+                <stop offset="70%" stop-color="#000000" stop-opacity="0.0" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0.18" />
+              </linearGradient>
+
+              <!-- Cúc gốm mạ vàng đất 3D -->
+              <radialGradient id="button-gold-subtle" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#FFF8E0" />
+                <stop offset="50%" stop-color="#C9A66B" />
+                <stop offset="100%" stop-color="#7A5338" />
+              </radialGradient>
+            </defs>
+
+            <!-- Vầng hào quang ngọc sương nhẹ phía sau -->
+            <ellipse cx="250" cy="340" rx="200" ry="260" fill="rgba(74, 133, 119, 0.06)" />
+
+            <!-- LỚP THÂN & QUẦN SUÔNG TRẮNG NGÀ -->
+            <g id="layer-body">
+              <!-- Quần lụa suông rủ thẳng qua cổ chân -->
+              <path d="M 218,440 C 214,495 208,565 204,635 L 244,637 C 246,575 248,505 249,440 Z" fill="#F5F2EB" stroke="#D3CDC2" stroke-width="1.2" />
+              <path d="M 251,440 C 252,505 254,575 256,637 L 296,635 C 292,565 286,495 282,440 Z" fill="#FAF7F0" stroke="#D3CDC2" stroke-width="1.2" />
+              <!-- Hài vải thêu thanh mảnh -->
+              <ellipse cx="224" cy="638" rx="14" ry="5" fill="#1C2B26" />
+              <ellipse cx="276" cy="638" rx="14" ry="5" fill="#1C2B26" />
+              <path d="M 218,638 Q 224,635 230,638" stroke="#C9A66B" stroke-width="1" fill="none" />
+              <path d="M 270,638 Q 276,635 282,638" stroke="#C9A66B" stroke-width="1" fill="none" />
+
+              <!-- Cổ cao thanh thoát & Vai xuôi tự nhiên -->
+              <path d="M 239,138 C 239,155 238,168 236,182 L 264,182 C 262,168 261,155 261,138 Z" fill="#F9E2CD" stroke="#5E402D" stroke-width="1.2" />
+              <ellipse cx="250" cy="116" rx="22" ry="28" fill="#F9E2CD" stroke="#5E402D" stroke-width="1.4" />
+              <!-- Nét mặt thanh tú tối giản -->
+              <path d="M 241,114 Q 244,112 247,114" stroke="#4A2E1B" stroke-width="1.2" fill="none" stroke-linecap="round" />
+              <path d="M 253,114 Q 256,112 259,114" stroke="#4A2E1B" stroke-width="1.2" fill="none" stroke-linecap="round" />
+              <path d="M 250,118 L 249,124 L 252,124" stroke="#8C6246" stroke-width="1.2" fill="none" stroke-linecap="round" />
+              <path d="M 246,131 Q 250,134 254,131" stroke="#F4C9D6" stroke-width="1.6" fill="none" stroke-linecap="round" />
+            </g>
+
+            <!-- LỚP KIỂU TÓC (ĐỔI ĐỘNG) -->
+            <g id="layer-hairstyle">
+              <!-- Mặc định: Búi cài trâm -->
+              <g id="hair-bui-tram">
+                <path d="M 228,116 C 228,84 272,84 272,116 C 272,96 228,96 228,116 Z" fill="#1C2B26" />
+                <circle cx="250" cy="80" r="16" fill="#1C2B26" stroke="#0E1714" stroke-width="1" />
+                <line x1="234" y1="78" x2="266" y2="78" stroke="#C9A66B" stroke-width="2.2" stroke-linecap="round" />
+                <circle cx="266" cy="78" r="3" fill="#F4C9D6" stroke="#C9A66B" stroke-width="1" />
+              </g>
+              <!-- Xõa tự nhiên -->
+              <g id="hair-xoa-dai" style="display: none;">
+                <path d="M 226,116 C 226,82 274,82 274,116 C 274,96 226,96 226,116 Z" fill="#1C2B26" />
+                <path d="M 226,116 C 220,150 216,190 220,230 L 230,230 C 228,190 232,150 236,120 Z" fill="#1C2B26" />
+                <path d="M 274,116 C 280,150 284,190 280,230 L 270,230 C 272,190 268,150 264,120 Z" fill="#1C2B26" />
+              </g>
+              <!-- Vấn khăn lụa -->
+              <g id="hair-van-khan" style="display: none;">
+                <ellipse cx="250" cy="98" rx="28" ry="14" fill="#4A8577" stroke="#1C2B26" stroke-width="1.2" />
+                <ellipse cx="250" cy="95" rx="24" ry="10" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1" />
+              </g>
+              <!-- Buộc thấp -->
+              <g id="hair-buoc-thap" style="display: none;">
+                <path d="M 228,116 C 228,84 272,84 272,116 C 272,96 228,96 228,116 Z" fill="#1C2B26" />
+                <path d="M 246,140 C 246,165 244,195 242,215 L 248,215 C 250,195 252,165 250,140 Z" fill="#1C2B26" />
+                <circle cx="248" cy="144" r="3" fill="#C9A66B" />
+              </g>
+            </g>
+
+            <!-- LỚP ÁO CHÍNH (ĐỔI MÀU TỨC THÌ THEO VAR VÀ FILL) -->
+            <g id="layer-main-garment">
+              <!-- Áo Ngũ Thân Lập Lĩnh (Mặc định) -->
+              <g id="garment-nguthan-group">
+                <!-- Thân tà áo rủ dài -->
+                <path id="nguthan-body-fill" d="M 216,182 C 190,190 178,215 168,260 L 140,430 L 360,430 L 332,260 C 322,215 310,190 284,182 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
+                <path d="M 216,182 C 190,190 178,215 168,260 L 140,430 L 360,430 L 332,260 C 322,215 310,190 284,182 Z" fill="url(#silk-sheen-sheer)" />
+                <!-- Tay chẽn thuôn nhẹ -->
+                <path id="nguthan-left-sleeve" d="M 190,188 L 130,250 L 120,360 L 148,355 L 168,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
+                <path id="nguthan-right-sleeve" d="M 310,188 L 370,250 L 380,360 L 352,355 L 332,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
+                <!-- Cổ áo lập lĩnh ôm khít & Cổ lót trắng ngà -->
+                <rect id="collar-outer" x="234" y="162" width="32" height="24" rx="4" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
+                <rect x="238" y="164" width="24" height="5" rx="1.5" fill="#F5F2EB" />
+                <!-- Nẹp áo uốn S-Curve chéo sang nách phải -->
+                <path d="M 250,186 Q 272,216 280,248 L 280,350" fill="none" stroke="#1C2B26" stroke-width="1.8" />
+                <!-- 5 Cúc gốm mạ vàng đất 3D tượng trưng Ngũ Thường -->
+                <circle cx="250" cy="186" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
+                <circle cx="264" cy="208" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
+                <circle cx="274" cy="235" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
+                <circle cx="280" cy="272" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
+                <circle cx="280" cy="316" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
+              </g>
+
+              <!-- Áo Bà Ba Nam Bộ (Hiện khi chọn phong cách mộc mạc) -->
+              <g id="garment-baba-group" style="display: none;">
+                <path id="baba-body-fill" d="M 216,184 Q 250,202 284,184 L 305,255 L 320,400 L 180,400 L 195,255 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
+                <path d="M 216,184 Q 250,202 284,184 L 305,255 L 320,400 L 180,400 L 195,255 Z" fill="url(#silk-sheen-sheer)" />
+                <path id="baba-left-sleeve" d="M 190,192 L 132,250 L 124,355 L 152,352 L 172,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
+                <path id="baba-right-sleeve" d="M 310,192 L 368,250 L 376,355 L 348,352 L 328,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
+                <line x1="250" y1="198" x2="250" y2="395" stroke="#1C2B26" stroke-width="1.8" />
+                <circle cx="250" cy="225" r="3.2" fill="url(#button-gold-subtle)" />
+                <circle cx="250" cy="260" r="3.2" fill="url(#button-gold-subtle)" />
+                <circle cx="250" cy="295" r="3.2" fill="url(#button-gold-subtle)" />
+                <circle cx="250" cy="330" r="3.2" fill="url(#button-gold-subtle)" />
+                <rect x="205" y="340" width="28" height="32" rx="3" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.4" id="baba-pocket-left" />
+                <rect x="267" y="340" width="28" height="32" rx="3" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.4" id="baba-pocket-right" />
+              </g>
+            </g>
+
+            <!-- LỚP PHỤ KIỆN (BẬT / TẮT TỨC THÌ) -->
+            <g id="layer-accessories">
+              <!-- 1. Quạt giấy xếp thư pháp (Mặc định) -->
+              <g id="acc-fan" transform="translate(365, 345) rotate(-18) scale(0.95)">
+                <ellipse cx="0" cy="25" rx="8" ry="6" fill="#F9E2CD" />
+                <line x1="0" y1="25" x2="-48" y2="-55" stroke="#4A2E1B" stroke-width="2.5" />
+                <line x1="0" y1="25" x2="-20" y2="-65" stroke="#4A2E1B" stroke-width="2" />
+                <line x1="0" y1="25" x2="20" y2="-65" stroke="#4A2E1B" stroke-width="2" />
+                <line x1="0" y1="25" x2="48" y2="-55" stroke="#4A2E1B" stroke-width="2.5" />
+                <path d="M -54,-45 Q 0,-85 54,-45 L 34,-20 Q 0,-45 -34,-20 Z" fill="#F5F2EB" stroke="#C9A66B" stroke-width="1.5" />
+                <path d="M -22,-52 Q 0,-64 22,-50" stroke="#4A8577" stroke-width="2" fill="none" />
+                <circle cx="0" cy="25" r="4" fill="#C9A66B" />
+              </g>
+
+              <!-- 2. Khăn rằn sông nước -->
+              <g id="acc-scarf" style="display: none;">
+                <path d="M 230,180 Q 250,205 270,180" stroke="#F5F2EB" stroke-width="14" fill="none" stroke-linecap="round" />
+                <path d="M 228,185 L 218,370 L 234,370 L 244,195 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1.2" />
+                <path d="M 272,185 L 282,370 L 266,370 L 256,195 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1.2" />
+                <line x1="222" y1="230" x2="236" y2="230" stroke="#1C2B26" stroke-width="2" />
+                <line x1="220" y1="270" x2="234" y2="270" stroke="#1C2B26" stroke-width="2" />
+                <line x1="219" y1="310" x2="233" y2="310" stroke="#1C2B26" stroke-width="2" />
+                <line x1="264" y1="230" x2="278" y2="230" stroke="#1C2B26" stroke-width="2" />
+                <line x1="266" y1="270" x2="280" y2="270" stroke="#1C2B26" stroke-width="2" />
+                <line x1="267" y1="310" x2="281" y2="310" stroke="#1C2B26" stroke-width="2" />
+              </g>
+
+              <!-- 3. Trâm cài gốm vàng -->
+              <g id="acc-hairpin" style="display: none;">
+                <line x1="225" y1="74" x2="275" y2="74" stroke="#C9A66B" stroke-width="3" stroke-linecap="round" />
+                <circle cx="275" cy="74" r="5" fill="#4A8577" stroke="#C9A66B" stroke-width="1.5" />
+                <path d="M 275,79 Q 272,94 276,104" stroke="#C9A66B" stroke-width="1.5" fill="none" />
+              </g>
+
+              <!-- 4. Túi gấm thêu hoa -->
+              <g id="acc-pouch" style="display: none;" transform="translate(145, 340)">
+                <path d="M -15,-20 Q 0,-30 15,-20 L 18,15 Q 0,25 -18,15 Z" fill="#4A8577" stroke="#C9A66B" stroke-width="1.5" />
+                <line x1="0" y1="-25" x2="0" y2="-45" stroke="#C9A66B" stroke-width="1.5" />
+                <circle cx="0" cy="0" r="4" fill="#F4C9D6" />
+              </g>
+            </g>
+          </svg>
+        </div>
+      </header>
+
+      <!-- ==========================================================
+           TẦNG DƯỚI (KHOẢNG 40% CHIỀU CAO — BẢNG NỔI / BENTO SHEET)
+           - Mobile: Nằm trọn trong Thumb Zone (< 350px từ đáy màn hình)
+           - Desktop: Studio Panel bên phải, đầy đủ thông tin tùy biến
+           ========================================================== -->
+      <footer class="workshop-sheet-tier" role="region" aria-label="Bảng tùy chọn phối đồ">
+        
+        <!-- Tiêu đề Studio dành riêng cho Desktop -->
+        <div class="workshop-desktop-header">
+          <h3 class="workshop-desktop-title">Studio Phối Đồ Lụa Thanh</h3>
+          <p class="workshop-desktop-sub">Tùy biến sắc lụa, phụ kiện và kiểu dáng chuẩn phong vị đương đại</p>
+        </div>
+
+        <!-- 4 Nhóm tùy chọn dạng Tab/Chip ngang (Hick's Law <= 4 nhóm) -->
+        <nav class="sheet-tabs-nav" role="tablist" aria-label="Nhóm tùy chọn phối đồ">
+          <button type="button" class="sheet-tab-btn active" id="tab-opt-colors" data-target="panel-colors" role="tab" aria-selected="true">
+            <span>🎨</span> Màu sắc
+          </button>
+          <button type="button" class="sheet-tab-btn" id="tab-opt-accessories" data-target="panel-accessories" role="tab" aria-selected="false">
+            <span>✨</span> Phụ kiện
+          </button>
+          <button type="button" class="sheet-tab-btn" id="tab-opt-hairstyles" data-target="panel-hairstyles" role="tab" aria-selected="false">
+            <span>💇</span> Kiểu tóc
+          </button>
+          <button type="button" class="sheet-tab-btn" id="tab-opt-styles" data-target="panel-styles" role="tab" aria-selected="false">
+            <span>🎭</span> Phong cách
           </button>
         </nav>
 
-        <!-- Khung chứa Vector SVG Line-Art Áo Ngũ Thân & Ảnh Lookbook AI -->
-        <div class="svg-artwork-container" id="artwork-display-frame">
-          <!-- Huy hiệu tem Giấy Dó phác thảo (hiển thị khi Fallback hoặc kích hoạt phác thảo) -->
-          <div id="vintage-sketch-badge" class="vintage-sketch-badge">
-            <span class="seal-badge" style="width:20px; height:20px; font-size:0.65rem; background:#B22222; border-color:#E5A93C;">図</span>
-            <span>BẢN PHÁC THẢO NGHỆ THUẬT GIẤY DÓ</span>
-          </div>
-
-          <svg id="nguthan-svg" viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <!-- Hào quang phong nền sơn mài hoài cổ -->
-              <radialGradient id="halo-glow" cx="50%" cy="42%" r="52%">
-                <stop offset="0%" stop-color="#3d2116" stop-opacity="0.85" />
-                <stop offset="65%" stop-color="#1c110b" stop-opacity="0.5" />
-                <stop offset="100%" stop-color="#120c08" stop-opacity="0" />
-              </radialGradient>
-
-              <!-- Ánh sáng bóng mờ lướt trên bề mặt lụa gấm -->
-              <linearGradient id="silk-sheen-croquis" x1="15%" y1="0%" x2="85%" y2="100%">
-                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.25" />
-                <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.06" />
-                <stop offset="65%" stop-color="#000000" stop-opacity="0.0" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0.22" />
-              </linearGradient>
-
-              <!-- Gradient cúc gốm nổi khối 3D dát vàng -->
-              <radialGradient id="button-gold-grad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#FFF8E0" />
-                <stop offset="45%" stop-color="#E5A93C" />
-                <stop offset="85%" stop-color="#A56E1E" />
-                <stop offset="100%" stop-color="#603B0A" />
-              </radialGradient>
-
-              <!-- Hoa văn chìm trên thân áo -->
-              <pattern id="pat-damask" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M 0,16 Q 16,0 32,16 Q 16,32 0,16 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.9" />
-                <circle cx="16" cy="16" r="2.2" fill="rgba(229,169,60,0.12)" />
-              </pattern>
-
-              <!-- Pattern hoa văn động AI (Seamless Jacquard) -->
-              <pattern id="dynamic-ai-pattern" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path id="dynamic-ai-pattern-path" d="M 10,30 Q 30,10 50,30 Q 30,50 10,30 Z" fill="none" stroke="#E5A93C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-              </pattern>
-            </defs>
-
-            <!-- LỚP HÀO QUANG & KHUNG TRÒN VĂN HÓA -->
-            <circle cx="250" cy="350" r="225" fill="url(#halo-glow)" />
-            <circle cx="250" cy="350" r="205" fill="none" stroke="rgba(229, 169, 60, 0.22)" stroke-width="1.2" stroke-dasharray="6,6" />
-            <circle cx="250" cy="350" r="209" fill="none" stroke="rgba(229, 169, 60, 0.1)" stroke-width="0.8" />
-
-            <!-- <g id="layer-body">: DÁNG NGƯỜI MẪU FASHION CROQUIS TỐI GIẢN CAO CẤP -->
-            <g id="layer-body">
-              <!-- Quần lụa suông rộng màu Trắng Bưởi (#F5F2EB) rủ thẳng thanh nhã -->
-              <g id="body-trousers">
-                <!-- Ống quần trái rủ mềm -->
-                <path d="M 218,450 C 212,505 206,575 201,642 L 244,645 C 246,585 248,515 249,450 Z" fill="#F5F2EB" stroke="#D5CEC2" stroke-width="1" />
-                <!-- Ống quần phải rủ mềm -->
-                <path d="M 251,450 C 252,515 254,585 256,645 L 299,642 C 294,575 288,505 282,450 Z" fill="#ECE8DD" stroke="#D5CEC2" stroke-width="1" />
-                <!-- Đường gân nếp rủ thẳng tắp của lụa tơ tằm -->
-                <path d="M 224,510 C 220,555 216,605 214,642" stroke="rgba(190, 180, 168, 0.6)" stroke-width="1.2" fill="none" />
-                <path d="M 276,510 C 280,555 284,605 286,642" stroke="rgba(190, 180, 168, 0.6)" stroke-width="1.2" fill="none" />
-                <!-- Đôi hài nhung cổ truyền thanh mảnh -->
-                <ellipse cx="222" cy="647" rx="14" ry="5.5" fill="#24160E" />
-                <ellipse cx="278" cy="647" rx="14" ry="5.5" fill="#24160E" />
-                <path d="M 216,647 Q 222,644 228,647" stroke="#E5A93C" stroke-width="1.2" fill="none" />
-                <path d="M 272,647 Q 278,644 284,647" stroke="#E5A93C" stroke-width="1.2" fill="none" />
-              </g>
-
-              <!-- Cổ cao thanh thoát & Vai xuôi tự nhiên phong cách thời trang -->
-              <path d="M 239,142 C 239,158 238,172 236,186 L 264,186 C 262,172 261,158 261,142 Z" fill="#F9E2CD" stroke="#5E402D" stroke-width="1.2" />
-
-              <!-- Gương mặt thanh tú Sleek Haute Couture Minimalist -->
-              <path d="M 236,110 C 236,92 264,92 264,110 C 264,128 256,142 250,143 C 244,142 236,128 236,110 Z" fill="#FCE9D8" stroke="#5E402D" stroke-width="1.3" />
-
-              <!-- Tóc đen búi chignon sau gáy & trâm gốm mạ vàng -->
-              <path d="M 235,108 C 234,88 266,88 265,108 C 265,96 235,96 235,108 Z" fill="#1C1715" />
-              <!-- Búi tóc gọn sau đầu -->
-              <path d="M 238,98 C 230,90 230,76 244,74 C 258,72 268,82 266,96 Z" fill="#181311" stroke="#3D291C" stroke-width="1" />
-              <!-- Cây trâm gốm cài tóc thanh nhã vắt chéo -->
-              <line x1="228" y1="84" x2="274" y2="72" stroke="#E5A93C" stroke-width="2.2" stroke-linecap="round" />
-              <circle cx="228" cy="84" r="3.2" fill="#B22222" stroke="#E5A93C" stroke-width="1" />
-              <path d="M 227,87 Q 223,98 226,108" stroke="#B22222" stroke-width="1.4" fill="none" stroke-linecap="round" />
-
-              <!-- Nét mặt Minimalist Fashion Illustration (tinh tế, không hoạt hình) -->
-              <!-- Chân mày thanh tú -->
-              <path d="M 241,113 Q 245,110 248,112" stroke="#5E402D" stroke-width="1.4" fill="none" stroke-linecap="round" />
-              <path d="M 252,112 Q 255,110 259,113" stroke="#5E402D" stroke-width="1.4" fill="none" stroke-linecap="round" />
-              <!-- Hàng mi khép hờ sang trọng -->
-              <path d="M 242,117 Q 245,120 248,118" stroke="#362217" stroke-width="1.6" fill="none" stroke-linecap="round" />
-              <path d="M 252,118 Q 255,120 258,117" stroke="#362217" stroke-width="1.6" fill="none" stroke-linecap="round" />
-              <!-- Sống mũi thanh mảnh -->
-              <path d="M 250,118 L 249,126 L 251,126" stroke="#C49B7B" stroke-width="1.1" fill="none" stroke-linecap="round" />
-              <!-- Đôi môi phớt son đỏ hồng đoan trang -->
-              <path d="M 246,133 Q 250,135 254,133" stroke="#B22222" stroke-width="1.8" fill="none" stroke-linecap="round" />
-            </g>
-
-            <!-- <g id="layer-inner">: ÁO LÓT TRẮNG LẬP LĨNH (#F5F2EB) LÓ RA BÊN TRONG -->
-            <g id="layer-inner">
-              <!-- Cổ áo lót trắng lập lĩnh ló ra thanh nhã trên gáy và mép cổ -->
-              <path d="M 235,176 C 244,173 256,173 265,176 L 265,190 C 256,193 244,193 235,190 Z" fill="#F5F2EB" stroke="#CDC7BA" stroke-width="1.2" />
-              <!-- Mép viền cổ tay áo lót trong ló ra ở hai đầu ống tay -->
-              <line x1="164" y1="346" x2="182" y2="349" stroke="#F5F2EB" stroke-width="3.5" stroke-linecap="round" />
-              <line x1="316" y1="334" x2="330" y2="345" stroke="#F5F2EB" stroke-width="3.5" stroke-linecap="round" />
-            </g>
-
-            <!-- <g id="layer-main-garment">: CẤU TRÚC ÁO NGŨ THÂN LẬP LĨNH UỐN LƯỢN CUBIC BEZIER -->
-            <g id="layer-main-garment">
-              <!-- 1. Thân áo chính ngũ thân & 5 thân áo buông tà với Cubic Bezier sống động -->
-              <path class="garment-fabric-fill garment-flow-path" d="M 234,188 C 210,196 186,206 182,212 L 165,248 L 164,346 L 182,349 L 195,296 C 205,335 214,395 212,475 C 208,505 178,522 170,528 C 210,544 290,544 330,528 C 322,522 292,505 288,475 C 286,395 295,335 305,296 L 316,334 L 330,345 L 335,248 L 318,212 C 314,206 290,196 266,188 Z" stroke="#140F0D" stroke-width="2" stroke-linejoin="round" />
-
-              <!-- 2. Tay áo raglan lượn sóng tự nhiên bên trái (Left raglan sleeve) -->
-              <path class="garment-fabric-fill" d="M 234,188 C 210,198 186,208 182,212 L 165,248 L 164,346 L 182,349 L 195,296 C 190,268 190,238 194,212 Z" stroke="#140F0D" stroke-width="1.8" filter="brightness(0.94)" />
-
-              <!-- 3. Tay áo raglan lượn sóng bên phải uốn theo thế gập khuỷu tay (Right sleeve bent gracefully) -->
-              <path class="garment-fabric-fill" d="M 266,188 C 290,198 314,208 318,212 L 335,248 L 330,345 L 316,334 L 305,296 C 310,268 310,238 306,212 Z" stroke="#140F0D" stroke-width="1.8" filter="brightness(0.94)" />
-
-              <!-- 4. Lớp vân lụa hoa chìm gấm (Damask Brocade Pattern) -->
-              <path d="M 234,188 C 210,196 186,206 182,212 L 165,248 L 164,346 L 182,349 L 195,296 C 205,335 214,395 212,475 C 208,505 178,522 170,528 C 210,544 290,544 330,528 C 322,522 292,505 288,475 C 286,395 295,335 305,296 L 316,334 L 330,345 L 335,248 L 318,212 C 314,206 290,196 266,188 Z" fill="url(#pat-damask)" pointer-events="none" />
-
-              <!-- 5. Lớp phản chiếu ánh sáng lướt qua sợi tơ tằm (Silk lighting gradient sheen) -->
-              <path d="M 234,188 C 210,196 186,206 182,212 L 165,248 L 164,346 L 182,349 L 195,296 C 205,335 214,395 212,475 C 208,505 178,522 170,528 C 210,544 290,544 330,528 C 322,522 292,505 288,475 C 286,395 295,335 305,296 L 316,334 L 330,345 L 335,248 L 318,212 C 314,206 290,196 266,188 Z" fill="url(#silk-sheen-croquis)" pointer-events="none" style="mix-blend-mode: overlay;" />
-
-              <!-- 6. Nếp gấp vải lụa mềm mại ở khuỷu tay và thắt lưng (Silk drapery physics) -->
-              <path d="M 184,242 C 176,275 178,310 182,345" stroke="rgba(0, 0, 0, 0.25)" stroke-width="1.4" fill="none" stroke-linecap="round" />
-              <path d="M 314,242 C 324,272 322,305 318,335" stroke="rgba(0, 0, 0, 0.25)" stroke-width="1.4" fill="none" stroke-linecap="round" />
-              <!-- Nếp vặn sóng lụa nhẹ vùng eo -->
-              <path d="M 226,312 C 240,324 260,324 274,312" stroke="rgba(0, 0, 0, 0.2)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-              <path d="M 220,340 C 238,354 262,354 280,340" stroke="rgba(0, 0, 0, 0.15)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-              <path d="M 216,420 C 235,440 265,440 284,420" stroke="rgba(0, 0, 0, 0.12)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-
-              <!-- 7. Cổ áo Lập Lĩnh đứng đoan trang ôm khít cổ -->
-              <path class="garment-fabric-fill" d="M 233,178 C 244,174 256,174 267,178 L 267,196 C 256,200 244,200 233,196 Z" stroke="#140F0D" stroke-width="1.8" />
-
-              <!-- 8. Nẹp áo vắt chéo uốn lượn S-Curve mềm mại từ cổ xuống nách phải và tà buông dọc -->
-              <path d="M 251,195 C 262,208 273,228 276,258 L 276,330 C 276,370 274,440 272,528" fill="none" stroke="#140F0D" stroke-width="2.2" stroke-linecap="round" />
-              <!-- Đường chỉ may mí trang nhã của nẹp hữu -->
-              <path d="M 253,196 C 264,209 275,229 278,258 L 278,330 C 278,370 276,440 274,528" fill="none" stroke="rgba(229, 169, 60, 0.45)" stroke-width="1" stroke-dasharray="3,2" />
-
-              <!-- 9. Lớp phủ hoa văn AI động (Seamless Jacquard) -->
-              <path id="layer-pattern-overlay" d="M 234,188 C 210,196 186,206 182,212 L 165,248 L 164,346 L 182,349 L 195,296 C 205,335 214,395 212,475 C 208,505 178,522 170,528 C 210,544 290,544 330,528 C 322,522 292,505 288,475 C 286,395 295,335 305,296 L 316,334 L 330,345 L 335,248 L 318,212 C 314,206 290,196 266,188 Z" fill="url(#dynamic-ai-pattern)" style="mix-blend-mode: multiply; opacity: 0.38; display: none;" pointer-events="none" />
-
-              <!-- 10. Lớp huy hiệu ngực áo trung tâm (Central Emblem) -->
-              <g id="layer-emblem" transform="translate(250, 275)" style="display: none; pointer-events: none;"></g>
-            </g>
-
-            <!-- <g id="layer-buttons">: 5 CÚC GỐM MẠ VÀNG (#E5A93C) NỔI KHỐI 3D (NHÂN - LỄ - NGHĨA - TRÍ - TÍN) -->
-            <g id="layer-buttons">
-              <!-- Cúc 1: Ngay mép cổ lập lĩnh (Nhân) -->
-              <circle cx="264" cy="188" r="4.2" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1.1" />
-              <circle cx="263" cy="187" r="1.3" fill="#FFFFFF" opacity="0.85" />
-
-              <!-- Cúc 2: Xương quai xanh phải (Lễ) -->
-              <circle cx="270" cy="214" r="4.2" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1.1" />
-              <circle cx="269" cy="213" r="1.3" fill="#FFFFFF" opacity="0.85" />
-
-              <!-- Cúc 3: Cạnh nách / ngực phải (Nghĩa) -->
-              <circle cx="275" cy="246" r="4.2" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1.1" />
-              <circle cx="274" cy="245" r="1.3" fill="#FFFFFF" opacity="0.85" />
-
-              <!-- Cúc 4: Sườn phải hạ ngực (Trí) -->
-              <circle cx="276" cy="285" r="4.2" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1.1" />
-              <circle cx="275" cy="284" r="1.3" fill="#FFFFFF" opacity="0.85" />
-
-              <!-- Cúc 5: Ngang thắt lưng eo (Tín) -->
-              <circle cx="275" cy="328" r="4.2" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1.1" />
-              <circle cx="274" cy="327" r="1.3" fill="#FFFFFF" opacity="0.85" />
-            </g>
-
-            <!-- <g id="layer-accessory-fan">: PHỤ KIỆN QUẠT GIẤY XẾP THƯ PHÁP (MẶC ĐỊNH HIỂN THỊ) -->
-            <g id="layer-accessory-fan" style="display: block;">
-              <!-- Bàn tay người mẫu thon thả ngọc ngà khẽ nâng quạt -->
-              <g transform="translate(305, 342)">
-                <ellipse cx="6" cy="2" rx="7" ry="5" fill="#FCE9D8" stroke="#5E402D" stroke-width="1.1" />
-                <path d="M 0,0 C 4,-4 14,-2 16,3 C 14,7 6,6 0,4 Z" fill="#FCE9D8" stroke="#5E402D" stroke-width="1" />
-              </g>
-
-              <!-- Nan quạt & Mảnh quạt giấy dó gấp nếp -->
-              <g transform="translate(312, 335) rotate(-24)">
-                <!-- Nan tre gỗ mun -->
-                <line x1="0" y1="22" x2="-38" y2="-45" stroke="#3D291C" stroke-width="2.2" stroke-linecap="round" />
-                <line x1="0" y1="22" x2="-18" y2="-55" stroke="#3D291C" stroke-width="1.8" stroke-linecap="round" />
-                <line x1="0" y1="22" x2="8" y2="-55" stroke="#3D291C" stroke-width="1.8" stroke-linecap="round" />
-                <line x1="0" y1="22" x2="36" y2="-45" stroke="#3D291C" stroke-width="2.2" stroke-linecap="round" />
-
-                <!-- Mảnh giấy dó xòe hình cánh buồm thanh tao -->
-                <path d="M -42,-34 C -10,-68 15,-66 42,-34 L 28,-14 C 10,-32 -8,-32 -26,-14 Z" fill="#F7F3E9" stroke="#D3CCC0" stroke-width="1.4" />
-                <!-- Thư pháp đỏ son trên quạt giấy -->
-                <path d="M -16,-38 Q 0,-48 16,-36" stroke="#B22222" stroke-width="2.4" fill="none" stroke-linecap="round" />
-                <circle cx="0" cy="-42" r="2.2" fill="#E5A93C" />
-
-                <!-- Chốt quạt vàng & Tua rua lụa đỏ son mềm rủ -->
-                <circle cx="0" cy="22" r="3.5" fill="url(#button-gold-grad)" stroke="#5A3A0B" stroke-width="1" />
-                <path d="M 0,25 C -4,45 2,65 0,82" stroke="#B22222" stroke-width="2.2" fill="none" stroke-linecap="round" />
-                <circle cx="0" cy="84" r="2.8" fill="#E5A93C" />
-              </g>
-            </g>
-
-            <!-- <g id="layer-accessory-scarf">: KHĂN RẰN NAM BỘ SỌC KẺ CA-RÔ -->
-            <g id="layer-accessory-scarf" style="display: none;">
-              <!-- Dải khăn rằn ôm quanh gáy áo -->
-              <path d="M 230,178 C 244,192 256,192 270,178" stroke="#24160E" stroke-width="14" fill="none" stroke-linecap="round" />
-              <path d="M 230,178 C 244,192 256,192 270,178" stroke="#F5F2EB" stroke-width="11" fill="none" stroke-linecap="round" />
-              <!-- Vạt khăn rằn bên trái buông dài -->
-              <path d="M 231,180 L 225,385 L 240,385 L 243,188 Z" fill="#F5F2EB" stroke="#24160E" stroke-width="1.3" />
-              <!-- Vạt khăn rằn bên phải buông dài -->
-              <path d="M 269,180 L 275,395 L 260,395 L 257,188 Z" fill="#F5F2EB" stroke="#24160E" stroke-width="1.3" />
-
-              <!-- Các sọc kẻ ca-rô truyền thống của khăn rằn -->
-              <line x1="226" y1="215" x2="242" y2="215" stroke="#24160E" stroke-width="2.2" />
-              <line x1="227" y1="240" x2="241" y2="240" stroke="#24160E" stroke-width="2.2" />
-              <line x1="227" y1="270" x2="241" y2="270" stroke="#24160E" stroke-width="2.2" />
-              <line x1="226" y1="305" x2="240" y2="305" stroke="#24160E" stroke-width="2.2" />
-              <line x1="226" y1="340" x2="240" y2="340" stroke="#24160E" stroke-width="2.2" />
-              <line x1="225" y1="370" x2="240" y2="370" stroke="#24160E" stroke-width="2.2" />
-
-              <line x1="258" y1="215" x2="274" y2="215" stroke="#24160E" stroke-width="2.2" />
-              <line x1="259" y1="240" x2="273" y2="240" stroke="#24160E" stroke-width="2.2" />
-              <line x1="259" y1="270" x2="273" y2="270" stroke="#24160E" stroke-width="2.2" />
-              <line x1="260" y1="305" x2="274" y2="305" stroke="#24160E" stroke-width="2.2" />
-              <line x1="260" y1="340" x2="274" y2="340" stroke="#24160E" stroke-width="2.2" />
-              <line x1="260" y1="375" x2="275" y2="375" stroke="#24160E" stroke-width="2.2" />
-
-              <!-- Tua rua đuôi khăn rằn -->
-              <line x1="227" y1="385" x2="227" y2="398" stroke="#24160E" stroke-width="1.4" />
-              <line x1="233" y1="385" x2="233" y2="398" stroke="#24160E" stroke-width="1.4" />
-              <line x1="238" y1="385" x2="238" y2="398" stroke="#24160E" stroke-width="1.4" />
-              <line x1="262" y1="395" x2="262" y2="408" stroke="#24160E" stroke-width="1.4" />
-              <line x1="267" y1="395" x2="267" y2="408" stroke="#24160E" stroke-width="1.4" />
-              <line x1="273" y1="395" x2="273" y2="408" stroke="#24160E" stroke-width="1.4" />
-            </g>
-
-            <!-- <g id="layer-accessory-non">: NÓN QUAI THAO BẮC BỘ VÀNH TRÒN THANH THOÁT -->
-            <g id="layer-accessory-non" style="display: none;" transform="translate(170, 320)">
-              <ellipse cx="0" cy="0" rx="58" ry="52" fill="#E8DFC8" stroke="#8E7859" stroke-width="2.2" />
-              <ellipse cx="0" cy="0" rx="48" ry="43" fill="#EFE8D7" stroke="#BAA78A" stroke-width="1.1" />
-              <circle cx="0" cy="0" r="15" fill="#D3C3A1" stroke="#8E7859" stroke-width="1.4" />
-              <!-- Quai thao tơ hồng buông rủ 2 dải duyên dáng -->
-              <path d="M -26,26 C -40,95 -38,135 -16,165" stroke="#D9383A" stroke-width="2.8" fill="none" stroke-linecap="round" />
-              <path d="M 26,26 C 40,95 38,135 16,165" stroke="#D9383A" stroke-width="2.8" fill="none" stroke-linecap="round" />
-              <circle cx="-16" cy="168" r="3.5" fill="#E5A93C" />
-              <circle cx="16" cy="168" r="3.5" fill="#E5A93C" />
-            </g>
-
-            <!-- LỚP PHÁ CÁCH GEN Z: KÍNH RÂM RUNWAY & TAI NGHE METALLIC QUANH CỔ -->
-            <g id="layer-genz-style">
-              <!-- Kính râm gọng vàng mắt mèo siêu mảnh -->
-              <path d="M 238,114 L 248,114 L 246,120 L 239,120 Z" fill="#140F0D" stroke="#E5A93C" stroke-width="1.2" rx="1.5" />
-              <path d="M 252,114 L 262,114 L 261,120 L 254,120 Z" fill="#140F0D" stroke="#E5A93C" stroke-width="1.2" rx="1.5" />
-              <line x1="248" y1="115" x2="252" y2="115" stroke="#E5A93C" stroke-width="1.2" />
-              <!-- Tai nghe over-ear metallic gold vắt hờ quanh cổ -->
-              <path d="M 232,176 C 244,198 256,198 268,176" stroke="#E5A93C" stroke-width="3.5" fill="none" stroke-linecap="round" />
-              <rect x="227" y="170" width="7" height="13" rx="2.5" fill="#181311" stroke="#E5A93C" stroke-width="1.2" />
-              <rect x="266" y="170" width="7" height="13" rx="2.5" fill="#181311" stroke="#E5A93C" stroke-width="1.2" />
-            </g>
-          </svg>
-
-          <!-- Khung hiển thị Ảnh Lookbook AI hoàn thiện -->
-          <div id="ai-lookbook-container" class="ai-lookbook-container" style="display: none;">
-            <img id="ai-lookbook-img" class="ai-lookbook-img" src="" alt="Lookbook Thời Trang AI" />
-            <div class="ai-lookbook-badge">
-              <span class="seal-badge" style="width:20px; height:20px; font-size:0.65rem; background:#B22222; border-color:#E5A93C;">光</span>
-              <span>LOOKBOOK AI • DÁT VÀNG SƠN MÀI</span>
-            </div>
-            <div class="ai-lookbook-actions">
-              <button type="button" id="btn-toggle-sketch-view" class="btn-lookbook-action" title="Xem lại bản phác thảo SVG">
-                <span>📐 Xem Phác Thảo</span>
-              </button>
-              <button type="button" id="btn-download-lookbook" class="btn-lookbook-action" title="Tải ảnh về máy">
-                <span>💾 Tải Ảnh Về</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- ============================================================
-               3. HIỆU ỨNG CHỜ MÀI VÓC (.polishing-overlay / #polishing-overlay)
-               ============================================================ -->
-          <div id="polishing-overlay" class="polishing-overlay" aria-live="assertive">
-            <div class="polishing-gold-sweep"></div>
-            <div class="polishing-ambient-glow"></div>
-            <div class="polishing-content">
-              <div class="polishing-seal-wrapper">
-                <div class="polishing-artisan-seal">磨</div>
-                <div class="polishing-gold-orbit"></div>
-              </div>
-              <h4 class="polishing-title">MÀI VÓC THỜI TRANG AI</h4>
-              <p class="polishing-quote">"Nghệ nhân đang mài vóc lớp sơn, làm nét thần thái thời trang..."</p>
-              <div class="polishing-gold-line"></div>
-              <div class="polishing-loading-pill">
-                <span class="polishing-dot"></span>
-                <span class="polishing-dot"></span>
-                <span class="polishing-dot"></span>
-                <span id="polishing-step-text">Đang mài phẳng nét cọ sơn mài...</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1. NÚT BẤM SÁNG TẠO LOOKBOOK AI (#btn-generate-ai-image) -->
-        <div class="ai-fashion-cta-wrapper">
-          <button type="button" id="btn-generate-ai-image" class="btn-generate-ai-image" aria-label="Tạo ảnh Lookbook AI">
-            <span class="seal-badge seal-do" style="width:28px; height:28px; font-size:0.85rem; border-color:#E5A93C;">📸</span>
-            <span class="btn-ai-text">TẠO ẢNH LOOKBOOK AI</span>
-            <span class="btn-ai-sparkle">✨</span>
-          </button>
+        <!-- Container chứa các nhóm lựa chọn con (Tối đa 5-6 lựa chọn/nhóm) -->
+        <div class="sheet-sub-options-container">
           
-          <!-- Thanh gạt chuyển đổi nhanh chế độ xem khi có ảnh Lookbook -->
-          <div id="artwork-mode-pills" class="artwork-mode-pills" style="display: none;">
-            <button type="button" class="mode-pill active" id="btn-mode-sketch">📐 Bản Phác Thảo SVG</button>
-            <button type="button" class="mode-pill" id="btn-mode-lookbook">📸 Ảnh Lookbook AI</button>
+          <!-- NHÓM 1: MÀU SẮC (5 VÒNG TRÒN MÀU XẾP NGANG / LƯỚI TRÊN DESKTOP) -->
+          <div class="sheet-options-panel active-panel" id="panel-colors" role="tabpanel">
+            <button type="button" class="sheet-color-circle active" data-color="#F4C9D6" data-name="Hồng Phấn Sen" style="background-color: #F4C9D6;" title="Hồng Phấn Sen" aria-label="Hồng Phấn Sen">
+              <span class="color-desktop-label">Hồng Phấn Sen</span>
+            </button>
+            <button type="button" class="sheet-color-circle" data-color="#4A8577" data-name="Xanh Ngọc Đậm" style="background-color: #4A8577;" title="Xanh Ngọc Đậm" aria-label="Xanh Ngọc Đậm">
+              <span class="color-desktop-label">Xanh Ngọc Đậm</span>
+            </button>
+            <button type="button" class="sheet-color-circle" data-color="#E8F3EE" data-name="Ngọc Sương" style="background-color: #E8F3EE; border: 1px solid rgba(74, 133, 119, 0.2);" title="Ngọc Sương" aria-label="Ngọc Sương">
+              <span class="color-desktop-label">Ngọc Sương</span>
+            </button>
+            <button type="button" class="sheet-color-circle" data-color="#1C2B26" data-name="Rêu Đêm" style="background-color: #1C2B26;" title="Rêu Đêm" aria-label="Rêu Đêm">
+              <span class="color-desktop-label">Rêu Đêm</span>
+            </button>
+            <button type="button" class="sheet-color-circle" data-color="#C9A66B" data-name="Vàng Đất" style="background-color: #C9A66B;" title="Vàng Đất" aria-label="Vàng Đất">
+              <span class="color-desktop-label">Vàng Đất</span>
+            </button>
           </div>
+
+          <!-- NHÓM 2: PHỤ KIỆN (5 THẺ CON) -->
+          <div class="sheet-options-panel" id="panel-accessories" role="tabpanel">
+            <button type="button" class="sheet-option-card active" data-accessory="QUAT_GIAY" aria-label="Quạt giấy">
+              <span class="sheet-option-icon">🪭</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Quạt Giấy</span>
+                <span class="sheet-option-sub">Thư pháp đoan trang</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-accessory="KHAN_RAN" aria-label="Khăn rằn">
+              <span class="sheet-option-icon">🧣</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Khăn Rằn</span>
+                <span class="sheet-option-sub">Sông nước Nam Bộ</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-accessory="TRAM_GOM" aria-label="Trâm cài">
+              <span class="sheet-option-icon">🥢</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Trâm Cài</span>
+                <span class="sheet-option-sub">Gốm dát vàng</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-accessory="TUI_GAM" aria-label="Túi gấm">
+              <span class="sheet-option-icon">👛</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Túi Gấm</span>
+                <span class="sheet-option-sub">Thêu hoa thủ công</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-accessory="NONE" aria-label="Không phụ kiện">
+              <span class="sheet-option-icon">✕</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Không Chọn</span>
+                <span class="sheet-option-sub">Tối giản thanh thoát</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- NHÓM 3: KIỂU TÓC (4 THẺ CON) -->
+          <div class="sheet-options-panel" id="panel-hairstyles" role="tabpanel">
+            <button type="button" class="sheet-option-card active" data-hair="BUI_TRAM" aria-label="Búi cài trâm">
+              <span class="sheet-option-icon">🎀</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Búi Trâm</span>
+                <span class="sheet-option-sub">Quý phái đoan trang</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-hair="XOA_DAI" aria-label="Xõa tự nhiên">
+              <span class="sheet-option-icon">🍃</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Xõa Dài</span>
+                <span class="sheet-option-sub">Thanh thoát dịu dàng</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-hair="VAN_KHAN" aria-label="Vấn khăn lụa">
+              <span class="sheet-option-icon">👑</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Vấn Khăn</span>
+                <span class="sheet-option-sub">Cung đình trang nhã</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-hair="BUOC_THAP" aria-label="Buộc thấp nhã">
+              <span class="sheet-option-icon">💫</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Buộc Thấp</span>
+                <span class="sheet-option-sub">Hiện đại nhẹ nhàng</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- NHÓM 4: PHONG CÁCH (4 THẺ CON) -->
+          <div class="sheet-options-panel" id="panel-styles" role="tabpanel">
+            <button type="button" class="sheet-option-card active" data-style="THANH_TAO" aria-label="Thanh tao">
+              <span class="sheet-option-icon">🌸</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Thanh Tao</span>
+                <span class="sheet-option-sub">Chuẩn mực cung đình</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-style="MOC_MAC" aria-label="Mộc mạc">
+              <span class="sheet-option-icon">🌾</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Mộc Mạc</span>
+                <span class="sheet-option-sub">Bình dị thôn dã</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-style="DUONG_DAI" aria-label="Đương đại">
+              <span class="sheet-option-icon">✨</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Đương Đại</span>
+                <span class="sheet-option-sub">Phá cách Gen Z</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-style="LE_HOI" aria-label="Lễ hội">
+              <span class="sheet-option-icon">🏮</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Lễ Hội</span>
+                <span class="sheet-option-sub">Rực rỡ trang trọng</span>
+              </div>
+            </button>
+          </div>
+
         </div>
 
-        <!-- 1. THẺ THÔNG TIN GIẤY DÓ (#heritage-info-card) -->
-        <article id="heritage-info-card" class="the-giay-do" aria-live="polite">
-          <!-- Trạng thái Đang tải (Loading State): Hiệu ứng mài vóc mờ nhẹ -->
-          <div class="heritage-loading-overlay" id="heritage-loading-overlay">
-            <div class="lacquer-shimmer"></div>
-            <div class="loading-seal">研</div>
-            <p class="loading-text">Nghệ nhân AI đang tra cứu di sản...</p>
+        <!-- Thẻ Ghi Chú Di Sản Lụa Thanh dành riêng cho Desktop Studio -->
+        <div class="workshop-desktop-guidance">
+          <div class="guidance-top-row">
+            <span class="guidance-badge">💡 Góc Nhìn Di Sản</span>
+            <span class="guidance-status" id="workshop-guidance-status">✓ Hài Hòa Chuẩn Mực</span>
           </div>
-
-          <!-- Header Thẻ Giấy Dó -->
-          <header class="heritage-card-header">
-            <div class="heritage-header-left">
-              <span class="seal-badge seal-do">誌</span>
-              <div>
-                <h3 class="heritage-title">THẺ DI SẢN GIẤY DÓ</h3>
-                <p class="heritage-subtitle" id="heritage-context-tag">Áo Ngũ Thân • Dạo Phố Tết • Đỏ Son</p>
-              </div>
-            </div>
-            <div class="ai-status-pill" title="Mô hình Gemini Flash phục dựng tri thức Việt Y">
-              <span class="ai-pulse-dot"></span>
-              <span>Gemini Flash</span>
-            </div>
-          </header>
-
-          <!-- 3 Khu Vực Thông Tin Chính -->
-          <div class="heritage-card-grid">
-            <!-- 1. Gợi ý Tóc & Trang điểm -->
-            <div class="heritage-info-item">
-              <div class="info-item-label">
-                <span class="info-item-icon">💄</span>
-                <span>Gợi ý Tóc & Trang điểm</span>
-              </div>
-              <div class="info-item-body fade-in" id="info-makeup">
-                Tóc búi cao điểm xuyết trâm hoa mai đồng hoặc vấn khăn lụa gấm; trang điểm sắc cam đào ấm áp, điểm xuyết son đỏ tươi cánh sen rực rỡ đón xuân tài lộc.
-              </div>
-            </div>
-
-            <!-- 2. Dáng Chụp Ảnh Tôn Phom -->
-            <div class="heritage-info-item">
-              <div class="info-item-label">
-                <span class="info-item-icon">📸</span>
-                <span>Dáng Chụp Ảnh Tôn Phom</span>
-              </div>
-              <div class="info-item-body fade-in" id="info-pose">
-                Đứng nghiêng 45 độ, một tay khẽ che quạt giấy xếp ngang ngực, tay kia buông tà tự nhiên, ánh mắt nhìn nghiêng thanh thoát đón ánh sáng tự nhiên.
-              </div>
-            </div>
-
-            <!-- 3. Câu Chuyện Di Sản -->
-            <div class="heritage-info-item">
-              <div class="info-item-label">
-                <span class="info-item-icon">📜</span>
-                <span>Câu Chuyện Di Sản</span>
-              </div>
-              <div class="info-item-body fade-in" id="info-story">
-                Sắc Đỏ Son trên tà áo Ngũ Thân tượng trưng cho hành Hỏa và điềm cát tường nghênh tân. Năm cúc áo cài chéo nhắc nhở đạo hiếu và nếp nhà bền vững qua từng mùa Tết.
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer con dấu mộc thư pháp -->
-          <footer class="heritage-card-footer">
-            <span>Việt Y Đương Đại • Trí Tuệ Văn Hóa</span>
-            <span class="heritage-stamp">五身立領 • 錦衣</span>
-          </footer>
-        </article>
-
-      </main>
-
-      <!-- 2. BẢNG ĐIỀU KHIỂN THÔNG MINH (#control-panel) -->
-      <aside id="control-panel">
-        <header class="panel-header-sticky">
-          <div class="panel-heading">
-            <span class="seal-badge">藝</span>
-            <span>BẢNG ĐIỀU KHIỂN VIỆT Y</span>
-          </div>
-        </header>
-
-        <div class="panel-body-content">
-          <!-- A. Thẻ Bối Cảnh 1-Chạm (Event Anchors) -->
-          <section>
-            <div class="section-title">
-              <span>A. Bối Cảnh 1-Chạm (Event Anchors)</span>
-              <span style="font-size: 0.68rem; opacity: 0.7;">Chạm đổi tức thì</span>
-            </div>
-            <div class="anchor-cards-grid">
-              <!-- Thẻ 1: Dạo Phố Tết (Mặc định) -->
-              <div class="anchor-card active" data-anchor="tet" id="anchor-tet">
-                <span class="anchor-icon">🌸</span>
-                <span class="anchor-label">Dạo Phố Tết</span>
-                <span class="anchor-meta">Đỏ Son • Quạt</span>
-              </div>
-
-              <!-- Thẻ 2: Lễ Tốt Nghiệp -->
-              <div class="anchor-card" data-anchor="grad" id="anchor-grad">
-                <span class="anchor-icon">🎓</span>
-                <span class="anchor-label">Lễ Tốt Nghiệp</span>
-                <span class="anchor-meta">Xanh Chàm</span>
-              </div>
-
-              <!-- Thẻ 3: Đi Chùa Cầu An -->
-              <div class="anchor-card" data-anchor="temple" id="anchor-temple">
-                <span class="anchor-icon">🛕</span>
-                <span class="anchor-label">Đi Chùa Cầu An</span>
-                <span class="anchor-meta">Cánh Gián • Quạt</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- B. Bảng Chọn Màu Vải Gốm Sứ (Color Swatches) -->
-          <section>
-            <div class="section-title">
-              <span>B. Màu Vải Gốm Sứ (Color Swatches)</span>
-              <span id="active-color-name" style="color: var(--vang-hoang-cuc); font-weight: 600;">Đỏ Son</span>
-            </div>
-            <div class="swatches-row">
-              <!-- Đỏ Son (#B22222) -->
-              <div class="ceramic-swatch active" data-color="#B22222" data-name="Đỏ Son">
-                <div class="swatch-disc" style="background: #B22222;"></div>
-                <span class="swatch-name">Đỏ Son</span>
-              </div>
-
-              <!-- Xanh Chàm (#1D3557) -->
-              <div class="ceramic-swatch" data-color="#1D3557" data-name="Xanh Chàm">
-                <div class="swatch-disc" style="background: #1D3557;"></div>
-                <span class="swatch-name">Xanh Chàm</span>
-              </div>
-
-              <!-- Vàng Hoàng Cúc (#E5A93C) -->
-              <div class="ceramic-swatch" data-color="#E5A93C" data-name="Hoàng Cúc">
-                <div class="swatch-disc" style="background: #E5A93C;"></div>
-                <span class="swatch-name">Hoàng Cúc</span>
-              </div>
-
-              <!-- Nâu Cánh Gián (#2B1A12) -->
-              <div class="ceramic-swatch" data-color="#2B1A12" data-name="Cánh Gián">
-                <div class="swatch-disc" style="background: #2B1A12;"></div>
-                <span class="swatch-name">Cánh Gián</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- C. Thanh Trượt Vi Mô (Micro-sliders) -->
-          <section>
-            <div class="section-title">
-              <span>C. Thanh Trượt Vi Mô (Micro-Sliders)</span>
-            </div>
-            <div class="slider-group">
-              <!-- Slider 1: Sắc độ Trầm Nhã <---> Rực Rỡ -->
-              <div class="slider-item">
-                <div class="slider-labels">
-                  <span id="label-sat-left">Trầm Nhã (50%)</span>
-                  <span class="active-tag" id="label-sat-val">100%</span>
-                  <span id="label-sat-right">Rực Rỡ (100%)</span>
-                </div>
-                <input type="range" class="micro-range" id="slider-saturation" min="50" max="100" value="100" step="1">
-              </div>
-
-              <!-- Slider 2: Phong cách Truyền Thống <---> Phá Cách Gen Z -->
-              <div class="slider-item">
-                <div class="slider-labels">
-                  <span class="active-tag" id="label-style-left">Truyền Thống</span>
-                  <span id="label-style-right">Phá Cách Gen Z</span>
-                </div>
-                <input type="range" class="micro-range" id="slider-style" min="0" max="100" value="0" step="1">
-              </div>
-            </div>
-          </section>
-
-          <!-- D. Thẩm Định Cổ Phục & Phụ Kiện (Cultural Guardrail) -->
-          <section>
-            <div class="section-title">
-              <span>D. Cổ Phục & Phụ Kiện (Thẩm Định)</span>
-              <span style="font-size: 0.68rem; color: #E5A93C;">Thử phối phá cách</span>
-            </div>
-            
-            <!-- Chọn Phom Áo -->
-            <p style="font-size: 0.72rem; color: rgba(245, 242, 235, 0.7); margin-bottom: 6px; text-transform: uppercase;">1. Phom Dáng Cổ Phục:</p>
-            <div class="selector-pills-grid" style="margin-bottom: 12px;">
-              <div class="selector-pill-card active" data-garment="AO_NGU_THAN" id="pill-garment-nguthan">
-                <span class="selector-pill-icon">👘</span>
-                <div>
-                  <div class="selector-pill-name">Áo Ngũ Thân</div>
-                  <div class="selector-pill-meta">Lập lĩnh 5 cúc</div>
-                </div>
-              </div>
-              <div class="selector-pill-card" data-garment="AO_BA_BA" id="pill-garment-baba">
-                <span class="selector-pill-icon">👕</span>
-                <div>
-                  <div class="selector-pill-name">Áo Bà Ba</div>
-                  <div class="selector-pill-meta">Nam Bộ dân dã</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Chọn Phụ Kiện -->
-            <p style="font-size: 0.72rem; color: rgba(245, 242, 235, 0.7); margin-bottom: 6px; text-transform: uppercase;">2. Phụ Kiện Đi Kèm:</p>
-            <div class="selector-pills-grid" style="grid-template-columns: repeat(3, 1fr);">
-              <div class="selector-pill-card active" data-accessory="QUAT_GIAY" id="pill-acc-quat">
-                <span class="selector-pill-icon">🪭</span>
-                <div>
-                  <div class="selector-pill-name">Quạt Giấy</div>
-                  <div class="selector-pill-meta">Chuẩn Ngũ Thân</div>
-                </div>
-              </div>
-              <div class="selector-pill-card" data-accessory="KHAN_RAN" id="pill-acc-khanran">
-                <span class="selector-pill-icon">🧣</span>
-                <div>
-                  <div class="selector-pill-name">Khăn Rằn</div>
-                  <div class="selector-pill-meta">Nam Bộ</div>
-                </div>
-              </div>
-              <div class="selector-pill-card" data-accessory="NON_QUAI_THAO" id="pill-acc-non">
-                <span class="selector-pill-icon">👒</span>
-                <div>
-                  <div class="selector-pill-name">Quai Thao</div>
-                  <div class="selector-pill-meta">Bắc Bộ</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- E. KHU VỰC NHẬP TỪ KHÓA CẢM HỨNG (MODULE SÁNG TẠO HOA VĂN AI) -->
-          <section id="pattern-input-section">
-            <div class="pattern-header">
-              <div class="pattern-header-title">
-                <span>✨</span>
-                <span>SÁNG TẠO HOA VĂN AI</span>
-              </div>
-              <!-- 2 Nút chuyển chế độ phủ (Toggle Tabs) -->
-              <div class="pattern-mode-tabs">
-                <button type="button" class="pattern-mode-tab active" data-mode="SEAMLESS_JACQUARD" id="tab-mode-seamless">Phủ Gấm Chìm</button>
-                <button type="button" class="pattern-mode-tab" data-mode="CENTRAL_EMBLEM" id="tab-mode-emblem">Huy Hiệu Ngực</button>
-              </div>
-            </div>
-
-            <!-- Ô nhập từ khóa cảm hứng & Nút Thêu -->
-            <div class="pattern-input-group">
-              <input type="text" id="pattern-keyword" placeholder="Nhập cảm xúc (vd: chiều mưa Huế, khát vọng)..." />
-              <button type="button" id="btn-generate-pattern" title="Gọi Nghệ nhân AI sinh hoa văn di sản">
-                <span>✨</span> Thêu Hoa Văn AI
-              </button>
-            </div>
-
-            <p id="pattern-story-display" class="pattern-story-text"></p>
-
-            <!-- Kho hoa văn cá nhân (Saved Ceramic Pattern Beads) -->
-            <div class="saved-patterns-box">
-              <div class="saved-patterns-header">
-                <span>Kho Hoa Văn Cá Nhân</span>
-                <span id="saved-pattern-count" style="color: #8B1E0F;">(3 mẫu sẵn)</span>
-              </div>
-              <div id="saved-pattern-list">
-                <!-- Sẽ được render động từ localStorage & danh sách mặc định -->
-              </div>
-            </div>
-          </section>
-
-          <!-- Thẻ Giới Thiệu Áo Ngũ Thân -->
-          <article class="the-giay-do lore-card">
-            <h3 class="lore-card-title">ÁO NGŨ THÂN LẬP LĨNH</h3>
-            <p class="lore-card-body">
-              Biểu tượng y phục văn minh do Định vương Nguyễn Phúc Khoát định hình năm 1744. Thiết kế 5 cúc tượng trưng cho <strong>Ngũ Thường</strong> (Nhân - Lễ - Nghĩa - Trí - Tín), kết hợp vạt con ôm sát giữ nề nếp đoan chính và linh hồn dân tộc.
-            </p>
-          </article>
+          <p class="guidance-text" id="workshop-cultural-note">
+            Tà ngũ thân lụa mềm kết hợp cùng quạt giấy xếp tạo nên phong thái nho nhã, tôn lên nét đoan trang của cổ phục Việt.
+          </p>
         </div>
-      </aside>
+
+      </footer>
 
     </div>
   </section>
@@ -732,38 +510,374 @@
   </aside>
 
   <!-- ============================================================
-       SECTION 3: MÀN HÌNH KHÁM PHÁ THẺ SƠN MÀI (#discover-scene)
+       MÀN HÌNH KẾT QUẢ — CONCEPT "LỤA THANH"
+       Bố cục 3 lớp xếp chồng (Progressive Disclosure):
+       - LỚP 1: Hình ảnh kết quả lớn + Badge góc trên
+       - LỚP 2: Khung cảnh báo văn hóa (chỉ hiện NẾU có cảnh báo)
+       - LỚP 3: Thẻ tri thức văn hóa (hé lộ khi bấm / vuốt lên)
+       - Chân màn hình: 2 nút "Lưu vào Lookbook" (chính) & "Phối lại" (phụ)
+       - Hai phiên bản tối ưu riêng biệt cho Mobile và Desktop
        ============================================================ -->
-  <section id="discover-scene">
-    <div class="discover-header-sub">
-      <h2 class="discover-heading">
-        <span class="seal-badge">閱</span>
-        <span>KHÁM PHÁ VIỆT Y OUTFITS</span>
-      </h2>
-      <p class="discover-hint">Vuốt Phải (❤️ Thích) • Vuốt Trái (✕ Bỏ Qua) • Vuốt Lên (🔄 Remix)</p>
+  <section id="result-scene" class="scene-hidden" aria-label="Màn hình kết quả phối đồ">
+    <div class="result-container">
+      
+      <!-- Nút điều hướng quay lại xưởng phối trên đỉnh -->
+      <header class="result-top-nav">
+        <button type="button" id="btn-result-back" class="btn-result-back" aria-label="Quay lại xưởng phối">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Xưởng Phối</span>
+        </button>
+        <span class="result-nav-title">Kết Quả Phối Đồ</span>
+        <div style="width: 80px;"></div>
+      </header>
+
+      <!-- Khung hiển thị chính (Mobile dọc / Desktop 2 cột Studio) -->
+      <div class="result-layout-frame">
+
+        <!-- ==========================================================
+             LỚP 1 — HÌNH ẢNH KẾT QUẢ (Luôn hiện đầu tiên, chiếm phần lớn)
+             ========================================================== -->
+        <div class="result-illustration-layer" id="result-illustration-layer">
+          <!-- Góc trên có badge nhỏ ghi phần trăm phù hợp hoặc tên bộ đồ -->
+          <div class="result-badge-top" id="result-badge-top">
+            <span class="badge-icon">✨</span>
+            <span class="badge-text" id="result-badge-text">98% Chuẩn Lụa Thanh</span>
+          </div>
+
+          <!-- Hình minh họa phối đồ hoàn chỉnh kích thước lớn -->
+          <div class="result-artwork-viewport">
+            <div id="result-croquis-display" class="result-croquis-art">
+              <!-- Render động SVG hoàn chỉnh từ outfit đang phối -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột Phải (Desktop) / Cụm Dưới (Mobile): Lớp 2, Lớp 3 và Bộ nút hành động -->
+        <div class="result-details-column">
+          
+          <div class="result-desktop-headline">
+            <h2 class="result-title" id="result-outfit-heading">Áo Ngũ Thân Lập Lĩnh</h2>
+            <p class="result-subtitle" id="result-outfit-subtitle">Bộ phục trang hoàn chỉnh theo phong vị đương đại concept Lụa Thanh</p>
+          </div>
+
+          <!-- ==========================================================
+               LỚP 2 — KHUNG CẢNH BÁO VĂN HÓA (Chỉ hiện NẾU có cảnh báo, nằm ngay dưới hình)
+               Nền Vàng Đất nhạt, viền 1px Vàng Đất, icon nhỏ bên trái, tối đa 1-2 câu nhắc nhở nhẹ nhàng
+               ========================================================== -->
+          <div class="result-cultural-warning-layer" id="result-warning-layer" role="alert" style="display: none;">
+            <div class="warning-icon-box">
+              <span class="warning-icon">💡</span>
+            </div>
+            <div class="warning-text-content">
+              <h4 class="warning-title">Lưu ý hòa hợp di sản</h4>
+              <p class="warning-desc" id="result-warning-desc">
+                Phối hợp này hơi khác biệt so với truyền thống gốc, bạn có muốn xem bản chuẩn không?
+              </p>
+            </div>
+          </div>
+
+          <!-- ==========================================================
+               LỚP 3 — THẺ TRI THỨC VĂN HÓA (Ẩn mặc định, hé lộ dần khi vuốt lên hoặc bấm "Tìm hiểu thêm")
+               Nền kính mờ nhẹ, bo góc 20px phía trên, tối đa 60 từ, từ khóa quan trọng bôi đậm Vàng Đất
+               ========================================================== -->
+          <div class="result-knowledge-layer" id="result-knowledge-layer">
+            
+            <!-- Nút bật/tắt hé lộ tri thức (Progressive Disclosure Trigger) -->
+            <button type="button" id="btn-toggle-knowledge" class="btn-knowledge-toggle" aria-expanded="false" aria-controls="knowledge-content-box">
+              <span class="toggle-indicator-bar"></span>
+              <div class="toggle-title-wrap">
+                <span class="knowledge-icon">📜</span>
+                <span class="toggle-label" id="knowledge-toggle-label">Tìm hiểu thêm về di sản</span>
+              </div>
+              <svg class="chevron-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- Nội dung tri thức văn hóa hé lộ -->
+            <div class="knowledge-content-box" id="knowledge-content-box">
+              <div class="knowledge-scroll-inner">
+                <h4 class="knowledge-title" id="knowledge-title">Nguồn Gốc & Ý Nghĩa Di Sản</h4>
+                <p class="knowledge-text" id="knowledge-text">
+                  Áo ngũ thân lập lĩnh định hình từ thời chúa <strong class="kw-gold">Nguyễn Phúc Khoát</strong> tại xứ <strong class="kw-gold">Đàng Trong</strong>, kế thừa tinh hoa phục sức phương Nam. Năm thân áo tượng trưng cho tứ thân phụ mẫu và chính mình, năm hạt cúc gốm biểu trưng cho ngũ thường Nhân - Lễ - Nghĩa - Trí - Tín, toát lên phong thái đĩnh đạc và đoan trang.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==========================================================
+               CUỐI MÀN HÌNH: 2 NÚT HÀNH ĐỘNG
+               - "Lưu vào Lookbook": Nút chính (Pill Gradient)
+               - "Phối lại": Nút phụ (Viền mảnh, nền trong suốt)
+               Phân cấp thị giác rõ ràng tuyệt đối
+               ========================================================== -->
+          <footer class="result-actions-footer">
+            <button type="button" id="btn-result-save-lookbook" class="btn-primary btn-result-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span id="btn-save-lookbook-text">Lưu vào Lookbook</span>
+            </button>
+
+            <button type="button" id="btn-result-remix" class="btn-result-secondary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              <span>Phối lại</span>
+            </button>
+          </footer>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MÀN HÌNH KHÁM PHÁ — CONCEPT "LỤA THANH"
+       ============================================================ -->
+  <section id="discover-scene" aria-label="Màn hình khám phá trang phục">
+    <div class="discover-container">
+      
+      <!-- Header màn hình khám phá -->
+      <header class="discover-header-group">
+        <h2 class="discover-title">Khám Phá Việt Y</h2>
+        <p class="discover-subtitle">Chọn bối cảnh để nhận gợi ý phối đồ tơ lụa chuẩn phong vị đương đại.</p>
+      </header>
+
+      <!-- PHẦN 1 — CHỌN BỐI CẢNH (HIỆN TRƯỚC, TỐI ĐA 4 LỰA CHỌN) -->
+      <section id="discover-context-step" aria-label="Chọn bối cảnh sự kiện">
+        <div class="context-cards-grid">
+          <button type="button" class="context-card-item" data-event-key="tet" aria-label="Dạo phố Tết">
+            <div class="context-card-icon">🌸</div>
+            <span class="context-card-name">Dạo phố Tết</span>
+          </button>
+
+          <button type="button" class="context-card-item" data-event-key="grad" aria-label="Lễ tốt nghiệp">
+            <div class="context-card-icon">🎓</div>
+            <span class="context-card-name">Lễ tốt nghiệp</span>
+          </button>
+
+          <button type="button" class="context-card-item" data-event-key="festival" aria-label="Lễ hội làng">
+            <div class="context-card-icon">🏮</div>
+            <span class="context-card-name">Lễ hội làng</span>
+          </button>
+
+          <button type="button" class="context-card-item" data-event-key="yearbook" aria-label="Chụp kỷ yếu">
+            <div class="context-card-icon">📷</div>
+            <span class="context-card-name">Chụp kỷ yếu</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- PHẦN 2 — CARD-STACK GỢI Ý (HIỆN SAU KHI CHỌN BỐI CẢNH) -->
+      <section id="discover-stack-step" class="step-hidden" aria-label="Gợi ý trang phục theo bối cảnh">
+        <!-- Thanh chip bối cảnh hiện tại (Hiển thị trên Mobile) -->
+        <div class="active-context-bar mobile-context-bar">
+          <div class="active-context-tag">
+            <span id="active-context-icon">🌸</span>
+            <span id="active-context-name">Dạo phố Tết</span>
+          </div>
+          <button type="button" id="btn-change-context" class="btn-change-context" aria-label="Đổi bối cảnh">
+            Đổi bối cảnh
+          </button>
+        </div>
+
+        <!-- Khung bố cục Showroom: Mobile (1 cột dọc) / Desktop (2 cột Showroom) -->
+        <div class="discover-showroom-layout">
+          
+          <!-- Cột 1: Xấp thẻ trang phục & Nút tương tác -->
+          <div class="discover-stack-column">
+            <!-- Khung Card-Stack: 1 thẻ lớn ở giữa, 1-2 thẻ mờ xếp phía sau -->
+            <div class="card-stack-viewport" id="lacquer-card-stack" role="region" aria-label="Xấp thẻ gợi ý trang phục">
+              <!-- Render động từ swipeEngine: Thẻ chính + 1-2 thẻ mờ phía sau -->
+            </div>
+
+            <!-- 3 Nút phía dưới: Bỏ qua (trái), Xáo lại (giữa), Thích (phải) -->
+            <div class="swipe-actions-trio" role="toolbar" aria-label="Hành động thẻ">
+              <button type="button" class="btn-circle-action btn-action-dislike" id="btn-swipe-dislike" title="Bỏ qua (Phím ←)" aria-label="Bỏ qua">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                <span class="action-btn-desktop-text">Bỏ qua</span>
+              </button>
+
+              <button type="button" class="btn-circle-action btn-action-reshuffle" id="btn-swipe-remix" title="Xáo lại (Phím Space)" aria-label="Xáo lại">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                <span class="action-btn-desktop-text">Xáo lại</span>
+              </button>
+
+              <button type="button" class="btn-circle-action btn-action-like" id="btn-swipe-like" title="Thích (Phím →)" aria-label="Thích">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="action-btn-desktop-text">Yêu thích</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cột 2 (Dành cho Desktop): Hồ Sơ Cổ Phục & Di Sản Chi Tiết -->
+          <aside class="discover-desktop-dossier card-base" aria-label="Hồ sơ cổ phục và gợi ý phối">
+            
+            <div class="active-context-bar desktop-context-bar">
+              <div class="active-context-tag">
+                <span id="desktop-context-icon">🌸</span>
+                <span id="desktop-context-name">Dạo phố Tết</span>
+              </div>
+              <button type="button" class="btn-change-context" id="btn-change-context-desktop" aria-label="Đổi bối cảnh">
+                Đổi bối cảnh
+              </button>
+            </div>
+
+            <div class="dossier-card-section">
+              <span class="dossier-pill-tag">✨ Thẩm Định Di Sản</span>
+              <h3 class="dossier-outfit-title" id="dossier-outfit-title">Áo Ngũ Thân Lập Lĩnh Hồng Sen</h3>
+              <p class="dossier-outfit-desc" id="dossier-outfit-desc">
+                Tà ngũ thân lụa mềm mại dệt thủ công sắc hồng phấn sen, tôn phong thái tao nhã đón nắng mai.
+              </p>
+            </div>
+
+            <div class="dossier-specs-grid">
+              <div class="dossier-spec-box">
+                <span class="spec-label">Chất Liệu Lụa</span>
+                <span class="spec-value" id="dossier-spec-silk">Tơ Tằm Tự Nhiên</span>
+              </div>
+              <div class="dossier-spec-box">
+                <span class="spec-label">Hòa Hợp Văn Hóa</span>
+                <span class="spec-value spec-success" id="dossier-spec-harmony">✓ 100% Chuẩn Mực</span>
+              </div>
+              <div class="dossier-spec-box">
+                <span class="spec-label">Phụ Kiện Khuyên Dùng</span>
+                <span class="spec-value" id="dossier-spec-acc">Quạt Giấy Xếp</span>
+              </div>
+              <div class="dossier-spec-box">
+                <span class="spec-label">Phong Thái</span>
+                <span class="spec-value" id="dossier-spec-mood">Thanh Tao Nhã Nhặn</span>
+              </div>
+            </div>
+
+            <!-- Gợi Ý Phối Đương Đại Gen Z -->
+            <div class="dossier-remix-box">
+              <h4 class="remix-box-title">💡 Gợi Ý Phối Đương Đại (Gen Z Remix)</h4>
+              <p class="remix-box-text" id="dossier-remix-advice">
+                Kết hợp cùng guốc mộc thanh mảnh hoặc kính râm gọng ngọc để tạo điểm nhấn vừa hoài cổ vừa sành điệu.
+              </p>
+            </div>
+
+            <!-- Nút Hành Động Trực Tiếp trên Desktop -->
+            <div class="dossier-actions-footer">
+              <button type="button" id="btn-dossier-remix-now" class="btn-primary btn-dossier-action">
+                <span>🎨 Đưa Vào Xưởng Phối Ngay</span>
+              </button>
+              <div class="desktop-keyboard-shortcuts">
+                <span>Phím tắt: <strong>←</strong> Bỏ qua &nbsp;•&nbsp; <strong>Phím Cách</strong> Xáo lại &nbsp;•&nbsp; <strong>→</strong> Thích</span>
+              </div>
+            </div>
+
+          </aside>
+
+        </div>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MÀN HÌNH LOOKBOOK — CONCEPT "LỤA THANH"
+       1. Tiêu đề "Lookbook của bạn" và số lượng bộ đồ đã lưu
+       2. Lưới ảnh (grid) 2 cột (Mobile) / 4 cột (Desktop), bo góc 16px đồng nhất
+       3. Mỗi ô khi chạm có phản hồi thị giác ngay (scale nhẹ xuống rồi trở lại)
+       4. Một nút nổi (floating button) góc dưới phải, icon chia sẻ, nằm trong Thumb Zone
+       5. TRẠNG THÁI RỖNG (empty state) minh họa khung dệt trống nhẹ nhàng + nút quay lại Khám phá
+       ============================================================ -->
+  <section id="lookbook-scene" aria-label="Màn hình Lookbook của bạn">
+    <div class="lookbook-container">
+      
+      <!-- 1. Tiêu đề "Lookbook của bạn" và số lượng bộ đồ đã lưu -->
+      <header class="lookbook-header-group">
+        <div class="lookbook-title-row">
+          <h2 class="lookbook-title">Lookbook của bạn</h2>
+          <span id="lookbook-count-badge" class="lookbook-count-badge">0 bộ đồ đã lưu</span>
+        </div>
+        <p class="lookbook-subtitle">
+          Không gian lưu giữ những tà phục tơ lụa do chính bạn thẩm định và phối sắc đương đại.
+        </p>
+      </header>
+
+      <!-- 2. Lưới ảnh (Grid) 2 cột (Mobile) / 4 cột (Desktop) -->
+      <div id="lookbook-grid" class="lookbook-grid" role="region" aria-label="Danh sách trang phục Lookbook">
+        <!-- Render động từ lookbookEngine -->
+      </div>
+
+      <!-- 5. TRẠNG THÁI RỖNG (Empty State) -->
+      <div id="lookbook-empty-state" class="lookbook-empty-state" role="status" aria-label="Lookbook đang trống">
+        <div class="empty-illustration-box">
+          <svg class="empty-loom-svg" viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="loom-silk-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F4C9D6" />
+                <stop offset="100%" stop-color="#4A8577" />
+              </linearGradient>
+            </defs>
+            <!-- Vầng hào quang ngọc sương nhẹ -->
+            <ellipse cx="120" cy="110" rx="90" ry="75" fill="rgba(74, 133, 119, 0.07)" />
+            
+            <!-- Khung cửi gỗ truyền thống thanh mảnh -->
+            <rect x="45" y="30" width="150" height="150" rx="14" fill="none" stroke="#4A8577" stroke-width="2" stroke-dasharray="4 3" opacity="0.6" />
+            <line x1="45" y1="55" x2="195" y2="55" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="45" y1="155" x2="195" y2="155" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="60" y1="30" x2="60" y2="180" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
+            <line x1="180" y1="30" x2="180" y2="180" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
+
+            <!-- Các sợi tơ lụa mềm mại rủ xuống -->
+            <path d="M 80,55 Q 85,105 78,155" stroke="url(#loom-silk-gradient)" stroke-width="2" fill="none" opacity="0.85" />
+            <path d="M 100,55 Q 105,105 98,155" stroke="url(#loom-silk-gradient)" stroke-width="2.2" fill="none" opacity="0.9" />
+            <path d="M 120,55 Q 118,105 124,155" stroke="url(#loom-silk-gradient)" stroke-width="2.4" fill="none" />
+            <path d="M 140,55 Q 142,105 138,155" stroke="url(#loom-silk-gradient)" stroke-width="2.2" fill="none" opacity="0.9" />
+            <path d="M 160,55 Q 155,105 162,155" stroke="url(#loom-silk-gradient)" stroke-width="2" fill="none" opacity="0.85" />
+
+            <!-- Con thoi dệt bằng gỗ điểm chỉ vàng đất -->
+            <path d="M 90,105 Q 120,95 150,105 Q 120,115 90,105 Z" fill="#E8F3EE" stroke="#C9A66B" stroke-width="1.8" />
+            <circle cx="120" cy="105" r="4" fill="#C9A66B" />
+          </svg>
+        </div>
+
+        <div class="empty-text-wrap">
+          <h3 class="empty-title">Khung Dệt Đang Chờ Bạn</h3>
+          <p class="empty-desc">
+            Bạn chưa lưu bộ phục trang nào vào Lookbook. Hãy khám phá và thỏa sức phối những tà lụa đương đại đầu tiên nhé!
+          </p>
+        </div>
+
+        <button type="button" id="btn-empty-lookbook-discover" class="btn-primary btn-empty-discover" aria-label="Bắt đầu phối đồ ngay">
+          <span>Khám Phá Việt Y Ngay</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
     </div>
 
-    <!-- Xấp Thẻ Sơn Mài (.lacquer-card-stack) -->
-    <div class="lacquer-card-stack" id="lacquer-card-stack">
-      <!-- Các thẻ Sơn Mài sẽ được nạp động bởi Swipe Engine -->
-    </div>
-
-    <!-- Hệ thống Nút Thao Tác Nhanh bên dưới thẻ -->
-    <div class="swipe-actions-row">
-      <button type="button" class="btn-swipe-action btn-action-dislike" id="btn-swipe-dislike" title="Bỏ qua (Vuốt trái)">
-        ✕
-      </button>
-      <button type="button" class="btn-swipe-action btn-action-remix" id="btn-swipe-remix" title="Remix về Xưởng Phối (Vuốt lên)">
-        🔄
-      </button>
-      <button type="button" class="btn-swipe-action btn-action-like" id="btn-swipe-like" title="Yêu thích & Lưu vào Tủ đồ (Vuốt phải)">
-        ❤️
-      </button>
-    </div>
-
-    <!-- Nút mở Tủ Đồ Yêu Thích nhanh -->
-    <button type="button" class="btn-view-wardrobe-hint" id="btn-discover-wardrobe">
-      👘 Mở Tủ Đồ Yêu Thích (<span id="discover-wardrobe-count">0</span>)
+    <!-- 4. Nút nổi (Floating Button) góc dưới phải trong vùng an toàn ngón tay cái (< 350px từ đáy) -->
+    <button type="button" id="btn-lookbook-share" class="lookbook-floating-share-btn" title="Chia sẻ Lookbook" aria-label="Chia sẻ Lookbook">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+      <span class="share-btn-desktop-text">Chia sẻ Lookbook</span>
     </button>
   </section>
 
@@ -774,9 +888,9 @@
   <aside id="wardrobe-drawer" class="wardrobe-drawer" role="dialog" aria-modal="true" aria-labelledby="wardrobe-title">
     <div class="wardrobe-drawer-header">
       <div class="wardrobe-drawer-title-group">
-        <span class="seal-badge" style="background:#B22222; border-color:#E5A93C;">蔵</span>
+        <span class="seal-badge">蔵</span>
         <div>
-          <h3 id="wardrobe-title" class="wardrobe-heading">TỦ ĐỒ DI SẢN CỦA BẠN</h3>
+          <h3 id="wardrobe-title" class="wardrobe-heading">Tủ Đồ Di Sản Của Bạn</h3>
           <p class="wardrobe-sub">Bộ sưu tập cổ phục do chính bạn thẩm định và yêu thích</p>
         </div>
       </div>
@@ -800,6 +914,103 @@
   <div id="pref-sync-toast" class="pref-sync-toast" role="status" aria-live="polite">
     <span>🎯</span>
     <span id="pref-sync-toast-msg">Đã đồng bộ gu thẩm mỹ cá nhân của bạn vào Xưởng Phối!</span>
+  </div>
+
+  <!-- ============================================================
+       THÀNH PHẦN DÙNG CHUNG TOÀN ỨNG DỤNG — CONCEPT "LỤA THANH"
+       1. TRẠNG THÁI ĐANG TẢI (Loading State):
+          - Khối mềm hữu cơ co giãn nhẹ theo nhịp thở (@keyframes chu kỳ thật)
+          - Dòng chữ nhỏ bên dưới thông báo nhẹ nhàng
+          - Tuyệt đối không dùng spinner xoay tròn
+       2. TRẠNG THÁI LỖI (Error State):
+          - Minh họa con thoi / cuộn tơ thư thái nhẹ nhàng (CẤM ĐỎ GẮT)
+          - Dòng chữ ngắn gọn, thân thiện, không đổ lỗi cho người dùng (< 60 từ)
+          - Nút "Thử lại" dạng pill màu Xanh Ngọc Đậm (#4A8577) trong Thumb Zone
+       Hỗ trợ 2 giao diện tối ưu riêng cho Mobile và Desktop
+       ============================================================ -->
+
+  <!-- 1. OVERLAY TRẠNG THÁI ĐANG TẢI (LOADING STATE) -->
+  <div id="global-loading-overlay" class="lua-feedback-overlay" role="status" aria-live="polite" aria-busy="false" aria-label="Đang xử lý">
+    <div class="lua-feedback-box lua-loading-box">
+      <!-- Khối mềm Lụa Thanh co giãn nhẹ theo nhịp thở (@keyframes chu kỳ thật) -->
+      <div class="lua-blob-loading-stage" aria-hidden="true">
+        <div class="lua-silk-loading-blob">
+          <div class="lua-blob-silk-sheen"></div>
+          <svg class="lua-blob-inner-wave" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20,48 Q 50,25 80,48 Q 50,70 20,48 Z" stroke="rgba(255,255,255,0.75)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <circle cx="50" cy="48" r="3.2" fill="#C9A66B" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Dòng chữ nhỏ bên dưới thông báo đang xử lý, giọng điệu nhẹ nhàng -->
+      <div class="lua-loading-text-wrap">
+        <p class="lua-loading-msg">Đang dệt sắc lụa đương đại...</p>
+        <p class="lua-loading-sub">Không gian Lụa Thanh đang nắn nót từng nếp tơ...</p>
+      </div>
+
+      <button type="button" class="lua-loading-cancel-btn" style="display: none;" aria-label="Dừng xử lý">
+        <span>Dừng xử lý</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. OVERLAY TRẠNG THÁI LỖI (ERROR STATE) -->
+  <div id="global-error-overlay" class="lua-feedback-overlay" role="alertdialog" aria-modal="true" aria-labelledby="global-error-title" aria-describedby="global-error-msg">
+    <div class="lua-feedback-box lua-error-box">
+      
+      <!-- Hình minh họa con thoi / cuộn tơ lụa nghỉ ngơi nhẹ nhàng (KHÔNG DÙNG ĐỎ GẮT) -->
+      <div class="lua-error-illustration-box" aria-hidden="true">
+        <svg class="lua-error-peaceful-svg" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lua-thread-peaceful-def" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#F4C9D6" />
+              <stop offset="100%" stop-color="#4A8577" />
+            </linearGradient>
+          </defs>
+          <!-- Vầng ánh ngọc sương êm dịu làm nền -->
+          <ellipse cx="70" cy="60" rx="55" ry="45" fill="rgba(74, 133, 119, 0.08)" />
+          
+          <!-- Con thoi dệt lụa gỗ mộc viền vàng đất thanh mảnh -->
+          <path d="M 30,60 Q 70,44 110,60 Q 70,76 30,60 Z" fill="#E8F3EE" stroke="#C9A66B" stroke-width="1.8" />
+          <circle cx="70" cy="60" r="5" fill="#4A8577" />
+          <circle cx="70" cy="60" r="2.2" fill="#E8F3EE" />
+
+          <!-- Sợi chỉ tơ tằm uốn lượn thanh tao chờ kết nối lại -->
+          <path d="M 45,60 C 35,40 25,65 15,50" stroke="url(#lua-thread-peaceful-def)" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="3 3"/>
+          <path d="M 95,60 C 105,75 115,50 125,68" stroke="url(#lua-thread-peaceful-def)" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="3 3"/>
+
+          <!-- Đốm hoa sen cách điệu nhỏ -->
+          <circle cx="28" cy="38" r="3" fill="#F4C9D6" opacity="0.8" />
+          <circle cx="112" cy="82" r="3" fill="#F4C9D6" opacity="0.8" />
+        </svg>
+      </div>
+
+      <!-- Dòng chữ giải thích ngắn gọn, thân thiện, không đổ lỗi cho người dùng (< 60 từ) -->
+      <div class="lua-error-text-wrap">
+        <h3 id="global-error-title" class="lua-error-title">Tơ Lụa Tạm Lắng</h3>
+        <p id="global-error-msg" class="lua-error-msg">
+          Không gian tơ lụa tạm lắng trong giây lát. Tà lụa và sắc phục của bạn vẫn được lưu giữ an toàn, hãy thử kết nối lại nhé.
+        </p>
+      </div>
+
+      <!-- Nút "Thử lại" dạng pill, màu Xanh Ngọc Đậm (#4A8577), đặt trong vùng an toàn ngón tay cái -->
+      <div class="lua-error-actions-group">
+        <button type="button" class="btn-pill-jade lua-error-retry-btn" aria-label="Thử Lại">
+          <svg class="lua-retry-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          <span class="lua-retry-btn-text">Thử Lại</span>
+          <span class="lua-desktop-shortcut-hint" aria-hidden="true">(R / Enter)</span>
+        </button>
+
+        <button type="button" class="lua-error-close-btn" aria-label="Để sau">
+          <span>Để sau</span>
+        </button>
+      </div>
+
+    </div>
   </div>
 
   <!-- APPLICATION ENTRY POINT MODULE -->

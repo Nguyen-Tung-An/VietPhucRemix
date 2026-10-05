@@ -1,6 +1,7 @@
 /* ============================================================
    VIỆT Y REMIX - MASTER STYLESHEET AGGREGATOR
    ============================================================ */
+@import './tokens.css';
 @import './variables.css';
 @import './base.css';
 @import './components.css';
@@ -11,3 +12,5 @@
 @import './lookbook.css';
 @import './discover.css';
 @import './wardrobe.css';
+@import './result.css';
+@import './feedback.css';

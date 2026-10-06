@@ -240,19 +240,25 @@ export class ResultEngine {
    * Nút bấm mở màn hình kết quả từ Xưởng Phối kèm trạng thái Tải thẩm định
    */
   private setupTriggers(): void {
-    const btnViewResult = document.getElementById('btn-view-result');
-    btnViewResult?.addEventListener('click', () => {
-      Sound.playClick();
-      feedbackState.showLoading({
-        message: 'Đang thẩm định & kết xuất tà lụa...',
-        submessage: 'Hệ thống đối chiếu chuẩn mực di sản Lụa Thanh...',
-        allowCancel: true
-      });
+    const triggerButtons = [
+      document.getElementById('btn-view-result'),
+      document.getElementById('btn-sheet-view-result')
+    ].filter(Boolean);
 
-      setTimeout(() => {
-        feedbackState.hideLoading();
-        this.showResult();
-      }, 550);
+    triggerButtons.forEach((btn) => {
+      btn?.addEventListener('click', () => {
+        Sound.playClick();
+        feedbackState.showLoading({
+          message: 'Đang thẩm định & kết xuất tà lụa...',
+          submessage: 'Hệ thống đối chiếu chuẩn mực di sản Lụa Thanh...',
+          allowCancel: true
+        });
+
+        setTimeout(() => {
+          feedbackState.hideLoading();
+          this.showResult();
+        }, 550);
+      });
     });
   }
 

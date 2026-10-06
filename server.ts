@@ -15,10 +15,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Khởi tạo Gemini AI Client phía Server
+// Chế độ Offline / Mock Mode toàn phần nhằm ngắt hoàn toàn kết nối ngoài, tránh 429 quota
+const AI_OFFLINE_MODE = true;
+
+// Khởi tạo Gemini AI Client phía Server (chỉ nạp khi không kích hoạt OFFLINE_MODE)
 const apiKey = process.env.GEMINI_API_KEY || '';
 let ai: GoogleGenAI | null = null;
-if (apiKey) {
+if (apiKey && !AI_OFFLINE_MODE) {
   ai = new GoogleGenAI({
     apiKey: apiKey,
     httpOptions: {

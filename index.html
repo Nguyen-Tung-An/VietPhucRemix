@@ -42,34 +42,18 @@
 
       <nav class="nav-tabs-group" aria-label="Điều hướng chính">
         <button type="button" class="nav-tab-btn active" id="tab-create">
-          <span>🎨</span> Xưởng Phối
+          <span class="nav-tab-icon">🎨</span>
+          <span class="nav-tab-label">Xưởng Phối</span>
         </button>
         <button type="button" class="nav-tab-btn" id="tab-discover">
-          <span>📜</span> Khám Phá
+          <span class="nav-tab-icon">📜</span>
+          <span class="nav-tab-label">Khám Phá</span>
         </button>
         <button type="button" class="nav-tab-btn" id="tab-lookbook">
-          <span>📖</span> Lookbook
+          <span class="nav-tab-icon">📖</span>
+          <span class="nav-tab-label">Lookbook</span>
         </button>
       </nav>
-
-      <div class="nav-actions-right">
-        <!-- Hai nút kiểm thử nhanh 2 trạng thái Tải & Lỗi dùng chung toàn app -->
-        <div class="nav-feedback-demo-group" role="group" aria-label="Kiểm thử trạng thái Lụa Thanh">
-          <button type="button" class="nav-demo-btn" id="btn-demo-loading" title="Xem thử Trạng Thái Đang Tải (Concept Lụa Thanh)">
-            <span>⏳ Tải</span>
-          </button>
-          <button type="button" class="nav-demo-btn" id="btn-demo-error" title="Xem thử Trạng Thái Lỗi (Concept Lụa Thanh)">
-            <span>⚠️ Lỗi</span>
-          </button>
-        </div>
-
-        <button type="button" class="nav-wardrobe-btn" id="btn-open-wardrobe" title="Mở Tủ Đồ Yêu Thích">
-          <span>👘</span> Tủ Đồ (<span id="wardrobe-count">0</span>)
-        </button>
-        <div class="nav-stats-pill" id="nav-pref-pill" title="Gu thời trang yêu thích">
-          <span>✨ Gu:</span> <strong id="nav-pref-text">Hồng Sen • Ngũ Thân</strong>
-        </div>
-      </div>
     </div>
   </header>
 
@@ -96,13 +80,18 @@
 
         <!-- CTA dành riêng cho giao diện Desktop (nằm ngay dưới chữ theo F-Pattern) -->
         <div class="landing-desktop-cta">
-          <button id="btn-enter" class="btn-primary btn-landing-cta" aria-label="Remix ngay">
-            <span>Remix ngay</span>
-            <svg class="btn-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
+          <div class="landing-cta-row">
+            <button id="btn-enter" class="btn-primary btn-landing-cta" aria-label="Khám phá ngay">
+              <span>Khám Phá Di Sản</span>
+              <svg class="btn-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+            <button id="btn-enter-workshop" class="btn-landing-secondary btn-landing-cta-workshop" aria-label="Vào Xưởng Phối">
+              <span>🎨 Xưởng Phối Đồ</span>
+            </button>
+          </div>
           <span class="landing-desktop-hint">Trải nghiệm không gian phối Việt phục đương đại</span>
         </div>
       </div>
@@ -116,12 +105,15 @@
 
       <!-- Nút CTA Mobile: Nằm trong vùng ngón tay cái (< 350px đáy màn hình) -->
       <footer class="landing-mobile-footer">
-        <button id="btn-enter-mobile" class="btn-primary btn-landing-cta" aria-label="Remix ngay">
-          <span>Remix ngay</span>
+        <button id="btn-enter-mobile" class="btn-primary btn-landing-cta" aria-label="Khám phá ngay">
+          <span>Khám Phá Di Sản</span>
           <svg class="btn-arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
+        </button>
+        <button id="btn-enter-workshop-mobile" class="btn-landing-secondary btn-landing-cta-workshop" aria-label="Vào Xưởng Phối">
+          <span>🎨 Vào Xưởng Phối</span>
         </button>
       </footer>
     </div>
@@ -140,12 +132,15 @@
            ========================================================== -->
       <header class="workshop-stage-tier" id="garment-canvas">
         <div class="stage-top-bar">
+          <button type="button" id="btn-back-landing" class="btn-stage-back" title="Về Tiền Sảnh 3D" aria-label="Về Tiền Sảnh 3D">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Tiền Sảnh</span>
+          </button>
           <div class="stage-title-pill">
             <span class="stage-title-text" id="current-garment-title">Áo Ngũ Thân Lập Lĩnh</span>
           </div>
-          <button type="button" id="btn-view-result" class="btn-view-result" title="Xem kết quả phối đồ hoàn chỉnh" aria-label="Xem kết quả phối đồ">
-            <span>✨ Xem Kết Quả</span>
-          </button>
         </div>
 
         <!-- Khung Vector SVG minh họa trang phục High-Fashion Croquis -->
@@ -317,42 +312,71 @@
           <p class="workshop-desktop-sub">Tùy biến sắc lụa, phụ kiện và kiểu dáng chuẩn phong vị đương đại</p>
         </div>
 
-        <!-- 4 Nhóm tùy chọn dạng Tab/Chip ngang (Hick's Law <= 4 nhóm) -->
+        <!-- 5 Nhóm tùy chọn dạng Tab/Chip ngang (Dáng Áo, Màu Sắc, Phụ Kiện, Kiểu Tóc, Phong Cách) -->
         <nav class="sheet-tabs-nav" role="tablist" aria-label="Nhóm tùy chọn phối đồ">
+          <button type="button" class="sheet-tab-btn" id="tab-opt-garments" data-target="panel-garments" role="tab" aria-selected="false">
+            <span>👘</span> Dáng Áo
+          </button>
           <button type="button" class="sheet-tab-btn active" id="tab-opt-colors" data-target="panel-colors" role="tab" aria-selected="true">
-            <span>🎨</span> Màu sắc
+            <span>🎨</span> Màu Sắc
           </button>
           <button type="button" class="sheet-tab-btn" id="tab-opt-accessories" data-target="panel-accessories" role="tab" aria-selected="false">
-            <span>✨</span> Phụ kiện
+            <span>✨</span> Phụ Kiện
           </button>
           <button type="button" class="sheet-tab-btn" id="tab-opt-hairstyles" data-target="panel-hairstyles" role="tab" aria-selected="false">
-            <span>💇</span> Kiểu tóc
+            <span>💇</span> Kiểu Tóc
           </button>
           <button type="button" class="sheet-tab-btn" id="tab-opt-styles" data-target="panel-styles" role="tab" aria-selected="false">
-            <span>🎭</span> Phong cách
+            <span>🎭</span> Phong Cách
           </button>
         </nav>
 
         <!-- Container chứa các nhóm lựa chọn con (Tối đa 5-6 lựa chọn/nhóm) -->
         <div class="sheet-sub-options-container">
           
+          <!-- NHÓM 0: DÁNG ÁO (ÁO NGŨ THÂN LẬP LĨNH & ÁO BÀ BA NAM BỘ) -->
+          <div class="sheet-options-panel" id="panel-garments" role="tabpanel">
+            <button type="button" class="sheet-option-card active" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
+              <span class="sheet-option-icon">👘</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Áo Ngũ Thân</span>
+                <span class="sheet-option-sub">Lập lĩnh • Sang trọng đoan trang</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card" data-garment-select="AO_BA_BA" aria-label="Áo Bà Ba Nam Bộ">
+              <span class="sheet-option-icon">🌾</span>
+              <div class="sheet-option-texts">
+                <span class="sheet-option-label">Áo Bà Ba</span>
+                <span class="sheet-option-sub">Xẻ tà • Mộc mạc sông nước</span>
+              </div>
+            </button>
+          </div>
+
           <!-- NHÓM 1: MÀU SẮC (5 VÒNG TRÒN MÀU XẾP NGANG / LƯỚI TRÊN DESKTOP) -->
           <div class="sheet-options-panel active-panel" id="panel-colors" role="tabpanel">
-            <button type="button" class="sheet-color-circle active" data-color="#F4C9D6" data-name="Hồng Phấn Sen" style="background-color: #F4C9D6;" title="Hồng Phấn Sen" aria-label="Hồng Phấn Sen">
-              <span class="color-desktop-label">Hồng Phấn Sen</span>
-            </button>
-            <button type="button" class="sheet-color-circle" data-color="#4A8577" data-name="Xanh Ngọc Đậm" style="background-color: #4A8577;" title="Xanh Ngọc Đậm" aria-label="Xanh Ngọc Đậm">
-              <span class="color-desktop-label">Xanh Ngọc Đậm</span>
-            </button>
-            <button type="button" class="sheet-color-circle" data-color="#E8F3EE" data-name="Ngọc Sương" style="background-color: #E8F3EE; border: 1px solid rgba(74, 133, 119, 0.2);" title="Ngọc Sương" aria-label="Ngọc Sương">
-              <span class="color-desktop-label">Ngọc Sương</span>
-            </button>
-            <button type="button" class="sheet-color-circle" data-color="#1C2B26" data-name="Rêu Đêm" style="background-color: #1C2B26;" title="Rêu Đêm" aria-label="Rêu Đêm">
-              <span class="color-desktop-label">Rêu Đêm</span>
-            </button>
-            <button type="button" class="sheet-color-circle" data-color="#C9A66B" data-name="Vàng Đất" style="background-color: #C9A66B;" title="Vàng Đất" aria-label="Vàng Đất">
-              <span class="color-desktop-label">Vàng Đất</span>
-            </button>
+            <div class="sheet-colors-row">
+              <button type="button" class="sheet-color-circle active" data-color="#F4C9D6" data-name="Hồng Phấn Sen" style="background-color: #F4C9D6;" title="Hồng Phấn Sen" aria-label="Hồng Phấn Sen">
+                <span class="color-desktop-label">Hồng Phấn Sen</span>
+              </button>
+              <button type="button" class="sheet-color-circle" data-color="#4A8577" data-name="Xanh Ngọc Đậm" style="background-color: #4A8577;" title="Xanh Ngọc Đậm" aria-label="Xanh Ngọc Đậm">
+                <span class="color-desktop-label">Xanh Ngọc Đậm</span>
+              </button>
+              <button type="button" class="sheet-color-circle" data-color="#E8F3EE" data-name="Ngọc Sương" style="background-color: #E8F3EE; border: 1px solid rgba(74, 133, 119, 0.2);" title="Ngọc Sương" aria-label="Ngọc Sương">
+                <span class="color-desktop-label">Ngọc Sương</span>
+              </button>
+              <button type="button" class="sheet-color-circle" data-color="#1C2B26" data-name="Rêu Đêm" style="background-color: #1C2B26;" title="Rêu Đêm" aria-label="Rêu Đêm">
+                <span class="color-desktop-label">Rêu Đêm</span>
+              </button>
+              <button type="button" class="sheet-color-circle" data-color="#C9A66B" data-name="Vàng Đất" style="background-color: #C9A66B;" title="Vàng Đất" aria-label="Vàng Đất">
+                <span class="color-desktop-label">Vàng Đất</span>
+              </button>
+            </div>
+            <div class="color-panel-footer">
+              <span class="color-selected-badge" id="color-selected-label">Sắc lụa: <strong>Hồng Phấn Sen</strong></span>
+              <button type="button" class="btn-color-next-step" id="btn-color-next-acc" title="Chuyển sang chọn phụ kiện">
+                <span>Tiếp: Phụ Kiện 👉</span>
+              </button>
+            </div>
           </div>
 
           <!-- NHÓM 2: PHỤ KIỆN (5 THẺ CON) -->
@@ -469,6 +493,17 @@
           <p class="guidance-text" id="workshop-cultural-note">
             Tà ngũ thân lụa mềm kết hợp cùng quạt giấy xếp tạo nên phong thái nho nhã, tôn lên nét đoan trang của cổ phục Việt.
           </p>
+        </div>
+
+        <!-- Thanh nút hành động nhanh trong Thumb Zone (Mobile & Desktop) -->
+        <div class="workshop-sheet-cta-bar">
+          <button type="button" id="btn-view-result" class="btn-primary btn-workshop-cta" title="Thẩm định & Xem kết quả phối đồ hoàn chỉnh" aria-label="Thẩm định & Xem kết quả phối đồ">
+            <span>✨ Thẩm Định & Xem Kết Quả</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
         </div>
 
       </footer>

@@ -10,13 +10,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   height: 100vh;
   height: 100dvh;
   z-index: 10;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   background-color: var(--color-bg);
   opacity: 0;
   transform: translateY(8px);
@@ -27,6 +28,7 @@
               visibility 0.25s ease;
   overflow: hidden;
   user-select: none;
+  box-sizing: border-box;
 }
 
 #create-scene.scene-active {
@@ -38,54 +40,58 @@
 
 /* ==========================================================================
    1. KHUNG CHỨA TỔNG THỂ
-   - Mobile: Max 440px dọc
-   - Desktop: Max 1320px ngang 2 cột studio
+   - Mobile: Co giãn vừa vặn theo chiều rộng màn hình (max 480px)
+   - Desktop: 2 cột studio widescreen (max 1280px)
    ========================================================================== */
 .workshop-container {
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  padding-top: max(54px, env(safe-area-inset-top));
+  padding-top: 52px;
+  margin: 0 auto;
+  box-sizing: border-box;
   transition: max-width 0.3s ease;
 }
 
 @media (min-width: 768px) {
   .workshop-container {
-    max-width: 1320px;
-    height: calc(100vh - 64px);
-    height: calc(100dvh - 64px);
+    max-width: 1280px;
+    height: 100%;
     flex-direction: row;
     align-items: stretch;
-    gap: 28px;
-    padding: 16px 28px 24px 28px;
+    gap: 24px;
+    padding: 76px 24px 20px 24px;
     margin: 0 auto;
   }
 }
 
 /* ==========================================================================
    2. TẦNG TRÊN (MOBILE) / CỘT TRÁI (DESKTOP) — SÀN DIỄN CROQUIS
-   - Mobile: ~58% chiều cao
-   - Desktop: ~58% chiều rộng, full chiều cao, đóng khung Studio cao cấp
+   - Mobile: Co giãn chiếm phần không gian trên (~52%)
+   - Desktop: Cột trái Studio, bo góc mềm mại
    ========================================================================== */
 .workshop-stage-tier {
-  flex: 0 0 58%;
-  height: 58%;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px 6px 16px;
+  padding: 6px 14px 4px 14px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
   .workshop-stage-tier {
-    flex: 1 1 58%;
+    flex: 1 1 0;
+    min-width: 0;
     height: 100%;
     border-radius: var(--border-radius-card, 16px);
     background: var(--color-card-bg);
@@ -93,7 +99,7 @@
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--color-card-border);
     box-shadow: var(--shadow-card);
-    padding: 20px 24px;
+    padding: 18px 22px;
   }
 }
 
@@ -104,6 +110,36 @@
   justify-content: space-between;
   width: 100%;
   z-index: 10;
+  gap: 8px;
+}
+
+.btn-stage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  padding: 5px 12px;
+  min-height: 34px;
+  border-radius: var(--border-radius-pill, 9999px);
+  color: var(--color-accent-secondary);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.08);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-stage-back:hover {
+  transform: translateX(-2px);
+  background: rgba(74, 133, 119, 0.12);
+}
+
+.btn-stage-back:active {
+  transform: scale(0.96);
 }
 
 .stage-title-pill {
@@ -171,38 +207,47 @@
 
 /* ==========================================================================
    3. TẦNG DƯỚI (MOBILE) / CỘT PHẢI (DESKTOP) — STUDIO CONTROL PANEL
-   - Mobile: 42% chiều cao, bo góc đỉnh 24px trong Thumb Zone (< 350px từ đáy)
-   - Desktop: 420px chiều rộng, full chiều cao, thẻ Studio sang trọng
+   - Mobile: Nằm gọn gàng trong Thumb Zone (< 48vh), cuộn nội dung không tràn
+   - Desktop: Cột phải 420px, bo góc Studio sang trọng
    ========================================================================== */
 .workshop-sheet-tier {
-  flex: 0 0 42%;
-  height: 42%;
-  border-radius: 24px 24px 0 0;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: 48vh;
+  border-radius: 20px 20px 0 0;
   background: var(--color-card-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--color-card-border);
-  box-shadow: 0 -10px 30px -4px rgba(74, 133, 119, 0.16),
-              0 -2px 8px rgba(28, 43, 38, 0.04);
-  padding: 12px 18px max(20px, env(safe-area-inset-bottom)) 18px;
+  box-shadow: 0 -8px 24px rgba(74, 133, 119, 0.12);
+  padding: 10px 14px max(12px, env(safe-area-inset-bottom)) 14px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 8px;
   z-index: 20;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 768px) {
   .workshop-sheet-tier {
-    flex: 0 0 440px;
+    flex: 0 0 420px;
+    width: 420px;
+    max-width: 420px;
+    max-height: none;
     height: 100%;
     border-radius: var(--border-radius-card, 16px);
     border: 1px solid var(--color-card-border);
     box-shadow: var(--shadow-card);
-    padding: 22px 24px;
-    gap: 16px;
+    padding: 18px 20px;
+    gap: 14px;
     justify-content: flex-start;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
@@ -235,15 +280,19 @@
   }
 }
 
-/* 4 Tab/Chip Ngang (Màu sắc, Phụ kiện, Kiểu tóc, Phong cách) */
+/* 5 Tab/Chip Ngang (Dáng Áo, Màu Sắc, Phụ Kiện, Kiểu Tóc, Phong Cách) */
 .sheet-tabs-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 5px;
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0 4px 0;
+  box-sizing: border-box;
 }
 
 .sheet-tabs-nav::-webkit-scrollbar {
@@ -251,23 +300,36 @@
 }
 
 .sheet-tab-btn {
-  flex: 1;
-  min-height: var(--touch-target-min, 44px);
+  flex: 0 0 auto;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 4px;
+  padding: 5px 10px;
   border-radius: var(--border-radius-pill, 9999px);
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.45);
   border: 1px solid var(--color-card-border);
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease;
+}
+
+@media (min-width: 768px) {
+  .sheet-tabs-nav {
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .sheet-tab-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.76rem;
+    padding: 6px 4px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -292,40 +354,17 @@
 /* Vùng chứa các nhóm lựa chọn con */
 .sheet-sub-options-container {
   width: 100%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-
-@media (min-width: 768px) {
-  .sheet-sub-options-container {
-    align-items: flex-start;
-    flex: none;
-  }
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .sheet-options-panel {
   display: none;
   width: 100%;
-  align-items: center;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 4px 2px;
-  animation: fadeInPanel 0.22s ease-out;
-}
-
-@media (min-width: 768px) {
-  .sheet-options-panel {
-    display: none;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 6px 0;
-  }
-}
-
-.sheet-options-panel::-webkit-scrollbar {
-  display: none;
+  max-width: 100%;
+  box-sizing: border-box;
+  animation: fadeInPanel 0.2s ease-out;
 }
 
 .sheet-options-panel.active-panel {
@@ -333,11 +372,98 @@
 }
 
 /* --------------------------------------------------------------------------
+   NHÓM 0: DÁNG ÁO (ÁO NGŨ THÂN / ÁO BÀ BA)
+   -------------------------------------------------------------------------- */
+#panel-garments {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+#panel-garments.active-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* --------------------------------------------------------------------------
    NHÓM 1: LỰA CHỌN MÀU SẮC
    -------------------------------------------------------------------------- */
+#panel-colors {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+#panel-colors.active-panel {
+  display: flex;
+}
+
+.sheet-colors-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  gap: 6px;
+  padding: 2px 0;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .sheet-colors-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+.color-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--color-card-border, rgba(74, 133, 119, 0.2));
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.color-selected-badge {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-primary);
+}
+
+.btn-color-next-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid var(--color-accent-secondary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.btn-color-next-step:hover {
+  background: rgba(74, 133, 119, 0.22);
+  transform: translateY(-1px);
+}
+
 .sheet-color-circle {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   min-width: 44px;
   min-height: 44px;
   border-radius: 50%;
@@ -352,6 +478,7 @@
               box-shadow 0.16s ease;
   position: relative;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .color-desktop-label {
@@ -359,29 +486,19 @@
 }
 
 @media (min-width: 768px) {
-  #panel-colors {
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  #panel-colors.active-panel {
-    display: flex;
-  }
-
   .sheet-color-circle {
     width: 100%;
-    height: 48px;
-    border-radius: 12px;
+    height: 44px;
+    border-radius: 10px;
     justify-content: flex-start;
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 12px;
+    gap: 10px;
   }
 
   .color-desktop-label {
     display: inline-block;
     font-family: var(--font-body);
-    font-size: 0.88rem;
+    font-size: 0.82rem;
     font-weight: 600;
   }
 
@@ -405,7 +522,7 @@
   transform: scale(0.95);
 }
 
-/* QUY TẮC BẮT BUỘC: Viền 2px Hồng Phấn Sen khi active */
+/* Viền Hồng Phấn Sen khi active */
 .sheet-color-circle.active {
   border: 2px solid var(--color-accent-primary, #F4C9D6) !important;
   box-shadow: 0 0 0 3px rgba(244, 201, 214, 0.4), 0 6px 16px rgba(74, 133, 119, 0.25);
@@ -418,7 +535,12 @@
   font-weight: 700;
   color: #FFFFFF;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .sheet-color-circle.active::after {
+    margin-left: auto;
+  }
 }
 
 .sheet-color-circle[data-color="#E8F3EE"].active::after,
@@ -429,13 +551,50 @@
 
 /* --------------------------------------------------------------------------
    NHÓM 2, 3, 4: THẺ CON (PHỤ KIỆN, KIỂU TÓC, PHONG CÁCH)
-   - Trên mobile: Nằm ngang cuộn nhẹ
-   - Trên desktop: Hiển thị dạng lưới 2 cột rộng rãi có kèm phụ đề
    -------------------------------------------------------------------------- */
+#panel-accessories,
+#panel-hairstyles,
+#panel-styles {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0;
+  box-sizing: border-box;
+}
+
+#panel-accessories.active-panel,
+#panel-hairstyles.active-panel,
+#panel-styles.active-panel {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  #panel-accessories,
+  #panel-hairstyles,
+  #panel-styles {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 4px 0;
+    overflow-x: visible;
+  }
+
+  #panel-accessories.active-panel,
+  #panel-hairstyles.active-panel,
+  #panel-styles.active-panel {
+    display: grid;
+  }
+}
+
 .sheet-option-card {
-  min-height: 48px;
-  min-width: 86px;
-  padding: 6px 12px;
+  min-height: 44px;
+  min-width: 82px;
+  padding: 6px 10px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--color-card-border);
@@ -443,10 +602,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+  box-sizing: border-box;
+  transition: transform 0.16s ease,
               border-color 0.16s ease,
               background-color 0.16s ease,
               box-shadow 0.16s ease;
@@ -464,12 +624,12 @@
 
 @media (min-width: 768px) {
   .sheet-option-card {
-    min-height: 64px;
-    flex: 1 1 calc(50% - 12px);
-    min-width: 140px;
-    padding: 10px 14px;
+    min-height: 52px;
+    width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
     flex-direction: row;
-    gap: 12px;
+    gap: 10px;
     justify-content: flex-start;
   }
 
@@ -480,7 +640,7 @@
   .sheet-option-sub {
     display: block;
     font-family: var(--font-body);
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     color: var(--color-text-muted);
   }
 }
@@ -587,6 +747,43 @@
     color: var(--color-text-primary);
     margin: 0;
   }
+}
+
+/* --------------------------------------------------------------------------
+   THANH HÀNH ĐỘNG THẨM ĐỊNH & XEM KẾT QUẢ DƯỚI ĐÁY BENTO SHEET
+   -------------------------------------------------------------------------- */
+.workshop-sheet-cta-bar {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.btn-workshop-cta {
+  width: 100%;
+  min-height: 44px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--gradient-btn-primary);
+  border: none;
+  color: var(--color-btn-text, #0D1714);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.22);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.btn-workshop-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.32);
+}
+
+.btn-workshop-cta:active {
+  transform: scale(0.97);
 }
 
 @keyframes fadeInPanel {

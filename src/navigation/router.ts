@@ -8,6 +8,8 @@ import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
 
 export class AppRouter {
+  private hasInitialWorkshopLoaded = false;
+
   public init(): void {
     this.setupSceneNavigation();
     this.setupTabs();
@@ -75,15 +77,15 @@ export class AppRouter {
       lookbookScene?.classList.remove('scene-active');
       createScene?.classList.add('scene-active');
 
-      // Vòng lặp Khép kín: Áp dụng Gu Thẩm Mỹ cá nhân cao nhất vào Xưởng Phối
-      const { topColor, topGarment, topEvent } = preferenceEngine.getTopPreferences();
-
-      garmentEngine.setFabricColor(topColor);
-      garmentEngine.setGarment(topGarment);
-      garmentEngine.setAccessory('QUAT_GIAY', true);
-      garmentEngine.callCulturalAI(topEvent, topColor, topGarment, 'QUAT_GIAY');
-
-      this.showToast('🎯 Đã đồng bộ gu thẩm mỹ cá nhân của bạn vào Xưởng Phối!');
+      // Khởi tạo phối đồ lần đầu tiên theo gu đã tích lũy (không ghi đè nếu người dùng đang phối dở)
+      if (!this.hasInitialWorkshopLoaded) {
+        this.hasInitialWorkshopLoaded = true;
+        const { topColor, topGarment, topEvent } = preferenceEngine.getTopPreferences();
+        garmentEngine.setFabricColor(topColor);
+        garmentEngine.setGarment(topGarment);
+        garmentEngine.setAccessory('QUAT_GIAY', true);
+        garmentEngine.callCulturalAI(topEvent, topColor, topGarment, 'QUAT_GIAY');
+      }
     } else if (tabName === 'discover') {
       tabDiscoverBtn?.classList.add('active');
       tabCreateBtn?.classList.remove('active');
@@ -147,8 +149,9 @@ export class AppRouter {
     const btnNavHome = document.getElementById('btn-nav-home');
     const btnBackLanding = document.getElementById('btn-back-landing');
     const enterButtons = document.querySelectorAll('.btn-landing-cta');
+    const enterWorkshopButtons = document.querySelectorAll('.btn-landing-cta-workshop');
 
-    // Nút "Remix ngay" ở màn mở đầu dẫn sang màn Khám phá
+    // Nút "Khám Phá Di Sản" ở màn mở đầu dẫn sang màn Khám phá
     const handleEnterDiscover = () => {
       Sound.playChime();
       landingScene?.classList.add('scene-hidden');
@@ -158,8 +161,22 @@ export class AppRouter {
       }, 180);
     };
 
+    // Nút "Vào Xưởng Phối" ở màn mở đầu dẫn thẳng sang màn Xưởng Phối
+    const handleEnterWorkshop = () => {
+      Sound.playChime();
+      landingScene?.classList.add('scene-hidden');
+      setTimeout(() => {
+        mainNavBar?.classList.add('nav-active');
+        this.switchTab('create');
+      }, 180);
+    };
+
     enterButtons.forEach((btn) => {
       btn.addEventListener('click', handleEnterDiscover);
+    });
+
+    enterWorkshopButtons.forEach((btn) => {
+      btn.addEventListener('click', handleEnterWorkshop);
     });
 
     // Bấm nút "Về Tiền Sảnh" từ topbar canvas

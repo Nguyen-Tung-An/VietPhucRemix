@@ -11,10 +11,12 @@ export class GarmentEngine {
 
   public init(): void {
     this.setupSheetTabs();
+    this.setupGarmentOptions();
     this.setupColorOptions();
     this.setupAccessoryOptions();
     this.setupHairstyleOptions();
     this.setupStyleOptions();
+    this.setupWorkshopCta();
     this.applyAllVisuals();
   }
 
@@ -31,7 +33,7 @@ export class GarmentEngine {
   }
 
   /**
-   * 1. Điều hướng 4 Tabs ở Bento Sheet (Màu sắc, Phụ kiện, Kiểu tóc, Phong cách)
+   * 1. Điều hướng 5 Tabs ở Bento Sheet (Dáng Áo, Màu Sắc, Phụ Kiện, Kiểu Tóc, Phong Cách)
    */
   private setupSheetTabs(): void {
     const tabs = document.querySelectorAll('.sheet-tab-btn');
@@ -62,7 +64,22 @@ export class GarmentEngine {
   }
 
   /**
-   * 2. Tùy chọn Màu sắc (5 vòng tròn màu)
+   * 2. Tùy chọn Dáng Áo (Áo Ngũ Thân Lập Lĩnh / Áo Bà Ba Nam Bộ)
+   */
+  private setupGarmentOptions(): void {
+    const garmentCards = document.querySelectorAll('[data-garment-select]');
+    garmentCards.forEach((card) => {
+      card.addEventListener('click', (e) => {
+        Sound.playChime();
+        const el = e.currentTarget as HTMLElement;
+        const garmentKey = el.dataset.garmentSelect || 'AO_NGU_THAN';
+        this.setGarment(garmentKey);
+      });
+    });
+  }
+
+  /**
+   * 3. Tùy chọn Màu sắc (5 vòng tròn màu & nút chuyển bước)
    */
   private setupColorOptions(): void {
     const colorSwatches = document.querySelectorAll('.sheet-color-circle');
@@ -78,6 +95,28 @@ export class GarmentEngine {
 
         this.setFabricColor(colorHex, colorName);
       });
+    });
+
+    // Nút chuyển nhanh "Tiếp: Phụ Kiện 👉"
+    const btnNextAcc = document.getElementById('btn-color-next-acc');
+    btnNextAcc?.addEventListener('click', () => {
+      Sound.playClick();
+      const tabAcc = document.getElementById('tab-opt-accessories');
+      tabAcc?.click();
+    });
+  }
+
+  /**
+   * 4. Nút hành động xem kết quả nhanh ở chân bảng điều khiển
+   */
+  private setupWorkshopCta(): void {
+    const btnSheetViewResult = document.getElementById('btn-sheet-view-result');
+    btnSheetViewResult?.addEventListener('click', () => {
+      // Kích hoạt nút Xem Kết Quả dùng chung
+      const topBtnView = document.getElementById('btn-view-result');
+      if (topBtnView) {
+        topBtnView.click();
+      }
     });
   }
 
@@ -178,6 +217,12 @@ export class GarmentEngine {
         el.classList.remove('active');
       }
     });
+
+    // Cập nhật nhãn màu đang chọn
+    const labelEl = document.getElementById('color-selected-label');
+    if (labelEl && this.currentColorName) {
+      labelEl.innerHTML = `Sắc lụa: <strong>${this.currentColorName}</strong>`;
+    }
 
     this.updateDesktopGuidance();
   }
@@ -281,6 +326,15 @@ export class GarmentEngine {
    * Tương thích với router & swipe deck
    */
   public setGarment(garment: string): void {
+    document.querySelectorAll('[data-garment-select]').forEach((card) => {
+      const el = card as HTMLElement;
+      if (el.dataset.garmentSelect === garment) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+
     if (garment === 'AO_BA_BA') {
       this.setStyle('MOC_MAC');
     } else {

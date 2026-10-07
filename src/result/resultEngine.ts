@@ -5,6 +5,7 @@ import { DiscoveryOutfit } from '../types/index.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
 import { appRouter } from '../navigation/router.ts';
+import { getCulturalTruth, checkStrictTaboo, checkMultipleStrictTaboos } from '../data/culturalTruths.ts';
 
 export class ResultEngine {
   private isKnowledgeRevealed: boolean = false;
@@ -27,9 +28,10 @@ export class ResultEngine {
 
     // Nạp dữ liệu phối đồ hiện tại
     const outfitState = garmentEngine.getCurrentOutfitState();
+    const allAccessories = outfitState.accessories?.length ? outfitState.accessories : [outfitState.accessory];
     this.renderArtwork(outfitState.garment, outfitState.color, outfitState.accessory);
-    this.renderBadgeAndHeadlines(outfitState.garment, outfitState.colorName, outfitState.accessory);
-    this.renderCulturalWarning(outfitState.garment, outfitState.accessory);
+    this.renderBadgeAndHeadlines(outfitState.garment, outfitState.colorName, allAccessories);
+    this.renderCulturalWarning(outfitState.garment, allAccessories);
     this.renderKnowledgeCard(outfitState.garment);
 
     // Đặt lại trạng thái ẩn mặc định cho Lớp 3 (Progressive Disclosure)
@@ -68,23 +70,24 @@ export class ResultEngine {
   /**
    * LỚP 1 — Badge góc trên và Tiêu đề
    */
-  private renderBadgeAndHeadlines(garment: string, colorName: string, _accessory: string): void {
+  private renderBadgeAndHeadlines(garment: string, colorName: string, accessories: string[]): void {
     const badgeText = document.getElementById('result-badge-text');
     const heading = document.getElementById('result-outfit-heading');
     const subtitle = document.getElementById('result-outfit-subtitle');
 
-    const garmentTitle = garment === 'AO_NGU_THAN' ? 'Áo Ngũ Thân Lập Lĩnh' : 'Áo Bà Ba Nam Bộ';
+    const truth = getCulturalTruth(garment);
     
     if (badgeText) {
       badgeText.textContent = `✨ 98% Chuẩn Lụa Thanh`;
     }
 
     if (heading) {
-      heading.textContent = `${garmentTitle} ${colorName}`;
+      heading.textContent = `${truth.name} • ${colorName}`;
     }
 
     if (subtitle) {
-      subtitle.textContent = `Bộ phục trang hoàn chỉnh theo phong vị đương đại concept Lụa Thanh.`;
+      const accListText = accessories.length > 0 ? ` kết hợp ${accessories.map(a => a.replace(/_/g, ' ')).join(', ')}` : '';
+      subtitle.textContent = `Bộ phục trang hoàn chỉnh theo phong vị đương đại concept Lụa Thanh${accListText}.`;
     }
   }
 
@@ -94,18 +97,17 @@ export class ResultEngine {
    * - Tối đa 1-2 câu nhắc nhở nhẹ nhàng, không gay gắt
    * - Nếu không có cảnh báo: khối này không hiển thị (display: none), không để trống
    */
-  private renderCulturalWarning(garment: string, accessory: string): void {
+  private renderCulturalWarning(garment: string, accessories: string[]): void {
     const warningLayer = document.getElementById('result-warning-layer');
     const warningDesc = document.getElementById('result-warning-desc');
     if (!warningLayer) return;
 
-    // Điều kiện cảnh báo: Ngũ thân kết hợp Khăn rằn (vốn đặc trưng của áo bà ba)
-    const hasCulturalDilemma = garment === 'AO_NGU_THAN' && accessory === 'KHAN_RAN';
+    const truth = getCulturalTruth(garment);
+    const tabooCheck = checkMultipleStrictTaboos(truth.id, accessories);
 
-    if (hasCulturalDilemma) {
+    if (tabooCheck.hasTaboo && tabooCheck.taboos.length > 0) {
       if (warningDesc) {
-        warningDesc.textContent =
-          'Phối hợp này hơi khác biệt so với truyền thống gốc, bạn có muốn xem bản chuẩn không?';
+        warningDesc.textContent = tabooCheck.taboos.map(t => t.historicalConflictReason).join(' ');
       }
       warningLayer.style.display = 'flex';
     } else {
@@ -114,19 +116,41 @@ export class ResultEngine {
   }
 
   /**
-   * LỚP 3 — Thẻ tri thức văn hóa (Ẩn mặc định, max 60 từ, từ khóa bôi đậm Vàng Đất)
+   * LỚP 3 — Thẻ tri thức văn hóa có trích dẫn nguồn xác thực (Progressive Disclosure)
    */
   private renderKnowledgeCard(garment: string): void {
     const knowledgeText = document.getElementById('knowledge-text');
+    const knowledgeTitle = document.getElementById('knowledge-title');
     if (!knowledgeText) return;
 
-    if (garment === 'AO_NGU_THAN') {
-      knowledgeText.innerHTML =
-        'Áo ngũ thân lập lĩnh định hình từ thời chúa <strong class="kw-gold">Nguyễn Phúc Khoát</strong> tại xứ <strong class="kw-gold">Đàng Trong</strong>, kế thừa tinh hoa phục sức phương Nam. Năm thân áo tượng trưng cho tứ thân phụ mẫu và chính mình, năm hạt cúc gốm biểu trưng cho ngũ thường Nhân - Lễ - Nghĩa - Trí - Tín, toát lên phong thái đĩnh đạc và đoan trang.';
-    } else {
-      knowledgeText.innerHTML =
-        'Áo bà ba xẻ tà buông rủ mộc mạc, gắn liền với văn hóa sông nước trù phú miền <strong class="kw-gold">Nam Bộ</strong>. Chiếc áo tôn vinh nét bình dị, cần lao mà duyên dáng, hòa quyện cùng lụa tơ tằm dệt thủ công tạo nên phong vị thôn dã thanh thoát và giàu sức sống.';
+    const truth = getCulturalTruth(garment);
+    if (knowledgeTitle) {
+      knowledgeTitle.textContent = `${truth.name} • Tri Thức Di Sản Khảo Cứu`;
     }
+
+    const citationHtml = `
+      <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed rgba(201,166,107,0.35); font-size: 11px;">
+        <div style="color: #6B4E2E; font-weight: 500;">
+          📜 <em>Nguồn:</em> <strong>${truth.sourceTitle}</strong> — ${truth.authorOrInstitution}
+        </div>
+        <div style="margin-top: 4px;">
+          <a href="${truth.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600;">
+            🔗 Đọc tài liệu khảo cứu gốc (${truth.sourceUrl}) ↗
+          </a>
+        </div>
+      </div>
+    `;
+
+    knowledgeText.innerHTML = `
+      <div>${truth.culturalSignificance}</div>
+      <div style="margin-top: 8px; font-size: 12px; color: #555;">
+        <strong>Niên đại lịch sử:</strong> ${truth.historicalEra}
+      </div>
+      <div style="margin-top: 6px; font-size: 12px; color: #555;">
+        <strong>Vùng miền cội nguồn:</strong> ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ / Huế' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}
+      </div>
+      ${citationHtml}
+    `;
   }
 
   /**
@@ -247,6 +271,16 @@ export class ResultEngine {
 
     triggerButtons.forEach((btn) => {
       btn?.addEventListener('click', () => {
+        // Kiểm tra State-Proof Sanity trên toàn bộ input tự nhập
+        const sanity = garmentEngine.validateCurrentInputs();
+        if (!sanity.isValid) {
+          garmentEngine.showSanityAlert(sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập theo thuần phong mỹ tục.');
+          const tabAI = document.getElementById('tab-opt-ai-styling');
+          tabAI?.click();
+          return;
+        }
+
+        garmentEngine.hideSanityAlert();
         Sound.playClick();
         feedbackState.showLoading({
           message: 'Đang thẩm định & kết xuất tà lụa...',

@@ -170,11 +170,25 @@
   padding: 5px 12px;
   border-radius: var(--border-radius-pill, 9999px);
   background: rgba(74, 133, 119, 0.12);
-  border: 1px solid rgba(74, 133, 119, 0.22);
+  border: 1px solid rgba(74, 133, 120, 0.22);
   font-family: var(--font-body);
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-accent-secondary);
+}
+
+.stage-era-sub-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.12);
+  color: var(--color-accent-secondary);
+  border: 1px solid rgba(74, 133, 119, 0.22);
+  white-space: nowrap;
 }
 
 /* Khung bao chứa Canvas SVG Vector Croquis */
@@ -384,7 +398,18 @@
 
 #panel-garments.active-panel {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 270px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+@media (min-width: 768px) {
+  #panel-garments.active-panel {
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 340px;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -796,3 +821,484 @@
     transform: translateY(0);
   }
 }
+
+/* ==========================================================================
+   COLOR PICKER TÙY CHỌN TỰ DO & BẢNG SẮC LỤA
+   ========================================================================== */
+.color-picker-custom-box {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-card, 14px);
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-picker-custom-box {
+    background: rgba(22, 34, 30, 0.45);
+  }
+}
+
+.color-picker-interactive-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.color-picker-trigger-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  transition: all 0.2s ease;
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.color-picker-trigger-label:hover {
+  border-color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.08);
+}
+
+.color-swatch-live-preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 1px var(--color-card-border);
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.color-picker-text-prompt {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.color-picker-trigger-label input[type="color"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.color-hex-field-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-pill, 9999px);
+  padding: 4px 10px;
+}
+
+.color-hex-prefix {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent-gold, #C9A66B);
+  letter-spacing: 0.5px;
+}
+
+.color-hex-input {
+  width: 68px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  outline: none;
+  text-transform: uppercase;
+}
+
+.heritage-palette-title-wrap {
+  margin-bottom: 6px;
+}
+
+.heritage-palette-title {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   TÍNH CÁCH CHIPS & GRID LỰA CHỌN
+   ========================================================================== */
+.subgroup-title {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.personality-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.personality-chip {
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.personality-chip:hover {
+  border-color: var(--color-accent-secondary);
+  color: var(--color-text-primary);
+}
+
+.personality-chip.active {
+  background: rgba(74, 133, 119, 0.14);
+  border-color: var(--color-accent-secondary);
+  color: var(--color-accent-secondary);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   MINI GEMINI STYLING GENERATOR UI
+   ========================================================================== */
+.ai-styling-generator-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(74, 133, 119, 0.1) 0%, rgba(201, 166, 107, 0.08) 100%);
+  border: 1px dashed rgba(201, 166, 107, 0.4);
+  border-radius: var(--border-radius-card, 14px);
+  margin-bottom: 12px;
+}
+
+.btn-trigger-ai-styling {
+  width: 100%;
+  min-height: 40px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: linear-gradient(135deg, #4A8577 0%, #2A5A4E 100%);
+  border: 1px solid rgba(201, 166, 107, 0.4);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(42, 90, 78, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-trigger-ai-styling:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(42, 90, 78, 0.3);
+  filter: brightness(1.05);
+}
+
+.btn-trigger-ai-styling:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ai-loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ai-generator-hint {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.ai-styling-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.section-title {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.section-title small {
+  font-weight: normal;
+  color: var(--color-text-muted);
+}
+
+.section-count-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--border-radius-pill, 9999px);
+}
+
+/* Multiple Accessories Grid */
+.accessories-multi-grid,
+.hairstyles-single-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.styling-item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.styling-item-card:hover {
+  border-color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.04);
+}
+
+.styling-item-card.selected {
+  border-color: var(--color-accent-secondary);
+  background: rgba(74, 133, 119, 0.1);
+}
+
+.item-check-indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--color-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #FFFFFF;
+  margin-top: 2px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.styling-item-card.radio-card .item-check-indicator {
+  border-radius: 50%;
+}
+
+.styling-item-card.selected .item-check-indicator {
+  background: var(--color-accent-secondary);
+  border-color: var(--color-accent-secondary);
+}
+
+.styling-item-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.styling-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.styling-item-name {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.styling-vibe-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(201, 166, 107, 0.15);
+  color: var(--color-accent-gold, #C9A66B);
+  white-space: nowrap;
+}
+
+.styling-item-reason {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+/* Custom User Input Group */
+.custom-input-group {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px dashed var(--color-card-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-input-group {
+    background: rgba(22, 34, 30, 0.3);
+  }
+}
+
+.custom-input-label {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.custom-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-text-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 6px 10px;
+  border-radius: var(--border-radius-pill, 9999px);
+  border: 1px solid var(--color-card-border);
+  background: var(--color-card-bg);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.custom-text-field:focus {
+  border-color: var(--color-accent-secondary);
+}
+
+.btn-custom-add {
+  padding: 6px 12px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--color-accent-secondary);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.btn-custom-add:hover {
+  opacity: 0.9;
+}
+
+.custom-chips-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 0;
+}
+
+.custom-chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(74, 133, 119, 0.15);
+  border: 1px solid var(--color-accent-secondary);
+  border-radius: var(--border-radius-pill, 9999px);
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.custom-chip-remove {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.custom-chip-remove:hover {
+  color: #D32F2F;
+}
+
+.custom-hair-active-badge {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--color-accent-secondary);
+  padding: 3px 8px;
+  background: rgba(74, 133, 119, 0.12);
+  border-radius: var(--border-radius-pill, 9999px);
+  width: fit-content;
+}
+
+/* Sanity Alert Banner */
+.styling-sanity-alert {
+  padding: 8px 12px;
+  background: rgba(211, 47, 47, 0.1);
+  border: 1px solid rgba(211, 47, 47, 0.3);
+  border-radius: 10px;
+  color: #D32F2F;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  animation: fadeInPanel 0.2s ease;
+}
+
+.sanity-alert-icon {
+  font-weight: bold;
+}
+

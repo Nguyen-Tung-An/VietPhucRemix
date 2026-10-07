@@ -1,5 +1,6 @@
 import { CulturalGuardrailResult } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
+import { getCulturalTruth, checkStrictTaboo } from '../data/culturalTruths.ts';
 
 export const MOCK_HERITAGE_DATA: Record<string, CulturalGuardrailResult> = {
   tet: {
@@ -45,27 +46,39 @@ export function checkLocalCulturalRules(
   accessory: string,
   _region: string = 'TOAN_QUOC'
 ): CulturalGuardrailResult {
-  if (garment === 'AO_BA_BA' && accessory === 'NON_QUAI_THAO') {
+  const truth = getCulturalTruth(garment);
+  const tabooCheck = checkStrictTaboo(truth.id, accessory);
+
+  if (tabooCheck.isTaboo && tabooCheck.taboo) {
     return {
       is_culturally_accurate: false,
       warning_level: 'WARNING',
-      cultural_warning_msg: 'Nón quai thao là nét đặc trưng Bắc Bộ, thường không đi kèm Áo bà ba Nam Bộ.',
-      suggested_fix: 'KHAN_RAN'
+      cultural_warning_msg: tabooCheck.taboo.historicalConflictReason,
+      suggested_fix: tabooCheck.taboo.suggestedAlternative,
+      citations: [
+        {
+          title: truth.sourceTitle,
+          author_or_institution: truth.authorOrInstitution,
+          url: truth.sourceUrl,
+          reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu di sản'
+        }
+      ]
     };
   }
-  if (garment === 'AO_NGU_THAN' && accessory === 'KHAN_RAN') {
-    return {
-      is_culturally_accurate: false,
-      warning_level: 'WARNING',
-      cultural_warning_msg: 'Khăn rằn gắn liền với Áo bà ba lao động, nên cân nhắc khi phối cùng Áo ngũ thân đĩnh đạc.',
-      suggested_fix: 'QUAT_GIAY'
-    };
-  }
+
   return {
     is_culturally_accurate: true,
     warning_level: 'SAFE',
     cultural_warning_msg: '',
-    suggested_fix: ''
+    suggested_fix: '',
+    citations: [
+      {
+        title: truth.sourceTitle,
+        author_or_institution: truth.authorOrInstitution,
+        url: truth.sourceUrl,
+        reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu di sản'
+      }
+    ]
   };
 }
 

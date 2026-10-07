@@ -4,7 +4,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
-import { runOfflineCulturalPipeline, runOnlineGeminiCulturalPipeline } from './server/culturalPipeline.ts';
+import {
+  runOfflineCulturalPipeline,
+  runOnlineGeminiCulturalPipeline,
+  runOnlineMiniStylingSuggestions,
+  getOfflineMiniStylingSuggestions,
+} from './server/culturalPipeline.ts';
 
 dotenv.config();
 
@@ -12,12 +17,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
-// Chế độ Offline / Mock Mode toàn phần nhằm ngắt hoàn toàn kết nối ngoài, tránh 429 quota
-const AI_OFFLINE_MODE = true;
+// Chế độ Offline / Mock Mode toàn phần (bật khi AI_OFFLINE_MODE=true hoặc khi không có API key)
+const AI_OFFLINE_MODE = process.env.AI_OFFLINE_MODE === 'true';
 
 // Khởi tạo Gemini AI Client phía Server (chỉ nạp khi không kích hoạt OFFLINE_MODE)
 const apiKey = process.env.GEMINI_API_KEY || '';
@@ -332,17 +337,58 @@ function generateEditorialLookbookDataUri(promptText: string): string {
   return `data:image/svg+xml;base64,${base64Svg}`;
 }
 
+// Endpoint API Mini Gemini: Sáng Tạo 3 Gợi Ý Phụ Kiện & Kiểu Tóc Theo Bối Cảnh
+app.post('/api/gemini/suggest-styling', async (req, res) => {
+  const { garment_type, primary_color, style_mode, personality } = req.body;
+
+  const context = {
+    garment_type: garment_type || 'AO_NGU_THAN',
+    primary_color: primary_color || '#F4C9D6',
+    style_mode: style_mode || 'THANH_TAO',
+    personality: personality || 'Đương đại, tự tin, yêu di sản',
+  };
+
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const suggestions = await runOnlineMiniStylingSuggestions(ai, context);
+      return res.json(suggestions);
+    } catch (err) {
+      console.warn('Lỗi gọi Gemini Mini Styling Suggestions, dùng Offline Generator:', err);
+    }
+  }
+
+  const offlineSuggestions = getOfflineMiniStylingSuggestions(context);
+  return res.json(offlineSuggestions);
+});
+
 // Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Hệ thống 2 vòng kiểm định di sản
 app.post('/api/gemini/cultural-ai', async (req, res) => {
-  const { event, primary_color, garment_type, accessory, region, style_mode } = req.body;
+  const {
+    event,
+    primary_color,
+    garment_type,
+    accessory,
+    accessories,
+    custom_accessories,
+    hairstyle,
+    custom_hairstyle,
+    region,
+    style_mode,
+    personality,
+  } = req.body;
 
   const contextPayload = {
     event: event || 'tet',
     primary_color: primary_color || '#F4C9D6',
     garment_type: garment_type || 'AO_NGU_THAN',
     accessory: accessory || 'QUAT_GIAY',
+    accessories: Array.isArray(accessories) ? accessories : (accessory ? [accessory] : ['QUAT_GIAY']),
+    custom_accessories: Array.isArray(custom_accessories) ? custom_accessories : [],
+    hairstyle: hairstyle || 'BUI_TRAM',
+    custom_hairstyle: custom_hairstyle || '',
     region: region || 'TOAN_QUOC',
     style_mode: style_mode || 'THANH_TAO',
+    personality: personality || '',
   };
 
   // 1. Chế độ Online: Gọi Gemini 2-Round Pipeline nếu AI_OFFLINE_MODE = false và có API Key
@@ -407,8 +453,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server đang chạy tại http://0.0.0.0:${PORT}`);
   });
 }
 

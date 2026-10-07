@@ -1,9 +1,13 @@
-import { CulturalGuardrailResult, PatternItem } from '../types/index.ts';
-import { HERITAGE_GROUND_TRUTH } from '../data/heritageGroundTruth.ts';
+import { CulturalGuardrailResult, PatternItem, CitationSource } from '../types/index.ts';
+import {
+  CULTURAL_DATABASE,
+  getCulturalTruth,
+  checkStrictTaboo
+} from '../data/culturalTruths.ts';
 
 /**
  * MOCK DATA PROVIDER - BẢO VỆ QUOTA GOOGLE API
- * Cung cấp dữ liệu thẩm định di sản, hoa văn và lookbook nghệ thuật tức thì.
+ * Cung cấp dữ liệu thẩm định di sản, hoa văn và lookbook nghệ thuật tức thì dựa trên Cultural Truths.
  */
 
 export function getMockCulturalAI(context: {
@@ -14,44 +18,34 @@ export function getMockCulturalAI(context: {
   region?: string;
 }): CulturalGuardrailResult {
   const { event, garment_type, accessory, primary_color } = context;
-  const garmentKey = (garment_type || 'AO_NGU_THAN').toUpperCase();
-  const record = HERITAGE_GROUND_TRUTH[garmentKey] || HERITAGE_GROUND_TRUTH.AO_NGU_THAN;
+  const truth = getCulturalTruth(garment_type);
+  const tabooCheck = checkStrictTaboo(truth.id, accessory);
 
-  // 1. Kiểm tra lệch quy chuẩn văn hóa
-  if (garment_type === 'AO_BA_BA' && accessory === 'NON_QUAI_THAO') {
+  const citations: CitationSource[] = [
+    {
+      title: truth.sourceTitle,
+      author_or_institution: truth.authorOrInstitution,
+      url: truth.sourceUrl,
+      reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu nghiên cứu di sản',
+      publication_year: truth.publicationYear
+    }
+  ];
+
+  // 1. Kiểm tra lệch quy chuẩn văn hóa dựa trên Strict Taboos
+  if (tabooCheck.isTaboo && tabooCheck.taboo) {
+    const taboo = tabooCheck.taboo;
     return {
       is_culturally_accurate: false,
       warning_level: 'WARNING',
-      cultural_warning_msg:
-        'Nón quai thao là nét văn hóa đặc trưng Bắc Bộ (quan họ Kinh Bắc), không nên đi cùng áo bà ba mộc mạc Nam Bộ.',
-      suggested_fix: 'KHAN_RAN',
+      cultural_warning_msg: taboo.historicalConflictReason,
+      suggested_fix: taboo.suggestedAlternative,
       kieu_toc_va_trang_diem:
-        'Tóc xõa dài tự nhiên hoặc thắt bím đuôi sam buông lơi một bên vai; trang điểm tự nhiên như phù sa sông nước, môi son cánh sen phớt hồng.',
+        'Tóc búi cao thanh thoát cài trâm hoặc thả tự nhiên; trang điểm nhẹ nhàng tôn phong thái đoan trang.',
       dang_chup_anh:
-        'Đứng nghiêng bên mạn xuồng hoặc tựa nhẹ vào hàng rào tre, hai tay khẽ giữ chéo vạt khăn rằn buông trước ngực, nụ cười tươi tắn hiền hòa.',
-      cau_chuyen_di_san:
-        'Áo bà ba gắn liền với văn hóa sông nước Cửu Long hào sảng và đôn hậu. Kết hợp cùng chiếc khăn rằn mộc mạc sẽ tôn vinh trọn vẹn vẻ đẹp thuần Việt của người phương Nam.',
-      citations: record.citations,
-      set_name: record.name,
-      audit_passed: false
-    };
-  }
-
-  if (garment_type === 'AO_NGU_THAN' && accessory === 'KHAN_RAN') {
-    return {
-      is_culturally_accurate: false,
-      warning_level: 'WARNING',
-      cultural_warning_msg:
-        'Khăn rằn gắn liền với nếp sống lao động Nam Bộ, trong khi Áo ngũ thân lập lĩnh là lễ phục cung đình và quý tộc đĩnh đạc.',
-      suggested_fix: 'QUAT_GIAY',
-      kieu_toc_va_trang_diem:
-        'Tóc búi cao thanh nhã cài trâm đồng mai điểu hoặc vấn khăn đóng trang trọng; trang điểm tông đỏ trầm quý phái, chân mày lá liễu mềm mại.',
-      dang_chup_anh:
-        'Đứng thẳng đoan trang, một tay khẽ che quạt giấy thư pháp ngang ngực, tay kia buông tà năm thân ngay ngắn, mắt nhìn thẳng tự tin.',
-      cau_chuyen_di_san:
-        'Áo ngũ thân lập lĩnh là đỉnh cao của nếp mặc Việt Y triều Nguyễn, với 5 cúc vàng tượng trưng cho ngũ thường: Nhân - Lễ - Nghĩa - Trí - Tín.',
-      citations: record.citations,
-      set_name: record.name,
+        'Đứng thẳng người đoan trang, một tay buông tà áo năm thân ngay ngắn, ánh mắt hướng về ống kính.',
+      cau_chuyen_di_san: truth.culturalSignificance,
+      citations,
+      set_name: truth.name,
       audit_passed: false
     };
   }
@@ -95,8 +89,8 @@ export function getMockCulturalAI(context: {
     kieu_toc_va_trang_diem: selectedEvent.makeup,
     dang_chup_anh: selectedEvent.pose,
     cau_chuyen_di_san: selectedEvent.story,
-    citations: record.citations,
-    set_name: record.name,
+    citations,
+    set_name: truth.name,
     audit_passed: true
   };
 }
@@ -307,4 +301,133 @@ export function getMockFashionLookbook(promptText: string): string {
   </svg>`;
 
   return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+}
+
+export function getMockStylingSuggestions(context: {
+  garment_type: string;
+  primary_color: string;
+  style_mode?: string;
+  personality?: string;
+}) {
+  const truth = getCulturalTruth(context.garment_type);
+  const garmentId = truth.id;
+
+  const suggestionsByGarment: Record<string, { accessories: any[]; hairstyles: any[] }> = {
+    AO_NGU_THAN: {
+      accessories: [
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Trầm Hương', cultural_reason: 'Tôn nét thanh nhã, đoan trang của sĩ phu và quý tộc triều Nguyễn khi dạo phố.', vibe_tag: 'Thanh Nhã' },
+        { id: 'TRAM_GOM', name: 'Trâm Cài Gốm Chu Đậu Khảm Vàng', cultural_reason: 'Điểm xuyết mái tóc với nét tinh hoa men lam gốm sứ cổ truyền 500 năm.', vibe_tag: 'Tinh Xảo' },
+        { id: 'TUI_GAM', name: 'Túi Gấm Dệt Kim Sa Cổ Phong', cultural_reason: 'Phụ kiện cầm tay tiện lợi chứa đồ cá nhân cho bạn trẻ dạo xuân.', vibe_tag: 'Duyên Dáng' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Cài Trâm Đồng', cultural_reason: 'Để lộ trọn vẹn cổ áo lập lĩnh vuông vức cao 2-3cm trang nghiêm.', vibe_tag: 'Sang Trọng' },
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Gấm Xứ Huế', cultural_reason: 'Chuẩn phong vị lễ phục cung đình, tôn gương mặt sáng sủa thanh tú.', vibe_tag: 'Truyền Thống' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Kẹp Bờm Ngọc', cultural_reason: 'Phá cách nhẹ nhàng đương đại dành cho Gen Z chụp ảnh phong cách thơ mộng.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_TAC: {
+      accessories: [
+        { id: 'KHAN_DONG', name: 'Khăn Đóng Lụa Dệt Chữ Thọ', cultural_reason: 'Phụ kiện nghi lễ bắt buộc khi khoác áo tấc hành đại lễ.', vibe_tag: 'Trang Trọng' },
+        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khắc Chữ Phúc', cultural_reason: 'Tái hiện phong vị quan viên và mệnh phụ triều Nguyễn.', vibe_tag: 'Quý Tộc' },
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Xếp Lụa Đỏ Son', cultural_reason: 'Hài hòa khi đứng chắp tay thụng dự tiệc truyền thống.', vibe_tag: 'Đĩnh Đạc' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Cung Đình', cultural_reason: 'Giữ nghiêm quy củ đại lễ phục, tôn nét tôn nghiêm lịch sử.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'BUI_TRAM', name: 'Búi Cao Cài Trâm Phượng', cultural_reason: 'Thanh thoát, phù hợp không gian cúng tế và hôn lễ cổ truyền.', vibe_tag: 'Đoan Trang' },
+        { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Cột Dải Lụa', cultural_reason: 'Gọn gàng tao nhã giúp thoải mái khi cử động vạt tay thụng.', vibe_tag: 'Thanh Thoát' }
+      ]
+    },
+    AO_NHAT_BINH: {
+      accessories: [
+        { id: 'TRAM_GOM', name: 'Trâm Cài Hoa Mai Cung Đình Mạ Vàng', cultural_reason: 'Điểm xuyết mái tóc cùng cung phục hậu phi lộng lẫy.', vibe_tag: 'Hoàng Gia' },
+        { id: 'QUAT_TRON', name: 'Quạt Tròn Lụa Thêu Song Hỷ', cultural_reason: 'Hài hòa với nẹp cổ áo chữ nhật thêu chỉ kim tuyến.', vibe_tag: 'Quý Phái' },
+        { id: 'BOI_NGOC', name: 'Dây Bội Ngọc Thắt Nút Đồng Tâm', cultural_reason: 'Đeo rủ trước ngực biểu trưng cho cát tường như ý.', vibe_tag: 'Cung Đình' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN_VANH', name: 'Vấn Khăn Vành Dây Xứ Huế', cultural_reason: 'Quy chuẩn hoàng triều của các bậc hoàng thái hậu, công chúa triều Nguyễn.', vibe_tag: 'Quyền Quý' },
+        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ khoét sâu đối khâm thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
+        { id: 'BUOC_THAP', name: 'Buộc Thấp Đính Dải Lụa Ngũ Sắc', cultural_reason: 'Đồng điệu với dải ngũ sắc ở viền tay áo Nhật Bình.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_GIAO_LINH: {
+      accessories: [
+        { id: 'DAI_LUA', name: 'Đai Lụa Buộc Vạt Thắt Nút Thả Dài', cultural_reason: 'Giữ vạt áo cổ chéo Lý - Trần - Lê buông rủ khoáng đạt.', vibe_tag: 'Cổ Phong' },
+        { id: 'BOI_NGOC', name: 'Bội Ngọc Khắc Hình Rồng Mây Thời Lý', cultural_reason: 'Tôn nét hào hoa phong nhã của tầng lớp quý tộc Thăng Long.', vibe_tag: 'Trầm Mặc' },
+        { id: 'QUAT_GIAY', name: 'Quạt Xếp Gỗ Mun Đề Thơ Cổ', cultural_reason: 'Phong thái văn nhân nho nhã dạo chơi danh lam thắng cảnh.', vibe_tag: 'Tao Nhã' }
+      ],
+      hairstyles: [
+        { id: 'BUI_CUA_DONG', name: 'Búi Tóc Đỉnh Đầu Cài Trâm Gỗ', cultural_reason: 'Hình tượng phổ biến trên tượng đá và bia ký thời Lê.', vibe_tag: 'Cổ Điển' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Tự Nhiên Rẽ Ngôi Giữa', cultural_reason: 'Tự nhiên, mộc mạc đúng tinh thần nếp mặc phương Bắc xưa.', vibe_tag: 'Thanh Thuần' },
+        { id: 'TET_BIEM', name: 'Tóc Thắt Bím Đuôi Sam Buông Lơi', cultural_reason: 'Nét trẻ trung duyên dáng của thiếu nữ đương đại phục dựng cổ phong.', vibe_tag: 'Thơ Mộng' }
+      ]
+    },
+    AO_TU_THAN: {
+      accessories: [
+        { id: 'NON_QUAI_THAO', name: 'Nón Quai Thao Dệt Đũi Xứ Kinh Bắc', cultural_reason: 'Biểu tượng liền chị duyên dáng trong các hội Lim mùa xuân.', vibe_tag: 'Kinh Bắc' },
+        { id: 'KHAN_MO_QUA', name: 'Khăn Mỏ Quạ Lụa Đen Tuyền', cultural_reason: 'Vấn nụ cười hàm tiếu che đi nét bẽn lẽn thôn nữ.', vibe_tag: 'Ý Nhị' },
+        { id: 'RUA_BAC', name: 'Dây Xà Tích Bạc Treo Con Dao Nhỏ', cultural_reason: 'Trang sức bằng bạc truyền thống của phụ nữ đồng bằng Bắc Bộ.', vibe_tag: 'Dân Gian' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN_MO_QUA', name: 'Tóc Vấn Khăn Mỏ Quạ Truyền Thống', cultural_reason: 'Khung hình chuẩn mực nhất gắn liền với nón quai thao.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'TET_BIEM', name: 'Tóc Buộc Đuôi Sam Thắt Dải Lụa Đào', cultural_reason: 'Tôn nét mộc mạc bên tà yếm thắm và thắt lưng xanh.', vibe_tag: 'Mộc Mạc' },
+        { id: 'XOA_DAI', name: 'Tóc Dài Buông Tự Nhiên Khẽ Cài Hoa', cultural_reason: 'Phong cách chụp ảnh mùa xuân tươi trẻ thanh thuần.', vibe_tag: 'Tươi Trẻ' }
+      ]
+    },
+    AO_BA_BA: {
+      accessories: [
+        { id: 'KHAN_RAN', name: 'Khăn Rằn Nam Bộ Kẻ Caro Đen Trắng', cultural_reason: 'Linh hồn phóng khoáng, mộc mạc của người phương Nam.', vibe_tag: 'Miệt Vườn' },
+        { id: 'NON_LA', name: 'Nón Lá Chóp Mềm Nghiêng Che', cultural_reason: 'Hài hòa bên bờ kênh, mạn xuồng vùng sông nước Cửu Long.', vibe_tag: 'Duyên Dáng' },
+        { id: 'GUOC_GOC', name: 'Guốc Mộc Quai Vải Hoa Li Ti', cultural_reason: 'Âm thanh gõ nhịp mộc mạc chân phương thôn dã.', vibe_tag: 'Chân Phương' }
+      ],
+      hairstyles: [
+        { id: 'TET_BIEM', name: 'Tóc Bím Đuôi Sam Buông Một Bên Vai', cultural_reason: 'Nét e ấp dịu dàng của người con gái miền Tây Nam Bộ.', vibe_tag: 'Ngọt Ngào' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Thẳng Mượt Tự Nhiên', cultural_reason: 'Nổi bật vẻ mộc mạc thanh thoát khi mặc áo bà ba lụa mềm.', vibe_tag: 'Mộc Mạc' },
+        { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Gọn Gàng Cài Nơ Vải', cultural_reason: 'Năng động, tươi trẻ dành cho các hoạt động trải nghiệm văn hóa.', vibe_tag: 'Năng Động' }
+      ]
+    },
+    AO_VIEN_LINH: {
+      accessories: [
+        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khảm Xà Cừ Triều Đình', cultural_reason: 'Tái hiện uy nghi hoàng gia triều Lý - Trần Đại Việt.', vibe_tag: 'Trang Nghiêm' },
+        { id: 'BOI_NGOC', name: 'Đai Bội Ngọc Chạm Khắc Long Ẩn', cultural_reason: 'Phối cùng cổ tròn đại triều tôn phong thái bậc tôn quý.', vibe_tag: 'Quyền Quý' },
+        { id: 'QUAT_GIAY', name: 'Quạt Xếp Thư Pháp Gỗ Hoàng Đàn', cultural_reason: 'Đạo cụ nhã nhặn của bậc vương hầu danh gia.', vibe_tag: 'Đĩnh Đạc' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Vấn Đai Ngọc Triều Đình', cultural_reason: 'Để lộ đường viền tròn hoàn mỹ của cổ áo viên lĩnh.', vibe_tag: 'Uy Nghi' },
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Thêu Chỉ Kim Tuyến', cultural_reason: 'Quy chuẩn lễ phục tôn kính lịch sử.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'XOA_DAI', name: 'Tóc Dài Suôn Mượt Cài Bờm Ngọc Bích', cultural_reason: 'Nét thanh lịch đương đại giao thoa di sản ngàn năm.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_DOI_KHAM: {
+      accessories: [
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Xứ Đoài', cultural_reason: 'Tôn nét phóng khoáng đàm đạo thi ca bên tà áo vạt thẳng song song.', vibe_tag: 'Thanh Tao' },
+        { id: 'BOI_NGOC', name: 'Bội Ngọc Chạm Hoa Cúc Chu Đậu', cultural_reason: 'Thả nhẹ trước vạt áo hở tinh tế tôn nét duyên ngầm.', vibe_tag: 'Tinh Tế' },
+        { id: 'TUI_GAM', name: 'Túi Gấm Thêu Chỉ Vàng Cổ Điển', cultural_reason: 'Phụ kiện cầm tay nhã nhặn chứa vật dụng khi du xuân.', vibe_tag: 'Duyên Dáng' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Tiên Nữ Cài Trâm Bạc', cultural_reason: 'Hình tượng mỹ nhân tao nhã trong tranh tượng thời Lê.', vibe_tag: 'Kiêu Kỳ' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Rẽ Ngôi Thanh Thoát', cultural_reason: 'Tạo cảm giác bồng bềnh phiêu dật khi bước đi.', vibe_tag: 'Phiêu Dật' },
+        { id: 'TET_BIEM', name: 'Tóc Tết Bím Đuôi Sam Kẹp Nơ Lụa', cultural_reason: 'Hiện đại, trẻ trung, kết nối nét cổ phong với Gen Z.', vibe_tag: 'Trẻ Trung' }
+      ]
+    },
+    AO_DAI_LEMUR: {
+      accessories: [
+        { id: 'VI_CAM_TAY', name: 'Ví Cầm Tay Vintage Thập Niên 1930', cultural_reason: 'Biểu tượng quý cô thành thị tân thời Hà Thành - Sài Gòn.', vibe_tag: 'Quý Cô' },
+        { id: 'CHUOI_NGOC', name: 'Chuỗi Ngọc Trai Cổ Điển', cultural_reason: 'Tôn vinh đường viền cổ áo cách tân và bờ vai thanh tú.', vibe_tag: 'Đài Các' },
+        { id: 'QUAT_LUA', name: 'Quạt Lụa Phớt Hồng Cầm Tay', cultural_reason: 'Nét duyên dáng thanh lịch của nữ sinh tân thời.', vibe_tag: 'Thơ Mộng' }
+      ],
+      hairstyles: [
+        { id: 'UON_SONG', name: 'Tóc Uốn Sóng Nước Kiểu Cô Ba Sài Gòn', cultural_reason: 'Trào lưu tóc uốn lượn sóng thịnh hành bậc nhất thập niên 1930.', vibe_tag: 'Vintage' },
+        { id: 'BUI_CU_TOI', name: 'Búi Tóc Thấp Cài Kẹp Ngọc Trai', cultural_reason: 'Nét đoan trang của nữ sinh trường Đồng Khánh - Gia Long.', vibe_tag: 'Thanh Lịch' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Ngang Vai Uốn Cụp Nữ Tính', cultural_reason: 'Nhẹ nhàng, thanh tân, chuẩn phong vị tân thời Lemur.', vibe_tag: 'Nữ Tính' }
+      ]
+    }
+  };
+
+  const garmentSet = suggestionsByGarment[garmentId] || suggestionsByGarment.AO_NGU_THAN;
+
+  return {
+    accessories: garmentSet.accessories,
+    hairstyles: garmentSet.hairstyles,
+    stylist_note: `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`
+  };
 }

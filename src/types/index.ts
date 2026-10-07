@@ -11,12 +11,15 @@ export type GarmentType =
   | 'AO_TAC' 
   | 'AO_NHAT_BINH' 
   | 'AO_GIAO_LINH' 
+  | 'AO_VIEN_LINH'
+  | 'AO_DOI_KHAM'
   | 'AO_TU_THAN' 
-  | 'AO_BA_BA';
+  | 'AO_BA_BA'
+  | 'AO_DAI_LEMUR';
 
 export interface CulturalGuardrailResult {
   is_culturally_accurate: boolean;
-  warning_level: 'SAFE' | 'WARNING';
+  warning_level: 'SAFE' | 'WARNING' | 'REJECTED';
   cultural_warning_msg: string;
   suggested_fix: string;
   kieu_toc_va_trang_diem?: string;
@@ -25,14 +28,36 @@ export interface CulturalGuardrailResult {
   citations?: CitationSource[];
   set_name?: string;
   audit_passed?: boolean;
+  sanity_check_passed?: boolean;
+  inappropriate_terms_detected?: string[];
+  chosen_accessories?: string[];
+  chosen_hairstyle?: string;
+}
+
+export interface StylingSuggestionItem {
+  id: string;
+  name: string;
+  cultural_reason: string;
+  vibe_tag?: string;
+}
+
+export interface MiniStylingResponse {
+  accessories: StylingSuggestionItem[];
+  hairstyles: StylingSuggestionItem[];
+  stylist_note: string;
 }
 
 export interface CulturalRecommendationInput {
   garment_type: string;
   event: string;
   primary_color: string;
-  accessory: string;
+  accessory?: string;
+  accessories?: string[];
+  custom_accessories?: string[];
+  hairstyle?: string;
+  custom_hairstyle?: string;
   style_mode?: string;
+  personality?: string;
   region?: string;
 }
 
@@ -106,6 +131,13 @@ export interface CurrentOutfitState {
   colorName: string;
   garment: string;
   accessory: string;
+  accessories?: string[];
+  custom_accessories?: string[];
+  hairstyle?: string;
+  custom_hairstyle?: string;
+  style?: string;
+  style_mode?: string;
+  personality?: string;
   pattern?: PatternItem | null;
   genzActive?: boolean;
 }

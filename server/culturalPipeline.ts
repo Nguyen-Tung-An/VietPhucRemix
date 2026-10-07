@@ -1,69 +1,127 @@
 /**
- * VIỆT Y REMIX — TWO-ROUND CULTURAL AI PIPELINE
+ * VIỆT Y REMIX — TWO-ROUND CULTURAL AI PIPELINE & MINI STYLING SUGGESTIONS
  * 
- * Kiến trúc 2 vòng kiểm định di sản theo chuẩn Prompt Engineering:
- * - Vòng 1: Grounded Recommendation Generator (CoT + Grounding Context + Structured Output)
- * - Vòng 2: Multi-Round Cultural Auditor Agent (Kiểm duyệt độc lập phát hiện nhầm lẫn vùng miền/thời kỳ)
+ * 1. MINI GEMINI ROUND:
+ *    - Nhận input: Loại áo, màu sắc (color picker), phong cách, tính cách.
+ *    - Sinh ra 3 gợi ý phụ kiện (multiple select) & 3 gợi ý kiểu tóc (single select).
+ *    - Người dùng có thể tự gõ phụ kiện và kiểu tóc tùy ý.
  * 
- * Cả 2 vòng đều dùng HERITAGE_GROUND_TRUTH làm "Nguồn sự thật duy nhất" (Single Source of Truth)
- * và luôn kèm theo các trích dẫn URL đến tài liệu nguồn gốc uy tín.
+ * 2. STATE-PROOF SANITY & CULTURAL GUARDRAIL:
+ *    - Kiểm duyệt input tự do của người dùng: phát hiện từ ngữ thô tục, phản cảm, xúc phạm
+ *      thuần phong mỹ tục hoặc chuỗi vô nghĩa/spam.
+ *    - Kiểm tra tính tương thích văn hóa & kiêng kỵ lịch sử (Strict Taboos) đối với toàn bộ
+ *      danh sách phụ kiện (cả chọn sẵn lẫn tự nhập).
+ * 
+ * 3. TWO-ROUND HERITAGE GROUNDED EVALUATION:
+ *    - Vòng 1: Grounded Recommendation Generator (Ground Truth + CoT Reasoning).
+ *    - Vòng 2: Heritage Auditor Critic (Thẩm định độc lập & đối chiếu URL thật).
  */
 
 import { GoogleGenAI, Type } from '@google/genai';
-import { HERITAGE_GROUND_TRUTH, GarmentHeritageRecord } from '../src/data/heritageGroundTruth.ts';
+import {
+  CULTURAL_DATABASE,
+  CulturalHeritageEntry,
+  getCulturalTruth,
+  checkMultipleStrictTaboos,
+  validateUserInputSanity
+} from '../src/data/culturalTruths.ts';
 import {
   CulturalRecommendationInput,
   GroundedRecommendationResult,
   CulturalAuditResult,
   TwoRoundCulturalResponse,
-  CulturalGuardrailResult
+  CulturalGuardrailResult,
+  CitationSource,
+  MiniStylingResponse,
+  StylingSuggestionItem
 } from '../src/types/index.ts';
 
 // -----------------------------------------------------------------------------
-// 1. CHUYỂN ĐỔI BỘ GROUND TRUTH THÀNH PROMPT CONTEXT CÔ ĐỌNG
+// 1. CHUYỂN ĐỔI BỘ CULTURAL DATABASE THÀNH SYSTEM CONTEXT ĐẦY ĐỦ CÓ NGUỒN XÁC THỰC
 // -----------------------------------------------------------------------------
-function buildGroundTruthContextText(): string {
-  const records = Object.values(HERITAGE_GROUND_TRUTH);
+export function buildGroundTruthContextText(): string {
+  const records = Object.values(CULTURAL_DATABASE);
   return records
-    .map((r: GarmentHeritageRecord) => {
-      const incompatibleList = r.strictly_incompatible_accessories
-        .map((inc) => `- Kỵ phụ kiện: ${inc.accessory_name} (Lý do lịch sử: ${inc.historical_conflict_reason})`)
+    .map((r: CulturalHeritageEntry) => {
+      const taboosList = r.strictTaboos
+        .map(
+          (t) =>
+            `- Kỵ phụ kiện/chi tiết: [${t.incompatibleWith}] ${t.incompatibleName}` +
+            `\n  Lý do lịch sử: ${t.historicalConflictReason}` +
+            `\n  Gợi ý thay thế: ${t.suggestedAlternative}`
+        )
         .join('\n      ');
 
-      const citationsList = r.citations
-        .map((c) => `- Nguồn: "${c.title}" - Tác giả/Tổ chức: ${c.author_or_institution} - Link: ${c.url} (${c.reference_chapter_or_note})`)
-        .join('\n      ');
+      const featuresList = r.definingFeatures.map((f) => `  * ${f}`).join('\n');
 
-      return `### LOẠI ÁO: [${r.id}] ${r.name}
-- Tên thường gọi: ${r.common_names.join(', ')}
-- Niên đại & Bối cảnh lịch sử: ${r.historical_era}
-- Vùng miền đặc trưng: ${r.primary_region}
-- Tầng lớp / Công năng: ${r.social_stratum}
-- Cấu trúc: ${r.structural_features.flaps_count} thân áo, cổ [${r.structural_features.collar_type}], ${r.structural_features.buttons_count} cúc cài.
-  + Ý nghĩa cúc: ${r.structural_features.button_symbolism}
-  + Ý nghĩa thân áo: ${r.structural_features.body_symbolism}
-- Sự kiện phù hợp: ${r.recommended_events.join(', ')}
-- Phụ kiện hòa hợp: ${r.compatible_accessories.join(', ')}
-- Quy chuẩn kiêng kỵ / Xung đột di sản:
-      ${incompatibleList || 'Không có kiêng kỵ nghiêm trọng.'}
-- Kiểu tóc & Trang điểm khuyến nghị: ${r.makeup_and_hair_guidelines.hair_styles.join('; ')} | Makeup: ${r.makeup_and_hair_guidelines.makeup_tone}
-- Tư thế chụp ảnh: ${r.makeup_and_hair_guidelines.photography_pose}
-- Tài liệu trích dẫn uy tín:
-      ${citationsList}`;
+      return `### LOẠI TRANG PHỤC: [${r.id}] ${r.name}
+- Tên gọi khác: ${r.commonNames.join(', ')}
+- Niên đại lịch sử: ${r.historicalEra}
+- Vùng miền xuất xứ: ${r.originRegion}
+- Tầng lớp & Không gian sử dụng: ${r.socialContext}
+- CẤU TRÚC ĐẶC TRƯNG BẮT BUỘC (GROUND TRUTH - KHÔNG ĐƯỢC SAI):
+${featuresList}
+- QUY CHUẨN KIÊNG KỴ NGHIÊM NGẶT (STRICT TABOOS):
+      ${taboosList || 'Không có kiêng kỵ vùng miền nghiêm trọng.'}
+- Ý nghĩa & Chiều sâu văn hóa: ${r.culturalSignificance}
+- BẢO CHỨNG NGUỒN GỐC UY TÍN (BẮT BUỘC TRÍCH DẪN):
+  * Tên công trình/hồ sơ: "${r.sourceTitle}"
+  * Tác giả/Viện bảo tàng: ${r.authorOrInstitution}
+  * Đường dẫn URL xác thực: ${r.sourceUrl}
+  * Ghi chú tham khảo: ${r.sourceReferenceNote || 'Hồ sơ nghiên cứu di sản'}`;
     })
-    .join('\n\n');
+    .join('\n\n=========================================\n\n');
 }
 
 // -----------------------------------------------------------------------------
-// 2. SCHEMAS CẤU TRÚC DỮ LIỆU ĐẦU RA (GEMINI STRUCTURED OUTPUTS)
+// 2. SCHEMAS CẤU TRÚC DỮ LIỆU ĐẦU RA
 // -----------------------------------------------------------------------------
+const miniStylingSchema = {
+  type: Type.OBJECT,
+  properties: {
+    accessories: {
+      type: Type.ARRAY,
+      description: 'Chính xác 3 gợi ý phụ kiện hài hòa với áo, màu sắc và phong cách',
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          id: { type: Type.STRING },
+          name: { type: Type.STRING },
+          cultural_reason: { type: Type.STRING },
+          vibe_tag: { type: Type.STRING }
+        },
+        required: ['id', 'name', 'cultural_reason', 'vibe_tag']
+      }
+    },
+    hairstyles: {
+      type: Type.ARRAY,
+      description: 'Chính xác 3 gợi ý kiểu tóc phù hợp với dáng cổ áo và tính cách',
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          id: { type: Type.STRING },
+          name: { type: Type.STRING },
+          cultural_reason: { type: Type.STRING },
+          vibe_tag: { type: Type.STRING }
+        },
+        required: ['id', 'name', 'cultural_reason', 'vibe_tag']
+      }
+    },
+    stylist_note: {
+      type: Type.STRING,
+      description: 'Lời khuyên stylist ngắn gọn, truyền cảm hứng cho Gen Z'
+    }
+  },
+  required: ['accessories', 'hairstyles', 'stylist_note']
+};
+
 const round1ResponseSchema = {
   type: Type.OBJECT,
   properties: {
-    set_name: { type: Type.STRING, description: 'Tên bộ trang phục mỹ miều chuẩn phong vị di sản' },
+    set_name: { type: Type.STRING, description: 'Tên bộ trang phục mỹ miều chuẩn phong vị di sản đương đại' },
     garment_type: { type: Type.STRING, description: 'Mã định danh loại áo (AO_NGU_THAN, AO_TAC, AO_NHAT_BINH...)' },
     primary_color: { type: Type.STRING, description: 'Mã màu chính hex hoặc tên màu' },
-    color_harmony_explanation: { type: Type.STRING, description: 'Giải thích sự hòa sắc theo ngũ hành hoặc tinh thần di sản' },
+    color_harmony_explanation: { type: Type.STRING, description: 'Giải thích sự hòa sắc theo ngũ hành hoặc tinh thần di sản đương đại' },
     recommended_accessories: {
       type: Type.ARRAY,
       items: {
@@ -91,15 +149,15 @@ const round1ResponseSchema = {
     kieu_toc_va_makeup: {
       type: Type.OBJECT,
       properties: {
-        hair: { type: Type.STRING },
-        makeup: { type: Type.STRING }
+        hair: { type: Type.STRING, description: 'Kiểu tóc đã chọn hoặc được gợi ý' },
+        makeup: { type: Type.STRING, description: 'Gợi ý tông trang điểm sáng tạo tự nhiên của AI' }
       },
       required: ['hair', 'makeup']
     },
-    dang_chup_anh: { type: Type.STRING },
-    cau_chuyen_di_san: { type: Type.STRING },
-    has_cultural_risk: { type: Type.BOOLEAN },
-    cultural_risk_summary: { type: Type.STRING },
+    dang_chup_anh: { type: Type.STRING, description: 'Gợi ý tư thế chụp ảnh nghệ thuật sống động, tự nhiên' },
+    cau_chuyen_di_san: { type: Type.STRING, description: 'Câu chuyện cảm hứng thời trang kết nối di sản với Gen Z' },
+    has_cultural_risk: { type: Type.BOOLEAN, description: 'true nếu vi phạm quy chuẩn kiêng kỵ trong Ground Truth' },
+    cultural_risk_summary: { type: Type.STRING, description: 'Tóm tắt lý do xung đột hoặc xác nhận an toàn' },
     citations: {
       type: Type.ARRAY,
       items: {
@@ -155,9 +213,9 @@ const round2AuditResponseSchema = {
       },
       required: ['is_valid', 'details']
     },
-    citations_verified: { type: Type.BOOLEAN, description: 'Tất cả link và tài liệu có khớp với Ground Truth không' },
-    audit_verdict_message: { type: Type.STRING, description: 'Nhận xét ngắn gọn, mềm mại theo tinh thần Lụa Thanh' },
-    suggested_correction: { type: Type.STRING, description: 'Gợi ý điều chỉnh nếu có xung đột, nếu không thì null' }
+    citations_verified: { type: Type.BOOLEAN, description: 'Xác nhận URL trích dẫn có đúng từ Ground Truth hay không' },
+    audit_verdict_message: { type: Type.STRING, description: 'Lời nhận xét thẩm định văn hóa chuẩn mực' },
+    suggested_correction: { type: Type.STRING, description: 'Mã phụ kiện thay thế chuẩn chỉnh nếu có vi phạm', nullable: true }
   },
   required: [
     'audit_status',
@@ -170,95 +228,432 @@ const round2AuditResponseSchema = {
 };
 
 // -----------------------------------------------------------------------------
-// 3. DETERMINISTIC OFFLINE ENGINE (TỐC ĐỘ <20MS, ZERO TOKEN, DỰA TRÊN GROUND TRUTH)
+// 3. MINI GEMINI ROUND: SÁNG TẠO 3 GỢI Ý PHỤ KIỆN & 3 KIỂU TÓC THEO BỐI CẢNH
+// -----------------------------------------------------------------------------
+
+export function getOfflineMiniStylingSuggestions(context: {
+  garment_type: string;
+  primary_color: string;
+  style_mode?: string;
+  personality?: string;
+}): MiniStylingResponse {
+  const truth = getCulturalTruth(context.garment_type);
+  const garmentId = truth.id;
+
+  // Dữ liệu gợi ý thông minh theo từng loại trang phục
+  const suggestionsByGarment: Record<string, { accessories: StylingSuggestionItem[]; hairstyles: StylingSuggestionItem[] }> = {
+    AO_NGU_THAN: {
+      accessories: [
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Trầm Hương', cultural_reason: 'Tôn nét thanh nhã, đoan trang của sĩ phu và quý tộc triều Nguyễn khi dạo phố.', vibe_tag: 'Thanh Nhã' },
+        { id: 'TRAM_GOM', name: 'Trâm Cài Gốm Chu Đậu Khảm Vàng', cultural_reason: 'Điểm xuyết mái tóc với nét tinh hoa men lam gốm sứ cổ truyền 500 năm.', vibe_tag: 'Tinh Xảo' },
+        { id: 'TUI_GAM', name: 'Túi Gấm Dệt Kim Sa Cổ Phong', cultural_reason: 'Phụ kiện cầm tay tiện lợi chứa đồ cá nhân cho bạn trẻ dạo xuân.', vibe_tag: 'Duyên Dáng' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Cài Trâm Đồng', cultural_reason: 'Để lộ trọn vẹn cổ áo lập lĩnh vuông vức cao 2-3cm trang nghiêm.', vibe_tag: 'Sang Trọng' },
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Gấm Xứ Huế', cultural_reason: 'Chuẩn phong vị lễ phục cung đình, tôn gương mặt sáng sủa thanh tú.', vibe_tag: 'Truyền Thống' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Kẹp Bờm Ngọc', cultural_reason: 'Phá cách nhẹ nhàng đương đại dành cho Gen Z chụp ảnh phong cách thơ mộng.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_TAC: {
+      accessories: [
+        { id: 'KHAN_DONG', name: 'Khăn Đóng Lụa Dệt Chữ Thọ', cultural_reason: 'Phụ kiện nghi lễ bắt buộc khi khoác áo tấc hành đại lễ.', vibe_tag: 'Trang Trọng' },
+        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khắc Chữ Phúc', cultural_reason: 'Tái hiện phong vị quan viên và mệnh phụ triều Nguyễn.', vibe_tag: 'Quý Tộc' },
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Xếp Lụa Đỏ Son', cultural_reason: 'Hài hòa khi đứng chắp tay thụng dự tiệc truyền thống.', vibe_tag: 'Đĩnh Đạc' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Cung Đình', cultural_reason: 'Giữ nghiêm quy củ đại lễ phục, tôn nét tôn nghiêm lịch sử.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'BUI_TRAM', name: 'Búi Cao Cài Trâm Phượng', cultural_reason: 'Thanh thoát, phù hợp không gian cúng tế và hôn lễ cổ truyền.', vibe_tag: 'Đoan Trang' },
+        { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Cột Dải Lụa', cultural_reason: 'Gọn gàng tao nhã giúp thoải mái khi cử động vạt tay thụng.', vibe_tag: 'Thanh Thoát' }
+      ]
+    },
+    AO_NHAT_BINH: {
+      accessories: [
+        { id: 'TRAM_GOM', name: 'Trâm Cài Hoa Mai Cung Đình Mạ Vàng', cultural_reason: 'Điểm xuyết mái tóc cùng cung phục hậu phi lộng lẫy.', vibe_tag: 'Hoàng Gia' },
+        { id: 'QUAT_TRON', name: 'Quạt Tròn Lụa Thêu Song Hỷ', cultural_reason: 'Hài hòa với nẹp cổ áo chữ nhật thêu chỉ kim tuyến.', vibe_tag: 'Quý Phái' },
+        { id: 'BOI_NGOC', name: 'Dây Bội Ngọc Thắt Nút Đồng Tâm', cultural_reason: 'Đeo rủ trước ngực biểu trưng cho cát tường như ý.', vibe_tag: 'Cung Đình' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN_VANH', name: 'Vấn Khăn Vành Dây Xứ Huế', cultural_reason: 'Quy chuẩn hoàng triều của các bậc hoàng thái hậu, công chúa triều Nguyễn.', vibe_tag: 'Quyền Quý' },
+        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ khoét sâu đối khâm thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
+        { id: 'BUOC_THAP', name: 'Buộc Thấp Đính Dải Lụa Ngũ Sắc', cultural_reason: 'Đồng điệu với dải ngũ sắc ở viền tay áo Nhật Bình.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_GIAO_LINH: {
+      accessories: [
+        { id: 'DAI_LUA', name: 'Đai Lụa Buộc Vạt Thắt Nút Thả Dài', cultural_reason: 'Giữ vạt áo cổ chéo Lý - Trần - Lê buông rủ khoáng đạt.', vibe_tag: 'Cổ Phong' },
+        { id: 'BOI_NGOC', name: 'Bội Ngọc Khắc Hình Rồng Mây Thời Lý', cultural_reason: 'Tôn nét hào hoa phong nhã của tầng lớp quý tộc Thăng Long.', vibe_tag: 'Trầm Mặc' },
+        { id: 'QUAT_GIAY', name: 'Quạt Xếp Gỗ Mun Đề Thơ Cổ', cultural_reason: 'Phong thái văn nhân nho nhã dạo chơi danh lam thắng cảnh.', vibe_tag: 'Tao Nhã' }
+      ],
+      hairstyles: [
+        { id: 'BUI_CUA_DONG', name: 'Búi Tóc Đỉnh Đầu Cài Trâm Gỗ', cultural_reason: 'Hình tượng phổ biến trên tượng đá và bia ký thời Lê.', vibe_tag: 'Cổ Điển' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Tự Nhiên Rẽ Ngôi Giữa', cultural_reason: 'Tự nhiên, mộc mạc đúng tinh thần nếp mặc phương Bắc xưa.', vibe_tag: 'Thanh Thuần' },
+        { id: 'TET_BIEM', name: 'Tóc Thắt Bím Đuôi Sam Buông Lơi', cultural_reason: 'Nét trẻ trung duyên dáng của thiếu nữ đương đại phục dựng cổ phong.', vibe_tag: 'Thơ Mộng' }
+      ]
+    },
+    AO_TU_THAN: {
+      accessories: [
+        { id: 'NON_QUAI_THAO', name: 'Nón Quai Thao Dệt Đũi Xứ Kinh Bắc', cultural_reason: 'Biểu tượng liền chị duyên dáng trong các hội Lim mùa xuân.', vibe_tag: 'Kinh Bắc' },
+        { id: 'KHAN_MO_QUA', name: 'Khăn Mỏ Quạ Lụa Đen Tuyền', cultural_reason: 'Vấn nụ cười hàm tiếu che đi nét bẽn lẽn thôn nữ.', vibe_tag: 'Ý Nhị' },
+        { id: 'RUA_BAC', name: 'Dây Xà Tích Bạc Treo Con Dao Nhỏ', cultural_reason: 'Trang sức bằng bạc truyền thống của phụ nữ đồng bằng Bắc Bộ.', vibe_tag: 'Dân Gian' }
+      ],
+      hairstyles: [
+        { id: 'VAN_KHAN_MO_QUA', name: 'Tóc Vấn Khăn Mỏ Quạ Truyền Thống', cultural_reason: 'Khung hình chuẩn mực nhất gắn liền với nón quai thao.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'TET_BIEM', name: 'Tóc Buộc Đuôi Sam Thắt Dải Lụa Đào', cultural_reason: 'Tôn nét mộc mạc bên tà yếm thắm và thắt lưng xanh.', vibe_tag: 'Mộc Mạc' },
+        { id: 'XOA_DAI', name: 'Tóc Dài Buông Tự Nhiên Khẽ Cài Hoa', cultural_reason: 'Phong cách chụp ảnh mùa xuân tươi trẻ thanh thuần.', vibe_tag: 'Tươi Trẻ' }
+      ]
+    },
+    AO_BA_BA: {
+      accessories: [
+        { id: 'KHAN_RAN', name: 'Khăn Rằn Nam Bộ Kẻ Caro Đen Trắng', cultural_reason: 'Linh hồn phóng khoáng, mộc mạc của người phương Nam.', vibe_tag: 'Miệt Vườn' },
+        { id: 'NON_LA', name: 'Nón Lá Chóp Mềm Nghiêng Che', cultural_reason: 'Hài hòa bên bờ kênh, mạn xuồng vùng sông nước Cửu Long.', vibe_tag: 'Duyên Dáng' },
+        { id: 'GUOC_GOC', name: 'Guốc Mộc Quai Vải Hoa Li Ti', cultural_reason: 'Âm thanh gõ nhịp mộc mạc chân phương thôn dã.', vibe_tag: 'Chân Phương' }
+      ],
+      hairstyles: [
+        { id: 'TET_BIEM', name: 'Tóc Bím Đuôi Sam Buông Một Bên Vai', cultural_reason: 'Nét e ấp dịu dàng của người con gái miền Tây Nam Bộ.', vibe_tag: 'Ngọt Ngào' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Thẳng Mượt Tự Nhiên', cultural_reason: 'Nổi bật vẻ mộc mạc thanh thoát khi mặc áo bà ba lụa mềm.', vibe_tag: 'Mộc Mạc' },
+        { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Gọn Gàng Cài Nơ Vải', cultural_reason: 'Năng động, tươi trẻ dành cho các hoạt động trải nghiệm văn hóa.', vibe_tag: 'Năng Động' }
+      ]
+    },
+    AO_VIEN_LINH: {
+      accessories: [
+        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khảm Xà Cừ Triều Đình', cultural_reason: 'Tái hiện uy nghi hoàng gia triều Lý - Trần Đại Việt.', vibe_tag: 'Trang Nghiêm' },
+        { id: 'BOI_NGOC', name: 'Đai Bội Ngọc Chạm Khắc Long Ẩn', cultural_reason: 'Phối cùng cổ tròn đại triều tôn phong thái bậc tôn quý.', vibe_tag: 'Quyền Quý' },
+        { id: 'QUAT_GIAY', name: 'Quạt Xếp Thư Pháp Gỗ Hoàng Đàn', cultural_reason: 'Đạo cụ nhã nhặn của bậc vương hầu danh gia.', vibe_tag: 'Đĩnh Đạc' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Vấn Đai Ngọc Triều Đình', cultural_reason: 'Để lộ đường viền tròn hoàn mỹ của cổ áo viên lĩnh.', vibe_tag: 'Uy Nghi' },
+        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Thêu Chỉ Kim Tuyến', cultural_reason: 'Quy chuẩn lễ phục tôn kính lịch sử.', vibe_tag: 'Chuẩn Mực' },
+        { id: 'XOA_DAI', name: 'Tóc Dài Suôn Mượt Cài Bờm Ngọc Bích', cultural_reason: 'Nét thanh lịch đương đại giao thoa di sản ngàn năm.', vibe_tag: 'Đương Đại' }
+      ]
+    },
+    AO_DOI_KHAM: {
+      accessories: [
+        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Xứ Đoài', cultural_reason: 'Tôn nét phóng khoáng đàm đạo thi ca bên tà áo vạt thẳng song song.', vibe_tag: 'Thanh Tao' },
+        { id: 'BOI_NGOC', name: 'Bội Ngọc Chạm Hoa Cúc Chu Đậu', cultural_reason: 'Thả nhẹ trước vạt áo hở tinh tế tôn nét duyên ngầm.', vibe_tag: 'Tinh Tế' },
+        { id: 'TUI_GAM', name: 'Túi Gấm Thêu Chỉ Vàng Cổ Điển', cultural_reason: 'Phụ kiện cầm tay nhã nhặn chứa vật dụng khi du xuân.', vibe_tag: 'Duyên Dáng' }
+      ],
+      hairstyles: [
+        { id: 'BUI_TRAM', name: 'Búi Tóc Tiên Nữ Cài Trâm Bạc', cultural_reason: 'Hình tượng mỹ nhân tao nhã trong tranh tượng thời Lê.', vibe_tag: 'Kiêu Kỳ' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Rẽ Ngôi Thanh Thoát', cultural_reason: 'Tạo cảm giác bồng bềnh phiêu dật khi bước đi.', vibe_tag: 'Phiêu Dật' },
+        { id: 'TET_BIEM', name: 'Tóc Tết Bím Đuôi Sam Kẹp Nơ Lụa', cultural_reason: 'Hiện đại, trẻ trung, kết nối nét cổ phong với Gen Z.', vibe_tag: 'Trẻ Trung' }
+      ]
+    },
+    AO_DAI_LEMUR: {
+      accessories: [
+        { id: 'VI_CAM_TAY', name: 'Ví Cầm Tay Vintage Thập Niên 1930', cultural_reason: 'Biểu tượng quý cô thành thị tân thời Hà Thành - Sài Gòn.', vibe_tag: 'Quý Cô' },
+        { id: 'CHUOI_NGOC', name: 'Chuỗi Ngọc Trai Cổ Điển', cultural_reason: 'Tôn vinh đường viền cổ áo cách tân và bờ vai thanh tú.', vibe_tag: 'Đài Các' },
+        { id: 'QUAT_LUA', name: 'Quạt Lụa Phớt Hồng Cầm Tay', cultural_reason: 'Nét duyên dáng thanh lịch của nữ sinh tân thời.', vibe_tag: 'Thơ Mộng' }
+      ],
+      hairstyles: [
+        { id: 'UON_SONG', name: 'Tóc Uốn Sóng Nước Kiểu Cô Ba Sài Gòn', cultural_reason: 'Trào lưu tóc uốn lượn sóng thịnh hành bậc nhất thập niên 1930.', vibe_tag: 'Vintage' },
+        { id: 'BUI_CU_TOI', name: 'Búi Tóc Thấp Cài Kẹp Ngọc Trai', cultural_reason: 'Nét đoan trang của nữ sinh trường Đồng Khánh - Gia Long.', vibe_tag: 'Thanh Lịch' },
+        { id: 'XOA_DAI', name: 'Tóc Xõa Ngang Vai Uốn Cụp Nữ Tính', cultural_reason: 'Nhẹ nhàng, thanh tân, chuẩn phong vị tân thời Lemur.', vibe_tag: 'Nữ Tính' }
+      ]
+    }
+  };
+
+  const garmentSet = suggestionsByGarment[garmentId] || suggestionsByGarment.AO_NGU_THAN;
+
+  return {
+    accessories: garmentSet.accessories,
+    hairstyles: garmentSet.hairstyles,
+    stylist_note: `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`
+  };
+}
+
+export async function runOnlineMiniStylingSuggestions(
+  ai: GoogleGenAI,
+  context: {
+    garment_type: string;
+    primary_color: string;
+    style_mode?: string;
+    personality?: string;
+  }
+): Promise<MiniStylingResponse> {
+  const truth = getCulturalTruth(context.garment_type);
+
+  const prompt = `Bạn là Giám đốc Phong cách Cổ phục Việt Y đương đại.
+Người dùng đang thiết kế bộ trang phục:
+- Loại áo: [${truth.id}] ${truth.name} (Xuất xứ: ${truth.originRegion}, Niên đại: ${truth.historicalEra})
+- Màu sắc chủ đạo: ${context.primary_color}
+- Phong cách: ${context.style_mode || 'THANH_TAO'}
+- Tính cách người mặc: ${context.personality || 'Thanh lịch, tự tin, yêu di sản'}
+
+Các kiêng kỵ nghiêm ngặt (KHÔNG ĐƯỢC GỢI Ý các món này):
+${truth.strictTaboos.map((t) => `- Không gợi ý: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}
+
+NHIỆM VỤ CỦA BẠN:
+1. Sáng tạo CHÍNH XÁC 3 gợi ý PHỤ KIỆN phù hợp với loại áo này (không phạm kiêng kỵ, tôn dáng, có ý nghĩa văn hóa và vibe tag).
+2. Sáng tạo CHÍNH XÁC 3 gợi ý KIỂU TÓC nghệ thuật, hài hòa với cổ áo và phong cách.
+3. Đưa ra 1 câu stylist note truyền cảm hứng ngắn gọn (< 40 từ).
+
+Trả về định dạng JSON theo đúng schema được yêu cầu.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: prompt,
+      config: {
+        systemInstruction: 'Bạn là chuyên gia tư vấn thời trang cổ phục Việt Y tinh tế và sáng tạo.',
+        responseMimeType: 'application/json',
+        responseSchema: miniStylingSchema,
+        temperature: 0.3
+      }
+    });
+
+    const parsed: MiniStylingResponse = JSON.parse(response.text || '{}');
+    if (parsed.accessories?.length && parsed.hairstyles?.length) {
+      return parsed;
+    }
+  } catch (err) {
+    console.warn('Lỗi gọi Gemini Mini Styling, chuyển sang Offline Generator:', err);
+  }
+
+  return getOfflineMiniStylingSuggestions(context);
+}
+
+// -----------------------------------------------------------------------------
+// 4. DETERMINISTIC OFFLINE ENGINE (BẢO VỆ QUOTA 100%, DỰA TRÊN CULTURAL DATABASE)
 // -----------------------------------------------------------------------------
 export function runOfflineCulturalPipeline(input: CulturalRecommendationInput): TwoRoundCulturalResponse {
   const startTime = Date.now();
-  const garmentKey = (input.garment_type || 'AO_NGU_THAN').toUpperCase();
-  const record = HERITAGE_GROUND_TRUTH[garmentKey] || HERITAGE_GROUND_TRUTH.AO_NGU_THAN;
+  const truth = getCulturalTruth(input.garment_type);
 
-  const currentAccessory = (input.accessory || 'QUAT_GIAY').toUpperCase();
+  // 1. Kiểm tra State-Proof Sanity trên input tự nhập của người dùng
+  for (const customAcc of input.custom_accessories || []) {
+    const sanityCheck = validateUserInputSanity(customAcc, 'accessory');
+    if (!sanityCheck.isValid) {
+      const rejectCitations: CitationSource[] = [
+        {
+          title: truth.sourceTitle,
+          author_or_institution: truth.authorOrInstitution,
+          url: truth.sourceUrl,
+          reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu di sản'
+        }
+      ];
 
-  // Kiểm tra xung đột phụ kiện trong Ground Truth
-  const conflict = record.strictly_incompatible_accessories.find(
-    (inc) => inc.accessory_id.toUpperCase() === currentAccessory || currentAccessory.includes(inc.accessory_id)
-  );
+      return {
+        recommendation: {
+          set_name: `${truth.name} (Chưa hợp chuẩn)`,
+          garment_type: truth.id,
+          primary_color: input.primary_color || '#F4C9D6',
+          color_harmony_explanation: 'Nội dung phụ kiện tự nhập cần được tinh chỉnh lại theo thuần phong mỹ tục hoặc tính hiện thực.',
+          recommended_accessories: [],
+          incompatible_accessories_detected: [],
+          kieu_toc_va_makeup: { hair: 'Chưa xác định', makeup: 'Chưa xác định' },
+          dang_chup_anh: 'Vui lòng điều chỉnh lại phụ kiện hoặc kiểu tóc hợp chuẩn.',
+          cau_chuyen_di_san: 'Hệ thống bảo vệ thuần phong mỹ tục đã phát hiện từ ngữ hoặc đồ vật chưa phù hợp.',
+          has_cultural_risk: true,
+          cultural_risk_summary: sanityCheck.reason || 'Phụ kiện nhập vào chưa phù hợp.',
+          citations: rejectCitations
+        },
+        audit: {
+          audit_status: 'FLAGGED',
+          confidence_score: 1.0,
+          cross_regional_check: { is_valid: false, details: 'Phát hiện nội dung không phù hợp.' },
+          historical_accuracy_check: { is_valid: false, details: 'Phụ kiện không hợp chuẩn hoặc không có thật.' },
+          citations_verified: true,
+          audit_verdict_message: sanityCheck.reason || 'Nội dung không hợp chuẩn.',
+          suggested_correction: 'QUAT_GIAY'
+        },
+        final_guardrail: {
+          is_culturally_accurate: false,
+          warning_level: 'REJECTED',
+          cultural_warning_msg: sanityCheck.reason || 'Phát hiện từ ngữ hoặc phụ kiện chưa phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+          suggested_fix: 'QUAT_GIAY',
+          kieu_toc_va_trang_diem: 'Chưa hợp chuẩn',
+          dang_chup_anh: 'Vui lòng chỉnh sửa lại từ ngữ nhập vào.',
+          cau_chuyen_di_san: 'Vui lòng dùng tên phụ kiện trang sức, mũ nón, quạt hoặc trâm cài trang nhã.',
+          citations: rejectCitations,
+          set_name: truth.name,
+          audit_passed: false,
+          sanity_check_passed: false,
+          inappropriate_terms_detected: [customAcc]
+        },
+        pipeline_metadata: {
+          mode: 'OFFLINE_GROUND_TRUTH_ENGINE',
+          model_round1: 'state-proof-sanity-filter',
+          model_round2: 'state-proof-sanity-filter',
+          latency_ms: Date.now() - startTime
+        }
+      };
+    }
+  }
 
-  const hasRisk = Boolean(conflict);
+  if (input.custom_hairstyle) {
+    const sanityCheck = validateUserInputSanity(input.custom_hairstyle, 'hairstyle');
+    if (!sanityCheck.isValid) {
+      const rejectCitations: CitationSource[] = [
+        {
+          title: truth.sourceTitle,
+          author_or_institution: truth.authorOrInstitution,
+          url: truth.sourceUrl,
+          reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu di sản'
+        }
+      ];
+
+      return {
+        recommendation: {
+          set_name: `${truth.name} (Chưa hợp chuẩn)`,
+          garment_type: truth.id,
+          primary_color: input.primary_color || '#F4C9D6',
+          color_harmony_explanation: 'Nội dung kiểu tóc tự nhập cần được tinh chỉnh lại theo thuần phong mỹ tục hoặc tính hiện thực.',
+          recommended_accessories: [],
+          incompatible_accessories_detected: [],
+          kieu_toc_va_makeup: { hair: 'Chưa xác định', makeup: 'Chưa xác định' },
+          dang_chup_anh: 'Vui lòng điều chỉnh lại kiểu tóc hợp chuẩn.',
+          cau_chuyen_di_san: 'Hệ thống bảo vệ thuần phong mỹ tục đã phát hiện từ ngữ hoặc kiểu tóc chưa phù hợp.',
+          has_cultural_risk: true,
+          cultural_risk_summary: sanityCheck.reason || 'Kiểu tóc nhập vào chưa phù hợp.',
+          citations: rejectCitations
+        },
+        audit: {
+          audit_status: 'FLAGGED',
+          confidence_score: 1.0,
+          cross_regional_check: { is_valid: false, details: 'Phát hiện nội dung không phù hợp.' },
+          historical_accuracy_check: { is_valid: false, details: 'Kiểu tóc không hợp chuẩn hoặc không có thật.' },
+          citations_verified: true,
+          audit_verdict_message: sanityCheck.reason || 'Nội dung không hợp chuẩn.',
+          suggested_correction: 'BUI_TRAM'
+        },
+        final_guardrail: {
+          is_culturally_accurate: false,
+          warning_level: 'REJECTED',
+          cultural_warning_msg: sanityCheck.reason || 'Phát hiện từ ngữ hoặc kiểu tóc chưa phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+          suggested_fix: 'BUI_TRAM',
+          kieu_toc_va_trang_diem: 'Chưa hợp chuẩn',
+          dang_chup_anh: 'Vui lòng chỉnh sửa lại từ ngữ nhập vào.',
+          cau_chuyen_di_san: 'Vui lòng dùng tên kiểu tóc hoặc cách vấn tóc trang nhã.',
+          citations: rejectCitations,
+          set_name: truth.name,
+          audit_passed: false,
+          sanity_check_passed: false,
+          inappropriate_terms_detected: [input.custom_hairstyle]
+        },
+        pipeline_metadata: {
+          mode: 'OFFLINE_GROUND_TRUTH_ENGINE',
+          model_round1: 'state-proof-sanity-filter',
+          model_round2: 'state-proof-sanity-filter',
+          latency_ms: Date.now() - startTime
+        }
+      };
+    }
+  }
+
+  // 2. Thu thập danh sách toàn bộ phụ kiện (cả chọn sẵn & tự nhập)
+  const allAccessories: string[] = [
+    ...(input.accessories || (input.accessory ? [input.accessory] : ['QUAT_GIAY'])),
+    ...(input.custom_accessories || [])
+  ];
+
+  // 3. Kiểm tra Strict Taboos với toàn bộ danh sách phụ kiện
+  const tabooCheck = checkMultipleStrictTaboos(truth.id, allAccessories);
+  const hasRisk = tabooCheck.hasTaboo;
+  const conflicts = tabooCheck.taboos;
 
   const primaryColor = input.primary_color || '#F4C9D6';
-  const matchedColor = record.recommended_colors.find(
-    (c) => c.hex.toLowerCase() === primaryColor.toLowerCase()
-  ) || record.recommended_colors[0];
+  const event = input.event || 'tet';
+  const chosenHair = input.custom_hairstyle || input.hairstyle || 'Tóc búi cao thanh thoát cài trâm gốm';
 
-  const setName = `${record.name} Sắc ${matchedColor.name}`;
-
-  // Bước 1: Recommendation
-  const recommendation: GroundedRecommendationResult = {
-    set_name: setName,
-    garment_type: record.id,
-    primary_color: primaryColor,
-    color_harmony_explanation: matchedColor.cultural_meaning,
-    recommended_accessories: record.compatible_accessories.map((accId) => ({
-      id: accId,
-      name: accId.replace(/_/g, ' '),
-      purpose: 'Tôn vinh tính trang nhã và nguyên bản của trang phục.'
-    })),
-    incompatible_accessories_detected: conflict
-      ? [
-          {
-            id: conflict.accessory_id,
-            name: conflict.accessory_name,
-            reason: conflict.historical_conflict_reason
-          }
-        ]
-      : [],
-    kieu_toc_va_makeup: {
-      hair: record.makeup_and_hair_guidelines.hair_styles[0] || 'Búi tóc thanh nhã',
-      makeup: record.makeup_and_hair_guidelines.makeup_tone
+  // AI Creativity Zone: Tùy biến sinh động theo sự kiện
+  const eventCreativeStyles: Record<string, { hair: string; makeup: string; pose: string; story: string }> = {
+    tet: {
+      hair: chosenHair,
+      makeup: 'Tông cam đào tươi tắn ấm áp, viền mắt nhẹ nhàng, điểm son đỏ cánh sen đón tân xuân nghênh tài lộc',
+      pose: 'Nghiêng người 45 độ, tay khẽ giữ phụ kiện đoan trang, tà áo buông tự nhiên đón ánh nắng mai',
+      story: `Sắc phục rạng rỡ chào xuân mới, kết hợp trọn vẹn triết lý di sản: ${truth.culturalSignificance}`
     },
-    dang_chup_anh: record.makeup_and_hair_guidelines.photography_pose,
-    cau_chuyen_di_san: `${record.structural_features.button_symbolism} ${record.structural_features.body_symbolism}`,
-    has_cultural_risk: hasRisk,
-    cultural_risk_summary: conflict
-      ? conflict.historical_conflict_reason
-      : 'Bộ phục trang hài hòa chuẩn mực di sản theo tài liệu khảo cứu.',
-    citations: record.citations
+    grad: {
+      hair: chosenHair,
+      makeup: 'Phong cách sương mai tông hồng đất tinh khôi, tôn phong thái tri thức đương đại',
+      pose: 'Đứng thẳng người đoan chính, hai tay nâng cuốn kỷ yếu hoặc nhành hoa ngang eo, tà áo buông thẳng tắp vững chãi',
+      story: `Khẳng định bản sắc cội nguồn trong ngày lễ trưởng thành cử nghiệp cùng dáng áo ${truth.name}`
+    },
+    temple: {
+      hair: chosenHair,
+      makeup: 'Trang điểm thuần khiết mộc mạc, môi hồng dưỡng tự nhiên thanh tịnh nơi thiền môn',
+      pose: 'Bước chậm khoan thai bên bậc thềm đá rêu phong hoặc hai tay chắp nhẹ trước ngực an nhiên',
+      story: `Nét trang nghiêm tịch tĩnh chốn thiền môn, gợi nhắc tâm hồn hướng thiện và đạo làm người bền vững`
+    }
   };
 
-  // Bước 2: Auditor Agent
+  const currentCreative = eventCreativeStyles[event] || eventCreativeStyles.tet;
+  const setName = `${truth.name} • Sắc Lụa Đương Đại`;
+
+  const citations: CitationSource[] = [
+    {
+      title: truth.sourceTitle,
+      author_or_institution: truth.authorOrInstitution,
+      url: truth.sourceUrl,
+      reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu nghiên cứu di sản uy tín',
+      publication_year: truth.publicationYear
+    }
+  ];
+
+  const conflictMessage = conflicts.map((c) => c.historicalConflictReason).join(' ');
+
+  const recommendation: GroundedRecommendationResult = {
+    set_name: setName,
+    garment_type: truth.id,
+    primary_color: primaryColor,
+    color_harmony_explanation: `Sự phối sắc hòa quyện giữa vẻ đẹp truyền thống của ${truth.name} và tinh thần đương đại Gen Z.`,
+    recommended_accessories: allAccessories.map((acc) => ({
+      id: acc,
+      name: acc.replace(/_/g, ' '),
+      purpose: 'Phụ kiện tôn nét phong nhã di sản theo lựa chọn cá nhân.'
+    })),
+    incompatible_accessories_detected: conflicts.map((c) => ({
+      id: c.incompatibleWith,
+      name: c.incompatibleName,
+      reason: c.historicalConflictReason
+    })),
+    kieu_toc_va_makeup: {
+      hair: currentCreative.hair,
+      makeup: currentCreative.makeup
+    },
+    dang_chup_anh: currentCreative.pose,
+    cau_chuyen_di_san: currentCreative.story,
+    has_cultural_risk: hasRisk,
+    cultural_risk_summary: hasRisk
+      ? conflictMessage
+      : 'Bộ phục trang hài hòa chuẩn mực di sản theo tài liệu khảo cứu.',
+    citations
+  };
+
   const audit: CulturalAuditResult = {
     audit_status: hasRisk ? 'FLAGGED' : 'APPROVED',
     confidence_score: hasRisk ? 0.98 : 1.0,
     cross_regional_check: {
       is_valid: !hasRisk,
       details: hasRisk
-        ? `Phát hiện xung đột vùng miền: ${conflict?.historical_conflict_reason}`
-        : `Phù hợp chuẩn mực vùng miền đặc trưng [${record.primary_region}].`
+        ? `Phát hiện xung đột văn hóa: ${conflictMessage}`
+        : `Phù hợp chuẩn mực vùng miền đặc trưng [${truth.originRegion}].`
     },
     historical_accuracy_check: {
       is_valid: true,
-      details: `Khớp niên đại khảo cứu: ${record.historical_era}.`
+      details: `Khớp niên đại khảo cứu: ${truth.historicalEra}.`
     },
     citations_verified: true,
     audit_verdict_message: hasRisk
-      ? `Phối hợp này mang tính thể nghiệm đương đại Gen Z, có sự khác biệt so với quy chuẩn gốc triều đại.`
-      : `Hài hòa di sản tuyệt đối. Bộ phục trang đạt chuẩn mực thẩm mỹ và lịch sử.`,
-    suggested_correction: conflict ? record.compatible_accessories[0] : null
+      ? `Phối hợp này mang tính thể nghiệm đương đại Gen Z, có sự khác biệt so với quy chuẩn di sản gốc.`
+      : `Hài hòa di sản tuyệt đối. Bộ phục trang đạt chuẩn mực thẩm mỹ và lịch sử (${truth.sourceTitle}).`,
+    suggested_correction: conflicts[0]?.suggestedAlternative || null
   };
 
-  // Final Guardrail View Model
   const finalGuardrail: CulturalGuardrailResult = {
     is_culturally_accurate: !hasRisk,
     warning_level: hasRisk ? 'WARNING' : 'SAFE',
-    cultural_warning_msg: hasRisk ? (conflict?.historical_conflict_reason || '') : '',
-    suggested_fix: conflict ? record.compatible_accessories[0] : 'QUAT_GIAY',
+    cultural_warning_msg: hasRisk ? conflictMessage : '',
+    suggested_fix: conflicts[0]?.suggestedAlternative || 'QUAT_GIAY',
     kieu_toc_va_trang_diem: `${recommendation.kieu_toc_va_makeup.hair} — ${recommendation.kieu_toc_va_makeup.makeup}`,
     dang_chup_anh: recommendation.dang_chup_anh,
     cau_chuyen_di_san: recommendation.cau_chuyen_di_san,
-    citations: record.citations,
+    citations,
     set_name: setName,
-    audit_passed: !hasRisk
+    audit_passed: !hasRisk,
+    sanity_check_passed: true,
+    chosen_accessories: allAccessories,
+    chosen_hairstyle: chosenHair
   };
 
   return {
@@ -275,42 +670,74 @@ export function runOfflineCulturalPipeline(input: CulturalRecommendationInput): 
 }
 
 // -----------------------------------------------------------------------------
-// 4. ONLINE GEMINI 2-ROUND PIPELINE (COT + GROUNDING SYSTEM INSTRUCTION)
+// 5. ONLINE GEMINI 2-ROUND PIPELINE (COT + GROUNDING SYSTEM INSTRUCTION)
 // -----------------------------------------------------------------------------
 export async function runOnlineGeminiCulturalPipeline(
   ai: GoogleGenAI,
   input: CulturalRecommendationInput
 ): Promise<TwoRoundCulturalResponse> {
   const startTime = Date.now();
+  const truth = getCulturalTruth(input.garment_type);
+
+  // 1. Kiểm tra State-Proof Sanity trên input tự nhập trước khi gọi API
+  for (const customAcc of input.custom_accessories || []) {
+    const sanity = validateUserInputSanity(customAcc, 'accessory');
+    if (!sanity.isValid) {
+      // Dừng sớm, không tiêu tốn token API
+      return runOfflineCulturalPipeline(input);
+    }
+  }
+
+  if (input.custom_hairstyle) {
+    const sanity = validateUserInputSanity(input.custom_hairstyle, 'hairstyle');
+    if (!sanity.isValid) {
+      return runOfflineCulturalPipeline(input);
+    }
+  }
+
   const groundTruthContext = buildGroundTruthContextText();
+  const allAccessories = [
+    ...(input.accessories || (input.accessory ? [input.accessory] : ['QUAT_GIAY'])),
+    ...(input.custom_accessories || [])
+  ];
+  const chosenHair = input.custom_hairstyle || input.hairstyle || 'Tóc búi cao thanh thoát cài trâm';
 
   // ---------------------------------------------------------------------------
   // VÒNG 1: GROUNDED RECOMMENDATION GENERATOR
-  // Kỹ thuật: Role-Prompting + Grounded System Instruction + CoT Reasoner
   // ---------------------------------------------------------------------------
-  const round1SystemInstruction = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Y.
-NGUỒN SỰ THẬT DUY NHẤT (GROUND TRUTH):
+  const round1SystemInstruction = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Y đương đại.
+
+BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
 ${groundTruthContext}
 
-QUY TẮC BẮT BUỘC:
-1. Bạn CHỈ ĐƯỢC PHÉP trả lời dựa trên Ground Truth được cung cấp ở trên.
-2. TUYỆT ĐỐI KHÔNG tự suy diễn, bịa đặt niên đại, ý nghĩa hay quy tắc ngoài tài liệu này.
-3. Trong phần citations, bạn PHẢI trích xuất chính xác tiêu đề, tác giả/tổ chức và đường link URL có trong Ground Truth.
-4. Áp dụng quy trình tư duy Chain-of-Thought (CoT):
-   - Bước 1: Tra cứu đúng mã loại áo trong Ground Truth.
-   - Bước 2: So sánh phụ kiện người dùng chọn với danh sách 'Quy chuẩn kiêng kỵ / Xung đột di sản' của áo đó.
-   - Bước 3: Nếu phát hiện xung đột (ví dụ Áo Ngũ Thân + Khăn Rằn, Áo Bà Ba + Nón Quai Thao), đặt has_cultural_risk = true và nêu rõ lý do lịch sử.
-   - Bước 4: Trích dẫn các tài liệu nguồn gốc có URL tương ứng.`;
+NGUYÊN TẮC HOẠT ĐỘNG PHÂN ĐỊNH RẠCH RÒI:
+1. ĐIỀU BẮT BUỘC TUÂN THỦ THEO GROUND TRUTH (KHÔNG ĐƯỢC SAI):
+   - Bạn PHẢI đối chiếu chính xác loại áo, niên đại, vùng miền và các đặc trưng cấu trúc từ Ground Truth.
+   - Kiểm tra toàn bộ danh sách phụ kiện (cả món có sẵn và món người dùng tự nhập) đối với danh sách 'QUY CHUẨN KIÊNG KỴ NGHIÊM NGẶT (STRICT TABOOS)':
+     + Nếu có phụ kiện thuộc danh sách kiêng kỵ (ví dụ: Áo Ngũ Thân Lập Lĩnh + Khăn Rằn, Áo Bà Ba + Nón Quai Thao, Áo Nhật Bình + Khăn Rằn), bạn PHẢI đánh dấu has_cultural_risk = true và nêu rõ lý do xung đột lịch sử.
+     + Nếu không vi phạm, đánh dấu has_cultural_risk = false.
+   - KIỂM ĐỊNH THUẦN PHONG MỸ TỤC TRÊN NỘI DUNG TỰ NHẬP:
+     + Nếu phát hiện từ ngữ thô tục, báng bổ hoặc không phải phụ kiện/kiểu tóc có thật, đánh dấu has_cultural_risk = true và nêu rõ lý do.
+   - BẮT BUỘC TRÍCH DẪN NGUỒN: Bạn PHẢI trích dẫn chính xác 'sourceUrl', 'title', 'author_or_institution' từ Ground Truth của loại trang phục đó vào mảng 'citations'. Tuyệt đối không bịa đặt link URL.
+
+2. VÙNG SÁNG TẠO TỰ NHIÊN CỦA AI (CREATIVE FREEDOM):
+   - Đánh giá sự hài hòa giữa màu sắc người dùng chọn, các phụ kiện đã chọn và kiểu tóc.
+   - Sáng tạo phong cách trang điểm (kieu_toc_va_makeup.makeup), dáng chụp ảnh nghệ thuật (dang_chup_anh) và thông điệp di sản truyền cảm hứng cho Gen Z (cau_chuyen_di_san).`;
 
   const round1Prompt = `Người dùng yêu cầu tư vấn phối đồ:
-- Loại trang phục yêu cầu: ${input.garment_type}
-- Sự kiện / Bối cảnh: ${input.event}
+- Loại trang phục: [${truth.id}] ${truth.name}
+- Sự kiện / Bối cảnh: ${input.event || 'tet'}
 - Màu sắc chủ đạo: ${input.primary_color}
-- Phụ kiện đang chọn: ${input.accessory}
+- Danh sách phụ kiện chọn & tự nhập: ${JSON.stringify(allAccessories)}
+- Kiểu tóc đã chọn hoặc tự nhập: "${chosenHair}"
 - Phong cách mong muốn: ${input.style_mode || 'THANH_TAO'}
-- Vùng miền: ${input.region || 'TOAN_QUOC'}
+- Tính cách người mặc: ${input.personality || 'Đương đại, phóng khoáng, tự tin'}
 
-Hãy phân tích và sinh bộ gợi ý phối đồ chuẩn mực có căn cứ di sản theo đúng định dạng JSON được yêu cầu.`;
+Hãy áp dụng Chain-of-Thought (CoT):
+1. Tra cứu loại trang phục trong Ground Truth và kiểm tra toàn bộ phụ kiện có phạm Strict Taboos không.
+2. Kiểm tra xem các phụ kiện tự nhập và kiểu tóc có phù hợp thuần phong mỹ tục và hợp chuẩn hay không.
+3. Sinh gợi ý makeup, dáng chụp ảnh và thông điệp di sản độc đáo theo bối cảnh.
+4. Trích xuất chính xác nguồn tư liệu uy tín có kèm 'url' từ Ground Truth vào danh sách 'citations'.`;
 
   const round1Response = await ai.models.generateContent({
     model: 'gemini-3.8-flash',
@@ -319,28 +746,40 @@ Hãy phân tích và sinh bộ gợi ý phối đồ chuẩn mực có căn cứ
       systemInstruction: round1SystemInstruction,
       responseMimeType: 'application/json',
       responseSchema: round1ResponseSchema,
-      temperature: 0.2 // Giữ nhiệt độ thấp để giảm thiểu tối đa ảo giác
+      temperature: 0.3
     }
   });
 
   const recommendation: GroundedRecommendationResult = JSON.parse(round1Response.text || '{}');
 
+  // Đảm bảo citations luôn có sourceUrl từ Ground Truth nếu model trả thiếu
+  if (!recommendation.citations || recommendation.citations.length === 0) {
+    recommendation.citations = [
+      {
+        title: truth.sourceTitle,
+        author_or_institution: truth.authorOrInstitution,
+        url: truth.sourceUrl,
+        reference_chapter_or_note: truth.sourceReferenceNote || 'Tài liệu nghiên cứu di sản'
+      }
+    ];
+  }
+
   // ---------------------------------------------------------------------------
   // VÒNG 2: MULTI-ROUND CULTURAL AUDITOR AGENT
-  // Kỹ thuật: Independent Heritage Auditor Critic + Cross-regional Verification
   // ---------------------------------------------------------------------------
   const round2SystemInstruction = `Bạn là Trưởng Ban Thẩm định Di sản Độc lập thuộc Hội đồng Cổ phục Việt Nam.
-NGUỒN SỰ THẬT DUY NHẤT ĐỐI CHIẾU:
+
+BỘ NGUỒN SỰ THẬT DUY NHẤT ĐỐI CHIẾU:
 ${groundTruthContext}
 
 NHIỆM VỤ CỦA BẠN:
-1. Bạn nhận bản kết quả tư vấn từ Vòng 1 và đối chiếu nghiêm ngặt từng câu chữ với Ground Truth.
-2. Kiểm tra xung đột vùng miền (Cross-regional check): Có bị lẫn lộn giữa nón quai thao/khăn mỏ quạ (Bắc Bộ), khăn vành/áo tấc/nhật bình (Huế/Trung Bộ), và áo bà ba/khăn rằn (Nam Bộ) không?
-3. Kiểm tra tính chính xác lịch sử (Historical accuracy check): Cấu trúc thân áo, số lượng cúc cài, và triết lý có đúng như trong sách nghiên cứu không?
-4. Kiểm tra trích dẫn (Citations verification): Đảm bảo các URL trích dẫn dẫn về nguồn uy tín đã được cấp phép trong Ground Truth.
+1. Bạn nhận bản kết quả tư vấn từ Vòng 1 và đối chiếu nghiêm ngặt từng yếu tố với Ground Truth.
+2. Kiểm tra xung đột vùng miền (Cross-regional check): Có bị lẫn lộn giữa nón quai thao/áo tứ thân (Bắc Bộ), khăn vành/áo tấc/nhật bình/ngũ thân (Huế/Trung Bộ), và áo bà ba/khăn rằn (Nam Bộ) không?
+3. Kiểm tra tính chính xác lịch sử (Historical accuracy check): Niên đại và cấu trúc có đúng như trong Ground Truth không?
+4. Kiểm tra trích dẫn (Citations verification): Đảm bảo các URL trích dẫn dẫn về nguồn uy tín có trong Ground Truth.
 5. Đưa ra phán quyết:
    - 'APPROVED': Hoàn toàn chuẩn mực di sản.
-   - 'FLAGGED': Có rủi ro hiểu lầm văn hóa (ví dụ gắn phụ kiện thôn dã vào đại lễ phục cung đình).`;
+   - 'FLAGGED': Có vi phạm điều kiêng kỵ nghiêm ngặt (Strict Taboos) hoặc không hợp chuẩn thuần phong mỹ tục.`;
 
   const round2Prompt = `Hãy kiểm định bản đề xuất sau đây từ Vòng 1:
 ${JSON.stringify(recommendation, null, 2)}
@@ -372,7 +811,10 @@ Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định 
     cau_chuyen_di_san: recommendation.cau_chuyen_di_san,
     citations: recommendation.citations,
     set_name: recommendation.set_name,
-    audit_passed: isSafe
+    audit_passed: isSafe,
+    sanity_check_passed: true,
+    chosen_accessories: allAccessories,
+    chosen_hairstyle: chosenHair
   };
 
   return {

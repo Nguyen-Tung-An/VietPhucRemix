@@ -23,7 +23,8 @@ import {
   CulturalHeritageEntry,
   getCulturalTruth,
   checkMultipleStrictTaboos,
-  validateUserInputSanity
+  validateUserInputSanity,
+  getColorCulturalAnalysis
 } from '../src/data/culturalTruths.ts';
 import {
   CulturalRecommendationInput,
@@ -653,7 +654,8 @@ export function runOfflineCulturalPipeline(input: CulturalRecommendationInput): 
     audit_passed: !hasRisk,
     sanity_check_passed: true,
     chosen_accessories: allAccessories,
-    chosen_hairstyle: chosenHair
+    chosen_hairstyle: chosenHair,
+    color_evaluation: getColorCulturalAnalysis(primaryColor, truth.id, event)
   };
 
   return {
@@ -814,7 +816,8 @@ Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định 
     audit_passed: isSafe,
     sanity_check_passed: true,
     chosen_accessories: allAccessories,
-    chosen_hairstyle: chosenHair
+    chosen_hairstyle: chosenHair,
+    color_evaluation: getColorCulturalAnalysis(input.primary_color, truth.id, input.event)
   };
 
   return {

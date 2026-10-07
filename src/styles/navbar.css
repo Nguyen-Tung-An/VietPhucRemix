@@ -1,7 +1,7 @@
 /* ==========================================================================
    VIỆT Y REMIX — THANH ĐIỀU HƯỚNG (#main-nav-bar)
    Concept: "LỤA THANH"
-   Responsive: Mobile (Zero Overflow, Compact Top Bar) & Desktop (Elevated Studio Header)
+   Responsive: Mobile (Dropdown Tơ Lụa Cánh Sen) & Desktop (Thanh Tab Studio Ngang)
    ========================================================================== */
 
 #main-nav-bar {
@@ -10,7 +10,7 @@
   left: 0;
   width: 100%;
   max-width: 100%;
-  height: 52px;
+  height: 54px;
   background: var(--color-card-bg);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -24,7 +24,7 @@
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  padding: 0 12px;
+  padding: 0 14px;
   box-sizing: border-box;
 }
 
@@ -37,7 +37,7 @@
 /* Container bên trong: co giãn linh hoạt, căn giữa max 1280px */
 .nav-inner-container {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1440px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
 .nav-brand-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
   user-select: none;
   transition: transform 0.15s ease;
@@ -65,61 +65,57 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   background: rgba(74, 133, 119, 0.15);
   border: 1px solid var(--color-accent-secondary);
   font-family: var(--font-title);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--color-accent-secondary);
-  font-weight: 600;
+  font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(74, 133, 119, 0.1);
 }
 
 .nav-logo-text {
   font-family: var(--font-title);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
   text-transform: none !important;
   white-space: nowrap;
 }
 
-/* Ẩn text logo trên màn hình nhỏ để 3 tab vừa vặn tuyệt đối không tràn viền */
-@media (max-width: 440px) {
-  .nav-logo-text {
-    display: none;
-  }
+/* Desktop Tabs: Ẩn trên mobile, hiện trên Desktop >= 768px */
+.desktop-only-nav {
+  display: none;
 }
 
-/* Tabs điều hướng chính (Xưởng Phối / Khám Phá / Lookbook) */
 .nav-tabs-group {
-  display: flex;
   align-items: center;
   background: rgba(74, 133, 119, 0.08);
   border: 1px solid var(--color-card-border);
   border-radius: var(--border-radius-pill, 9999px);
   padding: 3px;
-  gap: 3px;
+  gap: 4px;
   flex-shrink: 0;
-  max-width: 100%;
 }
 
 .nav-tab-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 10px;
-  min-height: 34px;
+  gap: 6px;
+  padding: 6px 14px;
+  min-height: 36px;
   border: none;
   background: transparent;
   border-radius: var(--border-radius-pill, 9999px);
   color: var(--color-text-muted);
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   user-select: none;
@@ -127,7 +123,7 @@
 }
 
 .nav-tab-icon {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1;
 }
 
@@ -140,6 +136,250 @@
   color: var(--color-accent-secondary);
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(74, 133, 119, 0.15);
+}
+
+/* ==========================================================================
+   MOBILE DROPDOWN NAVIGATION (< 768px)
+   Concept Tà Lụa Rủ Mềm Mại — Không Vuông Thô
+   ========================================================================== */
+.nav-mobile-controls {
+  display: flex;
+  align-items: center;
+}
+
+.nav-mobile-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  min-height: 34px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.1);
+  border: 1px solid rgba(74, 133, 119, 0.25);
+  color: var(--color-accent-secondary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(74, 133, 119, 0.08);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.nav-mobile-dropdown-btn:active {
+  transform: scale(0.97);
+  background: rgba(74, 133, 119, 0.18);
+}
+
+.nav-mobile-arrow-icon {
+  transition: transform 0.25s ease;
+}
+
+.nav-mobile-dropdown-btn[aria-expanded="true"] .nav-mobile-arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu Container */
+.nav-mobile-dropdown {
+  position: fixed;
+  top: 54px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 54px);
+  height: calc(100dvh - 54px);
+  z-index: 88;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.nav-mobile-dropdown.dropdown-open {
+  pointer-events: auto;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Backdrop */
+.nav-dropdown-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 28, 24, 0.38);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Tấm Lụa Thả Xuống (Silk Sheet Dropdown) */
+.nav-dropdown-silk-sheet {
+  position: relative;
+  width: 100%;
+  background: rgba(252, 250, 246, 0.98);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-bottom: 2px solid rgba(201, 166, 107, 0.35);
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 18px 40px rgba(18, 28, 24, 0.16);
+  padding: 16px 18px 20px 18px;
+  box-sizing: border-box;
+  transform: translateY(-12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-mobile-dropdown.dropdown-open .nav-dropdown-silk-sheet {
+  transform: translateY(0);
+}
+
+.nav-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(74, 133, 119, 0.15);
+}
+
+.nav-dropdown-brand-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #B22222;
+  color: #FFF;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.nav-dropdown-title {
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #7A5338;
+  letter-spacing: 0.08em;
+}
+
+.nav-dropdown-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nav-dropdown-item:active {
+  background: rgba(74, 133, 119, 0.1);
+  transform: scale(0.99);
+}
+
+.nav-dropdown-item.active {
+  background: rgba(74, 133, 119, 0.12);
+  border-color: rgba(74, 133, 119, 0.25);
+}
+
+.nav-dropdown-item .nav-item-icon {
+  font-size: 1.25rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  flex-shrink: 0;
+}
+
+.nav-dropdown-item .nav-item-texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-dropdown-item .nav-item-title {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.nav-dropdown-item.active .nav-item-title {
+  color: var(--color-accent-secondary);
+}
+
+.nav-dropdown-item .nav-item-desc {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.nav-dropdown-item .nav-item-indicator {
+  font-size: 0.75rem;
+  color: transparent;
+  transition: color 0.2s ease;
+}
+
+.nav-dropdown-item.active .nav-item-indicator {
+  color: var(--color-accent-secondary);
+}
+
+/* Footer trong dropdown: Phím về Tiền sảnh & Admin */
+.nav-dropdown-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(74, 133, 119, 0.12);
+}
+
+.nav-dropdown-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--color-card-border);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.nav-dropdown-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(201, 166, 107, 0.12);
+  border: 1px solid rgba(201, 166, 107, 0.3);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #7A5338;
+  cursor: pointer;
 }
 
 /* ==========================================================================
@@ -165,9 +405,13 @@
   }
 
   .seal-badge {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+
+  .desktop-only-nav {
+    display: flex;
   }
 
   .nav-tabs-group {
@@ -176,9 +420,16 @@
   }
 
   .nav-tab-btn {
-    padding: 8px 20px;
-    font-size: 0.92rem;
+    padding: 8px 18px;
+    font-size: 0.9rem;
     min-height: 40px;
     gap: 8px;
   }
+
+  /* Ẩn điều khiển dropdown trên desktop */
+  .nav-mobile-controls,
+  .nav-mobile-dropdown {
+    display: none !important;
+  }
 }
+

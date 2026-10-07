@@ -40,10 +40,15 @@
         <span class="nav-logo-text">VIỆT Y REMIX</span>
       </div>
 
-      <nav class="nav-tabs-group" aria-label="Điều hướng chính">
+      <!-- Desktop Tabs Group (Hiển thị trên màn hình >= 768px) -->
+      <nav class="nav-tabs-group desktop-only-nav" aria-label="Điều hướng chính">
         <button type="button" class="nav-tab-btn active" id="tab-create">
           <span class="nav-tab-icon">🎨</span>
           <span class="nav-tab-label">Xưởng Phối</span>
+        </button>
+        <button type="button" class="nav-tab-btn" id="tab-pattern">
+          <span class="nav-tab-icon">❖</span>
+          <span class="nav-tab-label">Hoa Văn</span>
         </button>
         <button type="button" class="nav-tab-btn" id="tab-discover">
           <span class="nav-tab-icon">📜</span>
@@ -54,6 +59,70 @@
           <span class="nav-tab-label">Lookbook</span>
         </button>
       </nav>
+
+      <!-- Mobile Dropdown Trigger (< 768px): Tà lụa mềm mại không vuông thô -->
+      <div class="nav-mobile-controls">
+        <button type="button" class="nav-mobile-dropdown-btn" id="btn-mobile-nav-toggle" aria-expanded="false" aria-label="Mở danh mục điều hướng">
+          <span class="nav-mobile-current-icon" id="mobile-current-tab-icon">🎨</span>
+          <span class="nav-mobile-current-name" id="mobile-current-tab-name">Xưởng Phối</span>
+          <svg class="nav-mobile-arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dropdown Cánh Sen / Tà Lụa Mềm Mại Thả Xuống Trên Mobile -->
+    <div class="nav-mobile-dropdown" id="nav-mobile-dropdown-menu" role="menu" aria-hidden="true">
+      <div class="nav-dropdown-backdrop" id="nav-dropdown-backdrop"></div>
+      <div class="nav-dropdown-silk-sheet">
+        <div class="nav-dropdown-header">
+          <span class="nav-dropdown-brand-seal">吉</span>
+          <span class="nav-dropdown-title">KHÔNG GIAN DI SẢN</span>
+        </div>
+        <div class="nav-dropdown-items-list">
+          <button type="button" class="nav-dropdown-item active" data-tab-target="create" role="menuitem">
+            <span class="nav-item-icon">🎨</span>
+            <div class="nav-item-texts">
+              <span class="nav-item-title">Xưởng Phối Đồ</span>
+              <span class="nav-item-desc">Tùy biến Việt phục & Thẩm định AI</span>
+            </div>
+            <span class="nav-item-indicator">●</span>
+          </button>
+          <button type="button" class="nav-dropdown-item" data-tab-target="pattern" role="menuitem">
+            <span class="nav-item-icon">❖</span>
+            <div class="nav-item-texts">
+              <span class="nav-item-title">Xưởng Hoa Văn</span>
+              <span class="nav-item-desc">Sáng tạo họa tiết cung đình & dân gian</span>
+            </div>
+            <span class="nav-item-indicator">●</span>
+          </button>
+          <button type="button" class="nav-dropdown-item" data-tab-target="discover" role="menuitem">
+            <span class="nav-item-icon">📜</span>
+            <div class="nav-item-texts">
+              <span class="nav-item-title">Khám Phá Di Sản</span>
+              <span class="nav-item-desc">Bộ sưu tập & Thẻ quẹt cổ phục</span>
+            </div>
+            <span class="nav-item-indicator">●</span>
+          </button>
+          <button type="button" class="nav-dropdown-item" data-tab-target="lookbook" role="menuitem">
+            <span class="nav-item-icon">📖</span>
+            <div class="nav-item-texts">
+              <span class="nav-item-title">Lookbook Cá Nhân</span>
+              <span class="nav-item-desc">Lưu trữ kiệt tác phối đồ của bạn</span>
+            </div>
+            <span class="nav-item-indicator">●</span>
+          </button>
+        </div>
+        <div class="nav-dropdown-footer">
+          <button type="button" class="nav-dropdown-home-btn" id="btn-dropdown-home">
+            <span>🏛️</span> Về Tiền Sảnh 3D
+          </button>
+          <button type="button" class="nav-dropdown-admin-btn" id="btn-open-admin-route" title="Trang Quản Trị Hệ Thống Di Sản">
+            <span>⚙️</span> Hệ Thống Di Sản
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -297,13 +366,118 @@
               </g>
             </g>
           </svg>
+
+          <!-- Thẻ Thông Báo Dáng Áo Khảo Cứu (Hiển thị khi chọn dáng áo chưa có bản vẽ vector demo) -->
+          <div id="stage-archival-placeholder" class="archival-placeholder-box" style="display: none;">
+            <div class="archival-placeholder-inner">
+              <div class="archival-seal-crest">🏛️</div>
+              <span class="archival-badge-tag">HỒ SƠ KHẢO CỨU DI SẢN</span>
+              <h4 class="archival-placeholder-title" id="archival-garment-name">Áo Nhật Bình Đối Khâm</h4>
+              <p class="archival-placeholder-desc">
+                Bản mẫu minh họa 3D/SVG của dáng áo này đang được Hội đồng phục dựng thủ công.
+              </p>
+              <div class="archival-demo-notice">
+                <span>💡 <em>Bản Demo Quota</em>: Toàn bộ cấu trúc di sản, quy chuẩn may đo, ngũ hành hòa sắc và kiêng kỵ vùng miền đã sẵn sàng để bạn thẩm định chuẩn xác 100%!</span>
+              </div>
+              <button type="button" class="btn-archival-inspect-prompt" id="btn-inspect-garment-prompt">
+                🖼️ Xem Cấu Trúc AI Prompt Của Dáng Áo Này
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
       <!-- ==========================================================
-           TẦNG DƯỚI (KHOẢNG 40% CHIỀU CAO — BẢNG NỔI / BENTO SHEET)
-           - Mobile: Nằm trọn trong Thumb Zone (< 350px từ đáy màn hình)
-           - Desktop: Studio Panel bên phải, đầy đủ thông tin tùy biến
+           CỘT 2 (DESKTOP) / GÓC NHÌN DI SẢN CHUYÊN SÂU (HERITAGE DEEP INSIGHT)
+           Tách riêng thành cột chiếm tỉ trọng vừa, nhiều nội dung di sản phong phú
+           (Niên đại, Cấu trúc may đo, Thẩm định sắc phục ngũ hành, Kiêng kỵ, Nguồn tư liệu)
+           ========================================================== -->
+      <section class="workshop-insight-tier" id="workshop-insight-column" aria-label="Góc nhìn di sản chuyên sâu">
+        <div class="insight-column-header">
+          <div class="insight-header-left">
+            <span class="insight-brand-icon">🏮</span>
+            <div>
+              <h3 class="insight-main-title">Góc Nhìn Di Sản Chuyên Sâu</h3>
+              <p class="insight-sub-title">Khảo cứu từ Single Source of Truth</p>
+            </div>
+          </div>
+          <span class="insight-status-badge" id="workshop-insight-status">✓ Chuẩn Mực Di Sản</span>
+        </div>
+
+        <div class="insight-cards-scroll">
+          <!-- 1. Niên Đại & Bối Cảnh Lịch Sử -->
+          <article class="insight-data-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">📜 BỐI CẢNH LỊCH SỬ</span>
+              <span class="insight-card-era" id="insight-garment-era">Triều Nguyễn (1802–1945)</span>
+            </div>
+            <p class="insight-card-text" id="insight-garment-context">
+              Lễ phục cổ truyền của người Việt, được vua Gia Long và Minh Mạng định chế thành quốc phục chính thống của toàn dân Đại Nam.
+            </p>
+          </article>
+
+          <!-- 2. Thẩm Định Hòa Sắc & Ngũ Hành (REAL-TIME COLOR EVALUATION) -->
+          <article class="insight-data-card color-harmony-highlight-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">🎨 THẨM ĐỊNH SẮC PHỤC & NGŨ HÀNH</span>
+              <span class="insight-element-pill" id="insight-color-element">Thổ Vị Trung Tâm</span>
+            </div>
+            <div class="insight-color-preview-row">
+              <span class="insight-color-dot" id="insight-color-dot" style="background-color: #F4C9D6;"></span>
+              <div class="insight-color-meta">
+                <strong id="insight-color-name">Hồng Phấn Sen</strong>
+                <span id="insight-harmony-rating">Độ Hòa Sắc: Hài Hòa Tinh Khôi</span>
+              </div>
+            </div>
+            <p class="insight-card-text" id="insight-color-symbolism">
+              Sắc sen thanh tao biểu trưng cho sự thanh nhã và cốt cách tươi mới. Trong ngũ hành, đây là sắc mầu dung dưỡng sinh khí hòa nhã.
+            </p>
+            <div class="insight-color-event-note" id="insight-color-event-suitability">
+              🌸 Phù hợp: Lễ tân xuân nghênh tài đón lộc, dạo phố và hội xuân.
+            </div>
+          </article>
+
+          <!-- 3. Cấu Trúc May Đo Bắt Buộc (Ground Truth) -->
+          <article class="insight-data-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">✂️ CẤU TRÚC MAY ĐO BẮT BUỘC</span>
+            </div>
+            <ul class="insight-features-list" id="insight-garment-features">
+              <li>Cổ áo lập lĩnh (cổ đứng vuông vức) cao từ 2-3 cm ôm khít cổ.</li>
+              <li>Cài 5 cúc bên nách phải tượng trưng cho Ngũ Thường (Nhân, Lễ, Nghĩa, Trí, Tín).</li>
+              <li>Năm thân áo khép kín (2 thân trước, 2 thân sau, 1 thân con bên trong).</li>
+            </ul>
+          </article>
+
+          <!-- 4. Quy Chuẩn Kiêng Kỵ Vùng Miền (Guardrail Rules) -->
+          <article class="insight-data-card" id="insight-taboo-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">⚖️ ĐIỀU KIÊNG KỴ & LỆCH VÙNG MIỀN</span>
+              <span class="insight-taboo-flag" id="insight-taboo-status">An Toàn</span>
+            </div>
+            <p class="insight-card-text" id="insight-taboo-explanation">
+              Không kết hợp cùng phụ kiện đối nghịch vùng miền để giữ trọn điển lễ thời kỳ.
+            </p>
+          </article>
+
+          <!-- 5. Nguồn Trích Dẫn Khảo Cứu Xác Thực (Citations) -->
+          <article class="insight-data-card citation-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">🏛️ BẢO CHỨNG TƯ LIỆU UY TÍN</span>
+            </div>
+            <div class="insight-citation-body">
+              <div class="citation-work-title" id="insight-citation-title">Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam 1009–1945</div>
+              <div class="citation-author-org" id="insight-citation-author">Bảo tàng Lịch sử Quốc gia & Nhà nghiên cứu Trần Quang Đức</div>
+              <a href="https://baotanglichsu.vn/vi/Articles/3097/15293/ngan-nam-ao-mu.html" target="_blank" rel="noopener noreferrer" class="insight-citation-link" id="insight-citation-url">
+                <span>Tra cứu hồ sơ di sản gốc ↗</span>
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           TẦNG DƯỚI (MOBILE) / CỘT 3 (DESKTOP) — STUDIO CONTROL SHEET
            ========================================================== -->
       <footer class="workshop-sheet-tier" role="region" aria-label="Bảng tùy chọn phối đồ">
         
@@ -571,25 +745,17 @@
 
         </div>
 
-        <!-- Thẻ Ghi Chú Di Sản Lụa Thanh dành riêng cho Desktop Studio -->
-        <div class="workshop-desktop-guidance">
-          <div class="guidance-top-row">
-            <span class="guidance-badge">💡 Góc Nhìn Di Sản</span>
-            <span class="guidance-status" id="workshop-guidance-status">✓ Hài Hòa Chuẩn Mực</span>
-          </div>
-          <p class="guidance-text" id="workshop-cultural-note">
-            Tà ngũ thân lụa mềm kết hợp cùng quạt giấy xếp tạo nên phong thái nho nhã, tôn lên nét đoan trang của cổ phục Việt.
-          </p>
-        </div>
-
         <!-- Thanh nút hành động nhanh trong Thumb Zone (Mobile & Desktop) -->
-        <div class="workshop-sheet-cta-bar">
+        <div class="workshop-sheet-cta-bar" style="display: flex; flex-direction: column; gap: 8px;">
           <button type="button" id="btn-view-result" class="btn-primary btn-workshop-cta" title="Thẩm định & Xem kết quả phối đồ hoàn chỉnh" aria-label="Thẩm định & Xem kết quả phối đồ">
             <span>✨ Thẩm Định & Xem Kết Quả</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
+          </button>
+          <button type="button" id="btn-inspect-outfit-prompt" class="btn-secondary" style="border: 1px dashed rgba(74, 133, 119, 0.4); background: rgba(74,133,119,0.06); color: var(--color-accent-secondary); font-size: 0.8rem; padding: 7px 12px; border-radius: 9999px; cursor: pointer; text-align: center; width: 100%;" title="Xem câu lệnh AI Prompt đầy đủ dùng để sinh ảnh trang phục hoàn chỉnh (Dành cho Giám khảo & Người thẩm định)">
+            <span>🖼️ Xem Cấu Trúc AI Prompt Sinh Ảnh Bộ Này (Demo Quota)</span>
           </button>
         </div>
 
@@ -725,6 +891,23 @@
                 <p class="knowledge-text" id="knowledge-text">
                   Áo ngũ thân lập lĩnh định hình từ thời chúa <strong class="kw-gold">Nguyễn Phúc Khoát</strong> tại xứ <strong class="kw-gold">Đàng Trong</strong>, kế thừa tinh hoa phục sức phương Nam. Năm thân áo tượng trưng cho tứ thân phụ mẫu và chính mình, năm hạt cúc gốm biểu trưng cho ngũ thường Nhân - Lễ - Nghĩa - Trí - Tín, toát lên phong thái đĩnh đạc và đoan trang.
                 </p>
+
+                <!-- Khối Thẩm Định Hòa Sắc & Ngũ Hành (Color Cultural Evaluation) -->
+                <div class="result-color-eval-box" id="result-color-eval-box" style="margin-top: 14px; padding: 12px 14px; background: rgba(74, 133, 119, 0.08); border-radius: 12px; border: 1px solid rgba(74, 133, 119, 0.2);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #4A8577; text-transform: uppercase;">🎨 Thẩm Định Sắc Phục & Ngũ Hành</span>
+                    <span id="result-color-element" style="font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; background: rgba(201, 166, 107, 0.2); color: #7A5338;">Thổ Vị Trung Tâm</span>
+                  </div>
+                  <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <span id="result-color-dot" style="width: 22px; height: 22px; border-radius: 50%; background-color: #F4C9D6; border: 1.5px solid rgba(0,0,0,0.12); flex-shrink: 0; margin-top: 2px;"></span>
+                    <div>
+                      <strong id="result-color-title" style="font-size: 0.88rem; color: #2B2B28;">Hồng Phấn Sen • Hài Hòa Tinh Khôi</strong>
+                      <p id="result-color-symbolism" style="margin: 3px 0 0 0; font-size: 0.8rem; color: #4A5568; line-height: 1.45;">
+                        Sắc sen thanh tao biểu trưng cho sự thanh nhã và cốt cách tươi mới.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -737,25 +920,134 @@
                Phân cấp thị giác rõ ràng tuyệt đối
                ========================================================== -->
           <footer class="result-actions-footer">
-            <button type="button" id="btn-result-save-lookbook" class="btn-primary btn-result-primary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span id="btn-save-lookbook-text">Lưu vào Lookbook</span>
+            <!-- Nút Hành Trình Sở Hữu Cổ Phục (Google Maps & Search) -->
+            <button type="button" id="btn-result-tailor-journey" class="btn-primary" style="background: linear-gradient(135deg, #C9A66B, #8B6528); color: #FFF; width: 100%; min-height: 48px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(201,166,107,0.35);">
+              <span>📍 May Đo & Tìm Tiệm (Google Maps & Search)</span>
             </button>
 
-            <button type="button" id="btn-result-remix" class="btn-result-secondary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-              </svg>
-              <span>Phối lại</span>
+            <div style="display: flex; gap: 10px; width: 100%;">
+              <button type="button" id="btn-result-save-lookbook" class="btn-primary btn-result-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span id="btn-save-lookbook-text">Lưu vào Lookbook</span>
+              </button>
+
+              <button type="button" id="btn-result-remix" class="btn-result-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+                <span>Phối lại</span>
+              </button>
+            </div>
+
+            <!-- Nút Xem Cấu Trúc Prompt Sinh Ảnh Trang Phục Dành Cho Giám Khảo -->
+            <button type="button" id="btn-result-prompt-inspect" class="btn-result-secondary" style="border-style: dashed; font-size: 0.82rem; padding: 6px 12px; min-height: 38px;">
+              <span>🖼️ Xem Cấu Trúc AI Prompt Sinh Ảnh Bộ Này (Demo Quota)</span>
             </button>
           </footer>
 
         </div>
 
       </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MÀN HÌNH HOA VĂN DI SẢN AI (#pattern-scene)
+       Concept: "LỤA THANH"
+       ============================================================ -->
+  <section id="pattern-scene" aria-label="Màn hình sáng tạo hoa văn di sản AI">
+    <div class="pattern-scene-container">
+      
+      <!-- Tiêu đề màn hình hoa văn -->
+      <header class="pattern-scene-header">
+        <div class="pattern-scene-badge">
+          <span>❖ Khởi Tạo Mỹ Thuật Di Sản AI</span>
+        </div>
+        <h2 class="pattern-scene-title">Xưởng Hoa Văn Di Sản</h2>
+        <p class="pattern-scene-subtitle">
+          Chuyển hóa biểu tượng hoàng gia và mỹ cảm nghìn năm thành hoa văn gấm lụa đương đại tương thích với trang phục truyền thống Việt Nam.
+        </p>
+      </header>
+
+      <!-- HỘP THÔNG CÁO GIÁM KHẢO VỀ QUOTA & KIẾN TRÚC PROMPT AI (DEMO SANDBOX) -->
+      <aside class="evaluator-quota-banner" role="region" aria-label="Thông cáo giám khảo về hạn mức sinh ảnh">
+        <div class="banner-seal-icon">🏛️</div>
+        <div class="banner-content">
+          <div class="banner-headline">Thông Cáo Dành Cho Ban Giám Khảo & Trải Nghiệm Demo</div>
+          <p class="banner-text">
+            Do chính sách bảo toàn hạn mức (Quota limit) của môi trường thi đấu / sandbox, tính năng kết xuất ảnh chất lượng cao tự động hiển thị bản thiết kế mẫu và <strong>câu prompt kiến trúc AI chi tiết</strong> sẽ được kết nối trực tiếp ở bản chính thức. Quý giám khảo có thể xem toàn bộ cấu trúc Prompt kỹ thuật mà hệ thống đã lắp ráp tự động ở bên dưới để đối chiếu!
+          </p>
+        </div>
+      </aside>
+
+      <!-- KHU VỰC SÁNG TẠO HOA VĂN TỰ DO (PROMPT CRAFTING & INJECTION STUDIO) -->
+      <section class="creative-studio-card" aria-label="Khu vực sáng tạo hoa văn mới">
+        <h3 class="studio-card-title">
+          <span>✨</span>
+          <span>Khởi Tạo Hoa Văn Mới Từ Cảm Hứng & Từ Khóa Của Bạn</span>
+        </h3>
+
+        <div class="studio-input-wrap">
+          <label for="custom-pattern-keyword" class="studio-label">Nhập từ khóa cảm hứng di sản hoặc mong muốn phối hoa văn:</label>
+          <input type="text" id="custom-pattern-keyword" class="studio-keyword-input" placeholder="Ví dụ: Hoa sen liên hoa thời Lý, mây phiêu bồng thời Nguyễn, sóng nước thủy ba..." value="Mây ngũ sắc cuộn sóng thủy ba hoàng gia" />
+        </div>
+
+        <div class="studio-input-wrap">
+          <label class="studio-label">Chọn kỹ thuật dệt & thể hiện mỹ thuật:</label>
+          <div class="studio-pills-row" id="technique-pills-group">
+            <button type="button" class="technique-pill active" data-tech="Gấm chìm Jacquard tơ tằm">❖ Gấm chìm Jacquard</button>
+            <button type="button" class="technique-pill" data-tech="Thêu chỉ vàng kim cung đình">🪡 Thêu chỉ kim tuyến</button>
+            <button type="button" class="technique-pill" data-tech="Lụa Tơ Tằm Tự Nhiên Tối Giản">🌿 Lụa tơ tằm tối giản</button>
+            <button type="button" class="technique-pill" data-tech="Huy hiệu mạ vàng sơn mài">✹ Huy hiệu sơn mài</button>
+            <button type="button" class="technique-pill" data-tech="Men lam gốm hoa nâu Đại Việt">🏺 Men lam truyền thống</button>
+          </div>
+        </div>
+
+        <div class="studio-input-wrap">
+          <label class="studio-label">Tương thích với phom dáng trang phục:</label>
+          <div class="studio-pills-row" id="garment-pills-group">
+            <button type="button" class="garment-pill active" data-garment="Áo Ngũ Thân Lập Lĩnh">Áo Ngũ Thân Lập Lĩnh</button>
+            <button type="button" class="garment-pill" data-garment="Áo Tấc (Áo Tay Thụ)">Áo Tấc (Đại Lễ)</button>
+            <button type="button" class="garment-pill" data-garment="Áo Nhật Bình">Áo Nhật Bình</button>
+            <button type="button" class="garment-pill" data-garment="Áo Bà Ba Nam Bộ">Áo Bà Ba Nam Bộ</button>
+          </div>
+        </div>
+
+        <div>
+          <button type="button" id="btn-creative-generate-pattern" class="btn-generate-creative-pattern">
+            <span>✨ Khởi Tạo Bản Thiết Kế Hoa Văn AI</span>
+          </button>
+        </div>
+
+        <!-- Khung hiển thị kết quả tạo hoa văn -->
+        <div id="pattern-generated-result-box" class="pattern-result-box box-hidden">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 id="gen-pattern-title" style="margin: 0; font-family: var(--font-title); color: #4A8577; font-size: 1.1rem;">Bản Thiết Kế Hoa Văn Mới</h4>
+            <span style="font-size: 0.75rem; background: #C9A66B; color: #1C2B26; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">AI Assembled</span>
+          </div>
+          <p id="gen-pattern-desc" style="font-size: 0.85rem; color: #444; margin: 0;"></p>
+          <div>
+            <div style="font-size: 0.76rem; font-weight: 700; color: #6B4E2E; margin-bottom: 4px;">CÂU LỆNH PROMPT KỸ THUẬT SINH ẢNH ĐÃ ĐƯỢC HỆ THỐNG GHÉP NỐI:</div>
+            <div id="gen-pattern-prompt-display" class="result-prompt-snippet"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KHO 6 PLACEHOLDER HOA VĂN MẪU ĐƯỢC BIÊN SOẠN SÂU SẮC -->
+      <section class="pattern-placeholders-section" aria-label="Bộ sưu tập hoa văn di sản mẫu">
+        <div class="section-headline-group">
+          <h3 class="section-headline">Kho Mẫu Hoa Văn Di Sản Tiêu Biểu</h3>
+          <p class="section-desc">6 biểu tượng di sản khảo cứu đã được tạo sẵn câu lệnh AI Image Generation và tương thích hoàn toàn để đưa vào Xưởng Phối.</p>
+        </div>
+
+        <div class="pattern-placeholders-grid" id="pattern-placeholders-grid">
+          <!-- Được render tự động từ SIX_PLACEHOLDER_HERITAGE_PATTERNS trong patternEngine.ts -->
+        </div>
+      </section>
 
     </div>
   </section>
@@ -1134,6 +1426,242 @@
 
     </div>
   </div>
+
+  <!-- ============================================================
+       MODAL: HÀNH TRÌNH SỞ HỮU VIỆT PHỤC (GOOGLE MAPS & TIỆM MAY)
+       ============================================================ -->
+  <div id="tailor-journey-modal" class="journey-modal" role="dialog" aria-modal="true" aria-labelledby="journey-main-title">
+    <div id="tailor-journey-backdrop" class="journey-backdrop"></div>
+    <div class="journey-dialog">
+      
+      <header class="journey-header">
+        <div class="journey-header-left">
+          <span class="journey-badge">📍 Khép Kín Trải Nghiệm Khách Hàng</span>
+          <h3 id="journey-main-title" class="journey-title">Hành Trình Sở Hữu Cổ Phục</h3>
+        </div>
+        <button type="button" id="btn-close-tailor-journey" class="btn-close-journey" aria-label="Đóng hành trình may đo">✕</button>
+      </header>
+
+      <div class="journey-body">
+        
+        <!-- Banner bộ phục trang người dùng vừa phối -->
+        <div class="journey-target-banner">
+          <div class="journey-target-title" id="journey-target-garment-title">
+            🎯 Bộ bạn đang muốn sở hữu: Áo Ngũ Thân Lập Lĩnh (Hồng Phấn Sen)
+          </div>
+          <div class="journey-target-sub" id="journey-target-garment-sub">
+            Hệ thống tự động kích hoạt bộ tìm kiếm Google Maps & Google Search giúp bạn kết nối trực tiếp với tiệm may đo phù hợp nhất.
+          </div>
+        </div>
+
+        <!-- Hàng nút hành động nhanh qua Google Maps & Google Search -->
+        <div class="journey-global-actions">
+          <a id="btn-journey-google-maps" href="https://www.google.com/maps/search/?api=1&query=tiệm+may+áo+ngũ+thân+cổ+phục" target="_blank" rel="noopener noreferrer" class="btn-search-external btn-search-maps">
+            <span>🗺️ Tìm Tiệm May Gần Tôi Trên Google Maps ↗</span>
+          </a>
+          <a id="btn-journey-google-search" href="https://www.google.com/search?q=tiệm+may+đo+áo+ngũ+thân+uy+tín" target="_blank" rel="noopener noreferrer" class="btn-search-external btn-search-google">
+            <span>🔍 Đọc Đánh Giá & Website Trên Google Search ↗</span>
+          </a>
+
+          <!-- Ô tìm kiếm tùy biến -->
+          <div class="journey-search-bar">
+            <input type="text" id="journey-custom-search-input" class="journey-search-input" placeholder="Nhập tên tiệm hoặc thành phố..." />
+            <button type="button" id="btn-journey-custom-search" class="btn-custom-search">Tìm Kiếm</button>
+          </div>
+        </div>
+
+        <!-- Khung bản đồ Google Maps tương tác trực tiếp -->
+        <div class="journey-map-wrapper">
+          <iframe
+            id="journey-map-iframe"
+            title="Google Maps Cổ Phục Việt Nam"
+            src="https://maps.google.com/maps?q=tiem+may+co+phuc+viet+phuc+viet+nam&t=&z=12&ie=UTF8&iwloc=&output=embed"
+            loading="lazy"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <!-- Tabs lọc tiệm may theo vùng miền -->
+        <div class="journey-region-tabs">
+          <button type="button" class="journey-region-tab active" data-region="all">Tất Cả 3 Miền</button>
+          <button type="button" class="journey-region-tab" data-region="hanoi">Hà Nội (Bắc Bộ)</button>
+          <button type="button" class="journey-region-tab" data-region="hue">Huế (Cố Đô)</button>
+          <button type="button" class="journey-region-tab" data-region="hcm">TP. Hồ Chí Minh (Nam Bộ)</button>
+          <button type="button" class="journey-region-tab" data-region="online">Đặt May Online</button>
+        </div>
+
+        <!-- Danh sách tiệm may được kiểm chứng (Atelier Grid) -->
+        <div class="journey-atelier-grid" id="journey-atelier-grid">
+          <!-- Rendered dynamically from VERIFIED_TAILOR_ATELIERS in tailorJourneyEngine.ts -->
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: XEM CẤU TRÚC PROMPT AI & THÔNG CÁO QUOTA GIÁM KHẢO
+       ============================================================ -->
+  <div id="prompt-inspect-modal" class="prompt-modal" role="dialog" aria-modal="true" aria-labelledby="modal-prompt-title">
+    <div id="prompt-modal-backdrop" class="prompt-modal-backdrop"></div>
+    <div class="prompt-modal-dialog">
+      
+      <header class="prompt-modal-header">
+        <div>
+          <span id="modal-prompt-type-badge" style="font-size: 0.72rem; font-weight: 700; color: #4A8577; text-transform: uppercase;">
+            ❖ Cấu Trúc AI Prompt Sinh Ảnh
+          </span>
+          <h3 id="modal-prompt-title" style="margin: 2px 0 0 0; font-family: var(--font-title); font-size: 1.15rem; color: #2B2B28;">
+            Chi Tiết Prompt Kiến Trúc AI
+          </h3>
+        </div>
+        <button type="button" id="btn-close-prompt-modal" class="btn-close-journey" aria-label="Đóng bảng prompt">✕</button>
+      </header>
+
+      <div class="prompt-modal-body">
+        
+        <!-- Hộp thông cảm Quota dành cho Ban Giám Khảo -->
+        <div class="evaluator-quota-banner" style="margin: 0;">
+          <div class="banner-seal-icon">🏛️</div>
+          <div class="banner-content">
+            <div class="banner-headline">Thông Cáo Dành Cho Giám Khảo & Người Thẩm Định</div>
+            <p class="banner-text">
+              Do giới hạn quota của phiên bản Demo Sandbox, mô hình sinh ảnh chất lượng cao tự động hiển thị bản thiết kế mẫu và <strong>câu prompt kiến trúc AI chi tiết</strong> sẽ được kết nối trực tiếp ở bản chính thức. Quý giám khảo có thể sao chép câu prompt kỹ thuật bên dưới để kiểm thử trực tiếp trên bất kỳ mô hình sinh ảnh cao cấp nào (Imagen 3, Gemini, Midjourney v6).
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.78rem; font-weight: 700; color: #4A8577; margin-bottom: 6px;">
+            CÂU LỆNH PROMPT HOÀN CHỈNH ĐƯỢC HỆ THỐNG ASSEMBLE TỰ ĐỘNG:
+          </div>
+          <pre id="modal-prompt-content" class="prompt-content-code"></pre>
+        </div>
+
+      </div>
+
+      <footer class="prompt-modal-footer">
+        <button type="button" id="btn-copy-prompt-text" class="btn-copy-prompt">
+          📋 Sao Chép Toàn Bộ Prompt
+        </button>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION: TRANG QUẢN TRỊ HỆ THỐNG DI SẢN & PROMPT HUB (#admin-scene)
+       Truy cập bằng: URL Hash #admin, Phím tắt Ctrl+Shift+A, hoặc Nút tiện ích
+       Tích hợp: Single Source of Truth, Copy Prompt tức thì & Xuất File JSON thật
+       ============================================================ -->
+  <section id="admin-scene" class="scene-hidden" aria-label="Trang quản trị hệ thống di sản">
+    <div class="admin-container">
+      
+      <!-- Top Action Bar -->
+      <header class="admin-header-bar">
+        <div class="admin-header-titles">
+          <div class="admin-badge-top">
+            <span>🏛️ HỆ THỐNG DI SẢN & PROMPT REPOSITORY</span>
+          </div>
+          <h2 class="admin-main-title">Bảng Tổng Hợp Dữ Liệu & Prompt AI Phục Dựng</h2>
+          <p class="admin-sub-text">
+            Nguồn sự thật duy nhất (Single Source of Truth) đồng bộ toàn diện giữa Xưởng Phối, Hoa Văn, Khám Phá và AI Grounding.
+          </p>
+        </div>
+        <div class="admin-header-buttons">
+          <button type="button" id="btn-close-admin" class="btn-admin-close">
+            ✕ Thoát Quản Trị
+          </button>
+        </div>
+      </header>
+
+      <!-- Stat Overview Cards -->
+      <div class="admin-stats-row">
+        <div class="admin-stat-card">
+          <div class="stat-icon">👘</div>
+          <div>
+            <div class="stat-value" id="admin-count-garments">9 Dáng Áo</div>
+            <div class="stat-label">Hồ sơ di sản & Quy chuẩn may đo</div>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon">❖</div>
+          <div>
+            <div class="stat-value" id="admin-count-patterns">6 Hoa Văn</div>
+            <div class="stat-label">Hoa văn cung đình & Prompt AI</div>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon">📜</div>
+          <div>
+            <div class="stat-value" id="admin-count-outfits">12 Bộ Phối</div>
+            <div class="stat-label">Bộ phối Khám Phá có sẵn Prompt</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Actions Banner (Tải file vật lý trực tiếp về máy) -->
+      <div class="admin-export-panel">
+        <div class="admin-export-info">
+          <h4>📥 Tải Dữ Liệu Lưu File Trực Tiếp (.json)</h4>
+          <p>Tải dữ liệu vật lý về máy tính cá nhân để lưu trữ (File Blob Download, không phụ thuộc LocalStorage).</p>
+        </div>
+        <div class="admin-export-buttons">
+          <button type="button" id="btn-admin-export-master" class="btn-export-primary">
+            💾 Tải Toàn Bộ Master Dataset (.json)
+          </button>
+          <button type="button" id="btn-admin-export-patterns" class="btn-export-secondary">
+            ❖ Tải DS Hoa Văn (.json)
+          </button>
+          <button type="button" id="btn-admin-export-outfits" class="btn-export-secondary">
+            📜 Tải DS Trang Phục Khám Phá (.json)
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 1: Danh sách các Dáng Áo (Garments) -->
+      <div class="admin-section-block">
+        <h3 class="admin-section-title">1. Toàn Bộ Dáng Áo & Quy Chuẩn Kiêng Kỵ (Cultural Database)</h3>
+        <div class="admin-table-wrapper">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tên Dáng Áo</th>
+                <th>Niên Đại</th>
+                <th>Vùng Miền</th>
+                <th>Quy Chuẩn Kiêng Kỵ (Strict Taboos)</th>
+                <th>Bảo Chứng Nguồn</th>
+              </tr>
+            </thead>
+            <tbody id="admin-garments-table-body">
+              <!-- Rendered dynamically from CULTURAL_DATABASE -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2: Danh sách Hoa Văn Cần Tạo Prompt Thủ Công -->
+      <div class="admin-section-block">
+        <h3 class="admin-section-title">2. Danh Sách Hoa Văn & Cấu Trúc AI Image Generation Prompt</h3>
+        <p class="admin-section-hint">Tất cả hoa văn được cấu trúc prompt chi tiết. Bạn có thể bấm "Copy Prompt Nhanh" để dán trực tiếp vào các model sinh ảnh.</p>
+        <div class="admin-grid-container" id="admin-patterns-grid">
+          <!-- Rendered dynamically from SIX_PLACEHOLDER_HERITAGE_PATTERNS -->
+        </div>
+      </div>
+
+      <!-- Section 3: Danh sách Bộ Trang Phục Trong Khám Phá Cần Tạo Prompt Thủ Công -->
+      <div class="admin-section-block">
+        <h3 class="admin-section-title">3. Danh Sách Trang Phục Khám Phá & Assembled Fashion Image Prompt</h3>
+        <p class="admin-section-hint">Tự động ghép nối từ promptEngine theo quy chuẩn di sản. Bấm "Copy Prompt Nhanh" để lưu lại.</p>
+        <div class="admin-grid-container" id="admin-outfits-grid">
+          <!-- Rendered dynamically from DISCOVERY_OUTFITS_POOL -->
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- APPLICATION ENTRY POINT MODULE -->
   <script type="module" src="/src/main.ts"></script>

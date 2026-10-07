@@ -1,33 +1,116 @@
 import { PatternItem } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
-import { fetchPatternAI } from '../services/api.ts';
 import { feedbackState } from '../services/feedbackState.ts';
+import { garmentEngine } from './garmentEngine.ts';
+import { appRouter } from '../navigation/router.ts';
+import { assembleFashionPrompt } from './promptEngine.ts';
 
-export const DEFAULT_CURATED_PATTERNS: PatternItem[] = [
+export interface HeritagePatternEntry {
+  id: string;
+  name: string;
+  vietnameseTitle: string;
+  dynastyEra: string;
+  technique: string;
+  compatibleGarments: string[];
+  historicalStory: string;
+  aiPromptSnippet: string;
+  fullImagePrompt: string;
+  colorHex: string;
+  svgPath: string;
+  previewBg: string;
+  patternType: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM';
+}
+
+export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
   {
-    id: 'pat-may-nguyen',
-    pattern_name: 'Mây Vờn Triều Nguyễn',
-    pattern_type: 'SEAMLESS_JACQUARD',
-    svg_path_data: 'M 10,30 Q 20,15 35,22 Q 50,10 60,25 Q 50,45 35,38 Q 20,50 10,30 Z',
-    pattern_color: '#C9A66B',
-    pattern_story: 'Họa tiết mây cuộn uyển chuyển thời Nguyễn, tượng trưng cho thiên thời tường thụy và tâm hồn tự do phóng khoáng.'
+    id: 'pat-may-ngu-sac',
+    name: 'Mây Ngũ Sắc Triều Nguyễn',
+    vietnameseTitle: 'Vân Vũ Ngũ Sắc Hoàng Triều',
+    dynastyEra: 'Triều Nguyễn (Thế kỷ 19)',
+    technique: 'Dệt gấm chìm Jacquard tơ tằm dệt kim tuyến',
+    compatibleGarments: ['Áo Ngũ Thân', 'Áo Tấc', 'Áo Nhật Bình'],
+    historicalStory: 'Họa tiết mây cuộn ngũ sắc uyển chuyển tượng trưng cho thiên thời tường thụy, vương khí hanh thông và sự tự do phóng khoáng của tâm hồn Việt.',
+    aiPromptSnippet: 'Imperial five-color cloud swirls (Vân ngũ sắc), flowing silk damask jacquard, gold filigree reflections',
+    fullImagePrompt: 'High-detail textile macro photography of authentic Vietnamese imperial cloud patterns (Vân Vũ Ngũ Sắc Triều Nguyễn), intricate continuous jacquard weave on luxury mulberry silk. Shimmering gold and jade threads, subtle tonal gradients, museum lighting. Designed seamlessly for traditional Vietnamese Ao Ngu Than robes. Strictly NO Hanfu motifs, NO cartoonish vectors, NO low resolution.',
+    colorHex: '#C9A66B',
+    svgPath: 'M 10,30 Q 20,15 35,22 Q 50,10 60,25 Q 50,45 35,38 Q 20,50 10,30 Z M 35,25 Q 45,20 50,30 Q 42,40 35,25 Z',
+    previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.2), rgba(28,43,38,0.85))',
+    patternType: 'SEAMLESS_JACQUARD'
   },
   {
-    id: 'pat-thuy-ba',
-    pattern_name: 'Sóng Nước Thủy Ba',
-    pattern_type: 'SEAMLESS_JACQUARD',
-    svg_path_data: 'M 0,35 Q 15,10 30,35 T 60,35 M 10,50 Q 25,25 40,50 T 70,50',
-    pattern_color: '#4A8577',
-    pattern_story: 'Dòng sóng thủy ba cuộn trào dưới chân áo triều phục, mang ước vọng bình an, mưa thuận gió hòa.'
+    id: 'pat-thuy-ba-hoang-gia',
+    name: 'Sóng Nước Thủy Ba Cung Đình',
+    vietnameseTitle: 'Thủy Ba Sóng Triều Đại Việt',
+    dynastyEra: 'Thời Lê Trung Hưng & Triều Nguyễn',
+    technique: 'Thêu nổi chỉ tơ đa sắc viền chân áo',
+    compatibleGarments: ['Áo Tấc', 'Áo Nhật Bình', 'Áo Ngũ Thân'],
+    historicalStory: 'Dòng sóng thủy ba cuộn trào dưới chân áo triều phục biểu trưng cho sự thái bình thịnh trị, cội nguồn văn minh sông nước và ước vọng mưa thuận gió hòa.',
+    aiPromptSnippet: 'Dynamic Thuy Ba royal concentric water waves, jade green and earthen gold silk embroidery',
+    fullImagePrompt: 'Editorial macro shot of Vietnamese imperial Thuy Ba water wave border patterns, hand-embroidered with fine silk floss and gold bullion cords. Layered rhythmic oceanic crests with sacred mountain peaks rising from foam. Soft cinematic studio light reflecting off lustrous Vietnamese raw silk. Authentic historical Vietnamese court costume pattern. NO Japanese seigaiha copy, NO flat vector, photorealistic 8k.',
+    colorHex: '#4A8577',
+    svgPath: 'M 0,35 Q 15,10 30,35 T 60,35 M 10,50 Q 25,25 40,50 T 70,50 M 0,20 Q 15,5 30,20 T 60,20',
+    previewBg: 'linear-gradient(135deg, rgba(74,133,119,0.25), rgba(13,23,20,0.9))',
+    patternType: 'SEAMLESS_JACQUARD'
   },
   {
-    id: 'pat-kim-boi',
-    pattern_name: 'Kim Bội Nhật Bình',
-    pattern_type: 'CENTRAL_EMBLEM',
-    svg_path_data:
-      'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M 0,-14 C 9,-14 14,-9 14,0 C 14,9 9,14 0,14 C -9,14 -14,9 -14,0 C -14,-9 -9,-14 0,-14 Z M -18,0 L 18,0 M 0,-18 L 0,18',
-    pattern_color: '#C9A66B',
-    pattern_story: 'Huy hiệu kim khánh cách điệu đặt giữa ngực áo, tôn vinh phẩm hạnh cao quý và cốt cách hoàng gia.'
+    id: 'pat-tu-quy',
+    name: 'Tứ Quý Mai Lan Cúc Trúc',
+    vietnameseTitle: 'Tứ Thời Cát Tường',
+    dynastyEra: 'Di sản mỹ thuật truyền thống Việt Nam',
+    technique: 'Thêu tay thủ công thanh nhã & in lụa chìm',
+    compatibleGarments: ['Áo Ngũ Thân', 'Áo Bà Ba', 'Áo Dài Tân Thời'],
+    historicalStory: 'Bốn loài hoa thảo biểu trưng cho bốn mùa luân chuyển, tiết tháo của bậc quân tử và phẩm hạnh đoan trang, dịu dàng của người phụ nữ Việt.',
+    aiPromptSnippet: 'Four seasons botanical elegance (Apricot, Orchid, Chrysanthemum, Bamboo), delicate pastel silk weaving',
+    fullImagePrompt: 'High-fashion editorial Vietnamese traditional garment textile swatch featuring Tu Quy (Mai Lan Cuc Truc) botanical motifs. Delicate blossoming apricot and slender bamboo silhouettes woven into organic Lotus Silk. Subtle lotus pink (#F4C9D6) and earthen gold undertones, poetic Asian aesthetics, hyper-detailed textile weave texture. Strictly Vietnamese cultural identity, NO Hanfu dragon robes.',
+    colorHex: '#F4C9D6',
+    svgPath: 'M 20,40 C 20,20 40,20 40,40 C 40,60 20,60 20,40 Z M 25,25 L 35,35 M 35,25 L 25,35 M 10,20 Q 30,5 50,20',
+    previewBg: 'linear-gradient(135deg, rgba(244,201,214,0.25), rgba(43,43,40,0.85))',
+    patternType: 'SEAMLESS_JACQUARD'
+  },
+  {
+    id: 'pat-cuc-day-nguyen',
+    name: 'Hoa Cúc Dây Triều Nguyễn',
+    vietnameseTitle: 'Cúc Dây Dệt Lụa Hoàng Gia',
+    dynastyEra: 'Triều Nguyễn (Thế kỷ 19)',
+    technique: 'Dệt gấm đoạn hoa cúc cuộn dây liên hoàn',
+    compatibleGarments: ['Áo Ngũ Thân Tay Chẽn', 'Áo Tấc'],
+    historicalStory: 'Dây cúc cuộn xoắn miên viễn tượng trưng cho sự trường thọ, trường tồn sinh sôi và cốt cách thanh sạch, không vướng bụi trần.',
+    aiPromptSnippet: 'Continuous undulating chrysanthemum floral vine damask, lustrous ancient silk brocade',
+    fullImagePrompt: 'Seamless textile pattern surface of authentic Vietnamese royal chrysanthemum scrolling vines (Cuc Day Trieu Nguyen). Intertwining gilded botanical lines on night moss deep green (#1C2B26) mulberry silk. Traditional Dong Ho and Hue imperial aesthetic resonance, high thread count natural sheen, soft directional side light highlighting thread relief. 8k, photorealistic fabric rendering.',
+    colorHex: '#C9A66B',
+    svgPath: 'M 0,25 C 20,5 40,45 60,25 M 15,25 A 6,6 0 1,0 27,25 A 6,6 0 1,0 15,25 M 45,25 A 6,6 0 1,0 57,25 A 6,6 0 1,0 45,25',
+    previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.3), rgba(28,43,38,0.92))',
+    patternType: 'SEAMLESS_JACQUARD'
+  },
+  {
+    id: 'pat-hac-an-may',
+    name: 'Hạc Ẩn Mây Tiên Cảnh',
+    vietnameseTitle: 'Bạch Hạc Du Vân',
+    dynastyEra: 'Thời Hậu Lê — Thời Nguyễn',
+    technique: 'Huy hiệu thêu chỉ bạc và chỉ tơ trắng ngà',
+    compatibleGarments: ['Áo Tấc', 'Áo Ngũ Thân', 'Khăn Đóng / Phụ kiện'],
+    historicalStory: 'Chim hạc tiên sải cánh lượn giữa mây trời là biểu tượng tối cao của trường thọ, khí tiết thanh cao và sự siêu thoát của tâm hồn.',
+    aiPromptSnippet: 'Sacred crane flying through billowing silk clouds, silver metallic threads on deep jade green',
+    fullImagePrompt: 'High-end Vietnamese heritage circular emblem medal embroidered with a sacred Crane soaring through swirling clouds (Hac An May). Embroidered with real silver filament and ivory silk on jade-colored textured damask. Rim lighting, intricate needlework relief, museum archival piece quality. Strictly authentic Vietnamese iconography, NO modern stamps.',
+    colorHex: '#E8F3EE',
+    svgPath: 'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M -12,-8 Q 0,-2 12,-8 Q 6,6 0,14 Q -6,6 -12,-8 Z',
+    previewBg: 'linear-gradient(135deg, rgba(232,243,238,0.3), rgba(13,23,20,0.9))',
+    patternType: 'CENTRAL_EMBLEM'
+  },
+  {
+    id: 'pat-lien-hoa-bo-de',
+    name: 'Liên Hoa Bồ Đề Thời Lý - Trần',
+    vietnameseTitle: 'Liên Hoa Bồ Đề Cổ Kính',
+    dynastyEra: 'Thời Lý - Trần (Thế kỷ 11–14)',
+    technique: 'Huy hiệu chạm nổi mạ vàng / Thêu chỉ vàng kim',
+    compatibleGarments: ['Áo Giao Lĩnh', 'Áo Ngũ Thân', 'Áo Nhật Bình'],
+    historicalStory: 'Cánh sen thanh tịnh lồng trong dáng lá bồ đề mang âm hưởng triết lý Phật giáo nhập thế rực rỡ thời Lý - Trần, tượng trưng cho sự thuần khiết và từ bi.',
+    aiPromptSnippet: 'Ly-Tran dynasty sacred lotus inside bodhi leaf outline, Buddhist courtly elegance, gold leaf texture',
+    fullImagePrompt: 'Editorial heritage design detail: Vietnamese Ly-Tran dynasty stylized sacred lotus enclosed inside a graceful Bodhi leaf silhouette. Intricate curling petal engravings inspired by ancient Thang Long Imperial Citadel ceramics, textured gold leaf foil stamped onto deep carmine and earthen brown natural raw silk. Crisp details, macro photography, luxury historical preservation aesthetic.',
+    colorHex: '#C9A66B',
+    svgPath: 'M 0,-26 C 14,-18 22,2 0,24 C -22,2 -14,-18 0,-26 Z M 0,-14 C 8,-6 10,6 0,16 C -10,6 -8,-6 0,-14 Z',
+    previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.35), rgba(74,133,119,0.85))',
+    patternType: 'CENTRAL_EMBLEM'
   }
 ];
 
@@ -35,223 +118,266 @@ export class PatternEngine {
   public savedPatterns: PatternItem[] = [];
   public currentOverlayMode: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM' = 'SEAMLESS_JACQUARD';
   public currentPattern: PatternItem | null = null;
+  public selectedTechnique: string = 'Gấm chìm Jacquard tơ tằm';
+  public selectedGarmentTarget: string = 'Áo Ngũ Thân Lập Lĩnh';
 
   public init(): void {
-    this.loadSavedPatterns();
-    this.setupUI();
+    this.renderPlaceholderCards();
+    this.setupCreativeStudio();
+    this.setupModals();
   }
 
-  public loadSavedPatterns(): void {
-    try {
-      const stored = localStorage.getItem('viet_y_saved_patterns');
-      if (stored) {
-        this.savedPatterns = JSON.parse(stored);
-      } else {
-        this.savedPatterns = [...DEFAULT_CURATED_PATTERNS];
-        localStorage.setItem('viet_y_saved_patterns', JSON.stringify(this.savedPatterns));
-      }
-    } catch {
-      this.savedPatterns = [...DEFAULT_CURATED_PATTERNS];
-    }
-    this.renderSavedPatternList();
-  }
+  /**
+   * Render danh sách 6 mẫu hoa văn di sản mẫu (Placeholders)
+   */
+  public renderPlaceholderCards(): void {
+    const grid = document.getElementById('pattern-placeholders-grid');
+    if (!grid) return;
 
-  public renderSavedPatternList(): void {
-    const container = document.getElementById('saved-pattern-list');
-    const countEl = document.getElementById('saved-pattern-count');
-    if (!container) return;
+    grid.innerHTML = SIX_PLACEHOLDER_HERITAGE_PATTERNS.map((pat) => {
+      return `
+        <article class="pattern-heritage-card" id="card-${pat.id}">
+          <div class="pattern-card-preview" style="background: ${pat.previewBg};">
+            <div class="pattern-card-art-wrap">
+              <svg viewBox="0 0 70 70" class="pattern-card-svg" aria-hidden="true">
+                <path d="${pat.svgPath}" fill="none" stroke="${pat.colorHex}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="pattern-card-badge">${pat.patternType === 'SEAMLESS_JACQUARD' ? '❖ Gấm Chìm' : '✹ Huy Hiệu'}</div>
+          </div>
 
-    container.innerHTML = '';
-    if (countEl) {
-      countEl.textContent = `(${this.savedPatterns.length} mẫu)`;
-    }
+          <div class="pattern-card-content">
+            <div class="pattern-dynasty">${pat.dynastyEra}</div>
+            <h4 class="pattern-title">${pat.name}</h4>
+            <div class="pattern-technique">🪡 <em>Kỹ thuật:</em> ${pat.technique}</div>
+            <p class="pattern-story">${pat.historicalStory}</p>
 
-    this.savedPatterns.forEach((pat) => {
-      const bead = document.createElement('button');
-      bead.type = 'button';
-      bead.className = 'pattern-bead';
-      bead.title = `${pat.pattern_name} (${pat.pattern_type === 'SEAMLESS_JACQUARD' ? 'Gấm chìm' : 'Huy hiệu'})`;
-      bead.setAttribute('aria-label', pat.pattern_name);
+            <div class="pattern-compatibility">
+              <strong>Tương thích:</strong>
+              ${pat.compatibleGarments.map((g) => `<span class="compat-tag">${g}</span>`).join('')}
+            </div>
 
-      bead.style.background = pat.pattern_color || '#C9A66B';
-      bead.innerHTML = pat.pattern_type === 'SEAMLESS_JACQUARD' ? '❖' : '✹';
-      bead.style.color = '#0D1714';
+            <div class="pattern-card-actions">
+              <button type="button" class="btn-pattern-apply" data-pattern-id="${pat.id}" title="Áp dụng hoa văn này vào trang phục trong Xưởng Phối">
+                🎨 Áp Dụng Lên Áo
+              </button>
+              <button type="button" class="btn-pattern-view-prompt" data-pattern-id="${pat.id}" title="Xem câu lệnh AI Prompt đầy đủ dùng để sinh ảnh">
+                🔍 Xem Prompt AI
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
 
-      bead.addEventListener('click', () => {
-        Sound.playChime();
-        document.querySelectorAll('.pattern-bead').forEach((b) => b.classList.remove('active'));
-        bead.classList.add('active');
-        this.applyPatternToGarment(pat);
-      });
-
-      container.appendChild(bead);
-    });
-  }
-
-  public applyPatternToGarment(patternData: PatternItem): void {
-    this.currentPattern = patternData;
-    const overlayPath = document.getElementById('layer-pattern-overlay');
-    const emblemGroup = document.getElementById('layer-emblem');
-    const dynPatternPath = document.getElementById('dynamic-ai-pattern-path');
-    const storyDisplay = document.getElementById('pattern-story-display');
-
-    if (patternData.pattern_type === 'SEAMLESS_JACQUARD') {
-      if (dynPatternPath) {
-        dynPatternPath.setAttribute('d', patternData.svg_path_data);
-        dynPatternPath.setAttribute('stroke', patternData.pattern_color || '#C9A66B');
-      }
-      if (overlayPath) {
-        overlayPath.style.display = 'block';
-        overlayPath.style.mixBlendMode = 'multiply';
-        overlayPath.style.opacity = '0.38';
-      }
-      if (emblemGroup) {
-        emblemGroup.style.display = 'none';
-      }
-    } else {
-      if (overlayPath) {
-        overlayPath.style.display = 'none';
-      }
-      if (emblemGroup) {
-        const color = patternData.pattern_color || '#C9A66B';
-        emblemGroup.innerHTML = `
-          <circle cx="0" cy="0" r="32" fill="none" stroke="${color}" stroke-width="2.2" stroke-dasharray="5,3" filter="drop-shadow(0 0 6px ${color})" />
-          <circle cx="0" cy="0" r="27" fill="rgba(30, 20, 15, 0.65)" stroke="${color}" stroke-width="1.2" />
-          <path d="${patternData.svg_path_data}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-          <circle cx="0" cy="0" r="3.5" fill="${color}" />
-        `;
-        emblemGroup.style.display = 'block';
-      }
-    }
-
-    if (storyDisplay && patternData.pattern_story) {
-      storyDisplay.style.display = 'block';
-      storyDisplay.innerHTML = `<strong>${patternData.pattern_name}:</strong> ${patternData.pattern_story}`;
-    }
-  }
-
-  public async generateAIPattern(userKeyword: string, overlayMode: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM'): Promise<void> {
-    const keyword = (userKeyword || '').trim() || 'chiều mưa xứ Huế';
-    const mode = overlayMode || 'SEAMLESS_JACQUARD';
-    const mainGarment = document.getElementById('layer-main-garment');
-    const btnGen = document.getElementById('btn-generate-pattern') as HTMLButtonElement | null;
-
-    if (mainGarment) {
-      mainGarment.classList.add('is-polishing');
-    }
-    if (btnGen) {
-      btnGen.disabled = true;
-      btnGen.innerHTML = '<span>⏳</span> Đang Mài Vóc...';
-    }
-
-    feedbackState.showLoading({
-      message: 'Đang thêu hoa văn Lụa Thanh...',
-      submessage: `Nghệ nhân đang dệt nét chạm theo cảm hứng "${keyword}"...`,
-      allowCancel: true,
-      onCancel: () => {
-        if (mainGarment) mainGarment.classList.remove('is-polishing');
-        if (btnGen) {
-          btnGen.disabled = false;
-          btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
+    // Gắn sự kiện cho các nút hành động trong từng thẻ
+    grid.querySelectorAll('.btn-pattern-apply').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-pattern-id');
+        const found = SIX_PLACEHOLDER_HERITAGE_PATTERNS.find((p) => p.id === id);
+        if (found) {
+          this.applyToWorkshopAndNavigate(found);
         }
-      }
+      });
     });
 
-    const fallbackResult: PatternItem = {
-      pattern_name: mode === 'SEAMLESS_JACQUARD' ? 'Gấm Mây Thủy Ba' : 'Nhật Bình Kim Khánh',
-      pattern_type: mode,
-      svg_path_data:
-        mode === 'SEAMLESS_JACQUARD'
-          ? 'M 10,30 Q 25,12 40,28 T 60,30 M 5,45 Q 25,25 45,45'
-          : 'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M -16,0 L 16,0 M 0,-16 L 0,16',
-      pattern_color: '#C9A66B',
-      pattern_story: `Khởi phát từ cảm hứng "${keyword}", hoa văn kết hợp dòng nước nguồn cội và nét chạm gốm mạ vàng tôn vinh cốt cách người mặc.`
+    grid.querySelectorAll('.btn-pattern-view-prompt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-pattern-id');
+        const found = SIX_PLACEHOLDER_HERITAGE_PATTERNS.find((p) => p.id === id);
+        if (found) {
+          this.openPromptInspectModal(found.name, found.fullImagePrompt, 'HOA_VAN');
+        }
+      });
+    });
+  }
+
+  /**
+   * Áp dụng hoa văn mẫu trực tiếp vào trang phục trong Xưởng Phối và chuyển tab
+   */
+  public applyToWorkshopAndNavigate(patternEntry: HeritagePatternEntry): void {
+    Sound.playChime();
+    const patternItem: PatternItem = {
+      id: patternEntry.id,
+      pattern_name: patternEntry.name,
+      pattern_type: patternEntry.patternType,
+      svg_path_data: patternEntry.svgPath,
+      pattern_color: patternEntry.colorHex,
+      pattern_story: patternEntry.historicalStory
     };
 
-    try {
-      let finalPattern: PatternItem | null = await fetchPatternAI(keyword, mode);
-      if (!finalPattern) {
-        finalPattern = fallbackResult;
-      }
+    garmentEngine.setPattern(patternItem);
 
-      // Giữ hiệu ứng mài vóc tối thiểu 900ms để người dùng cảm nhận trọn vẹn nhịp thở Lụa Thanh
-      await new Promise((r) => setTimeout(r, 900));
+    // Kích hoạt thông báo và chuyển tab sang Xưởng Phối
+    feedbackState.showLoading({
+      message: 'Đang đính hoa văn vào trang phục...',
+      submessage: `Đang may dệt mẫu "${patternEntry.name}" vào nếp tơ Lụa Thanh...`
+    });
 
+    setTimeout(() => {
       feedbackState.hideLoading();
-
-      if (mainGarment) {
-        mainGarment.classList.remove('is-polishing');
-      }
-      if (btnGen) {
-        btnGen.disabled = false;
-        btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
-      }
-
-      this.applyPatternToGarment(finalPattern);
-
-      finalPattern.id = 'pat-' + Date.now();
-      this.savedPatterns.unshift(finalPattern);
-      if (this.savedPatterns.length > 12) this.savedPatterns.pop();
-
-      try {
-        localStorage.setItem('viet_y_saved_patterns', JSON.stringify(this.savedPatterns));
-      } catch {}
-
-      this.renderSavedPatternList();
-      Sound.playChime();
-    } catch {
-      feedbackState.hideLoading();
-      if (mainGarment) mainGarment.classList.remove('is-polishing');
-      if (btnGen) {
-        btnGen.disabled = false;
-        btnGen.innerHTML = '<span>✨</span> Thêu Hoa Văn AI';
-      }
-
-      feedbackState.showError({
-        title: 'Tơ Lụa Tạm Lắng',
-        message: 'Hệ thống thêu hoa văn AI tạm thời gián đoạn kết nối hoặc hết hạn mức phục vụ. Bạn chạm thử lại để tiếp tục dệt nhé.',
-        onRetry: () => this.generateAIPattern(userKeyword, overlayMode)
-      });
-    }
+      appRouter.switchTab('create');
+      appRouter.showToast(`✨ Đã gắn hoa văn "${patternEntry.name}" vào áo của bạn trong Xưởng Phối!`);
+    }, 400);
   }
 
-  private setupUI(): void {
-    const tabSeamless = document.getElementById('tab-mode-seamless');
-    const tabEmblem = document.getElementById('tab-mode-emblem');
-    const inputKeyword = document.getElementById('pattern-keyword') as HTMLInputElement | null;
-    const btnGenPattern = document.getElementById('btn-generate-pattern');
+  /**
+   * Thiết lập khu vực Sáng Tạo Hoa Văn Tự Do (Prompt Injector)
+   */
+  private setupCreativeStudio(): void {
+    const inputKeyword = document.getElementById('custom-pattern-keyword') as HTMLInputElement | null;
+    const btnGenerate = document.getElementById('btn-creative-generate-pattern');
+    const techniquePills = document.querySelectorAll('.technique-pill');
+    const garmentPills = document.querySelectorAll('.garment-pill');
 
-    if (tabSeamless && tabEmblem) {
-      tabSeamless.addEventListener('click', () => {
+    techniquePills.forEach((pill) => {
+      pill.addEventListener('click', () => {
         Sound.playClick();
-        this.currentOverlayMode = 'SEAMLESS_JACQUARD';
-        tabSeamless.classList.add('active');
-        tabEmblem.classList.remove('active');
+        techniquePills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.selectedTechnique = pill.getAttribute('data-tech') || 'Gấm chìm Jacquard';
       });
+    });
 
-      tabEmblem.addEventListener('click', () => {
+    garmentPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
         Sound.playClick();
-        this.currentOverlayMode = 'CENTRAL_EMBLEM';
-        tabEmblem.classList.add('active');
-        tabSeamless.classList.remove('active');
+        garmentPills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.selectedGarmentTarget = pill.getAttribute('data-garment') || 'Áo Ngũ Thân';
       });
+    });
+
+    btnGenerate?.addEventListener('click', () => {
+      const keyword = (inputKeyword?.value || '').trim() || 'Hoa sen liên hoa, mây ngũ sắc thời Nguyễn';
+      Sound.playClick();
+      this.handleGenerateCreativePattern(keyword);
+    });
+
+    inputKeyword?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        btnGenerate?.click();
+      }
+    });
+  }
+
+  /**
+   * Xử lý sinh ảnh hoa văn từ từ khóa người dùng (Inject vào Prompt & hiển thị Quota Notice cho BGK)
+   */
+  public handleGenerateCreativePattern(userKeyword: string): void {
+    const assembledPrompt = this.constructPatternImagePrompt(
+      userKeyword,
+      this.selectedTechnique,
+      this.selectedGarmentTarget
+    );
+
+    feedbackState.showLoading({
+      message: 'Đang dệt ý tưởng hoa văn AI...',
+      submessage: `Tổng hợp Prompt kiến trúc AI từ cảm hứng: "${userKeyword}"...`,
+      allowCancel: true
+    });
+
+    setTimeout(() => {
+      feedbackState.hideLoading();
+      Sound.playChime();
+
+      // Cập nhật khung kết quả trực quan
+      const resultBox = document.getElementById('pattern-generated-result-box');
+      const resultTitle = document.getElementById('gen-pattern-title');
+      const resultPromptEl = document.getElementById('gen-pattern-prompt-display');
+      const resultDesc = document.getElementById('gen-pattern-desc');
+
+      if (resultBox) resultBox.classList.remove('box-hidden');
+      if (resultTitle) resultTitle.textContent = `Bản Thiết Kế: ${userKeyword} (${this.selectedTechnique})`;
+      if (resultPromptEl) resultPromptEl.textContent = assembledPrompt;
+      if (resultDesc) {
+        resultDesc.textContent = `Hệ thống đã tự động chuyển hóa từ khóa "${userKeyword}" thành cấu trúc câu lệnh AI đồ họa chuyên sâu tương thích hoàn toàn với phom dáng ${this.selectedGarmentTarget}.`;
+      }
+
+      // Mở modal thông cáo Quota và Prompt dành riêng cho Ban Giám khảo
+      this.openPromptInspectModal(`Hoa Văn Sáng Tạo: ${userKeyword}`, assembledPrompt, 'HOA_VAN');
+
+      // Cuộn êm đến khung kết quả
+      resultBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 700);
+  }
+
+  /**
+   * Cơ chế ghép nối câu lệnh AI Image Generation chuyên sâu (Prompt Assembly)
+   */
+  public constructPatternImagePrompt(keyword: string, technique: string, targetGarment: string): string {
+    return `Ultra-detailed textile macro editorial photography of traditional Vietnamese textile pattern: "${keyword}". Artistic technique: ${technique}, meticulously tailored for Vietnamese ${targetGarment}. Natural mulberry silk texture (tơ tằm tự nhiên) with fine jacquard relief weave, soft gold leaf highlights (#C9A66B) and jade undertones. Soft cinematic studio rim lighting, 8k resolution, authentic Vietnamese cultural heritage aesthetics. Strictly NO Hanfu imperial dragons, NO Kimono sash motifs, NO flat cartoon illustration, photorealistic textile fabric sample.`;
+  }
+
+  /**
+   * Thiết lập Modal hiển thị Prompt & Thông cáo Quota
+   */
+  private setupModals(): void {
+    const modal = document.getElementById('prompt-inspect-modal');
+    const btnClose = document.getElementById('btn-close-prompt-modal');
+    const backdrop = document.getElementById('prompt-modal-backdrop');
+    const btnCopy = document.getElementById('btn-copy-prompt-text');
+
+    const closeModal = () => {
+      modal?.classList.remove('modal-active');
+    };
+
+    btnClose?.addEventListener('click', closeModal);
+    backdrop?.addEventListener('click', closeModal);
+
+    btnCopy?.addEventListener('click', () => {
+      const promptText = document.getElementById('modal-prompt-content')?.textContent;
+      if (promptText) {
+        navigator.clipboard.writeText(promptText).then(() => {
+          Sound.playChime();
+          const origText = btnCopy.innerHTML;
+          btnCopy.innerHTML = '✓ Đã Sao Chép Prompt!';
+          setTimeout(() => {
+            btnCopy.innerHTML = origText;
+          }, 2000);
+        });
+      }
+    });
+
+    // Lắng nghe nút mở Prompt trang phục tại Xưởng Phối và Màn Kết Quả
+    const triggerOutfitPromptBtns = [
+      document.getElementById('btn-inspect-outfit-prompt'),
+      document.getElementById('btn-result-prompt-inspect')
+    ];
+
+    triggerOutfitPromptBtns.forEach((btn) => {
+      btn?.addEventListener('click', () => {
+        Sound.playClick();
+        const outfitState = garmentEngine.getCurrentOutfitState();
+        const assembledOutfitPrompt = assembleFashionPrompt(outfitState);
+        this.openPromptInspectModal(
+          `Trang Phục Hoàn Chỉnh: ${outfitState.garment === 'AO_BA_BA' ? 'Áo Bà Ba' : 'Áo Ngũ Thân'} ${outfitState.colorName}`,
+          assembledOutfitPrompt,
+          'TRANG_PHUC'
+        );
+      });
+    });
+  }
+
+  /**
+   * Mở Modal hiển thị Prompt và Banner thông cáo Quota cho Giám khảo
+   */
+  public openPromptInspectModal(title: string, promptContent: string, mode: 'HOA_VAN' | 'TRANG_PHUC'): void {
+    const modal = document.getElementById('prompt-inspect-modal');
+    const titleEl = document.getElementById('modal-prompt-title');
+    const contentEl = document.getElementById('modal-prompt-content');
+    const badgeEl = document.getElementById('modal-prompt-type-badge');
+
+    if (!modal) return;
+
+    if (titleEl) titleEl.textContent = title;
+    if (contentEl) contentEl.textContent = promptContent;
+    if (badgeEl) {
+      badgeEl.textContent = mode === 'HOA_VAN' ? '❖ Cấu Trúc Prompt Sinh Ảnh Hoa Văn' : '🎨 Cấu Trúc Prompt Sinh Ảnh Trang Phục';
     }
 
-    if (btnGenPattern && inputKeyword) {
-      const handleTriggerPattern = () => {
-        const val = inputKeyword.value.trim() || 'chiều mưa xứ Huế';
-        Sound.playClick();
-        this.generateAIPattern(val, this.currentOverlayMode);
-      };
-
-      btnGenPattern.addEventListener('click', handleTriggerPattern);
-      inputKeyword.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleTriggerPattern();
-        }
-      });
-    }
+    modal.classList.add('modal-active');
   }
 }
 

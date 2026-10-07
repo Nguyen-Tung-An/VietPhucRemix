@@ -1,0 +1,453 @@
+/* ============================================================
+   HÀNH TRÌNH SỞ HỮU VIỆT PHỤC (TAILOR & SHOPPING JOURNEY)
+   Concept: "LỤA THANH"
+   Tích hợp: Google Maps & Google Search tiệm may cổ phục uy tín
+   ============================================================ */
+
+/* Modal Backdrop & Container */
+.journey-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.journey-modal.modal-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.journey-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 23, 20, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.journey-dialog {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1040px;
+  max-height: 90vh;
+  background: #FCFBF9;
+  border: 1px solid rgba(74, 133, 119, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: journeyModalPop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes journeyModalPop {
+  from {
+    transform: scale(0.96) translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header */
+.journey-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(74, 133, 119, 0.15);
+  background: linear-gradient(135deg, rgba(232, 243, 238, 0.6), rgba(255, 255, 255, 0.95));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.journey-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.journey-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #4A8577;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.journey-title {
+  font-family: var(--font-title, 'Playfair Display', serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2B2B28;
+  margin: 0;
+}
+
+.btn-close-journey {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(74, 133, 119, 0.2);
+  background: white;
+  color: #5C635F;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close-journey:hover {
+  background: #E8F3EE;
+  color: #1C2B26;
+  transform: rotate(90deg);
+}
+
+/* Body Scrollable */
+.journey-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Target Garment Banner */
+.journey-target-banner {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(201, 166, 107, 0.15), rgba(74, 133, 119, 0.08));
+  border: 1px solid rgba(201, 166, 107, 0.35);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.journey-target-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #6B4E2E;
+}
+
+.journey-target-sub {
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Global Google Search Row */
+.journey-global-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-search-external {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-search-maps {
+  background: #4A8577;
+  color: white;
+  box-shadow: 0 4px 12px rgba(74, 133, 119, 0.25);
+}
+
+.btn-search-maps:hover {
+  background: #39695E;
+  transform: translateY(-1px);
+}
+
+.btn-search-google {
+  background: white;
+  border: 1px solid rgba(74, 133, 119, 0.3);
+  color: #2B2B28;
+}
+
+.btn-search-google:hover {
+  background: #E8F3EE;
+  border-color: #4A8577;
+  transform: translateY(-1px);
+}
+
+/* Custom Search Input */
+.journey-search-bar {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  gap: 8px;
+}
+
+.journey-search-input {
+  flex: 1;
+  padding: 9px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(74, 133, 119, 0.25);
+  background: white;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.journey-search-input:focus {
+  border-color: #4A8577;
+  box-shadow: 0 0 0 3px rgba(74, 133, 119, 0.12);
+}
+
+.btn-custom-search {
+  padding: 9px 16px;
+  border-radius: 9999px;
+  border: none;
+  background: #C9A66B;
+  color: #1C2B26;
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-custom-search:hover {
+  background: #B89255;
+}
+
+/* Google Maps Interactive Frame Box */
+.journey-map-wrapper {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(74, 133, 119, 0.2);
+  background: #EEE;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.journey-map-wrapper iframe {
+  width: 100%;
+  height: 230px;
+  border: 0;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .journey-map-wrapper iframe {
+    height: 270px;
+  }
+}
+
+/* Region Filter Tabs */
+.journey-region-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(74, 133, 119, 0.08);
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+.journey-region-tab {
+  padding: 7px 16px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #5C635F;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.journey-region-tab:hover {
+  color: #1C2B26;
+}
+
+.journey-region-tab.active {
+  background: white;
+  color: #4A8577;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.15);
+}
+
+/* Atelier Cards Grid */
+.journey-atelier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .journey-atelier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .journey-atelier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.atelier-card {
+  background: white;
+  border: 1px solid rgba(74, 133, 119, 0.18);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.atelier-card:hover {
+  transform: translateY(-2px);
+  border-color: #4A8577;
+  box-shadow: 0 8px 24px rgba(74, 133, 119, 0.12);
+}
+
+.atelier-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.atelier-city-badge {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(74, 133, 119, 0.12);
+  color: #4A8577;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.atelier-name {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2B2B28;
+  margin: 0;
+}
+
+.atelier-address {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.atelier-desc {
+  font-size: 0.82rem;
+  color: #444;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.atelier-meta-box {
+  background: #F8F9F8;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.atelier-meta-box strong {
+  color: #2B2B28;
+}
+
+.atelier-meta-box a {
+  color: #4A8577;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.atelier-price span {
+  color: #6B4E2E;
+  font-weight: 600;
+}
+
+.atelier-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.atelier-tag {
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(201, 166, 107, 0.12);
+  color: #6B4E2E;
+  font-weight: 500;
+}
+
+.atelier-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(74, 133, 119, 0.15);
+}
+
+.btn-atelier-map,
+.btn-atelier-search {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn-atelier-map {
+  background: rgba(74, 133, 119, 0.12);
+  color: #4A8577;
+  border: 1px solid rgba(74, 133, 119, 0.25);
+}
+
+.btn-atelier-map:hover {
+  background: #4A8577;
+  color: white;
+}
+
+.btn-atelier-search {
+  background: #F3F4F3;
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-atelier-search:hover {
+  background: #E5E7E5;
+  color: #111;
+}

@@ -10,6 +10,7 @@ import {
   runOnlineMiniStylingSuggestions,
   getOfflineMiniStylingSuggestions,
 } from './server/culturalPipeline.ts';
+import { getColorCulturalAnalysis } from './src/data/culturalTruths.ts';
 
 dotenv.config();
 
@@ -120,6 +121,7 @@ function getLocalCulturalAnalysis(contextPayload: {
     kieu_toc_va_trang_diem: selectedEventInfo.makeup,
     dang_chup_anh: selectedEventInfo.pose,
     cau_chuyen_di_san: selectedEventInfo.story,
+    color_evaluation: getColorCulturalAnalysis(contextPayload.primary_color, garment_type, event),
   };
 }
 

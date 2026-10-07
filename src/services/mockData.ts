@@ -2,7 +2,8 @@ import { CulturalGuardrailResult, PatternItem, CitationSource } from '../types/i
 import {
   CULTURAL_DATABASE,
   getCulturalTruth,
-  checkStrictTaboo
+  checkStrictTaboo,
+  getColorCulturalAnalysis
 } from '../data/culturalTruths.ts';
 
 /**
@@ -46,7 +47,8 @@ export function getMockCulturalAI(context: {
       cau_chuyen_di_san: truth.culturalSignificance,
       citations,
       set_name: truth.name,
-      audit_passed: false
+      audit_passed: false,
+      color_evaluation: getColorCulturalAnalysis(primary_color, garment_type, event)
     };
   }
 
@@ -91,7 +93,8 @@ export function getMockCulturalAI(context: {
     cau_chuyen_di_san: selectedEvent.story,
     citations,
     set_name: truth.name,
-    audit_passed: true
+    audit_passed: true,
+    color_evaluation: getColorCulturalAnalysis(primary_color, garment_type, event)
   };
 }
 

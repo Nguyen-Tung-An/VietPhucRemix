@@ -5,7 +5,14 @@ import { DiscoveryOutfit } from '../types/index.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
 import { appRouter } from '../navigation/router.ts';
-import { getCulturalTruth, checkStrictTaboo, checkMultipleStrictTaboos } from '../data/culturalTruths.ts';
+import {
+  getCulturalTruth,
+  checkStrictTaboo,
+  checkMultipleStrictTaboos,
+  getAllSourcesForGarment,
+  getColorCulturalAnalysis
+} from '../data/culturalTruths.ts';
+import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
 
 export class ResultEngine {
   private isKnowledgeRevealed: boolean = false;
@@ -33,12 +40,42 @@ export class ResultEngine {
     this.renderBadgeAndHeadlines(outfitState.garment, outfitState.colorName, allAccessories);
     this.renderCulturalWarning(outfitState.garment, allAccessories);
     this.renderKnowledgeCard(outfitState.garment);
+    this.renderColorEvaluation(outfitState.color, outfitState.colorName, outfitState.garment, outfitState.event);
 
     // Đặt lại trạng thái ẩn mặc định cho Lớp 3 (Progressive Disclosure)
     this.setKnowledgeRevealed(false);
 
     // Kích hoạt màn hình kết quả
     resultScene.classList.add('scene-active');
+  }
+
+  private renderColorEvaluation(colorHex: string, colorName: string, garment: string, event: string): void {
+    const colorAnalysis = getColorCulturalAnalysis(colorHex, garment, event);
+    const elementTag = document.getElementById('result-color-element');
+    const colorDot = document.getElementById('result-color-dot');
+    const colorTitle = document.getElementById('result-color-title');
+    const colorSymbolism = document.getElementById('result-color-symbolism');
+
+    const elementNameMap: Record<string, string> = {
+      KIM: 'Kim Bạch Lạp',
+      MOC: 'Mộc Sinh Khí',
+      THUY: 'Thủy Dưỡng Sắc',
+      HOA: 'Hỏa Chu Tước',
+      THO: 'Thổ Vị Trung Tâm'
+    };
+
+    if (elementTag) {
+      elementTag.textContent = elementNameMap[colorAnalysis.five_elements_element || 'THO'] || 'Thổ Vị Trung Tâm';
+    }
+    if (colorDot) {
+      colorDot.style.backgroundColor = colorHex;
+    }
+    if (colorTitle) {
+      colorTitle.textContent = `${colorName} • ${colorAnalysis.harmony_title}`;
+    }
+    if (colorSymbolism) {
+      colorSymbolism.textContent = `${colorAnalysis.cultural_symbolism} (${colorAnalysis.event_suitability})`;
+    }
   }
 
   /**
@@ -124,20 +161,36 @@ export class ResultEngine {
     if (!knowledgeText) return;
 
     const truth = getCulturalTruth(garment);
+    const allSources = getAllSourcesForGarment(garment);
+
     if (knowledgeTitle) {
       knowledgeTitle.textContent = `${truth.name} • Tri Thức Di Sản Khảo Cứu`;
     }
 
+    const citationItemsHtml = allSources.map((src, index) => {
+      const yearStr = src.year ? ` (${src.year})` : '';
+      const noteStr = src.note ? ` — <span style="color: #666;">${src.note}</span>` : '';
+      return `
+        <div style="margin-top: 6px; padding: 4px 0; border-bottom: 1px dotted rgba(201,166,107,0.25);">
+          <div style="color: #6B4E2E; font-weight: 500;">
+            [${index + 1}] <strong>${src.title}</strong>${yearStr} — <em>${src.authorOrInstitution}</em>${noteStr}
+          </div>
+          <div style="margin-top: 2px;">
+            <a href="${src.url}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600;">
+              🔗 Đọc tài liệu khảo cứu gốc ↗
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+
     const citationHtml = `
-      <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed rgba(201,166,107,0.35); font-size: 11px;">
-        <div style="color: #6B4E2E; font-weight: 500;">
-          📜 <em>Nguồn:</em> <strong>${truth.sourceTitle}</strong> — ${truth.authorOrInstitution}
+      <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(201,166,107,0.4); font-size: 11px;">
+        <div style="font-weight: 700; color: #4A8577; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+          <span>📜 Nguồn tư liệu khảo cứu xác thực (${allSources.length} nguồn):</span>
+          <span style="font-size: 10px; color: #888; font-weight: normal;">Đã kiểm chứng lịch sử</span>
         </div>
-        <div style="margin-top: 4px;">
-          <a href="${truth.sourceUrl}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600;">
-            🔗 Đọc tài liệu khảo cứu gốc (${truth.sourceUrl}) ↗
-          </a>
-        </div>
+        ${citationItemsHtml}
       </div>
     `;
 
@@ -194,6 +247,13 @@ export class ResultEngine {
     const btnSaveLookbook = document.getElementById('btn-result-save-lookbook');
     const btnRemix = document.getElementById('btn-result-remix');
     const btnBack = document.getElementById('btn-result-back');
+    const btnTailorJourney = document.getElementById('btn-result-tailor-journey');
+
+    // Nút Hành trình Sở hữu Cổ phục (Google Maps & Search tiệm may đo thực tế)
+    btnTailorJourney?.addEventListener('click', () => {
+      const outfitState = garmentEngine.getCurrentOutfitState();
+      tailorJourneyEngine.openJourney(outfitState.garment, undefined, outfitState.colorName);
+    });
 
     // Nút phụ: "Phối lại" -> Quay lại xưởng phối
     btnRemix?.addEventListener('click', () => {

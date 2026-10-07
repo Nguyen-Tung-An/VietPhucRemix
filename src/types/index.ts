@@ -17,6 +17,15 @@ export type GarmentType =
   | 'AO_BA_BA'
   | 'AO_DAI_LEMUR';
 
+export interface ColorCulturalAnalysis {
+  rating: 'CHUAN_SAC' | 'HAI_HOA' | 'CAN_NHAC';
+  harmony_title: string;
+  cultural_symbolism: string;
+  five_elements_element: 'KIM' | 'MOC' | 'THUY' | 'HOA' | 'THO';
+  element_meaning: string;
+  event_suitability: string;
+}
+
 export interface CulturalGuardrailResult {
   is_culturally_accurate: boolean;
   warning_level: 'SAFE' | 'WARNING' | 'REJECTED';
@@ -32,6 +41,7 @@ export interface CulturalGuardrailResult {
   inappropriate_terms_detected?: string[];
   chosen_accessories?: string[];
   chosen_hairstyle?: string;
+  color_evaluation?: ColorCulturalAnalysis;
 }
 
 export interface StylingSuggestionItem {

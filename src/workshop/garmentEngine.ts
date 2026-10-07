@@ -1,7 +1,14 @@
-import { CurrentOutfitState, MiniStylingResponse, StylingSuggestionItem } from '../types/index.ts';
+import { CurrentOutfitState, MiniStylingResponse, StylingSuggestionItem, PatternItem } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
-import { getCulturalTruth, validateUserInputSanity } from '../data/culturalTruths.ts';
+import {
+  getCulturalTruth,
+  validateUserInputSanity,
+  getColorCulturalAnalysis,
+  checkMultipleStrictTaboos
+} from '../data/culturalTruths.ts';
 import { fetchStylingSuggestionsAPI } from '../services/api.ts';
+import { assembleFashionPrompt } from './promptEngine.ts';
+import { patternEngine } from './patternEngine.ts';
 
 export class GarmentEngine {
   public currentColor: string = '#F4C9D6';
@@ -9,6 +16,7 @@ export class GarmentEngine {
   public currentGarment: string = 'AO_NGU_THAN';
   public currentStyle: string = 'THANH_TAO';
   public currentPersonality: string = 'Nho nhã đoan trang';
+  public currentPattern: PatternItem | null = null;
 
   // Multiple selection for accessories
   public selectedAccessories: string[] = ['QUAT_GIAY'];
@@ -35,6 +43,44 @@ export class GarmentEngine {
     this.loadInitialStyling();
   }
 
+  public setPattern(pattern: PatternItem | null): void {
+    this.currentPattern = pattern;
+    const overlayPath = document.getElementById('layer-pattern-overlay');
+    const emblemGroup = document.getElementById('layer-emblem');
+    const dynPatternPath = document.getElementById('dynamic-ai-pattern-path');
+
+    if (!pattern) {
+      if (overlayPath) overlayPath.style.display = 'none';
+      if (emblemGroup) emblemGroup.style.display = 'none';
+      return;
+    }
+
+    if (pattern.pattern_type === 'SEAMLESS_JACQUARD') {
+      if (dynPatternPath) {
+        dynPatternPath.setAttribute('d', pattern.svg_path_data);
+        dynPatternPath.setAttribute('stroke', pattern.pattern_color || '#C9A66B');
+      }
+      if (overlayPath) {
+        overlayPath.style.display = 'block';
+        overlayPath.style.mixBlendMode = 'multiply';
+        overlayPath.style.opacity = '0.38';
+      }
+      if (emblemGroup) emblemGroup.style.display = 'none';
+    } else {
+      if (overlayPath) overlayPath.style.display = 'none';
+      if (emblemGroup) {
+        const color = pattern.pattern_color || '#C9A66B';
+        emblemGroup.innerHTML = `
+          <circle cx="0" cy="0" r="32" fill="none" stroke="${color}" stroke-width="2.2" stroke-dasharray="5,3" filter="drop-shadow(0 0 6px ${color})" />
+          <circle cx="0" cy="0" r="27" fill="rgba(30, 20, 15, 0.65)" stroke="${color}" stroke-width="1.2" />
+          <path d="${pattern.svg_path_data}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="0" cy="0" r="3.5" fill="${color}" />
+        `;
+        emblemGroup.style.display = 'block';
+      }
+    }
+  }
+
   public getCurrentOutfitState(): CurrentOutfitState {
     const allAccessories = [...this.selectedAccessories, ...this.customAccessories];
     return {
@@ -47,7 +93,7 @@ export class GarmentEngine {
       custom_accessories: this.customAccessories,
       hairstyle: this.customHairstyle || this.selectedHairstyle,
       custom_hairstyle: this.customHairstyle,
-      pattern: null,
+      pattern: this.currentPattern,
       genzActive: this.currentStyle === 'DUONG_DAI',
       style: this.currentStyle,
       personality: this.currentPersonality
@@ -581,6 +627,31 @@ export class GarmentEngine {
       labelEl.innerHTML = `Sắc lụa: <strong>${this.currentColorName}</strong>`;
     }
 
+    // Cập nhật khối Thẩm Định Sắc Phục & Ngũ Hành (Real-time Color Cultural Analysis)
+    const colorAnalysis = getColorCulturalAnalysis(colorHex, this.currentGarment, 'tet');
+    const insightColorElement = document.getElementById('insight-color-element');
+    const insightColorDot = document.getElementById('insight-color-dot');
+    const insightColorName = document.getElementById('insight-color-name');
+    const insightHarmonyRating = document.getElementById('insight-harmony-rating');
+    const insightColorSymbolism = document.getElementById('insight-color-symbolism');
+    const insightColorEvent = document.getElementById('insight-color-event-suitability');
+
+    if (insightColorElement) {
+      const elementNameMap: Record<string, string> = {
+        KIM: 'Kim Bạch Lạp',
+        MOC: 'Mộc Sinh Khí',
+        THUY: 'Thủy Dưỡng Sắc',
+        HOA: 'Hỏa Chu Tước',
+        THO: 'Thổ Vị Trung Tâm'
+      };
+      insightColorElement.textContent = elementNameMap[colorAnalysis.five_elements_element || 'THO'] || 'Thổ Vị Trung Tâm';
+    }
+    if (insightColorDot) insightColorDot.style.backgroundColor = colorHex;
+    if (insightColorName) insightColorName.textContent = this.currentColorName;
+    if (insightHarmonyRating) insightHarmonyRating.textContent = `Độ Hòa Sắc: ${colorAnalysis.harmony_title}`;
+    if (insightColorSymbolism) insightColorSymbolism.textContent = colorAnalysis.cultural_symbolism;
+    if (insightColorEvent) insightColorEvent.textContent = `🌸 Phù hợp: ${colorAnalysis.event_suitability}`;
+
     this.updateDesktopGuidance();
   }
 
@@ -599,7 +670,7 @@ export class GarmentEngine {
   }
 
   /**
-   * Tùy biến Dáng Áo & Đồng bộ tiêu đề Stage Runway
+   * Tùy biến Dáng Áo & Đồng bộ tiêu đề Stage Runway cùng Cột Góc Nhìn Di Sản
    */
   public setGarment(garment: string): void {
     this.currentGarment = garment;
@@ -624,17 +695,63 @@ export class GarmentEngine {
       stageEra.textContent = truth.historicalEra.split('(')[0].trim().slice(0, 32);
     }
 
-    // Hiển thị croquis phù hợp (tạm thời giữ croquis hiện tại cho ngũ thân/bà ba theo chỉ đạo)
+    // Hiển thị croquis vector hoặc Thẻ khảo cứu di sản (Archival Placeholder)
+    const svgEl = document.getElementById('nguthan-svg');
     const nguthanGroup = document.getElementById('garment-nguthan-group');
     const babaGroup = document.getElementById('garment-baba-group');
+    const archivalPlaceholder = document.getElementById('stage-archival-placeholder');
+    const archivalName = document.getElementById('archival-garment-name');
+    const btnInspectGarmentPrompt = document.getElementById('btn-inspect-garment-prompt');
 
-    if (garment === 'AO_BA_BA') {
+    if (garment === 'AO_NGU_THAN') {
+      if (svgEl) svgEl.style.display = 'block';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'none';
+      if (nguthanGroup) nguthanGroup.style.display = 'block';
+      if (babaGroup) babaGroup.style.display = 'none';
+    } else if (garment === 'AO_BA_BA') {
+      if (svgEl) svgEl.style.display = 'block';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'none';
       if (nguthanGroup) nguthanGroup.style.display = 'none';
       if (babaGroup) babaGroup.style.display = 'block';
     } else {
-      if (nguthanGroup) nguthanGroup.style.display = 'block';
-      if (babaGroup) babaGroup.style.display = 'none';
+      // Các dáng áo khác đang trong diện nghiên cứu phục dựng đồ họa
+      if (svgEl) svgEl.style.display = 'none';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'flex';
+      if (archivalName) archivalName.textContent = truth.name;
+
+      if (btnInspectGarmentPrompt) {
+        btnInspectGarmentPrompt.onclick = () => {
+          Sound.playChime();
+          const currentState = this.getCurrentOutfitState();
+          const assembled = assembleFashionPrompt(currentState);
+          patternEngine.openPromptInspectModal(
+            `Prompt AI: ${truth.name}`,
+            assembled,
+            'TRANG_PHUC'
+          );
+        };
+      }
     }
+
+    // Đồng bộ toàn bộ nội dung Cột 2: Góc Nhìn Di Sản Chuyên Sâu
+    const insightEra = document.getElementById('insight-garment-era');
+    const insightContext = document.getElementById('insight-garment-context');
+    const insightFeatures = document.getElementById('insight-garment-features');
+    const insightCitationTitle = document.getElementById('insight-citation-title');
+    const insightCitationAuthor = document.getElementById('insight-citation-author');
+    const insightCitationUrl = document.getElementById('insight-citation-url') as HTMLAnchorElement | null;
+
+    if (insightEra) insightEra.textContent = truth.historicalEra;
+    if (insightContext) insightContext.textContent = `${truth.socialContext}. ${truth.culturalSignificance}`;
+    if (insightFeatures) {
+      insightFeatures.innerHTML = truth.definingFeatures.map((f) => `<li>${f}</li>`).join('');
+    }
+    if (insightCitationTitle) insightCitationTitle.textContent = truth.sourceTitle;
+    if (insightCitationAuthor) insightCitationAuthor.textContent = truth.authorOrInstitution;
+    if (insightCitationUrl) insightCitationUrl.href = truth.sourceUrl;
+
+    // Tự động cập nhật lại đánh giá màu sắc
+    this.setFabricColor(this.currentColor, this.currentColorName);
 
     // Tự động load gợi ý tương ứng khi đổi áo
     this.triggerMiniGeminiGeneration();
@@ -668,8 +785,21 @@ export class GarmentEngine {
 
   private setupWorkshopCta(): void {
     const topBtnView = document.getElementById('btn-view-result');
+    const btnInspectOutfit = document.getElementById('btn-inspect-outfit-prompt');
+
     topBtnView?.addEventListener('click', () => {
       // Trigger kết quả
+    });
+
+    btnInspectOutfit?.addEventListener('click', () => {
+      Sound.playChime();
+      const currentState = this.getCurrentOutfitState();
+      const promptText = assembleFashionPrompt(currentState);
+      patternEngine.openPromptInspectModal(
+        `Bộ Phối: ${currentState.garment} (${this.currentColorName})`,
+        promptText,
+        'TRANG_PHUC'
+      );
     });
   }
 
@@ -681,30 +811,44 @@ export class GarmentEngine {
   }
 
   private updateDesktopGuidance(): void {
-    const noteEl = document.getElementById('workshop-cultural-note');
-    const statusEl = document.getElementById('workshop-guidance-status');
-    if (!noteEl) return;
-
     const truth = getCulturalTruth(this.currentGarment);
     const allAcc = [...this.selectedAccessories, ...this.customAccessories];
 
-    // Kiểm tra xem có vi phạm điều kiêng kỵ nào không
-    const hasConflict = truth.strictTaboos.some((t) =>
-      allAcc.some((a) => a.toUpperCase().includes(t.incompatibleWith.toUpperCase()) || a.toUpperCase().includes(t.incompatibleName.toUpperCase()))
-    );
+    const tabooResult = checkMultipleStrictTaboos(truth.id, allAcc);
+    const hasConflict = tabooResult.hasTaboo;
+
+    // Cập nhật nhãn trạng thái tổng
+    const statusEl = document.getElementById('workshop-insight-status');
+    const tabooStatusEl = document.getElementById('insight-taboo-status');
+    const tabooExplEl = document.getElementById('insight-taboo-explanation');
+    const tabooCardEl = document.getElementById('insight-taboo-card');
 
     if (hasConflict) {
       if (statusEl) {
         statusEl.textContent = '⚡ Phá Cách Gen Z';
-        statusEl.style.color = '#C9A66B';
+        statusEl.className = 'insight-status-badge insight-seal-warn';
       }
-      noteEl.textContent = `${truth.name} sắc ${this.currentColorName} kết hợp phụ kiện thể nghiệm đương đại, mang nét tự do sáng tạo.`;
+      if (tabooStatusEl) {
+        tabooStatusEl.textContent = '⚠ Kiêng Kỵ Lịch Sử';
+        tabooStatusEl.className = 'insight-taboo-flag flag-warn';
+      }
+      if (tabooExplEl) {
+        tabooExplEl.textContent = tabooResult.taboos.map((t) => t.historicalConflictReason).join(' ');
+      }
+      if (tabooCardEl) tabooCardEl.classList.add('taboo-card-warn');
     } else {
       if (statusEl) {
         statusEl.textContent = '✓ Chuẩn Mực Di Sản';
-        statusEl.style.color = '#4A8577';
+        statusEl.className = 'insight-status-badge insight-seal-safe';
       }
-      noteEl.textContent = `${truth.name} sắc ${this.currentColorName} (${truth.historicalEra}) tôn phong thái ${this.currentPersonality.toLowerCase()} và đoan trang.`;
+      if (tabooStatusEl) {
+        tabooStatusEl.textContent = '✓ Hài Hòa Vùng Miền';
+        tabooStatusEl.className = 'insight-taboo-flag flag-safe';
+      }
+      if (tabooExplEl) {
+        tabooExplEl.textContent = `Phối hợp hòa hợp hoàn toàn với quy chuẩn di sản [${truth.originRegion}]. Không vi phạm bất kỳ điều kiêng kỵ lịch sử nào.`;
+      }
+      if (tabooCardEl) tabooCardEl.classList.remove('taboo-card-warn');
     }
   }
 }

@@ -6,6 +6,7 @@ import { wardrobeManager } from '../discover/wardrobeManager.ts';
 import { garmentEngine } from '../workshop/garmentEngine.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
+import { adminEngine } from '../admin/adminEngine.ts';
 
 export class AppRouter {
   private hasInitialWorkshopLoaded = false;
@@ -13,69 +14,122 @@ export class AppRouter {
   public init(): void {
     this.setupSceneNavigation();
     this.setupTabs();
+    this.setupMobileDropdown();
     this.setupFeedbackDemos();
   }
 
-  private setupFeedbackDemos(): void {
-    const btnDemoLoading = document.getElementById('btn-demo-loading');
-    const btnDemoError = document.getElementById('btn-demo-error');
+  private setupMobileDropdown(): void {
+    const toggleBtn = document.getElementById('btn-mobile-nav-toggle');
+    const backdrop = document.getElementById('nav-dropdown-backdrop');
+    const dropdownMenu = document.getElementById('nav-mobile-dropdown-menu');
+    const dropdownHome = document.getElementById('btn-dropdown-home');
+    const dropdownAdmin = document.getElementById('btn-open-admin-route');
+    const dropdownItems = document.querySelectorAll('.nav-dropdown-item');
 
-    btnDemoLoading?.addEventListener('click', () => {
+    toggleBtn?.addEventListener('click', () => {
       Sound.playClick();
-      feedbackState.showLoading({
-        message: 'Đang dệt sắc lụa đương đại...',
-        submessage: 'Không gian Lụa Thanh đang nắn nót từng nếp tơ...',
-        allowCancel: true
-      });
-
-      // Tự động kết thúc sau 3 giây hoặc người dùng có thể bấm "Dừng xử lý"
-      setTimeout(() => {
-        feedbackState.hideLoading();
-      }, 3000);
+      const isOpen = dropdownMenu?.classList.contains('dropdown-open');
+      if (isOpen) {
+        this.closeMobileDropdown();
+      } else {
+        this.openMobileDropdown();
+      }
     });
 
-    btnDemoError?.addEventListener('click', () => {
-      Sound.playError();
-      feedbackState.showError({
-        title: 'Tơ Lụa Tạm Lắng',
-        message: 'Không gian tơ lụa tạm lắng trong giây lát. Tà lụa và sắc phục của bạn vẫn được lưu giữ an toàn, hãy thử kết nối lại nhé.',
-        retryLabel: 'Thử Lại',
-        onRetry: () => {
-          feedbackState.showLoading({
-            message: 'Đang kết nối lại xưởng dệt...',
-            submessage: 'Hồi phục tà lụa và đồng bộ dữ liệu di sản...'
-          });
+    backdrop?.addEventListener('click', () => {
+      Sound.playClick();
+      this.closeMobileDropdown();
+    });
 
-          setTimeout(() => {
-            feedbackState.hideLoading();
-            Sound.playChime();
-            this.showToast('✨ Đã kết nối lại thành công không gian Lụa Thanh!');
-          }, 1100);
+    dropdownItems.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        Sound.playClick();
+        const targetTab = (e.currentTarget as HTMLElement).dataset.tabTarget as
+          | 'create'
+          | 'pattern'
+          | 'discover'
+          | 'lookbook';
+        if (targetTab) {
+          this.switchTab(targetTab);
+          this.closeMobileDropdown();
         }
       });
     });
+
+    dropdownHome?.addEventListener('click', () => {
+      Sound.playClick();
+      this.closeMobileDropdown();
+      document.getElementById('btn-nav-home')?.click();
+    });
+
+    dropdownAdmin?.addEventListener('click', () => {
+      Sound.playClick();
+      this.closeMobileDropdown();
+      adminEngine.openAdminScene();
+    });
   }
 
-  public switchTab(tabName: 'create' | 'discover' | 'lookbook'): void {
+  public openMobileDropdown(): void {
+    const toggleBtn = document.getElementById('btn-mobile-nav-toggle');
+    const dropdownMenu = document.getElementById('nav-mobile-dropdown-menu');
+    toggleBtn?.setAttribute('aria-expanded', 'true');
+    dropdownMenu?.classList.add('dropdown-open');
+    dropdownMenu?.setAttribute('aria-hidden', 'false');
+  }
+
+  public closeMobileDropdown(): void {
+    const toggleBtn = document.getElementById('btn-mobile-nav-toggle');
+    const dropdownMenu = document.getElementById('nav-mobile-dropdown-menu');
+    toggleBtn?.setAttribute('aria-expanded', 'false');
+    dropdownMenu?.classList.remove('dropdown-open');
+    dropdownMenu?.setAttribute('aria-hidden', 'true');
+  }
+
+  public switchTab(tabName: 'create' | 'pattern' | 'discover' | 'lookbook'): void {
     const createScene = document.getElementById('create-scene');
+    const patternScene = document.getElementById('pattern-scene');
     const discoverScene = document.getElementById('discover-scene');
     const lookbookScene = document.getElementById('lookbook-scene');
     const resultScene = document.getElementById('result-scene');
 
     const tabCreateBtn = document.getElementById('tab-create');
+    const tabPatternBtn = document.getElementById('tab-pattern');
     const tabDiscoverBtn = document.getElementById('tab-discover');
     const tabLookbookBtn = document.getElementById('tab-lookbook');
 
+    const mobileIcon = document.getElementById('mobile-current-tab-icon');
+    const mobileName = document.getElementById('mobile-current-tab-name');
+    const dropdownItems = document.querySelectorAll('.nav-dropdown-item');
+
     resultScene?.classList.remove('scene-active');
+
+    // Tắt active toàn bộ scene
+    createScene?.classList.remove('scene-active');
+    patternScene?.classList.remove('scene-active');
+    discoverScene?.classList.remove('scene-active');
+    lookbookScene?.classList.remove('scene-active');
+
+    // Tắt active toàn bộ tabs
+    tabCreateBtn?.classList.remove('active');
+    tabPatternBtn?.classList.remove('active');
+    tabDiscoverBtn?.classList.remove('active');
+    tabLookbookBtn?.classList.remove('active');
+
+    // Cập nhật trạng thái dropdown items
+    dropdownItems.forEach((item) => {
+      const el = item as HTMLElement;
+      if (el.dataset.tabTarget === tabName) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
 
     if (tabName === 'create') {
       tabCreateBtn?.classList.add('active');
-      tabDiscoverBtn?.classList.remove('active');
-      tabLookbookBtn?.classList.remove('active');
-
-      discoverScene?.classList.remove('scene-active');
-      lookbookScene?.classList.remove('scene-active');
       createScene?.classList.add('scene-active');
+      if (mobileIcon) mobileIcon.textContent = '🎨';
+      if (mobileName) mobileName.textContent = 'Xưởng Phối';
 
       // Khởi tạo phối đồ lần đầu tiên theo gu đã tích lũy (không ghi đè nếu người dùng đang phối dở)
       if (!this.hasInitialWorkshopLoaded) {
@@ -86,14 +140,16 @@ export class AppRouter {
         garmentEngine.setAccessory('QUAT_GIAY', true);
         garmentEngine.callCulturalAI(topEvent, topColor, topGarment, 'QUAT_GIAY');
       }
+    } else if (tabName === 'pattern') {
+      tabPatternBtn?.classList.add('active');
+      patternScene?.classList.add('scene-active');
+      if (mobileIcon) mobileIcon.textContent = '❖';
+      if (mobileName) mobileName.textContent = 'Hoa Văn';
     } else if (tabName === 'discover') {
       tabDiscoverBtn?.classList.add('active');
-      tabCreateBtn?.classList.remove('active');
-      tabLookbookBtn?.classList.remove('active');
-
-      createScene?.classList.remove('scene-active');
-      lookbookScene?.classList.remove('scene-active');
       discoverScene?.classList.add('scene-active');
+      if (mobileIcon) mobileIcon.textContent = '📜';
+      if (mobileName) mobileName.textContent = 'Khám Phá';
 
       swipeEngine.currentDeck = preferenceEngine.sortDeckByPreference(
         swipeEngine.currentDeck.length > 0 ? swipeEngine.currentDeck : DISCOVERY_OUTFITS_POOL
@@ -101,12 +157,9 @@ export class AppRouter {
       swipeEngine.renderDeckStack();
     } else if (tabName === 'lookbook') {
       tabLookbookBtn?.classList.add('active');
-      tabCreateBtn?.classList.remove('active');
-      tabDiscoverBtn?.classList.remove('active');
-
-      createScene?.classList.remove('scene-active');
-      discoverScene?.classList.remove('scene-active');
       lookbookScene?.classList.add('scene-active');
+      if (mobileIcon) mobileIcon.textContent = '📖';
+      if (mobileName) mobileName.textContent = 'Lookbook';
 
       lookbookEngine.renderLookbook();
     }
@@ -141,6 +194,45 @@ export class AppRouter {
     setTimeout(() => {
       toast.classList.remove('show');
     }, 2800);
+  }
+
+  private setupFeedbackDemos(): void {
+    const btnDemoLoading = document.getElementById('btn-demo-loading');
+    const btnDemoError = document.getElementById('btn-demo-error');
+
+    btnDemoLoading?.addEventListener('click', () => {
+      Sound.playClick();
+      feedbackState.showLoading({
+        message: 'Đang dệt sắc lụa đương đại...',
+        submessage: 'Không gian Lụa Thanh đang nắn nót từng nếp tơ...',
+        allowCancel: true
+      });
+
+      setTimeout(() => {
+        feedbackState.hideLoading();
+      }, 3000);
+    });
+
+    btnDemoError?.addEventListener('click', () => {
+      Sound.playError();
+      feedbackState.showError({
+        title: 'Tơ Lụa Tạm Lắng',
+        message: 'Không gian tơ lụa tạm lắng trong giây lát. Tà lụa và sắc phục của bạn vẫn được lưu giữ an toàn, hãy thử kết nối lại nhé.',
+        retryLabel: 'Thử Lại',
+        onRetry: () => {
+          feedbackState.showLoading({
+            message: 'Đang kết nối lại xưởng dệt...',
+            submessage: 'Hồi phục tà lụa và đồng bộ dữ liệu di sản...'
+          });
+
+          setTimeout(() => {
+            feedbackState.hideLoading();
+            Sound.playChime();
+            this.showToast('✨ Đã kết nối lại thành công không gian Lụa Thanh!');
+          }, 1100);
+        }
+      });
+    });
   }
 
   private setupSceneNavigation(): void {
@@ -197,6 +289,7 @@ export class AppRouter {
       Sound.playClick();
       mainNavBar?.classList.remove('nav-active');
       document.getElementById('create-scene')?.classList.remove('scene-active');
+      document.getElementById('pattern-scene')?.classList.remove('scene-active');
       document.getElementById('discover-scene')?.classList.remove('scene-active');
       document.getElementById('lookbook-scene')?.classList.remove('scene-active');
       document.getElementById('result-scene')?.classList.remove('scene-active');
@@ -208,6 +301,7 @@ export class AppRouter {
 
   private setupTabs(): void {
     const tabCreateBtn = document.getElementById('tab-create');
+    const tabPatternBtn = document.getElementById('tab-pattern');
     const tabDiscoverBtn = document.getElementById('tab-discover');
     const tabLookbookBtn = document.getElementById('tab-lookbook');
     const btnOpenWardrobe = document.getElementById('btn-open-wardrobe');
@@ -216,6 +310,11 @@ export class AppRouter {
     tabCreateBtn?.addEventListener('click', () => {
       Sound.playClick();
       this.switchTab('create');
+    });
+
+    tabPatternBtn?.addEventListener('click', () => {
+      Sound.playClick();
+      this.switchTab('pattern');
     });
 
     tabDiscoverBtn?.addEventListener('click', () => {

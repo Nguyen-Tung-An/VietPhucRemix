@@ -16,6 +16,19 @@
  *      không bị trói buộc bởi các trường cơ sở dữ liệu cứng nhắc.
  */
 
+export interface CitationSource {
+  /** Tiêu đề tài liệu / Công trình khảo cứu / Bài viết bảo tàng */
+  title: string;
+  /** Tác giả, Nhà nghiên cứu hoặc Viện bảo tàng / Cơ quan lưu trữ */
+  authorOrInstitution: string;
+  /** BẮT BUỘC: Đường dẫn URL xác thực đến tài liệu gốc */
+  url: string;
+  /** Chương mục, trang hoặc ghi chú khảo cứu cụ thể */
+  note?: string;
+  /** Năm xuất bản hoặc công bố */
+  year?: number;
+}
+
 export interface CulturalHeritageEntry {
   /** Mã định danh độc nhất của trang phục (ví dụ: AO_NGU_THAN, AO_TAC, AO_BA_BA...) */
   id: string;
@@ -49,9 +62,9 @@ export interface CulturalHeritageEntry {
   culturalSignificance: string;
 
   // --- TRÍCH DẪN NGUỒN BẮT BUỘC (MANDATORY ATTRIBUTION) ---
-  /** Tên tài liệu / Công trình khảo cứu */
+  /** Tên tài liệu / Công trình khảo cứu chính */
   sourceTitle: string;
-  /** Tác giả hoặc Cơ quan / Viện bảo tàng lưu trữ */
+  /** Tác giả hoặc Cơ quan / Viện bảo tàng lưu trữ chính */
   authorOrInstitution: string;
   /** 
    * BẮT BUỘC: Đường dẫn URL xác thực đến tài liệu nguồn của viện bảo tàng hoặc tổ chức văn hóa uy tín
@@ -61,6 +74,12 @@ export interface CulturalHeritageEntry {
   sourceReferenceNote?: string;
   /** Năm xuất bản hoặc công bố (nếu có) */
   publicationYear?: number;
+
+  /**
+   * HỖ TRỢ ĐA NGUỒN (MULTI-SOURCE CITATIONS):
+   * Danh sách toàn bộ các nguồn khảo cứu uy tín bổ sung cho cùng một kiểu trang phục (hỗ trợ hàng chục đến hàng trăm nguồn).
+   */
+  sources?: CitationSource[];
 }
 
 /**
@@ -114,7 +133,37 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Nhà nghiên cứu Trần Quang Đức',
     sourceUrl: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu-cong-trinh-nghien-cuu-trang-phuc-viet-nam.html',
     sourceReferenceNote: 'Chương 5: Trang phục thời Nguyễn — Tiêu chuẩn hóa Áo Ngũ Thân thời Minh Mạng',
-    publicationYear: 2013
+    publicationYear: 2013,
+    sources: [
+      {
+        title: 'Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam giai đoạn 1009–1945',
+        authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Trần Quang Đức',
+        url: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu-cong-trinh-nghien-cuu-trang-phuc-viet-nam.html',
+        note: 'Chương 5: Chuẩn hóa Áo Ngũ Thân Lập Lĩnh thời vua Minh Mạng (1827-1837)',
+        year: 2013
+      },
+      {
+        title: 'Đại Nam Thực Lục Chính Biên — Quy chế Y phục Triều Nguyễn',
+        authorOrInstitution: 'Quốc Sử Quán Triều Nguyễn',
+        url: 'https://vi.wikipedia.org/wiki/%C4%90%E1%BA%A1i_Nam_th%E1%BB%B1c_l%E1%BB%A5c',
+        note: 'Đệ nhị kỷ: Chỉ dụ định chế y phục từ năm Minh Mạng thứ 8 đến thứ 18',
+        year: 1844
+      },
+      {
+        title: 'Trang phục triều Nguyễn — Nghiên cứu di sản Cổ vật Huế',
+        authorOrInstitution: 'Trung tâm Bảo tồn Di tích Cố đô Huế',
+        url: 'https://hueworldheritage.org.vn/',
+        note: 'Bộ sưu tập Áo Dài Ngũ Thân quan lại và thường dân xứ Huế',
+        year: 2021
+      },
+      {
+        title: 'Áo Dài Ngũ Thân — Nét văn hiến và bản sắc dân tộc Việt Nam',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/',
+        note: 'Tư liệu hiện vật áo năm thân truyền thống thế kỷ 19-20',
+        year: 2020
+      }
+    ]
   },
 
   AO_TAC: {
@@ -377,6 +426,119 @@ export function getAllCulturalTruths(): CulturalHeritageEntry[] {
 }
 
 /**
+ * Lấy danh sách toàn bộ nguồn trích dẫn khảo cứu (kể cả nguồn chính và các nguồn bổ sung) cho một trang phục
+ * Hỗ trợ hệ thống trích dẫn đa tầng và sẵn sàng tích hợp RAG với >100 nguồn.
+ */
+export function getAllSourcesForGarment(garmentId: string): CitationSource[] {
+  const truth = getCulturalTruth(garmentId);
+  const result: CitationSource[] = [];
+
+  // Nguồn chính
+  if (truth.sourceUrl) {
+    result.push({
+      title: truth.sourceTitle,
+      authorOrInstitution: truth.authorOrInstitution,
+      url: truth.sourceUrl,
+      note: truth.sourceReferenceNote,
+      year: truth.publicationYear
+    });
+  }
+
+  // Các nguồn mở rộng
+  if (truth.sources && Array.isArray(truth.sources)) {
+    for (const src of truth.sources) {
+      if (!result.some((existing) => existing.url === src.url)) {
+        result.push(src);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * THẨM ĐỊNH MÀU SẮC DI SẢN & NGŨ HÀNH TƯƠNG SINH
+ * Đánh giá chuyên sâu ý nghĩa văn hóa, ngũ hành và mức độ phù hợp sự kiện của màu sắc người dùng chọn.
+ */
+export function getColorCulturalAnalysis(
+  colorHex: string,
+  _garmentId?: string,
+  _event?: string
+): {
+  rating: 'CHUAN_SAC' | 'HAI_HOA' | 'CAN_NHAC';
+  harmony_title: string;
+  cultural_symbolism: string;
+  five_elements_element: 'KIM' | 'MOC' | 'THUY' | 'HOA' | 'THO';
+  element_meaning: string;
+  event_suitability: string;
+} {
+  const hex = (colorHex || '#F4C9D6').toUpperCase();
+
+  const colorProfiles: Record<string, {
+    rating: 'CHUAN_SAC' | 'HAI_HOA' | 'CAN_NHAC';
+    harmony_title: string;
+    cultural_symbolism: string;
+    five_elements_element: 'KIM' | 'MOC' | 'THUY' | 'HOA' | 'THO';
+    element_meaning: string;
+    event_suitability: string;
+  }> = {
+    '#F4C9D6': {
+      rating: 'CHUAN_SAC',
+      harmony_title: 'Hồng Phấn Sen — Sắc Thắm Đoan Trang',
+      cultural_symbolism: 'Hồng sen là sắc lụa truyền thống biểu trưng cho sự thanh tân, thuần khiết và tâm hồn hiền dịu của phụ nữ phương Nam và xứ Đoài.',
+      five_elements_element: 'HOA',
+      element_meaning: 'Hỏa sinh Thổ — ấm áp, tràn đầy sinh khí hưng vượng, xua tan hàn khí mùa lạnh.',
+      event_suitability: 'Đặc biệt thích hợp cho ngày Tết, hội xuân, lễ tơ hồng và chụp ảnh kỷ niệm thanh xuân.'
+    },
+    '#4A8577': {
+      rating: 'CHUAN_SAC',
+      harmony_title: 'Xanh Ngọc Đậm — Cốt Cách Bích Ngọc',
+      cultural_symbolism: 'Màu xanh ngọc bích thâm trầm gắn liền với tầng lớp văn nhân, quan viên và gia đình vọng tộc thời Nguyễn, toát lên phong thái điềm tĩnh, tri thức.',
+      five_elements_element: 'MOC',
+      element_meaning: 'Mộc khí — tượng trưng cho sự sinh sôi, trường thọ và bản lĩnh vững chãi.',
+      event_suitability: 'Hoàn hảo cho lễ tốt nghiệp, thăm viếng đình miếu di tích và dạ tiệc đĩnh đạc.'
+    },
+    '#E8F3EE': {
+      rating: 'HAI_HOA',
+      harmony_title: 'Ngọc Sương — Bạch Lụa Thanh Thuần',
+      cultural_symbolism: 'Sắc trắng ngà ánh sương gợi nhớ tơ tằm nguyên bản chưa nhuộm của các làng nghề Hà Đông, tôn vinh nét đoan trang tịch tĩnh.',
+      five_elements_element: 'KIM',
+      element_meaning: 'Kim khí — biểu trưng cho sự chính trực, minh bạch và phẩm hạnh thanh cao.',
+      event_suitability: 'Rất trang nhã cho sự kiện học thuật, triển lãm văn hóa và lễ chùa an nhiên.'
+    },
+    '#1C2B26': {
+      rating: 'HAI_HOA',
+      harmony_title: 'Rêu Đêm — Huyền Sắc Vương Giả',
+      cultural_symbolism: 'Sắc xanh rêu đen trầm mặc đại diện cho chiều sâu lịch sử, nét quyền quý kín đáo trong phục trang cung đình xưa.',
+      five_elements_element: 'THUY',
+      element_meaning: 'Thủy khí — thông tuệ, uyên bác và bao dung như biển sâu nghìn trượng.',
+      event_suitability: 'Thích hợp cho không gian nghệ thuật, dạ hội cổ phục và trình diễn sân khấu.'
+    },
+    '#C9A66B': {
+      rating: 'CHUAN_SAC',
+      harmony_title: 'Vàng Đất — Hoàng Thổ Cung Đình',
+      cultural_symbolism: 'Màu vàng đất đôn hậu đại diện cho cội nguồn hoàng thổ Đại Việt, mang lại cảm giác vương giả, sung túc và bền vững.',
+      five_elements_element: 'THO',
+      element_meaning: 'Thổ vị trung tâm — nuôi dưỡng vạn vật, nền tảng của thái bình thịnh trị.',
+      event_suitability: 'Rực rỡ trong ngày đại lễ, hôn lễ cổ truyền và đón tết tài lộc.'
+    }
+  };
+
+  if (colorProfiles[hex]) {
+    return colorProfiles[hex];
+  }
+
+  return {
+    rating: 'HAI_HOA',
+    harmony_title: `Sắc Lụa Tự Phối (${colorHex})`,
+    cultural_symbolism: `Sắc phục đương đại thể hiện dấu ấn cá nhân phóng khoáng, kết hợp hài hòa trên nền phom dáng truyền thống.`,
+    five_elements_element: 'MOC',
+    element_meaning: 'Sự giao thoa giữa di sản cổ truyền và cảm hứng đương đại của thế hệ mới.',
+    event_suitability: 'Thích hợp cho các hoạt động sáng tạo, biểu diễn nghệ thuật và trải nghiệm văn hóa.'
+  };
+}
+
+/**
  * Kiểm tra nhanh một phụ kiện có vi phạm điều kiêng kỵ nghiêm ngặt (Strict Taboo) hay không
  */
 export function checkStrictTaboo(
@@ -422,11 +584,11 @@ export function checkMultipleStrictTaboos(
 }
 
 /**
- * BỘ LỌC KIỂM TRA THUẦN PHONG MỸ TỤC & TÍNH KHẢ THI (STATE-PROOF INPUT SANITY GUARDRAIL)
- * Kiểm duyệt input tự do của người dùng:
- * 1. Từ ngữ thô tục, phản cảm, xúc phạm hoặc vi phạm thuần phong mỹ tục
- * 2. Ký tự vô nghĩa, spam (asdfghjk, chuỗi lặp không có nguyên âm)
- * 3. Độ dài bất thường (< 2 ký tự hoặc > 60 ký tự)
+ * BỘ LỌC KIỂM TRA ĐỊNH DẠNG ĐẦU VÀO CƠ BẢN (CLIENT-SIDE FORMAT SANITY CHECK)
+ * Kiểm tra định dạng kỹ thuật trên client trước khi gửi lên Gemini API:
+ * - Chuỗi không rỗng, độ dài hợp lý (2 - 60 ký tự)
+ * - Loại trừ spam ký tự lặp vô nghĩa (ví dụ: aaaaa, zzzzz)
+ * Mọi đánh giá về thuần phong mỹ tục, văn hóa và tính phù hợp được giao trọn vẹn cho Gemini AI.
  */
 
 export interface InputSanityResult {
@@ -438,52 +600,9 @@ export interface InputSanityResult {
   sanitizedText: string;
 }
 
-/** Từ khóa nhạy cảm, thô tục, báng bổ hoặc vi phạm thuần phong mỹ tục */
-const INAPPROPRIATE_KEYWORDS = [
-  'đm', 'dm', 'đmm', 'vcl', 'vl', 'clgt', 'địt', 'dit', 'lồn', 'lon',
-  'cặc', 'cac', 'buồi', 'buoi', 'chó chết', 'đĩ', 'cave', 'dâm', 'sex',
-  'porn', 'fuck', 'bitch', 'shit', 'asshole', 'ngu ngốc', 'óc chó',
-  'báng bổ', 'phản động', 'đồi trụy', 'tục tĩu', 'dâm ô', 'khiêu dâm'
-];
-
-/** Từ khóa đồ vật hoàn toàn không phải phụ kiện thời trang hay kiểu tóc */
-const IRRELEVANT_OBJECT_KEYWORDS = [
-  // Thức ăn & đồ uống
-  'phở', 'bún', 'cơm', 'bánh mì', 'thịt', 'cá', 'trà sữa', 'cà phê', 'bia', 'rượu', 'lẩu', 'bánh tráng', 'bún bò', 'chả cá',
-  // Thiết bị công nghệ & điện tử
-  'iphone', 'điện thoại', 'laptop', 'máy tính', 'ipad', 'airpod', 'tivi', 'tai nghe', 'sạc', 'bàn phím', 'chuột máy tính',
-  // Phương tiện & vũ khí
-  'xe máy', 'xe đạp', 'ô tô', 'xe hơi', 'máy bay', 'tàu hỏa', 'súng', 'đạn', 'dao găm', 'lựu đạn', 'bom', 'thuốc nổ',
-  // Động vật
-  'con chó', 'con mèo', 'con heo', 'con chuột', 'con gà', 'con bò', 'con rắn', 'con lợn',
-  // Gia dụng & nội thất
-  'cái bàn', 'cái ghế', 'tủ lạnh', 'máy giặt', 'nồi cơm', 'bồn cầu', 'chổi', 'giường ngủ', 'cục gạch'
-];
-
-/** Các từ khóa ngữ nghĩa đại diện cho phụ kiện thời trang, trang sức, đạo cụ phong nhã */
-const ACCESSORY_SEMANTIC_KEYWORDS = [
-  'khăn', 'nón', 'mấn', 'quạt', 'trâm', 'hoa', 'cài', 'ngọc', 'xuyến', 'kiềng',
-  'túi', 'ví', 'xách', 'tráp', 'chuỗi', 'hạt', 'trầm', 'vòng', 'lắc', 'khuyên',
-  'bông tai', 'hoa tai', 'lược', 'guốc', 'hài', 'giày', 'dép', 'đai', 'thắt lưng',
-  'lụa', 'dải lụa', 'dây buộc', 'thẻ bài', 'bội', 'ngọc bội', 'kim khánh', 'dải',
-  'yếm', 'áo khoác', 'khăn rằn', 'khăn vành', 'khăn đóng', 'khăn mỏ quạ', 'khăn xếp',
-  'quạt giấy', 'quạt nan', 'quạt lông', 'trâm bạc', 'trâm vàng', 'trâm gốm', 'ngọc trai',
-  'ngọc bích', 'phỉ thúy', 'san hô', 'hổ phách', 'trâm thoa', 'thoa', 'ô', 'dù', 'lọng',
-  'bạc', 'vàng', 'đồng', 'gốm', 'gỗ', 'mộc', 'bình', 'hồ lô', 'quạt xoè', 'nhẫn'
-];
-
-/** Các từ khóa ngữ nghĩa đại diện cho kiểu tóc & nghệ thuật búi vấn đầu tóc */
-const HAIRSTYLE_SEMANTIC_KEYWORDS = [
-  'tóc', 'búi', 'bím', 'xõa', 'tết', 'vấn', 'cột', 'buộc', 'kẹp', 'rẽ ngôi',
-  'ngôi giữa', 'ngôi lệch', 'đuôi sam', 'củ tỏi', 'uốn', 'ngắn', 'dài', 'búi cao',
-  'búi thấp', 'vấn trần', 'vấn khăn', 'mái thưa', 'mái ngố', 'rủ vai', 'lọn',
-  'xoăn', 'suôn', 'mượt', 'cài hoa', 'gài trâm', 'tém', 'bím tóc', 'thắt bím',
-  'buộc nửa đầu', 'đuôi ngựa', 'tóc mây', 'tóc huyền', 'mái bằng', 'tóc tiên'
-];
-
 export function validateUserInputSanity(
   rawInput: string,
-  itemType?: 'accessory' | 'hairstyle'
+  _itemType?: 'accessory' | 'hairstyle'
 ): InputSanityResult {
   if (!rawInput || typeof rawInput !== 'string') {
     return {
@@ -521,29 +640,14 @@ export function validateUserInputSanity(
 
   const lower = cleaned.toLowerCase();
 
-  // 1. Kiểm tra từ ngữ nhạy cảm / xúc phạm thuần phong mỹ tục
-  for (const word of INAPPROPRIATE_KEYWORDS) {
-    const regex = new RegExp(`(^|\\s|[.,!?;])${word}($|\\s|[.,!?;])`, 'i');
-    if (regex.test(lower) || lower.includes(` ${word} `) || lower === word) {
-      return {
-        isValid: false,
-        isOffensive: true,
-        isNonsensical: false,
-        isNotRealItem: false,
-        reason: 'Phát hiện từ ngữ chưa phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
-        sanitizedText: cleaned
-      };
-    }
-  }
-
-  // 2. Kiểm tra chuỗi vô nghĩa / spam (chuỗi lặp ký tự liên tục >= 4 lần, e.g. aaaaa, zzzzz)
-  if (/(.)\1{3,}/.test(lower)) {
+  // Kiểm tra chuỗi lặp ký tự vô nghĩa (spam, ví dụ: aaaaa, zzzzz)
+  if (/(.)\1{4,}/.test(lower)) {
     return {
       isValid: false,
       isOffensive: false,
       isNonsensical: true,
       isNotRealItem: false,
-      reason: 'Phát hiện chuỗi ký tự lặp vô nghĩa (spam).',
+      reason: 'Phát hiện chuỗi ký tự lặp vô nghĩa.',
       sanitizedText: cleaned
     };
   }
@@ -555,51 +659,9 @@ export function validateUserInputSanity(
       isOffensive: false,
       isNonsensical: true,
       isNotRealItem: false,
-      reason: 'Tên phụ kiện hoặc kiểu tóc phải bao gồm chữ cái có nghĩa.',
+      reason: 'Vui lòng nhập tên bằng chữ cái có nghĩa.',
       sanitizedText: cleaned
     };
-  }
-
-  // 3. Kiểm tra các đồ vật lạc đề (đồ ăn, công nghệ, xe cộ, động vật, vũ khí...)
-  for (const irr of IRRELEVANT_OBJECT_KEYWORDS) {
-    if (lower.includes(irr)) {
-      return {
-        isValid: false,
-        isOffensive: false,
-        isNonsensical: false,
-        isNotRealItem: true,
-        reason: `"${cleaned}" không phải là phụ kiện thời trang hay kiểu tóc hợp lệ. Vui lòng nhập phụ kiện (khăn, nón, trâm, kiềng, quạt, túi...) hoặc kiểu tóc.`,
-        sanitizedText: cleaned
-      };
-    }
-  }
-
-  // 4. Kiểm tra tính hiện thực theo từng loại cụ thể (State-Proof Semantic Check)
-  if (itemType === 'accessory') {
-    const hasAccessoryTerm = ACCESSORY_SEMANTIC_KEYWORDS.some((kw) => lower.includes(kw));
-    if (!hasAccessoryTerm) {
-      // Nếu không chứa bất kỳ từ khóa phụ kiện nào, kiểm tra xem có phải từ mô tả thời trang hay không
-      return {
-        isValid: false,
-        isOffensive: false,
-        isNonsensical: false,
-        isNotRealItem: true,
-        reason: `"${cleaned}" chưa nhận diện được là phụ kiện trang phục. Vui lòng thử các phụ kiện như: quạt giấy, khăn lụa, trâm cài, chuỗi ngọc, kiềng bạc, nón lá, túi gấm...`,
-        sanitizedText: cleaned
-      };
-    }
-  } else if (itemType === 'hairstyle') {
-    const hasHairTerm = HAIRSTYLE_SEMANTIC_KEYWORDS.some((kw) => lower.includes(kw));
-    if (!hasHairTerm) {
-      return {
-        isValid: false,
-        isOffensive: false,
-        isNonsensical: false,
-        isNotRealItem: true,
-        reason: `"${cleaned}" chưa nhận diện được là kiểu tóc. Vui lòng thử các kiểu tóc như: tóc búi cao, tóc xõa buông lơi, tóc tết lệch vai, vấn khăn lụa, tóc cài hoa sen...`,
-        sanitizedText: cleaned
-      };
-    }
   }
 
   return {

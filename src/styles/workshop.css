@@ -39,9 +39,12 @@
 }
 
 /* ==========================================================================
-   1. KHUNG CHỨA TỔNG THỂ
-   - Mobile: Co giãn vừa vặn theo chiều rộng màn hình (max 480px)
-   - Desktop: 2 cột studio widescreen (max 1280px)
+   1. KHUNG CHỨA TỔNG THỂ & HỆ THỐNG 3 CỘT (DESKTOP) / XẾP TẦNG (MOBILE)
+   - Desktop (>= 992px): 3 Cột Vàng:
+     * Cột 1 (320px): Sàn Diễn Croquis / Thẻ Khảo Cứu (Tỉ trọng thấp nhất, xêm xêm thẻ khám phá)
+     * Cột 2 (Flex 1): Góc Nhìn Di Sản Chuyên Sâu (Tỉ trọng vừa, giàu tri thức & ngũ hành sắc phục)
+     * Cột 3 (420px): Studio Tùy Biến (Bento Control Sheet & Nút Thẩm Định ghim đáy)
+   - Mobile (< 992px): Khung cuộn mượt mà chuẩn Thumb Zone, không chèn ép text hay mất nút.
    ========================================================================== */
 .workshop-container {
   width: 100%;
@@ -50,56 +53,61 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
-  padding-top: 52px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 56px 10px 84px 10px;
+  gap: 12px;
   margin: 0 auto;
   box-sizing: border-box;
-  transition: max-width 0.3s ease;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .workshop-container {
-    max-width: 1280px;
+    max-width: 1440px;
     height: 100%;
     flex-direction: row;
     align-items: stretch;
-    gap: 24px;
-    padding: 76px 24px 20px 24px;
+    gap: 18px;
+    padding: 72px 24px 20px 24px;
     margin: 0 auto;
+    overflow: hidden;
   }
 }
 
 /* ==========================================================================
-   2. TẦNG TRÊN (MOBILE) / CỘT TRÁI (DESKTOP) — SÀN DIỄN CROQUIS
-   - Mobile: Co giãn chiếm phần không gian trên (~52%)
-   - Desktop: Cột trái Studio, bo góc mềm mại
+   2. CỘT 1 (DESKTOP) / TẦNG TRÊN (MOBILE) — SÀN DIỄN CROQUIS & THẺ KHẢO CỨU
+   - Desktop: Chiếm tỷ lệ thấp nhất (~320px - 340px, xêm xêm size thẻ khám phá)
+   - Phù hợp cả khi có hình SVG lẫn khi hiển thị Thẻ Khảo Cứu di sản
    ========================================================================== */
 .workshop-stage-tier {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: 240px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 14px 4px 14px;
+  padding: 10px 12px;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .workshop-stage-tier {
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 0 0 320px;
+    width: 320px;
+    max-width: 340px;
+    min-width: 300px;
     height: 100%;
-    border-radius: var(--border-radius-card, 16px);
-    background: var(--color-card-bg);
+    padding: 16px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid var(--color-card-border);
-    box-shadow: var(--shadow-card);
-    padding: 18px 22px;
   }
 }
 
@@ -212,56 +220,419 @@
   transition: transform 0.25s ease;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .croquis-svg-art {
-    max-height: calc(100vh - 170px);
-    max-height: calc(100dvh - 170px);
+    max-height: calc(100vh - 240px);
+    max-height: calc(100dvh - 240px);
   }
 }
 
 /* ==========================================================================
-   3. TẦNG DƯỚI (MOBILE) / CỘT PHẢI (DESKTOP) — STUDIO CONTROL PANEL
-   - Mobile: Nằm gọn gàng trong Thumb Zone (< 48vh), cuộn nội dung không tràn
-   - Desktop: Cột phải 420px, bo góc Studio sang trọng
+   THẺ KHẢO CỨU DI SẢN (ARCHIVAL RESTORATION PLACEHOLDER)
+   Hiển thị trang nhã khi người dùng chọn 7 dáng áo chưa có bản vẽ vector 3D
+   ========================================================================== */
+.archival-placeholder-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 10px;
+  box-sizing: border-box;
+}
+
+.archival-placeholder-inner {
+  width: 100%;
+  max-width: 290px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 16px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1.5px dashed rgba(201, 166, 107, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(74, 133, 119, 0.06);
+  gap: 8px;
+}
+
+.archival-seal-crest {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.archival-badge-tag {
+  font-family: var(--font-title);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #7A5338;
+  letter-spacing: 0.08em;
+  background: rgba(201, 166, 107, 0.2);
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.archival-placeholder-title {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 2px 0;
+}
+
+.archival-placeholder-desc {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.archival-demo-notice {
+  background: rgba(74, 133, 119, 0.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.72rem;
+  color: #4A8577;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.btn-archival-inspect-prompt {
+  margin-top: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 9999px;
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid rgba(74, 133, 119, 0.3);
+  color: var(--color-accent-secondary);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-archival-inspect-prompt:hover {
+  background: var(--color-accent-secondary);
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   3. CỘT 2 (DESKTOP) / KHỐI GIỮA (MOBILE) — GÓC NHÌN DI SẢN CHUYÊN SÂU
+   Tách riêng chiếm tỉ trọng vừa, nhiều nội dung di sản phong phú
+   ========================================================================== */
+.workshop-insight-tier {
+  flex: 0 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  border-radius: var(--border-radius-card, 16px);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+  gap: 12px;
+}
+
+@media (min-width: 992px) {
+  .workshop-insight-tier {
+    flex: 1 1 0;
+    min-width: 320px;
+    max-width: 480px;
+    height: 100%;
+    overflow: hidden;
+    padding: 18px 20px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+}
+
+.insight-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(74, 133, 119, 0.15);
+  flex-shrink: 0;
+}
+
+.insight-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insight-brand-icon {
+  font-size: 1.25rem;
+}
+
+.insight-main-title {
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.insight-sub-title {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.insight-status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.insight-seal-safe {
+  background: rgba(74, 133, 119, 0.14);
+  color: #4A8577;
+  border: 1px solid rgba(74, 133, 119, 0.28);
+}
+
+.insight-seal-warn {
+  background: rgba(201, 166, 107, 0.18);
+  color: #7A5338;
+  border: 1px solid rgba(201, 166, 107, 0.35);
+}
+
+.insight-cards-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(74, 133, 119, 0.25) transparent;
+}
+
+.insight-cards-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.insight-cards-scroll::-webkit-scrollbar-thumb {
+  background: rgba(74, 133, 119, 0.25);
+  border-radius: 4px;
+}
+
+.insight-data-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(74, 133, 119, 0.14);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.insight-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.insight-card-tag {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-accent-secondary);
+  letter-spacing: 0.04em;
+}
+
+.insight-card-era {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #7A5338;
+  padding: 1px 6px;
+  background: rgba(201, 166, 107, 0.15);
+  border-radius: 9999px;
+}
+
+.insight-card-text {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-primary);
+  line-height: 1.48;
+  margin: 0;
+}
+
+/* Thẻ Hòa Sắc & Ngũ Hành Nổi Bật */
+.color-harmony-highlight-card {
+  background: rgba(244, 201, 214, 0.12);
+  border-color: rgba(201, 166, 107, 0.35);
+  box-shadow: 0 2px 8px rgba(201, 166, 107, 0.08);
+}
+
+.insight-element-pill {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #7A5338;
+  padding: 2px 8px;
+  background: rgba(201, 166, 107, 0.22);
+  border-radius: 9999px;
+}
+
+.insight-color-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.insight-color-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+  box-shadow: 0 0 0 1px rgba(74, 133, 119, 0.3);
+  flex-shrink: 0;
+}
+
+.insight-color-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.insight-color-meta strong {
+  font-size: 0.84rem;
+  color: var(--color-text-primary);
+}
+
+.insight-color-meta span {
+  font-size: 0.74rem;
+  color: var(--color-accent-secondary);
+  font-weight: 500;
+}
+
+.insight-color-event-note {
+  font-size: 0.74rem;
+  color: #6B4E2E;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-top: 2px;
+}
+
+/* Cấu trúc may đo list */
+.insight-features-list {
+  margin: 2px 0 0 0;
+  padding-left: 18px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-primary);
+  line-height: 1.48;
+}
+
+.insight-features-list li {
+  margin-bottom: 3px;
+}
+
+/* Kiêng kỵ card */
+.taboo-card-warn {
+  border-color: rgba(201, 166, 107, 0.5);
+  background: rgba(201, 166, 107, 0.1);
+}
+
+.insight-taboo-flag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 9999px;
+}
+
+.flag-safe {
+  background: rgba(74, 133, 119, 0.14);
+  color: #4A8577;
+}
+
+.flag-warn {
+  background: rgba(201, 166, 107, 0.25);
+  color: #7A5338;
+}
+
+/* Trích dẫn tư liệu */
+.citation-card {
+  background: rgba(74, 133, 119, 0.05);
+}
+
+.insight-citation-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.citation-work-title {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2B2B28;
+}
+
+.citation-author-org {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.insight-citation-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-accent-secondary);
+  text-decoration: underline;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   4. CỘT 3 (DESKTOP) / BẢNG NỔI (MOBILE) — STUDIO CONTROL SHEET
    ========================================================================== */
 .workshop-sheet-tier {
   flex: 0 0 auto;
   width: 100%;
   max-width: 100%;
-  max-height: 48vh;
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--border-radius-card, 16px);
   background: var(--color-card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--color-card-border);
-  box-shadow: 0 -8px 24px rgba(74, 133, 119, 0.12);
-  padding: 10px 14px max(12px, env(safe-area-inset-bottom)) 14px;
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 8px;
+  gap: 10px;
   z-index: 20;
-  overflow-y: auto;
-  overflow-x: hidden;
   box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .workshop-sheet-tier {
     flex: 0 0 420px;
     width: 420px;
-    max-width: 420px;
-    max-height: none;
+    max-width: 450px;
     height: 100%;
-    border-radius: var(--border-radius-card, 16px);
-    border: 1px solid var(--color-card-border);
-    box-shadow: var(--shadow-card);
-    padding: 18px 20px;
-    gap: 14px;
-    justify-content: flex-start;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 18px 20px;
+    gap: 12px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
@@ -270,26 +641,27 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .workshop-desktop-header {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--color-card-border);
+    flex-shrink: 0;
   }
 
   .workshop-desktop-title {
     font-family: var(--font-title);
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 700;
     color: var(--color-text-primary);
     text-transform: none !important;
   }
 
   .workshop-desktop-sub {
     font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: var(--color-text-muted);
   }
 }
@@ -1301,4 +1673,49 @@
 .sanity-alert-icon {
   font-weight: bold;
 }
+
+/* ==========================================================================
+   WORKSHOP SHEET CTA BAR & BUTTONS
+   ========================================================================== */
+.workshop-sheet-cta-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(74, 133, 119, 0.15);
+  position: sticky;
+  bottom: 0;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 15;
+}
+
+.btn-workshop-cta {
+  width: 100%;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--border-radius-pill, 9999px);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(74, 133, 119, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-workshop-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(74, 133, 119, 0.32);
+}
+
+.btn-workshop-cta:active {
+  transform: scale(0.98);
+}
+
 

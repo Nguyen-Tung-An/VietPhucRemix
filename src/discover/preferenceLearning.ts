@@ -65,58 +65,30 @@ export class PreferenceEngine {
     pillText.textContent = `${colorNames[topColor] || 'Hồng Sen'} • ${garmentNames[topGarment] || 'Ngũ Thân'}`;
   }
 
-  public calculateOutfitScore(outfit: DiscoveryOutfit): number {
-    if (!outfit) return 0;
-    const colorScore = this.userPreferenceVector.colors[outfit.color] || 0;
-    const garmentScore = this.userPreferenceVector.garments[outfit.garment] || 0;
-    return colorScore * 0.6 + garmentScore * 0.4;
+  /**
+   * TẠM THỜI TẮT / SKIP TÍNH ĐIỂM SỞ THÍCH ĐỢI REFACTOR
+   * Giữ nguyên thứ tự hiển thị tự nhiên của bộ sưu tập, không tự động đảo lộn vị trí các thẻ.
+   */
+  public calculateOutfitScore(_outfit: DiscoveryOutfit): number {
+    return 0;
   }
 
   public sortDeckByPreference(deck: DiscoveryOutfit[]): DiscoveryOutfit[] {
-    return [...deck].sort((a, b) => this.calculateOutfitScore(b) - this.calculateOutfitScore(a));
+    // Trả về deck nguyên bản, không tự động đảo lộn sở thích
+    return [...deck];
   }
 
-  public recordPreference(outfit: DiscoveryOutfit, action: 'LIKE' | 'DISLIKE'): void {
-    if (!outfit) return;
-    if (action === 'LIKE') {
-      this.userPreferenceVector.colors[outfit.color] = (this.userPreferenceVector.colors[outfit.color] || 0) + 2;
-      this.userPreferenceVector.garments[outfit.garment] = (this.userPreferenceVector.garments[outfit.garment] || 0) + 2;
-      this.userPreferenceVector.events[outfit.event] = (this.userPreferenceVector.events[outfit.event] || 0) + 1;
-    } else if (action === 'DISLIKE') {
-      this.userPreferenceVector.colors[outfit.color] = (this.userPreferenceVector.colors[outfit.color] || 0) - 1;
-    }
-    this.saveUserPreferences();
+  public recordPreference(_outfit: DiscoveryOutfit, _action: 'LIKE' | 'DISLIKE'): void {
+    // Tạm thời bỏ qua ghi nhận vector sở thích chờ refactor
   }
 
   public getTopPreferences(): { topColor: string; topGarment: string; topEvent: string } {
-    let topColor = '#F4C9D6';
-    let maxCScore = -Infinity;
-    for (const [col, score] of Object.entries(this.userPreferenceVector.colors || {})) {
-      if (score > maxCScore) {
-        maxCScore = score;
-        topColor = col;
-      }
-    }
-
-    let topGarment = 'AO_NGU_THAN';
-    let maxGScore = -Infinity;
-    for (const [gar, score] of Object.entries(this.userPreferenceVector.garments || {})) {
-      if (score > maxGScore) {
-        maxGScore = score;
-        topGarment = gar;
-      }
-    }
-
-    let topEvent = 'tet';
-    let maxEScore = -Infinity;
-    for (const [ev, score] of Object.entries(this.userPreferenceVector.events || {})) {
-      if (score > maxEScore) {
-        maxEScore = score;
-        topEvent = ev;
-      }
-    }
-
-    return { topColor, topGarment, topEvent };
+    // Trả về giá trị mặc định chuẩn mực cho Xưởng Phối
+    return {
+      topColor: '#F4C9D6',
+      topGarment: 'AO_NGU_THAN',
+      topEvent: 'tet'
+    };
   }
 }
 

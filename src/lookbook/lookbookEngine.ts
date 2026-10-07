@@ -3,6 +3,7 @@ import { wardrobeManager } from '../discover/wardrobeManager.ts';
 import { appRouter } from '../navigation/router.ts';
 import { WardrobeItem } from '../types/index.ts';
 import { feedbackState } from '../services/feedbackState.ts';
+import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
 
 export class LookbookEngine {
   public init(): void {
@@ -95,6 +96,9 @@ export class LookbookEngine {
           <button type="button" class="btn-card-remix" data-remix-id="${item.id}" title="Phối lại trang phục này trong Xưởng">
             <span>🎨 Remix</span>
           </button>
+          <button type="button" class="btn-card-tailor" data-tailor-id="${item.id}" style="padding: 6px 10px; border-radius: 9999px; background: rgba(201,166,107,0.18); border: 1px solid rgba(201,166,107,0.35); color: #6B4E2E; font-size: 0.74rem; font-weight: 600; cursor: pointer;" title="Tìm tiệm may bộ này trên Google Maps">
+            <span>📍 Tiệm May</span>
+          </button>
           <button type="button" class="btn-card-remove" data-remove-id="${item.id}" title="Xóa khỏi Lookbook" aria-label="Xóa bộ đồ">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -108,7 +112,7 @@ export class LookbookEngine {
       card.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         // Tránh trigger khi bấm nút Xóa hoặc nút Remix trực tiếp
-        if (target.closest('.btn-card-remove') || target.closest('.btn-card-remix')) {
+        if (target.closest('.btn-card-remove') || target.closest('.btn-card-remix') || target.closest('.btn-card-tailor')) {
           return;
         }
         Sound.playClick();
@@ -117,6 +121,13 @@ export class LookbookEngine {
           card.style.transform = '';
           appRouter.remixToWorkshop(item);
         }, 150);
+      });
+
+      // Bắt sự kiện nút Tìm Tiệm May
+      const tailorBtn = card.querySelector(`[data-tailor-id="${item.id}"]`);
+      tailorBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tailorJourneyEngine.openJourney(item.garment, item.title, item.colorName);
       });
 
       // Bắt sự kiện nút Remix

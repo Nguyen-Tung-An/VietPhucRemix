@@ -1,4 +1,5 @@
 import { CulturalGuardrailResult, PatternItem } from '../types/index.ts';
+import { HERITAGE_GROUND_TRUTH } from '../data/heritageGroundTruth.ts';
 
 /**
  * MOCK DATA PROVIDER - BẢO VỆ QUOTA GOOGLE API
@@ -13,6 +14,8 @@ export function getMockCulturalAI(context: {
   region?: string;
 }): CulturalGuardrailResult {
   const { event, garment_type, accessory, primary_color } = context;
+  const garmentKey = (garment_type || 'AO_NGU_THAN').toUpperCase();
+  const record = HERITAGE_GROUND_TRUTH[garmentKey] || HERITAGE_GROUND_TRUTH.AO_NGU_THAN;
 
   // 1. Kiểm tra lệch quy chuẩn văn hóa
   if (garment_type === 'AO_BA_BA' && accessory === 'NON_QUAI_THAO') {
@@ -27,7 +30,10 @@ export function getMockCulturalAI(context: {
       dang_chup_anh:
         'Đứng nghiêng bên mạn xuồng hoặc tựa nhẹ vào hàng rào tre, hai tay khẽ giữ chéo vạt khăn rằn buông trước ngực, nụ cười tươi tắn hiền hòa.',
       cau_chuyen_di_san:
-        'Áo bà ba gắn liền với văn hóa sông nước Cửu Long hào sảng và đôn hậu. Kết hợp cùng chiếc khăn rằn mộc mạc sẽ tôn vinh trọn vẹn vẻ đẹp thuần Việt của người phương Nam.'
+        'Áo bà ba gắn liền với văn hóa sông nước Cửu Long hào sảng và đôn hậu. Kết hợp cùng chiếc khăn rằn mộc mạc sẽ tôn vinh trọn vẹn vẻ đẹp thuần Việt của người phương Nam.',
+      citations: record.citations,
+      set_name: record.name,
+      audit_passed: false
     };
   }
 
@@ -43,7 +49,10 @@ export function getMockCulturalAI(context: {
       dang_chup_anh:
         'Đứng thẳng đoan trang, một tay khẽ che quạt giấy thư pháp ngang ngực, tay kia buông tà năm thân ngay ngắn, mắt nhìn thẳng tự tin.',
       cau_chuyen_di_san:
-        'Áo ngũ thân lập lĩnh là đỉnh cao của nếp mặc Việt Y triều Nguyễn, với 5 cúc vàng tượng trưng cho ngũ thường: Nhân - Lễ - Nghĩa - Trí - Tín.'
+        'Áo ngũ thân lập lĩnh là đỉnh cao của nếp mặc Việt Y triều Nguyễn, với 5 cúc vàng tượng trưng cho ngũ thường: Nhân - Lễ - Nghĩa - Trí - Tín.',
+      citations: record.citations,
+      set_name: record.name,
+      audit_passed: false
     };
   }
 
@@ -85,7 +94,10 @@ export function getMockCulturalAI(context: {
     suggested_fix: '',
     kieu_toc_va_trang_diem: selectedEvent.makeup,
     dang_chup_anh: selectedEvent.pose,
-    cau_chuyen_di_san: selectedEvent.story
+    cau_chuyen_di_san: selectedEvent.story,
+    citations: record.citations,
+    set_name: record.name,
+    audit_passed: true
   };
 }
 

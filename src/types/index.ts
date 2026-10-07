@@ -1,3 +1,19 @@
+export interface CitationSource {
+  title: string;
+  author_or_institution: string;
+  publication_year?: number;
+  url: string;
+  reference_chapter_or_note: string;
+}
+
+export type GarmentType = 
+  | 'AO_NGU_THAN' 
+  | 'AO_TAC' 
+  | 'AO_NHAT_BINH' 
+  | 'AO_GIAO_LINH' 
+  | 'AO_TU_THAN' 
+  | 'AO_BA_BA';
+
 export interface CulturalGuardrailResult {
   is_culturally_accurate: boolean;
   warning_level: 'SAFE' | 'WARNING';
@@ -6,6 +22,73 @@ export interface CulturalGuardrailResult {
   kieu_toc_va_trang_diem?: string;
   dang_chup_anh?: string;
   cau_chuyen_di_san?: string;
+  citations?: CitationSource[];
+  set_name?: string;
+  audit_passed?: boolean;
+}
+
+export interface CulturalRecommendationInput {
+  garment_type: string;
+  event: string;
+  primary_color: string;
+  accessory: string;
+  style_mode?: string;
+  region?: string;
+}
+
+/**
+ * BƯỚC 1: Output của Grounded Recommendation Engine
+ */
+export interface GroundedRecommendationResult {
+  set_name: string;
+  garment_type: string;
+  primary_color: string;
+  color_harmony_explanation: string;
+  recommended_accessories: Array<{ id: string; name: string; purpose: string }>;
+  incompatible_accessories_detected: Array<{ id: string; name: string; reason: string }>;
+  kieu_toc_va_makeup: {
+    hair: string;
+    makeup: string;
+  };
+  dang_chup_anh: string;
+  cau_chuyen_di_san: string;
+  has_cultural_risk: boolean;
+  cultural_risk_summary: string;
+  citations: CitationSource[];
+}
+
+/**
+ * BƯỚC 2: Output của Multi-round Cultural Check (Auditor Agent)
+ */
+export interface CulturalAuditResult {
+  audit_status: 'APPROVED' | 'NEEDS_REVISION' | 'FLAGGED';
+  confidence_score: number; // 0.0 - 1.0
+  cross_regional_check: {
+    is_valid: boolean;
+    details: string;
+  };
+  historical_accuracy_check: {
+    is_valid: boolean;
+    details: string;
+  };
+  citations_verified: boolean;
+  audit_verdict_message: string;
+  suggested_correction: string | null;
+}
+
+/**
+ * Kết quả hợp nhất trả về cho UI
+ */
+export interface TwoRoundCulturalResponse {
+  recommendation: GroundedRecommendationResult;
+  audit: CulturalAuditResult;
+  final_guardrail: CulturalGuardrailResult;
+  pipeline_metadata: {
+    mode: 'ONLINE_GEMINI_PIPELINE' | 'OFFLINE_GROUND_TRUTH_ENGINE';
+    model_round1: string;
+    model_round2: string;
+    latency_ms: number;
+  };
 }
 
 export interface PatternItem {

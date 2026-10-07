@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
+import { runOfflineCulturalPipeline, runOnlineGeminiCulturalPipeline } from './server/culturalPipeline.ts';
 
 dotenv.config();
 
@@ -331,20 +332,42 @@ function generateEditorialLookbookDataUri(promptText: string): string {
   return `data:image/svg+xml;base64,${base64Svg}`;
 }
 
-// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Chế độ Mock Bảo Vệ Quota
+// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Hệ thống 2 vòng kiểm định di sản
 app.post('/api/gemini/cultural-ai', async (req, res) => {
-  const { event, primary_color, garment_type, accessory, region } = req.body;
+  const { event, primary_color, garment_type, accessory, region, style_mode } = req.body;
 
   const contextPayload = {
     event: event || 'tet',
-    primary_color: primary_color || '#B22222',
+    primary_color: primary_color || '#F4C9D6',
     garment_type: garment_type || 'AO_NGU_THAN',
     accessory: accessory || 'QUAT_GIAY',
     region: region || 'TOAN_QUOC',
+    style_mode: style_mode || 'THANH_TAO',
   };
 
-  // Trả về dữ liệu thẩm định di sản nội bộ (Zero quota consumption)
-  return res.json(getLocalCulturalAnalysis(contextPayload));
+  // 1. Chế độ Online: Gọi Gemini 2-Round Pipeline nếu AI_OFFLINE_MODE = false và có API Key
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const onlineResult = await runOnlineGeminiCulturalPipeline(ai, contextPayload);
+      return res.json({
+        ...onlineResult.final_guardrail,
+        recommendation: onlineResult.recommendation,
+        audit: onlineResult.audit,
+        pipeline_metadata: onlineResult.pipeline_metadata,
+      });
+    } catch (err) {
+      console.error('Lỗi gọi Gemini Cultural Pipeline trực tiếp, chuyển sang Offline Engine:', err);
+    }
+  }
+
+  // 2. Chế độ Offline / Ground Truth Deterministic Engine (Bảo vệ quota 100%, có trích dẫn URL)
+  const offlineResult = runOfflineCulturalPipeline(contextPayload);
+  return res.json({
+    ...offlineResult.final_guardrail,
+    recommendation: offlineResult.recommendation,
+    audit: offlineResult.audit,
+    pipeline_metadata: offlineResult.pipeline_metadata,
+  });
 });
 
 // Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI - Chế độ Mock Bảo Vệ Quota

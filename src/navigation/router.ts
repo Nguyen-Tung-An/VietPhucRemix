@@ -284,6 +284,28 @@ export class AppRouter {
       }, 150);
     });
 
+    // Bấm xem Khám phá thực tế từ màn hình Kết quả (khi không có demo)
+    document.getElementById('btn-result-goto-discover')?.addEventListener('click', () => {
+      Sound.playClick();
+      document.getElementById('result-scene')?.classList.remove('scene-active');
+      setTimeout(() => {
+        this.switchTab('discover');
+      }, 150);
+    });
+
+    // Nút Back từ cột Insight (layout mới không có stage tier)
+    document.getElementById('btn-back-landing-insight')?.addEventListener('click', () => {
+      Sound.playClick();
+      mainNavBar?.classList.remove('nav-active');
+      document.getElementById('create-scene')?.classList.remove('scene-active');
+      document.getElementById('discover-scene')?.classList.remove('scene-active');
+      document.getElementById('lookbook-scene')?.classList.remove('scene-active');
+      document.getElementById('result-scene')?.classList.remove('scene-active');
+      setTimeout(() => {
+        landingScene?.classList.remove('scene-hidden');
+      }, 150);
+    });
+
     // Bấm logo để về lại Tiền sảnh 3D
     btnNavHome?.addEventListener('click', () => {
       Sound.playClick();
@@ -335,6 +357,67 @@ export class AppRouter {
     btnEmptyDiscover?.addEventListener('click', () => {
       wardrobeManager.closeWardrobe();
       this.switchTab('discover');
+    });
+
+    // Tab Profile — mở modal hồ sơ cá nhân
+    const openProfile = () => {
+      const modal = document.getElementById('profile-modal');
+      if (!modal) return;
+      // Nạp dữ liệu đã lưu
+      try {
+        const saved = localStorage.getItem('viet_y_user_profile');
+        if (saved) {
+          const profile = JSON.parse(saved);
+          (document.getElementById('profile-name') as HTMLInputElement).value = profile.name || '';
+          (document.getElementById('profile-height') as HTMLInputElement).value = profile.height || '';
+          (document.getElementById('profile-weight') as HTMLInputElement).value = profile.weight || '';
+          (document.getElementById('profile-shape') as HTMLInputElement).value = profile.shape || '';
+          (document.getElementById('profile-skin') as HTMLInputElement).value = profile.skin || '';
+          (document.getElementById('profile-hair') as HTMLInputElement).value = profile.hair || '';
+        }
+      } catch (e) {}
+      modal.style.display = 'flex';
+    };
+
+    document.getElementById('tab-profile')?.addEventListener('click', () => {
+      Sound.playClick();
+      openProfile();
+    });
+
+    document.getElementById('btn-mobile-profile')?.addEventListener('click', () => {
+      Sound.playClick();
+      openProfile();
+      document.getElementById('nav-mobile-dropdown-menu')?.classList.remove('open');
+    });
+
+    // Đóng modal
+    document.getElementById('btn-close-profile')?.addEventListener('click', () => {
+      const modal = document.getElementById('profile-modal');
+      if (modal) modal.style.display = 'none';
+    });
+
+    // Lưu profile vào localStorage
+    document.getElementById('btn-save-profile')?.addEventListener('click', () => {
+      const profile = {
+        name: (document.getElementById('profile-name') as HTMLInputElement)?.value?.trim() || '',
+        height: (document.getElementById('profile-height') as HTMLInputElement)?.value?.trim() || '',
+        weight: (document.getElementById('profile-weight') as HTMLInputElement)?.value?.trim() || '',
+        shape: (document.getElementById('profile-shape') as HTMLInputElement)?.value?.trim() || '',
+        skin: (document.getElementById('profile-skin') as HTMLInputElement)?.value?.trim() || '',
+        hair: (document.getElementById('profile-hair') as HTMLInputElement)?.value?.trim() || '',
+      };
+      localStorage.setItem('viet_y_user_profile', JSON.stringify(profile));
+      const modal = document.getElementById('profile-modal');
+      if (modal) modal.style.display = 'none';
+      this.showToast(`✅ Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}! AI sẽ tư vấn phù hợp hơn.`);
+      Sound.playChime();
+    });
+
+    // Đóng modal khi bấm ra ngoài backdrop
+    document.getElementById('profile-modal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('profile-modal')) {
+        (document.getElementById('profile-modal') as HTMLElement).style.display = 'none';
+      }
     });
   }
 }

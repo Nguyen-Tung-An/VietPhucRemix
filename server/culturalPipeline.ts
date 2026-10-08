@@ -369,16 +369,21 @@ export async function runOnlineMiniStylingSuggestions(
     primary_color: string;
     style_mode?: string;
     personality?: string;
+    user_profile?: any;
   }
 ): Promise<MiniStylingResponse> {
   const truth = getCulturalTruth(context.garment_type);
+
+  const userProfileStr = context.user_profile
+    ? `\nĐặc điểm ngoại hình người mặc:\n- Tên: ${context.user_profile.name || 'Chưa rõ'}\n- Chiều cao: ${context.user_profile.height || 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight || 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
+    : '';
 
   const prompt = `Bạn là Giám đốc Phong cách Cổ phục Việt Y đương đại.
 Người dùng đang thiết kế bộ trang phục:
 - Loại áo: [${truth.id}] ${truth.name} (Xuất xứ: ${truth.originRegion}, Niên đại: ${truth.historicalEra})
 - Màu sắc chủ đạo: ${context.primary_color}
 - Phong cách: ${context.style_mode || 'THANH_TAO'}
-- Tính cách người mặc: ${context.personality || 'Thanh lịch, tự tin, yêu di sản'}
+- Tính cách mong muốn: ${context.personality || 'Thanh lịch, tự tin, yêu di sản'}${userProfileStr}
 
 Các kiêng kỵ nghiêm ngặt (KHÔNG ĐƯỢC GỢI Ý các món này):
 ${truth.strictTaboos.map((t) => `- Không gợi ý: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}

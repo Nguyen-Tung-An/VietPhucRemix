@@ -22,6 +22,7 @@ export async function fetchStylingSuggestionsAPI(
     primary_color: string;
     style_mode?: string;
     personality?: string;
+    user_profile?: any;
   },
   signal?: AbortSignal
 ): Promise<MiniStylingResponse> {

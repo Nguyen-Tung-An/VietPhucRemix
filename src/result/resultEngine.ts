@@ -89,19 +89,30 @@ export class ResultEngine {
     }
   }
 
-  /**
-   * LỚP 1 — Render minh họa trang phục hoàn chỉnh
-   */
-  private renderArtwork(_garment: string, _colorHex: string, _accessory: string): void {
-    const displayBox = document.getElementById('result-croquis-display');
-    const sourceSvg = document.getElementById('nguthan-svg');
-    if (!displayBox || !sourceSvg) return;
+  private renderArtwork(garment: string, colorHex: string, accessory: string): void {
+    const demoImg = document.getElementById('result-demo-image') as HTMLImageElement;
+    const placeholder = document.getElementById('result-no-image-placeholder');
+    if (!demoImg || !placeholder) return;
 
-    // Clone chính xác SVG từ xưởng phối với màu sắc và phụ kiện thực tế
-    displayBox.innerHTML = '';
-    const clonedSvg = sourceSvg.cloneNode(true) as SVGElement;
-    clonedSvg.setAttribute('id', 'result-svg-cloned');
-    displayBox.appendChild(clonedSvg);
+    // Hardcode a few demo combinations (since we have no AI generation quota)
+    // For example: AO_NGU_THAN with #F4C9D6 and QUAT_GIAY
+    // Let's assume if it matches exactly, we show a pre-uploaded image.
+    // Otherwise show the placeholder.
+    let demoSrc = '';
+    
+    // For this demo, let's just pretend we have a demo image for AO_NGU_THAN + QUAT_GIAY
+    if (garment === 'AO_NGU_THAN' && accessory === 'QUAT_GIAY') {
+      demoSrc = '/assets/images/demo_ngu_than.jpg'; // Placeholder path
+    }
+
+    if (demoSrc) {
+      demoImg.src = demoSrc;
+      demoImg.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      demoImg.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
   }
 
   /**

@@ -64,12 +64,12 @@
 
 @media (min-width: 992px) {
   .workshop-container {
-    max-width: 1440px;
+    max-width: 1280px;
     height: 100%;
     flex-direction: row;
     align-items: stretch;
-    gap: 18px;
-    padding: 72px 24px 20px 24px;
+    gap: 0;
+    padding: 56px 0 0 0;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -80,35 +80,9 @@
    - Desktop: Chiếm tỷ lệ thấp nhất (~320px - 340px, xêm xêm size thẻ khám phá)
    - Phù hợp cả khi có hình SVG lẫn khi hiển thị Thẻ Khảo Cứu di sản
    ========================================================================== */
+/* Cột SVG croquis cũ — ẩn hoàn toàn, layout mới chỉ còn 2 cột */
 .workshop-stage-tier {
-  flex: 0 0 auto;
-  min-height: 240px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-  border-radius: var(--border-radius-card, 16px);
-  background: var(--color-card-bg);
-  border: 1px solid var(--color-card-border);
-  box-shadow: var(--shadow-card);
-}
-
-@media (min-width: 992px) {
-  .workshop-stage-tier {
-    flex: 0 0 320px;
-    width: 320px;
-    max-width: 340px;
-    min-width: 300px;
-    height: 100%;
-    padding: 16px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
+  display: none !important;
 }
 
 /* Thanh thông tin trạng thái nhẹ nhàng trên đỉnh stage */
@@ -161,6 +135,8 @@
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--color-card-border);
   box-shadow: 0 2px 8px rgba(74, 133, 119, 0.08);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .stage-title-text {
@@ -169,7 +145,30 @@
   font-weight: 600;
   color: var(--color-text-primary);
   text-transform: none !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.btn-stage-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.btn-stage-back:hover {
+  background: var(--color-bg);
+  transform: translateX(-2px);
+}
+.btn-stage-back span { display: none; }
 
 .stage-status-badge {
   display: inline-flex;
@@ -339,13 +338,17 @@
 @media (min-width: 992px) {
   .workshop-insight-tier {
     flex: 1 1 0;
-    min-width: 320px;
-    max-width: 480px;
-    height: 100%;
+    min-width: 0;
+    height: calc(100vh - 56px);
     overflow: hidden;
-    padding: 18px 20px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    padding: 20px 24px;
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: 1px solid var(--color-card-border);
+    box-shadow: none;
+    backdrop-filter: none;
   }
 }
 
@@ -623,16 +626,15 @@
 
 @media (min-width: 992px) {
   .workshop-sheet-tier {
-    flex: 0 0 420px;
-    width: 420px;
-    max-width: 450px;
-    height: 100%;
+    flex: 1 1 0;
+    min-width: 0;
+    height: calc(100vh - 56px);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 18px 20px;
-    gap: 12px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    padding: 20px 24px;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
   }
 }
 
@@ -755,6 +757,7 @@
 
 .sheet-options-panel.active-panel {
   display: flex;
+  flex-direction: column;
 }
 
 /* --------------------------------------------------------------------------
@@ -774,13 +777,13 @@
   gap: 8px;
   max-height: 270px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 8px;
 }
 
 @media (min-width: 768px) {
   #panel-garments.active-panel {
-    grid-template-columns: repeat(3, 1fr);
-    max-height: 340px;
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 380px;
   }
 }
 

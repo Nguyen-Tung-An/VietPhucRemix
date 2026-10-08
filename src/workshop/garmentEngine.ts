@@ -341,11 +341,18 @@ export class GarmentEngine {
 
   private async loadInitialStyling(): Promise<void> {
     try {
+      let userProfile = null;
+      try {
+        const saved = localStorage.getItem('viet_y_user_profile');
+        if (saved) userProfile = JSON.parse(saved);
+      } catch (e) {}
+
       const data = await fetchStylingSuggestionsAPI({
         garment_type: this.currentGarment,
         primary_color: this.currentColor,
         style_mode: this.currentStyle,
-        personality: this.currentPersonality
+        personality: this.currentPersonality,
+        user_profile: userProfile
       });
       this.aiStylingData = data;
       this.renderAccessoriesList(data.accessories);
@@ -365,11 +372,18 @@ export class GarmentEngine {
     if (label) label.textContent = 'AI Đang Sáng Tạo Gợi Ý...';
 
     try {
+      let userProfile = null;
+      try {
+        const saved = localStorage.getItem('viet_y_user_profile');
+        if (saved) userProfile = JSON.parse(saved);
+      } catch (e) {}
+
       const data = await fetchStylingSuggestionsAPI({
         garment_type: this.currentGarment,
         primary_color: this.currentColor,
         style_mode: this.currentStyle,
-        personality: this.currentPersonality
+        personality: this.currentPersonality,
+        user_profile: userProfile
       });
 
       this.aiStylingData = data;

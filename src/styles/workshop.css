@@ -80,9 +80,47 @@
    - Desktop: Chiếm tỷ lệ thấp nhất (~320px - 340px, xêm xêm size thẻ khám phá)
    - Phù hợp cả khi có hình SVG lẫn khi hiển thị Thẻ Khảo Cứu di sản
    ========================================================================== */
-/* Cột SVG croquis cũ — ẩn hoàn toàn, layout mới chỉ còn 2 cột */
 .workshop-stage-tier {
-  display: none !important;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--border-radius-card, 16px);
+  padding: 14px;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+@media (min-width: 992px) {
+  .workshop-stage-tier {
+    width: 340px;
+    height: calc(100vh - 56px);
+    max-width: 360px;
+    border-radius: 0;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    border-right: 1px solid var(--color-card-border);
+    box-shadow: none;
+    overflow-y: auto;
+  }
+}
+
+.stage-artwork-viewport {
+  width: 100%;
+  flex: 1;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(74, 133, 119, 0.04);
 }
 
 /* Thanh thông tin trạng thái nhẹ nhàng trên đỉnh stage */
@@ -198,33 +236,7 @@
   white-space: nowrap;
 }
 
-/* Khung bao chứa Canvas SVG Vector Croquis */
-.stage-svg-wrapper {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 2px 0;
-  overflow: hidden;
-}
 
-.croquis-svg-art {
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 14px 24px rgba(74, 133, 119, 0.16));
-  transition: transform 0.25s ease;
-}
-
-@media (min-width: 992px) {
-  .croquis-svg-art {
-    max-height: calc(100vh - 240px);
-    max-height: calc(100dvh - 240px);
-  }
-}
 
 /* ==========================================================================
    THẺ KHẢO CỨU DI SẢN (ARCHIVAL RESTORATION PLACEHOLDER)

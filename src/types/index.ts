@@ -129,10 +129,10 @@ export interface TwoRoundCulturalResponse {
 export interface PatternItem {
   id?: string;
   pattern_name: string;
-  pattern_type: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM';
-  svg_path_data: string;
-  pattern_color: string;
-  pattern_story: string;
+  pattern_type?: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM';
+  pattern_color?: string;
+  pattern_story?: string;
+  imageUrl?: string;
 }
 
 export interface CurrentOutfitState {
@@ -163,6 +163,7 @@ export interface DiscoveryOutfit {
   accessory: 'QUAT_GIAY' | 'KHAN_RAN' | 'NON_QUAI_THAO';
   seal: string;
   desc: string;
+  imageUrl?: string;
 }
 
 export interface WardrobeItem extends DiscoveryOutfit {

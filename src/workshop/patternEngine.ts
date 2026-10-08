@@ -16,7 +16,7 @@ export interface HeritagePatternEntry {
   aiPromptSnippet: string;
   fullImagePrompt: string;
   colorHex: string;
-  svgPath: string;
+  imageUrl: string;
   previewBg: string;
   patternType: 'SEAMLESS_JACQUARD' | 'CENTRAL_EMBLEM';
 }
@@ -33,7 +33,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Imperial five-color cloud swirls (Vân ngũ sắc), flowing silk damask jacquard, gold filigree reflections',
     fullImagePrompt: 'High-detail textile macro photography of authentic Vietnamese imperial cloud patterns (Vân Vũ Ngũ Sắc Triều Nguyễn), intricate continuous jacquard weave on luxury mulberry silk. Shimmering gold and jade threads, subtle tonal gradients, museum lighting. Designed seamlessly for traditional Vietnamese Ao Ngu Than robes. Strictly NO Hanfu motifs, NO cartoonish vectors, NO low resolution.',
     colorHex: '#C9A66B',
-    svgPath: 'M 10,30 Q 20,15 35,22 Q 50,10 60,25 Q 50,45 35,38 Q 20,50 10,30 Z M 35,25 Q 45,20 50,30 Q 42,40 35,25 Z',
+    imageUrl: '/images/patterns/pat-may-ngu-sac.png',
     previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.2), rgba(28,43,38,0.85))',
     patternType: 'SEAMLESS_JACQUARD'
   },
@@ -48,7 +48,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Dynamic Thuy Ba royal concentric water waves, jade green and earthen gold silk embroidery',
     fullImagePrompt: 'Editorial macro shot of Vietnamese imperial Thuy Ba water wave border patterns, hand-embroidered with fine silk floss and gold bullion cords. Layered rhythmic oceanic crests with sacred mountain peaks rising from foam. Soft cinematic studio light reflecting off lustrous Vietnamese raw silk. Authentic historical Vietnamese court costume pattern. NO Japanese seigaiha copy, NO flat vector, photorealistic 8k.',
     colorHex: '#4A8577',
-    svgPath: 'M 0,35 Q 15,10 30,35 T 60,35 M 10,50 Q 25,25 40,50 T 70,50 M 0,20 Q 15,5 30,20 T 60,20',
+    imageUrl: '/images/patterns/pat-thuy-ba-hoang-gia.png',
     previewBg: 'linear-gradient(135deg, rgba(74,133,119,0.25), rgba(13,23,20,0.9))',
     patternType: 'SEAMLESS_JACQUARD'
   },
@@ -63,7 +63,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Four seasons botanical elegance (Apricot, Orchid, Chrysanthemum, Bamboo), delicate pastel silk weaving',
     fullImagePrompt: 'High-fashion editorial Vietnamese traditional garment textile swatch featuring Tu Quy (Mai Lan Cuc Truc) botanical motifs. Delicate blossoming apricot and slender bamboo silhouettes woven into organic Lotus Silk. Subtle lotus pink (#F4C9D6) and earthen gold undertones, poetic Asian aesthetics, hyper-detailed textile weave texture. Strictly Vietnamese cultural identity, NO Hanfu dragon robes.',
     colorHex: '#F4C9D6',
-    svgPath: 'M 20,40 C 20,20 40,20 40,40 C 40,60 20,60 20,40 Z M 25,25 L 35,35 M 35,25 L 25,35 M 10,20 Q 30,5 50,20',
+    imageUrl: '/images/patterns/pat-tu-quy.png',
     previewBg: 'linear-gradient(135deg, rgba(244,201,214,0.25), rgba(43,43,40,0.85))',
     patternType: 'SEAMLESS_JACQUARD'
   },
@@ -78,7 +78,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Continuous undulating chrysanthemum floral vine damask, lustrous ancient silk brocade',
     fullImagePrompt: 'Seamless textile pattern surface of authentic Vietnamese royal chrysanthemum scrolling vines (Cuc Day Trieu Nguyen). Intertwining gilded botanical lines on night moss deep green (#1C2B26) mulberry silk. Traditional Dong Ho and Hue imperial aesthetic resonance, high thread count natural sheen, soft directional side light highlighting thread relief. 8k, photorealistic fabric rendering.',
     colorHex: '#C9A66B',
-    svgPath: 'M 0,25 C 20,5 40,45 60,25 M 15,25 A 6,6 0 1,0 27,25 A 6,6 0 1,0 15,25 M 45,25 A 6,6 0 1,0 57,25 A 6,6 0 1,0 45,25',
+    imageUrl: '/images/patterns/pat-cuc-day-nguyen.png',
     previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.3), rgba(28,43,38,0.92))',
     patternType: 'SEAMLESS_JACQUARD'
   },
@@ -93,7 +93,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Sacred crane flying through billowing silk clouds, silver metallic threads on deep jade green',
     fullImagePrompt: 'High-end Vietnamese heritage circular emblem medal embroidered with a sacred Crane soaring through swirling clouds (Hac An May). Embroidered with real silver filament and ivory silk on jade-colored textured damask. Rim lighting, intricate needlework relief, museum archival piece quality. Strictly authentic Vietnamese iconography, NO modern stamps.',
     colorHex: '#E8F3EE',
-    svgPath: 'M 0,-24 C 16,-24 24,-16 24,0 C 24,16 16,24 0,24 C -16,24 -24,16 -24,0 C -24,-16 -16,-24 0,-24 Z M -12,-8 Q 0,-2 12,-8 Q 6,6 0,14 Q -6,6 -12,-8 Z',
+    imageUrl: '/images/patterns/pat-hac-an-may.png',
     previewBg: 'linear-gradient(135deg, rgba(232,243,238,0.3), rgba(13,23,20,0.9))',
     patternType: 'CENTRAL_EMBLEM'
   },
@@ -108,7 +108,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     aiPromptSnippet: 'Ly-Tran dynasty sacred lotus inside bodhi leaf outline, Buddhist courtly elegance, gold leaf texture',
     fullImagePrompt: 'Editorial heritage design detail: Vietnamese Ly-Tran dynasty stylized sacred lotus enclosed inside a graceful Bodhi leaf silhouette. Intricate curling petal engravings inspired by ancient Thang Long Imperial Citadel ceramics, textured gold leaf foil stamped onto deep carmine and earthen brown natural raw silk. Crisp details, macro photography, luxury historical preservation aesthetic.',
     colorHex: '#C9A66B',
-    svgPath: 'M 0,-26 C 14,-18 22,2 0,24 C -22,2 -14,-18 0,-26 Z M 0,-14 C 8,-6 10,6 0,16 C -10,6 -8,-6 0,-14 Z',
+    imageUrl: '/images/patterns/pat-lien-hoa-bo-de.png',
     previewBg: 'linear-gradient(135deg, rgba(201,166,107,0.35), rgba(74,133,119,0.85))',
     patternType: 'CENTRAL_EMBLEM'
   }
@@ -138,10 +138,12 @@ export class PatternEngine {
       return `
         <article class="pattern-heritage-card" id="card-${pat.id}">
           <div class="pattern-card-preview" style="background: ${pat.previewBg};">
-            <div class="pattern-card-art-wrap">
-              <svg viewBox="0 0 70 70" class="pattern-card-svg" aria-hidden="true">
-                <path d="${pat.svgPath}" fill="none" stroke="${pat.colorHex}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
+            <div class="pattern-card-art-wrap" style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <img src="${pat.imageUrl}" alt="${pat.name}" class="pattern-card-img" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='flex';" />
+              <div class="pattern-no-img-box" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 8px;">
+                <span style="font-size: 1.8rem; opacity: 0.45;">🏛️</span>
+                <span style="font-family: var(--font-body); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.3;">Tổ hợp này chưa có ảnh minh họa demo</span>
+              </div>
             </div>
             <div class="pattern-card-badge">${pat.patternType === 'SEAMLESS_JACQUARD' ? '❖ Gấm Chìm' : '✹ Huy Hiệu'}</div>
           </div>
@@ -201,7 +203,7 @@ export class PatternEngine {
       id: patternEntry.id,
       pattern_name: patternEntry.name,
       pattern_type: patternEntry.patternType,
-      svg_path_data: patternEntry.svgPath,
+      imageUrl: patternEntry.imageUrl,
       pattern_color: patternEntry.colorHex,
       pattern_story: patternEntry.historicalStory
     };

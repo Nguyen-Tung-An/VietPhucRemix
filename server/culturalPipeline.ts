@@ -20,13 +20,13 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import {
   CULTURAL_DATABASE,
-  CulturalHeritageEntry,
+  type CulturalHeritageEntry,
   getCulturalTruth,
   checkMultipleStrictTaboos,
   validateUserInputSanity,
   getColorCulturalAnalysis
 } from '../src/data/culturalTruths.ts';
-import {
+import type {
   CulturalRecommendationInput,
   GroundedRecommendationResult,
   CulturalAuditResult,

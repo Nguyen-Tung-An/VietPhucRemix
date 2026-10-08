@@ -89,26 +89,35 @@ export class ResultEngine {
     }
   }
 
-  private renderArtwork(garment: string, colorHex: string, accessory: string): void {
+  private renderArtwork(garment: string, _colorHex: string, _accessory: string): void {
     const demoImg = document.getElementById('result-demo-image') as HTMLImageElement;
     const placeholder = document.getElementById('result-no-image-placeholder');
     if (!demoImg || !placeholder) return;
 
-    // Hardcode a few demo combinations (since we have no AI generation quota)
-    // For example: AO_NGU_THAN with #F4C9D6 and QUAT_GIAY
-    // Let's assume if it matches exactly, we show a pre-uploaded image.
-    // Otherwise show the placeholder.
-    let demoSrc = '';
-    
-    // For this demo, let's just pretend we have a demo image for AO_NGU_THAN + QUAT_GIAY
-    if (garment === 'AO_NGU_THAN' && accessory === 'QUAT_GIAY') {
-      demoSrc = '/assets/images/demo_ngu_than.jpg'; // Placeholder path
-    }
+    const GARMENT_IMAGE_MAP: Record<string, string> = {
+      AO_NGU_THAN: '/images/garments/ao-ngu-than.png',
+      AO_TAC: '/images/garments/ao-tac.png',
+      AO_NHAT_BINH: '/images/garments/ao-nhat-binh.png',
+      AO_GIAO_LINH: '/images/garments/ao-giao-linh.png',
+      AO_VIEN_LINH: '/images/garments/ao-vien-linh.png',
+      AO_DOI_KHAM: '/images/garments/ao-doi-kham.png',
+      AO_TU_THAN: '/images/garments/ao-tu-than.png',
+      AO_BA_BA: '/images/garments/ao-ba-ba.png',
+      AO_DAI_LEMUR: '/images/garments/ao-dai-lemur.png',
+    };
+
+    const demoSrc = GARMENT_IMAGE_MAP[garment] || '';
 
     if (demoSrc) {
       demoImg.src = demoSrc;
-      demoImg.style.display = 'block';
-      placeholder.style.display = 'none';
+      demoImg.onload = () => {
+        demoImg.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      demoImg.onerror = () => {
+        demoImg.style.display = 'none';
+        placeholder.style.display = 'flex';
+      };
     } else {
       demoImg.style.display = 'none';
       placeholder.style.display = 'flex';
@@ -259,6 +268,12 @@ export class ResultEngine {
     const btnRemix = document.getElementById('btn-result-remix');
     const btnBack = document.getElementById('btn-result-back');
     const btnTailorJourney = document.getElementById('btn-result-tailor-journey');
+    const btnGotoDiscover = document.getElementById('btn-result-goto-discover');
+
+    btnGotoDiscover?.addEventListener('click', () => {
+      this.hideResult();
+      appRouter.switchTab('discover');
+    });
 
     // Nút Hành trình Sở hữu Cổ phục (Google Maps & Search tiệm may đo thực tế)
     btnTailorJourney?.addEventListener('click', () => {

@@ -27,7 +27,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Dạo phố Tết',
     accessory: 'QUAT_GIAY',
     seal: 'Lụa',
-    desc: 'Tà ngũ thân lụa mềm mại phối quạt thanh tao, tươi tắn đón nắng xuân.'
+    desc: 'Tà ngũ thân lụa mềm mại phối quạt thanh tao, tươi tắn đón nắng xuân.',
+    imageUrl: '/images/garments/outfit-1.png'
   },
   {
     id: 'outfit-2',
@@ -39,7 +40,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Lễ tốt nghiệp',
     accessory: 'QUAT_GIAY',
     seal: 'Thanh',
-    desc: 'Sắc ngọc trầm tĩnh biểu trưng cho trí tuệ và chí hướng thanh vân.'
+    desc: 'Sắc ngọc trầm tĩnh biểu trưng cho trí tuệ và chí hướng thanh vân.',
+    imageUrl: '/images/garments/outfit-2.png'
   },
   {
     id: 'outfit-3',
@@ -51,7 +53,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Lễ hội làng',
     accessory: 'KHAN_RAN',
     seal: 'Mộc',
-    desc: 'Áo bà ba xẻ tà buông rủ mộc mạc, điểm khăn rằn sông nước phương Nam.'
+    desc: 'Áo bà ba xẻ tà buông rủ mộc mạc, điểm khăn rằn sông nước phương Nam.',
+    imageUrl: '/images/garments/outfit-3.png'
   },
   {
     id: 'outfit-4',
@@ -63,7 +66,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Chụp kỷ yếu',
     accessory: 'QUAT_GIAY',
     seal: 'Cổ',
-    desc: 'Ánh vàng đất hoài niệm, tạo chiều sâu nghệ thuật cho từng khung hình kỷ yếu.'
+    desc: 'Ánh vàng đất hoài niệm, tạo chiều sâu nghệ thuật cho từng khung hình kỷ yếu.',
+    imageUrl: '/images/garments/outfit-4.png'
   },
   {
     id: 'outfit-5',
@@ -75,7 +79,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Dạo phố Tết',
     accessory: 'KHAN_RAN',
     seal: 'Xuân',
-    desc: 'Dáng áo bà ba cách điệu sắc hồng sen nhẹ nhàng bên bến hoa ngày Tết.'
+    desc: 'Dáng áo bà ba cách điệu sắc hồng sen nhẹ nhàng bên bến hoa ngày Tết.',
+    imageUrl: '/images/garments/outfit-5.png'
   },
   {
     id: 'outfit-6',
@@ -87,7 +92,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Lễ tốt nghiệp',
     accessory: 'QUAT_GIAY',
     seal: 'Nhã',
-    desc: 'Chất liệu lụa dệt sắc ngọc sương tinh khôi, tôn phong thái đĩnh đạc tự tin.'
+    desc: 'Chất liệu lụa dệt sắc ngọc sương tinh khôi, tôn phong thái đĩnh đạc tự tin.',
+    imageUrl: '/images/garments/outfit-6.png'
   },
   {
     id: 'outfit-7',
@@ -99,7 +105,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Lễ hội làng',
     accessory: 'QUAT_GIAY',
     seal: 'Hội',
-    desc: 'Lập lĩnh tối màu đơm cúc mạ vàng, nổi bật lung linh dưới ánh đèn lồng cổ.'
+    desc: 'Lập lĩnh tối màu đơm cúc mạ vàng, nổi bật lung linh dưới ánh đèn lồng cổ.',
+    imageUrl: '/images/garments/outfit-7.png'
   },
   {
     id: 'outfit-8',
@@ -111,7 +118,8 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     eventLabel: 'Chụp kỷ yếu',
     accessory: 'KHAN_RAN',
     seal: 'Kỷ',
-    desc: 'Nét đẹp hồn nhiên tươi trẻ trong bộ bà ba xanh ngọc đậm cùng chúng bạn.'
+    desc: 'Nét đẹp hồn nhiên tươi trẻ trong bộ bà ba xanh ngọc đậm cùng chúng bạn.',
+    imageUrl: '/images/garments/outfit-8.png'
   }
 ];
 
@@ -280,84 +288,20 @@ export class SwipeEngine {
         </div>
 
         <div class="card-illustration-box">
-          <svg class="card-garment-svg" viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="sheen-${outfit.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3" />
-                <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.05" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0.15" />
-              </linearGradient>
-            </defs>
-
-            <!-- Vầng hào quang ngọc sương nhẹ -->
-            <ellipse cx="140" cy="170" rx="95" ry="115" fill="rgba(74, 133, 119, 0.08)" />
-
-            <!-- Gương mặt & búi tóc thanh thoát -->
-            <path d="M 130,55 L 130,78 Q 140,74 150,78 L 150,55 Z" fill="#F7DCBF" stroke="#4A2E1B" stroke-width="1.2" />
-            <ellipse cx="140" cy="50" rx="20" ry="24" fill="#F7DCBF" stroke="#4A2E1B" stroke-width="1.4" />
-            <path d="M 120,50 C 120,24 160,24 160,50 C 160,34 120,34 120,50 Z" fill="#1C2B26" />
-            <circle cx="140" cy="22" r="11" fill="#1C2B26" />
-            <line x1="130" y1="20" x2="150" y2="20" stroke="#C9A66B" stroke-width="2" stroke-linecap="round" />
-
-            <!-- Quần suông trắng ngà -->
-            <path d="M 108,180 L 98,310 L 134,312 L 138,185 Z" fill="#F5F2EB" stroke="#D3CDC2" stroke-width="1" />
-            <path d="M 172,180 L 182,310 L 146,312 L 142,185 Z" fill="#FAF7F0" stroke="#D3CDC2" stroke-width="1" />
-
-            ${
-              outfit.garment === 'AO_NGU_THAN'
-                ? `
-              <!-- Áo Ngũ Thân Lập Lĩnh Lụa Thanh -->
-              <path d="M 115,82 Q 140,88 165,82 L 182,145 L 195,270 L 85,270 L 98,145 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.6" />
-              <path d="M 115,82 Q 140,88 165,82 L 182,145 L 195,270 L 85,270 L 98,145 Z" fill="url(#sheen-${outfit.id})" />
-              <path d="M 115,85 L 75,115 L 72,185 L 94,180 L 98,145 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.2" />
-              <path d="M 165,85 L 205,115 L 208,185 L 186,180 L 182,145 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.2" />
-              <!-- Cổ lập lĩnh & cổ lót trắng -->
-              <rect x="126" y="65" width="28" height="18" rx="3" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.4" />
-              <rect x="129" y="66" width="22" height="4" fill="#F5F2EB" />
-              <!-- Nẹp áo vắt chéo & 5 cúc vàng đất -->
-              <path d="M 140,83 Q 156,105 160,128 L 160,205" fill="none" stroke="#1C2B26" stroke-width="1.4" />
-              <circle cx="140" cy="82" r="2.8" fill="#C9A66B" stroke="#7A5338" stroke-width="0.8" />
-              <circle cx="150" cy="98" r="2.8" fill="#C9A66B" stroke="#7A5338" stroke-width="0.8" />
-              <circle cx="158" cy="118" r="2.8" fill="#C9A66B" stroke="#7A5338" stroke-width="0.8" />
-              <circle cx="160" cy="146" r="2.8" fill="#C9A66B" stroke="#7A5338" stroke-width="0.8" />
-              <circle cx="160" cy="180" r="2.8" fill="#C9A66B" stroke="#7A5338" stroke-width="0.8" />
-            `
-                : `
-              <!-- Áo Bà Ba Thanh Thoát -->
-              <path d="M 116,84 Q 140,94 164,84 L 178,140 L 188,255 L 92,255 L 102,140 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.6" />
-              <path d="M 116,84 Q 140,94 164,84 L 178,140 L 188,255 L 92,255 L 102,140 Z" fill="url(#sheen-${outfit.id})" />
-              <path d="M 116,86 L 76,115 L 74,185 L 98,180 L 102,140 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.2" />
-              <path d="M 164,86 L 204,115 L 206,185 L 182,180 L 178,140 Z" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1.2" />
-              <line x1="140" y1="94" x2="140" y2="252" stroke="#1C2B26" stroke-width="1.4" />
-              <circle cx="140" cy="115" r="2.4" fill="#C9A66B" />
-              <circle cx="140" cy="140" r="2.4" fill="#C9A66B" />
-              <circle cx="140" cy="165" r="2.4" fill="#C9A66B" />
-              <circle cx="140" cy="190" r="2.4" fill="#C9A66B" />
-              <circle cx="140" cy="215" r="2.4" fill="#C9A66B" />
-              <!-- Túi áo mộc -->
-              <rect x="114" y="210" width="16" height="20" rx="2" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1" />
-              <rect x="150" y="210" width="16" height="20" rx="2" fill="${outfit.color}" stroke="#1C2B26" stroke-width="1" />
-            `
-            }
-
-            ${
-              outfit.accessory === 'KHAN_RAN'
-                ? `
-              <path d="M 126,88 L 122,215 L 132,215 L 134,92 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1" />
-              <path d="M 154,88 L 158,215 L 148,215 L 146,92 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1" />
-              <line x1="124" y1="130" x2="132" y2="130" stroke="#1C2B26" stroke-width="1.5" />
-              <line x1="123" y1="160" x2="131" y2="160" stroke="#1C2B26" stroke-width="1.5" />
-              <line x1="150" y1="130" x2="157" y2="130" stroke="#1C2B26" stroke-width="1.5" />
-              <line x1="150" y1="160" x2="157" y2="160" stroke="#1C2B26" stroke-width="1.5" />
-            `
-                : `
-              <g transform="translate(194, 185) rotate(-20) scale(0.65)">
-                <path d="M -40,-35 Q 0,-65 40,-35 L 25,-15 Q 0,-30 -25,-15 Z" fill="#F5F2EB" stroke="#C9A66B" stroke-width="1.2" />
-                <path d="M -15,-40 Q 0,-50 15,-38" stroke="#4A8577" stroke-width="1.8" fill="none" />
-              </g>
-            `
-            }
-          </svg>
+          <div class="card-image-wrap" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 16px;">
+            ${outfit.imageUrl ? `
+              <img src="${outfit.imageUrl}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
+            ` : ''}
+            <div class="card-no-image-placeholder" style="display: ${outfit.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 16px; width: 100%; height: 100%; box-sizing: border-box;">
+              <div style="font-size: 3rem; opacity: 0.4;">🏛️</div>
+              <p style="font-family: var(--font-body); font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.5; max-width: 220px; margin: 0;">
+                Tổ hợp này chưa có ảnh minh họa demo.
+              </p>
+              <span style="font-size: 0.74rem; color: var(--color-gold, #C9A66B); font-weight: 500;">
+                ${outfit.title}
+              </span>
+            </div>
+          </div>
 
           <div class="card-stamp-feedback card-stamp-like">THÍCH</div>
           <div class="card-stamp-feedback card-stamp-dislike">BỎ QUA</div>

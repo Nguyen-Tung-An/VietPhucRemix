@@ -328,3 +328,152 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* ==========================================================================
+   MODAL HỒ SƠ NGƯỜI MẶC (PROFILE MODAL)
+   ========================================================================== */
+.profile-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 23, 20, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.profile-modal-backdrop.active {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.profile-modal-container {
+  background: var(--color-bg, #FAF7F0);
+  border: 1px solid var(--color-card-border, rgba(74, 133, 119, 0.25));
+  padding: 24px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  animation: profileModalIn 0.25s ease-out;
+}
+
+@keyframes profileModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-modal-seal {
+  font-size: 1.3rem;
+}
+
+.profile-modal-title {
+  font-family: var(--font-title, 'Cinzel', serif);
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #1C2B26);
+}
+
+.profile-modal-desc {
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #5E6D66);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.profile-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--color-card-border, rgba(74, 133, 119, 0.25));
+  background: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
+  font-size: 0.88rem;
+  color: var(--color-text-primary, #1C2B26);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-input:focus {
+  border-color: var(--color-accent-secondary, #4A8577);
+  box-shadow: 0 0 0 3px rgba(74, 133, 119, 0.15);
+}
+
+.profile-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-profile-secondary {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-card-border, rgba(74, 133, 119, 0.25));
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-text-primary, #1C2B26);
+  transition: all 0.2s ease;
+}
+
+.btn-profile-secondary:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-profile-primary {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #4A8577, #2A5A4E);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
+  font-weight: 600;
+  font-size: 0.88rem;
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-profile-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.4);
+}

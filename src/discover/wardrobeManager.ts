@@ -77,27 +77,11 @@ export class WardrobeManager {
       const matchPct = Math.min(99, Math.max(65, Math.round(70 + score * 4)));
 
       card.innerHTML = `
-        <div class="wardrobe-card-thumb">
-          <svg viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="25" r="14" fill="#F7DCBF" />
-            <path d="M 40,25 C 40,10 60,10 60,25 Z" fill="#1C1817" />
-            <path d="M 38,40 Q 50,42 62,40 L 72,110 L 28,110 Z" fill="${item.color}" stroke="#121110" stroke-width="1.2" />
-            ${
-              item.garment === 'AO_NGU_THAN'
-                ? `
-              <path d="M 50,40 Q 56,48 60,60 L 60,95" fill="none" stroke="#121110" stroke-width="1" />
-              <circle cx="54" cy="45" r="1.6" fill="#E5A93C" />
-              <circle cx="57" cy="53" r="1.6" fill="#E5A93C" />
-              <circle cx="59" cy="62" r="1.6" fill="#E5A93C" />
-            `
-                : `
-              <line x1="50" y1="40" x2="50" y2="105" stroke="#121110" stroke-width="1" />
-              <circle cx="50" cy="50" r="1.5" fill="#E5A93C" />
-              <circle cx="50" cy="65" r="1.5" fill="#E5A93C" />
-              <circle cx="50" cy="80" r="1.5" fill="#E5A93C" />
-            `
-            }
-          </svg>
+        <div class="wardrobe-card-thumb" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.08); border-radius: 8px; width: 64px; height: 80px; flex-shrink: 0;">
+          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="wardrobe-thumb-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.wardrobe-thumb-placeholder'); if (ph) ph.style.display='flex';" />` : ''}
+          <div class="wardrobe-thumb-placeholder" style="display: ${item.imageUrl ? 'none' : 'flex'}; width: 100%; height: 100%; align-items: center; justify-content: center;">
+            <span style="font-size: 1.4rem; opacity: 0.45;">🏛️</span>
+          </div>
         </div>
         <div class="wardrobe-card-info">
           <h4 class="wardrobe-card-title">${item.title}</h4>

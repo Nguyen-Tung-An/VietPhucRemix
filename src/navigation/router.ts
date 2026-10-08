@@ -359,7 +359,15 @@ export class AppRouter {
       this.switchTab('discover');
     });
 
-    // Tab Profile — mở modal hồ sơ cá nhân
+    // Tab Profile — mở/đóng modal hồ sơ cá nhân
+    const closeProfile = () => {
+      const modal = document.getElementById('profile-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+      }
+    };
+
     const openProfile = () => {
       const modal = document.getElementById('profile-modal');
       if (!modal) return;
@@ -377,6 +385,7 @@ export class AppRouter {
         }
       } catch (e) {}
       modal.style.display = 'flex';
+      modal.classList.add('active');
     };
 
     document.getElementById('tab-profile')?.addEventListener('click', () => {
@@ -392,8 +401,8 @@ export class AppRouter {
 
     // Đóng modal
     document.getElementById('btn-close-profile')?.addEventListener('click', () => {
-      const modal = document.getElementById('profile-modal');
-      if (modal) modal.style.display = 'none';
+      Sound.playClick();
+      closeProfile();
     });
 
     // Lưu profile vào localStorage
@@ -407,8 +416,7 @@ export class AppRouter {
         hair: (document.getElementById('profile-hair') as HTMLInputElement)?.value?.trim() || '',
       };
       localStorage.setItem('viet_y_user_profile', JSON.stringify(profile));
-      const modal = document.getElementById('profile-modal');
-      if (modal) modal.style.display = 'none';
+      closeProfile();
       this.showToast(`✅ Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}! AI sẽ tư vấn phù hợp hơn.`);
       Sound.playChime();
     });
@@ -416,7 +424,14 @@ export class AppRouter {
     // Đóng modal khi bấm ra ngoài backdrop
     document.getElementById('profile-modal')?.addEventListener('click', (e) => {
       if (e.target === document.getElementById('profile-modal')) {
-        (document.getElementById('profile-modal') as HTMLElement).style.display = 'none';
+        closeProfile();
+      }
+    });
+
+    // Đóng modal bằng phím Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeProfile();
       }
     });
   }

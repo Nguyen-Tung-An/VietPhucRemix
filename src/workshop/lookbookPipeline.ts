@@ -13,10 +13,11 @@ export class LookbookPipeline {
     const btnGen = document.getElementById('btn-generate-ai-image') as HTMLButtonElement | null;
     const lookbookContainer = document.getElementById('ai-lookbook-container');
     const lookbookImg = document.getElementById('ai-lookbook-img') as HTMLImageElement | null;
-    const svgEl = document.getElementById('nguthan-svg');
     const modePills = document.getElementById('artwork-mode-pills');
     const artworkFrame = document.getElementById('artwork-display-frame');
     const vintageBadge = document.getElementById('vintage-sketch-badge');
+    const workshopImg = document.getElementById('workshop-artwork-image');
+    const workshopPlaceholder = document.getElementById('workshop-no-image-placeholder');
 
     // 1. Kích hoạt hiệu ứng Mài Vóc (Polishing Motion)
     if (overlay) {
@@ -82,7 +83,8 @@ export class LookbookPipeline {
       }
 
       setTimeout(() => {
-        if (svgEl) svgEl.style.display = 'none';
+        if (workshopImg) workshopImg.style.display = 'none';
+        if (workshopPlaceholder) workshopPlaceholder.style.display = 'none';
         if (lookbookContainer) lookbookContainer.style.display = 'flex';
         if (modePills) modePills.style.display = 'inline-flex';
         if (vintageBadge) vintageBadge.style.display = 'none';
@@ -95,7 +97,7 @@ export class LookbookPipeline {
         this.showToast('✨ Ảnh Lookbook Thời Trang AI mài vóc hoàn mỹ!');
       }, 800);
     } else {
-      // 2. CƠ CHẾ DỰ PHÒNG (FALLBACK): 2D SVG Phác Thảo hiệu ứng giấy dó hoài cổ
+      // 2. CƠ CHẾ DỰ PHÒNG (FALLBACK)
       if (overlay) {
         overlay.classList.add('fade-out');
         overlay.classList.remove('active');
@@ -103,13 +105,15 @@ export class LookbookPipeline {
 
       setTimeout(() => {
         if (lookbookContainer) lookbookContainer.style.display = 'none';
-        if (svgEl) svgEl.style.display = 'block';
-        if (artworkFrame) artworkFrame.classList.add('do-paper-vintage');
-        if (vintageBadge) vintageBadge.style.display = 'inline-flex';
+        if (workshopImg && workshopImg.getAttribute('src')) {
+          workshopImg.style.display = 'block';
+        } else if (workshopPlaceholder) {
+          workshopPlaceholder.style.display = 'flex';
+        }
         if (modePills) modePills.style.display = 'none';
 
         Sound.playClick();
-        this.showToast('Bản phác thảo nghệ thuật đã sẵn sàng dành cho bạn');
+        this.showToast('Tổ hợp hiện tại đã được ghi nhận trong xưởng phối');
       }, 400);
     }
 
@@ -128,14 +132,19 @@ export class LookbookPipeline {
     const btnDownloadLookbook = document.getElementById('btn-download-lookbook');
     const btnModeSketch = document.getElementById('btn-mode-sketch');
     const btnModeLookbook = document.getElementById('btn-mode-lookbook');
-    const svgArtwork = document.getElementById('nguthan-svg');
+    const workshopArtworkImg = document.getElementById('workshop-artwork-image');
+    const workshopNoImg = document.getElementById('workshop-no-image-placeholder');
     const lookbookContainer = document.getElementById('ai-lookbook-container');
     const lookbookImg = document.getElementById('ai-lookbook-img') as HTMLImageElement | null;
 
     if (btnToggleSketch) {
       btnToggleSketch.addEventListener('click', () => {
         Sound.playClick();
-        if (svgArtwork) svgArtwork.style.display = 'block';
+        if (workshopArtworkImg && workshopArtworkImg.getAttribute('src')) {
+          workshopArtworkImg.style.display = 'block';
+        } else if (workshopNoImg) {
+          workshopNoImg.style.display = 'flex';
+        }
         if (lookbookContainer) lookbookContainer.style.display = 'none';
         if (btnModeSketch) btnModeSketch.classList.add('active');
         if (btnModeLookbook) btnModeLookbook.classList.remove('active');
@@ -145,7 +154,11 @@ export class LookbookPipeline {
     if (btnModeSketch) {
       btnModeSketch.addEventListener('click', () => {
         Sound.playClick();
-        if (svgArtwork) svgArtwork.style.display = 'block';
+        if (workshopArtworkImg && workshopArtworkImg.getAttribute('src')) {
+          workshopArtworkImg.style.display = 'block';
+        } else if (workshopNoImg) {
+          workshopNoImg.style.display = 'flex';
+        }
         if (lookbookContainer) lookbookContainer.style.display = 'none';
         btnModeSketch.classList.add('active');
         if (btnModeLookbook) btnModeLookbook.classList.remove('active');
@@ -156,7 +169,8 @@ export class LookbookPipeline {
       btnModeLookbook.addEventListener('click', () => {
         Sound.playClick();
         if (lookbookImg && lookbookImg.src) {
-          if (svgArtwork) svgArtwork.style.display = 'none';
+          if (workshopArtworkImg) workshopArtworkImg.style.display = 'none';
+          if (workshopNoImg) workshopNoImg.style.display = 'none';
           if (lookbookContainer) lookbookContainer.style.display = 'flex';
           btnModeLookbook.classList.add('active');
           if (btnModeSketch) btnModeSketch.classList.remove('active');

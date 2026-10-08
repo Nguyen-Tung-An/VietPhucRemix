@@ -71,20 +71,20 @@ export class LookbookEngine {
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', `Xem chi tiết ${item.title}`);
 
-      // Sinh Croquis SVG chuẩn Lụa Thanh cho từng ô
-      const isNguThan = item.garment === 'AO_NGU_THAN';
-      const croquisSvg = isNguThan
-        ? this.generateNguThanSvg(item.color)
-        : this.generateBaBaSvg(item.color);
-
       card.innerHTML = `
         <div class="lookbook-card-top-tag">
           <span>✨</span>
           <span>${item.eventLabel || 'Lụa Thanh'}</span>
         </div>
 
-        <div class="lookbook-card-thumb-box">
-          ${croquisSvg}
+        <div class="lookbook-card-thumb-box" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.06); border-radius: 12px; width: 100%; height: 180px;">
+          ${item.imageUrl ? `
+            <img src="${item.imageUrl}" alt="${item.title}" class="lookbook-card-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.lookbook-card-no-img'); if (ph) ph.style.display='flex';" />
+          ` : ''}
+          <div class="lookbook-card-no-img" style="display: ${item.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; width: 100%; height: 100%;">
+            <span style="font-size: 2.2rem; opacity: 0.4;">🏛️</span>
+            <span style="font-family: var(--font-body); font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.4;">Tổ hợp này chưa có ảnh minh họa demo</span>
+          </div>
         </div>
 
         <div class="lookbook-card-meta">
@@ -181,57 +181,6 @@ export class LookbookEngine {
         appRouter.showToast('✨ Đã sao chép liên kết chia sẻ Lookbook Lụa Thanh của bạn!');
       }
     }, 700);
-  }
-
-  /**
-   * Sinh SVG Croquis Áo Ngũ Thân thu nhỏ tinh xảo
-   */
-  private generateNguThanSvg(colorHex: string): string {
-    return `
-      <svg class="lookbook-card-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="100" cy="120" rx="70" ry="90" fill="rgba(74, 133, 119, 0.08)" />
-        <ellipse cx="100" cy="36" rx="14" ry="17" fill="#F9E2CD" stroke="#5E402D" stroke-width="1" />
-        <path d="M 85,35 C 85,18 115,18 115,35 Z" fill="#1C2B26" />
-        <!-- Quần trắng ngà -->
-        <path d="M 86,140 L 78,215 L 96,215 L 98,140 Z" fill="#FAF7F0" stroke="#D3CDC2" stroke-width="1" />
-        <path d="M 102,140 L 104,215 L 122,215 L 114,140 Z" fill="#FAF7F0" stroke="#D3CDC2" stroke-width="1" />
-        <!-- Thân áo ngũ thân -->
-        <path d="M 82,56 Q 100,66 118,56 L 132,150 L 68,150 Z" fill="${colorHex}" stroke="#1C2B26" stroke-width="1.3" />
-        <!-- Tay chẽn -->
-        <path d="M 82,58 L 56,95 L 68,100 L 86,76 Z" fill="${colorHex}" stroke="#1C2B26" stroke-width="1.2" />
-        <path d="M 118,58 L 144,95 L 132,100 L 114,76 Z" fill="${colorHex}" stroke="#1C2B26" stroke-width="1.2" />
-        <!-- Cổ lập lĩnh & Cúc vàng 3D -->
-        <rect x="91" y="46" width="18" height="12" rx="2" fill="${colorHex}" stroke="#1C2B26" stroke-width="1.2" />
-        <path d="M 100,58 Q 110,72 114,90 L 114,140" fill="none" stroke="#1C2B26" stroke-width="1.2" />
-        <circle cx="100" cy="58" r="2.2" fill="#C9A66B" stroke="#7A5338" stroke-width="0.5" />
-        <circle cx="107" cy="68" r="2.2" fill="#C9A66B" stroke="#7A5338" stroke-width="0.5" />
-        <circle cx="112" cy="80" r="2.2" fill="#C9A66B" stroke="#7A5338" stroke-width="0.5" />
-      </svg>
-    `;
-  }
-
-  /**
-   * Sinh SVG Croquis Áo Bà Ba thu nhỏ tinh xảo
-   */
-  private generateBaBaSvg(colorHex: string): string {
-    return `
-      <svg class="lookbook-card-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="100" cy="120" rx="70" ry="90" fill="rgba(74, 133, 119, 0.08)" />
-        <ellipse cx="100" cy="36" rx="14" ry="17" fill="#F9E2CD" stroke="#5E402D" stroke-width="1" />
-        <path d="M 86,36 C 86,18 114,18 114,36 Z" fill="#1C2B26" />
-        <!-- Quần suông đen rêu -->
-        <path d="M 86,145 L 80,215 L 96,215 L 98,145 Z" fill="#1C2B26" />
-        <path d="M 102,145 L 104,215 L 120,215 L 114,145 Z" fill="#1C2B26" />
-        <!-- Thân áo bà ba xẻ tà -->
-        <path d="M 82,56 Q 100,66 118,56 L 130,145 L 70,145 Z" fill="${colorHex}" stroke="#1C2B26" stroke-width="1.3" />
-        <!-- Hàng cúc giữa -->
-        <line x1="100" y1="62" x2="100" y2="142" stroke="#1C2B26" stroke-width="1.3" />
-        <circle cx="100" cy="74" r="2" fill="#C9A66B" />
-        <circle cx="100" cy="92" r="2" fill="#C9A66B" />
-        <circle cx="100" cy="110" r="2" fill="#C9A66B" />
-        <circle cx="100" cy="128" r="2" fill="#C9A66B" />
-      </svg>
-    `;
   }
 }
 

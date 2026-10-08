@@ -21,6 +21,8 @@ export async function fetchStylingSuggestionsAPI(
     garment_type: string;
     primary_color: string;
     style_mode?: string;
+    styles?: string[];
+    creativity_level?: number;
     personality?: string;
     user_profile?: any;
   },

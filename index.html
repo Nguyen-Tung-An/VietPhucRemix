@@ -201,331 +201,229 @@
   </section>
 
   <!-- ============================================================
-       SECTION 2: MÀN HÌNH PHỐI ĐỒ TƯƠNG TÁC — CONCEPT "LỤA THANH"
-       Bố cục dọc 2 tầng chuẩn Mobile-First (60% Stage / 40% Bento Sheet)
+       SECTION 2: MÀN HÌNH PHỐI ĐỒ TƯƠNG TÁC (WORKSHOP)
+       - Ban đầu chỉ xuất hiện 1 cột Studio
+       - Cột Tổng hợp Thẩm định & Gợi ý AI sẽ pop-up xuất hiện bên cạnh khi nhấn "Xem Gợi Ý AI"
        ============================================================ -->
   <section id="create-scene" aria-label="Màn hình phối đồ tương tác">
-    <div class="workshop-container">
+    <div class="workshop-container" id="workshop-container">
 
       <!-- ==========================================================
-           TẦNG TRÊN (KHOẢNG 60% CHIỀU CAO MÀN HÌNH)
-           Khung hiển thị lớn hình minh họa trang phục đang được phối
+           CỘT TỔNG HỢP THẨM ĐỊNH & GỢI Ý AI (AI SYNTHESIS & HERITAGE COLUMN)
+           Ban đầu ẩn đi (display: none). Sẽ pop-up xuất hiện bên cạnh Studio
+           ngay khi người dùng nhấn "Xem Gợi Ý AI".
            ========================================================== -->
-      <header class="workshop-stage-tier" id="garment-canvas">
-        <div class="stage-top-bar">
-          <button type="button" id="btn-back-landing" class="btn-stage-back" title="Về Tiền Sảnh 3D" aria-label="Về Tiền Sảnh 3D">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-            <span>Tiền Sảnh</span>
-          </button>
-          <div class="stage-title-pill">
-            <span class="stage-title-text" id="current-garment-title">Áo Ngũ Thân Lập Lĩnh</span>
-            <span class="stage-era-sub-badge" id="current-garment-era-pill">Triều Nguyễn (1802–1945)</span>
-          </div>
-        </div>
-
-        <!-- Khung Vector SVG minh họa trang phục High-Fashion Croquis -->
-        <div class="stage-svg-wrapper" id="artwork-display-frame">
-          <svg id="nguthan-svg" class="croquis-svg-art" viewBox="0 0 500 680" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <!-- Ánh sáng bóng mờ lướt trên tơ lụa -->
-              <linearGradient id="silk-sheen-sheer" x1="20%" y1="0%" x2="80%" y2="100%">
-                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.32" />
-                <stop offset="40%" stop-color="#FFFFFF" stop-opacity="0.08" />
-                <stop offset="70%" stop-color="#000000" stop-opacity="0.0" />
-                <stop offset="100%" stop-color="#000000" stop-opacity="0.18" />
-              </linearGradient>
-
-              <!-- Cúc gốm mạ vàng đất 3D -->
-              <radialGradient id="button-gold-subtle" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#FFF8E0" />
-                <stop offset="50%" stop-color="#C9A66B" />
-                <stop offset="100%" stop-color="#7A5338" />
-              </radialGradient>
-            </defs>
-
-            <!-- Vầng hào quang ngọc sương nhẹ phía sau -->
-            <ellipse cx="250" cy="340" rx="200" ry="260" fill="rgba(74, 133, 119, 0.06)" />
-
-            <!-- LỚP THÂN & QUẦN SUÔNG TRẮNG NGÀ -->
-            <g id="layer-body">
-              <!-- Quần lụa suông rủ thẳng qua cổ chân -->
-              <path d="M 218,440 C 214,495 208,565 204,635 L 244,637 C 246,575 248,505 249,440 Z" fill="#F5F2EB" stroke="#D3CDC2" stroke-width="1.2" />
-              <path d="M 251,440 C 252,505 254,575 256,637 L 296,635 C 292,565 286,495 282,440 Z" fill="#FAF7F0" stroke="#D3CDC2" stroke-width="1.2" />
-              <!-- Hài vải thêu thanh mảnh -->
-              <ellipse cx="224" cy="638" rx="14" ry="5" fill="#1C2B26" />
-              <ellipse cx="276" cy="638" rx="14" ry="5" fill="#1C2B26" />
-              <path d="M 218,638 Q 224,635 230,638" stroke="#C9A66B" stroke-width="1" fill="none" />
-              <path d="M 270,638 Q 276,635 282,638" stroke="#C9A66B" stroke-width="1" fill="none" />
-
-              <!-- Cổ cao thanh thoát & Vai xuôi tự nhiên -->
-              <path d="M 239,138 C 239,155 238,168 236,182 L 264,182 C 262,168 261,155 261,138 Z" fill="#F9E2CD" stroke="#5E402D" stroke-width="1.2" />
-              <ellipse cx="250" cy="116" rx="22" ry="28" fill="#F9E2CD" stroke="#5E402D" stroke-width="1.4" />
-              <!-- Nét mặt thanh tú tối giản -->
-              <path d="M 241,114 Q 244,112 247,114" stroke="#4A2E1B" stroke-width="1.2" fill="none" stroke-linecap="round" />
-              <path d="M 253,114 Q 256,112 259,114" stroke="#4A2E1B" stroke-width="1.2" fill="none" stroke-linecap="round" />
-              <path d="M 250,118 L 249,124 L 252,124" stroke="#8C6246" stroke-width="1.2" fill="none" stroke-linecap="round" />
-              <path d="M 246,131 Q 250,134 254,131" stroke="#F4C9D6" stroke-width="1.6" fill="none" stroke-linecap="round" />
-            </g>
-
-            <!-- LỚP KIỂU TÓC (ĐỔI ĐỘNG) -->
-            <g id="layer-hairstyle">
-              <!-- Mặc định: Búi cài trâm -->
-              <g id="hair-bui-tram">
-                <path d="M 228,116 C 228,84 272,84 272,116 C 272,96 228,96 228,116 Z" fill="#1C2B26" />
-                <circle cx="250" cy="80" r="16" fill="#1C2B26" stroke="#0E1714" stroke-width="1" />
-                <line x1="234" y1="78" x2="266" y2="78" stroke="#C9A66B" stroke-width="2.2" stroke-linecap="round" />
-                <circle cx="266" cy="78" r="3" fill="#F4C9D6" stroke="#C9A66B" stroke-width="1" />
-              </g>
-              <!-- Xõa tự nhiên -->
-              <g id="hair-xoa-dai" style="display: none;">
-                <path d="M 226,116 C 226,82 274,82 274,116 C 274,96 226,96 226,116 Z" fill="#1C2B26" />
-                <path d="M 226,116 C 220,150 216,190 220,230 L 230,230 C 228,190 232,150 236,120 Z" fill="#1C2B26" />
-                <path d="M 274,116 C 280,150 284,190 280,230 L 270,230 C 272,190 268,150 264,120 Z" fill="#1C2B26" />
-              </g>
-              <!-- Vấn khăn lụa -->
-              <g id="hair-van-khan" style="display: none;">
-                <ellipse cx="250" cy="98" rx="28" ry="14" fill="#4A8577" stroke="#1C2B26" stroke-width="1.2" />
-                <ellipse cx="250" cy="95" rx="24" ry="10" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1" />
-              </g>
-              <!-- Buộc thấp -->
-              <g id="hair-buoc-thap" style="display: none;">
-                <path d="M 228,116 C 228,84 272,84 272,116 C 272,96 228,96 228,116 Z" fill="#1C2B26" />
-                <path d="M 246,140 C 246,165 244,195 242,215 L 248,215 C 250,195 252,165 250,140 Z" fill="#1C2B26" />
-                <circle cx="248" cy="144" r="3" fill="#C9A66B" />
-              </g>
-            </g>
-
-            <!-- LỚP ÁO CHÍNH (ĐỔI MÀU TỨC THÌ THEO VAR VÀ FILL) -->
-            <g id="layer-main-garment">
-              <!-- Áo Ngũ Thân Lập Lĩnh (Mặc định) -->
-              <g id="garment-nguthan-group">
-                <!-- Thân tà áo rủ dài -->
-                <path id="nguthan-body-fill" d="M 216,182 C 190,190 178,215 168,260 L 140,430 L 360,430 L 332,260 C 322,215 310,190 284,182 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
-                <path d="M 216,182 C 190,190 178,215 168,260 L 140,430 L 360,430 L 332,260 C 322,215 310,190 284,182 Z" fill="url(#silk-sheen-sheer)" />
-                <!-- Tay chẽn thuôn nhẹ -->
-                <path id="nguthan-left-sleeve" d="M 190,188 L 130,250 L 120,360 L 148,355 L 168,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
-                <path id="nguthan-right-sleeve" d="M 310,188 L 370,250 L 380,360 L 352,355 L 332,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
-                <!-- Cổ áo lập lĩnh ôm khít & Cổ lót trắng ngà -->
-                <rect id="collar-outer" x="234" y="162" width="32" height="24" rx="4" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
-                <rect x="238" y="164" width="24" height="5" rx="1.5" fill="#F5F2EB" />
-                <!-- Nẹp áo uốn S-Curve chéo sang nách phải -->
-                <path d="M 250,186 Q 272,216 280,248 L 280,350" fill="none" stroke="#1C2B26" stroke-width="1.8" />
-                <!-- 5 Cúc gốm mạ vàng đất 3D tượng trưng Ngũ Thường -->
-                <circle cx="250" cy="186" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
-                <circle cx="264" cy="208" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
-                <circle cx="274" cy="235" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
-                <circle cx="280" cy="272" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
-                <circle cx="280" cy="316" r="3.6" fill="url(#button-gold-subtle)" stroke="#7A5338" stroke-width="0.8" />
-              </g>
-
-              <!-- Áo Bà Ba Nam Bộ (Hiện khi chọn phong cách mộc mạc) -->
-              <g id="garment-baba-group" style="display: none;">
-                <path id="baba-body-fill" d="M 216,184 Q 250,202 284,184 L 305,255 L 320,400 L 180,400 L 195,255 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.8" />
-                <path d="M 216,184 Q 250,202 284,184 L 305,255 L 320,400 L 180,400 L 195,255 Z" fill="url(#silk-sheen-sheer)" />
-                <path id="baba-left-sleeve" d="M 190,192 L 132,250 L 124,355 L 152,352 L 172,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
-                <path id="baba-right-sleeve" d="M 310,192 L 368,250 L 376,355 L 348,352 L 328,260 Z" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.5" />
-                <line x1="250" y1="198" x2="250" y2="395" stroke="#1C2B26" stroke-width="1.8" />
-                <circle cx="250" cy="225" r="3.2" fill="url(#button-gold-subtle)" />
-                <circle cx="250" cy="260" r="3.2" fill="url(#button-gold-subtle)" />
-                <circle cx="250" cy="295" r="3.2" fill="url(#button-gold-subtle)" />
-                <circle cx="250" cy="330" r="3.2" fill="url(#button-gold-subtle)" />
-                <rect x="205" y="340" width="28" height="32" rx="3" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.4" id="baba-pocket-left" />
-                <rect x="267" y="340" width="28" height="32" rx="3" fill="#F4C9D6" stroke="#1C2B26" stroke-width="1.4" id="baba-pocket-right" />
-              </g>
-            </g>
-
-            <!-- LỚP PHỤ KIỆN (BẬT / TẮT TỨC THÌ) -->
-            <g id="layer-accessories">
-              <!-- 1. Quạt giấy xếp thư pháp (Mặc định) -->
-              <g id="acc-fan" transform="translate(365, 345) rotate(-18) scale(0.95)">
-                <ellipse cx="0" cy="25" rx="8" ry="6" fill="#F9E2CD" />
-                <line x1="0" y1="25" x2="-48" y2="-55" stroke="#4A2E1B" stroke-width="2.5" />
-                <line x1="0" y1="25" x2="-20" y2="-65" stroke="#4A2E1B" stroke-width="2" />
-                <line x1="0" y1="25" x2="20" y2="-65" stroke="#4A2E1B" stroke-width="2" />
-                <line x1="0" y1="25" x2="48" y2="-55" stroke="#4A2E1B" stroke-width="2.5" />
-                <path d="M -54,-45 Q 0,-85 54,-45 L 34,-20 Q 0,-45 -34,-20 Z" fill="#F5F2EB" stroke="#C9A66B" stroke-width="1.5" />
-                <path d="M -22,-52 Q 0,-64 22,-50" stroke="#4A8577" stroke-width="2" fill="none" />
-                <circle cx="0" cy="25" r="4" fill="#C9A66B" />
-              </g>
-
-              <!-- 2. Khăn rằn sông nước -->
-              <g id="acc-scarf" style="display: none;">
-                <path d="M 230,180 Q 250,205 270,180" stroke="#F5F2EB" stroke-width="14" fill="none" stroke-linecap="round" />
-                <path d="M 228,185 L 218,370 L 234,370 L 244,195 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1.2" />
-                <path d="M 272,185 L 282,370 L 266,370 L 256,195 Z" fill="#F5F2EB" stroke="#1C2B26" stroke-width="1.2" />
-                <line x1="222" y1="230" x2="236" y2="230" stroke="#1C2B26" stroke-width="2" />
-                <line x1="220" y1="270" x2="234" y2="270" stroke="#1C2B26" stroke-width="2" />
-                <line x1="219" y1="310" x2="233" y2="310" stroke="#1C2B26" stroke-width="2" />
-                <line x1="264" y1="230" x2="278" y2="230" stroke="#1C2B26" stroke-width="2" />
-                <line x1="266" y1="270" x2="280" y2="270" stroke="#1C2B26" stroke-width="2" />
-                <line x1="267" y1="310" x2="281" y2="310" stroke="#1C2B26" stroke-width="2" />
-              </g>
-
-              <!-- 3. Trâm cài gốm vàng -->
-              <g id="acc-hairpin" style="display: none;">
-                <line x1="225" y1="74" x2="275" y2="74" stroke="#C9A66B" stroke-width="3" stroke-linecap="round" />
-                <circle cx="275" cy="74" r="5" fill="#4A8577" stroke="#C9A66B" stroke-width="1.5" />
-                <path d="M 275,79 Q 272,94 276,104" stroke="#C9A66B" stroke-width="1.5" fill="none" />
-              </g>
-
-              <!-- 4. Túi gấm thêu hoa -->
-              <g id="acc-pouch" style="display: none;" transform="translate(145, 340)">
-                <path d="M -15,-20 Q 0,-30 15,-20 L 18,15 Q 0,25 -18,15 Z" fill="#4A8577" stroke="#C9A66B" stroke-width="1.5" />
-                <line x1="0" y1="-25" x2="0" y2="-45" stroke="#C9A66B" stroke-width="1.5" />
-                <circle cx="0" cy="0" r="4" fill="#F4C9D6" />
-              </g>
-            </g>
-          </svg>
-
-          <!-- Thẻ Thông Báo Dáng Áo Khảo Cứu (Hiển thị khi chọn dáng áo chưa có bản vẽ vector demo) -->
-          <div id="stage-archival-placeholder" class="archival-placeholder-box" style="display: none;">
-            <div class="archival-placeholder-inner">
-              <div class="archival-seal-crest">🏛️</div>
-              <span class="archival-badge-tag">HỒ SƠ KHẢO CỨU DI SẢN</span>
-              <h4 class="archival-placeholder-title" id="archival-garment-name">Áo Nhật Bình Đối Khâm</h4>
-              <p class="archival-placeholder-desc">
-                Bản mẫu minh họa 3D/SVG của dáng áo này đang được Hội đồng phục dựng thủ công.
-              </p>
-              <div class="archival-demo-notice">
-                <span>💡 <em>Bản Demo Quota</em>: Toàn bộ cấu trúc di sản, quy chuẩn may đo, ngũ hành hòa sắc và kiêng kỵ vùng miền đã sẵn sàng để bạn thẩm định chuẩn xác 100%!</span>
-              </div>
-              <button type="button" class="btn-archival-inspect-prompt" id="btn-inspect-garment-prompt">
-                🖼️ Xem Cấu Trúc AI Prompt Của Dáng Áo Này
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- ==========================================================
-           CỘT 2 (DESKTOP) / GÓC NHÌN DI SẢN CHUYÊN SÂU (HERITAGE DEEP INSIGHT)
-           Tách riêng thành cột chiếm tỉ trọng vừa, nhiều nội dung di sản phong phú
-           (Niên đại, Cấu trúc may đo, Thẩm định sắc phục ngũ hành, Kiêng kỵ, Nguồn tư liệu)
-           ========================================================== -->
-      <section class="workshop-insight-tier" id="workshop-insight-column" aria-label="Góc nhìn di sản chuyên sâu">
-        <div class="insight-column-header">
-          <div class="insight-header-left">
-            <button type="button" id="btn-back-landing-insight" class="btn-stage-back" title="Về Tiền Sảnh" aria-label="Về Tiền Sảnh" style="margin-right: 12px;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-            <span class="insight-brand-icon">🏮</span>
+      <section class="workshop-ai-column" id="workshop-ai-column" aria-label="Tổng hợp thẩm định và gợi ý AI" style="display: none;">
+        <div class="ai-column-header">
+          <div class="ai-header-left">
+            <span class="ai-brand-icon">🏮</span>
             <div>
-              <h3 class="insight-main-title">Góc Nhìn Di Sản Chuyên Sâu</h3>
-              <p class="insight-sub-title">Khảo cứu từ Single Source of Truth</p>
+              <h3 class="ai-main-title">Tổng Hợp Thẩm Định & Gợi Ý AI</h3>
+              <p class="ai-sub-title">Phân tích sắc phục, vóc dáng cá nhân & quy chuẩn di sản</p>
             </div>
           </div>
-          <span class="insight-status-badge" id="workshop-insight-status">✓ Chuẩn Mực Di Sản</span>
+          <span class="ai-status-badge" id="ai-guardrail-status-pill">✓ Chuẩn Mực Di Sản</span>
         </div>
 
-        <div class="insight-cards-scroll">
-          <!-- 1. Niên Đại & Bối Cảnh Lịch Sử -->
-          <article class="insight-data-card">
-            <div class="insight-card-head">
-              <span class="insight-card-tag">📜 BỐI CẢNH LỊCH SỬ</span>
-              <span class="insight-card-era" id="insight-garment-era">Triều Nguyễn (1802–1945)</span>
+        <div class="ai-cards-scroll">
+          <!-- 1. Hàng Minh Họa Trực Quan Mẫu Áo, Mẫu Tóc, Phụ Kiện (Search Google Images & Gallery Strip) -->
+          <div class="ai-visual-strip-container">
+            <div class="ai-strip-title-row">
+              <span class="ai-strip-heading">🖼️ HÌNH ẢNH MINH HỌA DI SẢN</span>
+              <span class="ai-strip-subhint">Tra cứu trực quan Google Images</span>
             </div>
-            <p class="insight-card-text" id="insight-garment-context">
-              Lễ phục cổ truyền của người Việt, được vua Gia Long và Minh Mạng định chế thành quốc phục chính thống của toàn dân Đại Nam.
-            </p>
-          </article>
+            <div class="ai-visual-cards-row" id="ai-visual-cards-row">
+              <!-- Card 1: Dáng Áo -->
+              <div class="ai-visual-card" id="visual-card-garment">
+                <div class="ai-visual-thumb-wrap">
+                  <span class="ai-visual-thumb-icon">👘</span>
+                  <img id="visual-thumb-garment-img" src="/images/garments/ao-ngu-than.png" alt="Mẫu áo" class="ai-visual-thumb-img" onerror="this.style.display='none';" />
+                  <span class="ai-visual-tag">Dáng Áo</span>
+                </div>
+                <div class="ai-visual-meta">
+                  <strong class="ai-visual-name" id="visual-garment-name">Áo Ngũ Thân</strong>
+                  <span class="ai-visual-desc" id="visual-garment-desc">Lập lĩnh • Tay chẽn</span>
+                  <a href="https://www.google.com/search?tbm=isch&q=%C3%81o+ng%C5%A9+th%C3%A2n+l%E1%BA%ADp+l%C4%A9nh+Vi%E1%BB%87t+Nam" target="_blank" rel="noopener noreferrer" class="ai-visual-search-link" id="visual-garment-search-link">
+                    <span>🔍 Google Ảnh ↗</span>
+                  </a>
+                </div>
+              </div>
 
-          <!-- 2. Thẩm Định Hòa Sắc & Ngũ Hành (REAL-TIME COLOR EVALUATION) -->
+              <!-- Card 2: Kiểu Tóc -->
+              <div class="ai-visual-card" id="visual-card-hair">
+                <div class="ai-visual-thumb-wrap">
+                  <span class="ai-visual-thumb-icon">💇</span>
+                  <img id="visual-thumb-hair-img" src="/images/garments/outfit-1.png" alt="Kiểu tóc" class="ai-visual-thumb-img" onerror="this.style.display='none';" />
+                  <span class="ai-visual-tag">Kiểu Tóc</span>
+                </div>
+                <div class="ai-visual-meta">
+                  <strong class="ai-visual-name" id="visual-hair-name">Búi Tóc Cài Trâm</strong>
+                  <span class="ai-visual-desc" id="visual-hair-desc">Thanh nhã cổ truyền</span>
+                  <a href="https://www.google.com/search?tbm=isch&q=B%C3%BAi+t%C3%B3c+c%C3%A0i+tr%C3%A2m+c%E1%BB%95+ph%E1%BB%A5c" target="_blank" rel="noopener noreferrer" class="ai-visual-search-link" id="visual-hair-search-link">
+                    <span>🔍 Google Ảnh ↗</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Card 3: Phụ Kiện -->
+              <div class="ai-visual-card" id="visual-card-accessory">
+                <div class="ai-visual-thumb-wrap">
+                  <span class="ai-visual-thumb-icon">🪭</span>
+                  <img id="visual-thumb-acc-img" src="/images/patterns/pat-may-ngu-sac.png" alt="Phụ kiện" class="ai-visual-thumb-img" onerror="this.style.display='none';" />
+                  <span class="ai-visual-tag">Phụ Kiện</span>
+                </div>
+                <div class="ai-visual-meta">
+                  <strong class="ai-visual-name" id="visual-acc-name">Quạt Giấy Thư Pháp</strong>
+                  <span class="ai-visual-desc" id="visual-acc-desc">Đoan trang nho nhã</span>
+                  <a href="https://www.google.com/search?tbm=isch&q=Qu%E1%BA%A1t+gi%E1%BA%A5y+th%C6%B0+ph%C3%A1p+c%E1%BB%95+ph%E1%BB%A5c" target="_blank" rel="noopener noreferrer" class="ai-visual-search-link" id="visual-acc-search-link">
+                    <span>🔍 Google Ảnh ↗</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Phân Tích Màu Sắc Động Người Dùng Chọn (Từ Gemini API) -->
           <article class="insight-data-card color-harmony-highlight-card">
             <div class="insight-card-head">
-              <span class="insight-card-tag">🎨 THẨM ĐỊNH SẮC PHỤC & NGŨ HÀNH</span>
-              <span class="insight-element-pill" id="insight-color-element">Thổ Vị Trung Tâm</span>
+              <span class="insight-card-tag">🎨 PHÂN TÍCH SẮC PHỤC ĐỘNG</span>
+              <span class="insight-element-pill" id="ai-color-element">Thổ Hoàng Cúc</span>
             </div>
             <div class="insight-color-preview-row">
-              <span class="insight-color-dot" id="insight-color-dot" style="background-color: #F4C9D6;"></span>
+              <span class="insight-color-dot" id="ai-color-dot" style="background-color: #F4C9D6;"></span>
               <div class="insight-color-meta">
-                <strong id="insight-color-name">Hồng Phấn Sen</strong>
-                <span id="insight-harmony-rating">Độ Hòa Sắc: Hài Hòa Tinh Khôi</span>
+                <strong id="ai-color-name">Mã Sắc: #F4C9D6</strong>
+                <span id="ai-color-harmony">Độ Hòa Sắc: Hài Hòa Di Sản</span>
               </div>
             </div>
-            <p class="insight-card-text" id="insight-color-symbolism">
-              Sắc sen thanh tao biểu trưng cho sự thanh nhã và cốt cách tươi mới. Trong ngũ hành, đây là sắc mầu dung dưỡng sinh khí hòa nhã.
+            <p class="insight-card-text" id="ai-color-meaning">
+              Sắc độ ấm áp gợi cảm giác nền nã, dung dị, biểu trưng cho sự hòa nhã và cốt cách tươi mới trong nếp mặc người Việt.
             </p>
-            <div class="insight-color-event-note" id="insight-color-event-suitability">
-              🌸 Phù hợp: Lễ tân xuân nghênh tài đón lộc, dạo phố và hội xuân.
+            <div class="insight-color-event-note" id="ai-color-visual-tone">
+              🌸 Cảm giác thị giác: Tông sáng tươi mới, bừng sáng diện mạo.
             </div>
           </article>
 
-          <!-- 3. Cấu Trúc May Đo Bắt Buộc (Ground Truth) -->
+          <!-- 3. Độ Tương Thích Cá Nhân Người Dùng (Personal Compatibility) -->
+          <article class="insight-data-card personal-compat-card" id="ai-compat-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">👤 ĐỘ TƯƠNG THÍCH VỚI NGOẠI HÌNH CÁ NHÂN</span>
+              <span class="compat-status-badge" id="ai-compat-badge">Đã Phân Tích</span>
+            </div>
+            <div id="ai-compat-provided-content">
+              <div class="compat-subgroup">
+                <div class="compat-item-label">
+                  <span class="compat-icon">✨</span>
+                  <strong>Tác động lên sắc da:</strong>
+                </div>
+                <p class="compat-item-text" id="ai-skin-effect-text">
+                  Làn da sáng kết hợp cùng tông màu này giúp diện mạo rạng rỡ và tươi tắn tự nhiên.
+                </p>
+              </div>
+              <div class="compat-subgroup" style="margin-top: 10px;">
+                <div class="compat-item-label">
+                  <span class="compat-icon">📏</span>
+                  <strong>Tác động lên vóc dáng & chiều cao:</strong>
+                </div>
+                <p class="compat-item-text" id="ai-silhouette-effect-text">
+                  Dáng áo ngũ thân với các thân ghép dọc giúp kéo dài trục cơ thể, tạo cảm giác cao ráo, thanh mảnh và giấu khuyết điểm khéo léo.
+                </p>
+              </div>
+              <div class="compat-subgroup" style="margin-top: 10px;">
+                <div class="compat-item-label">
+                  <span class="compat-icon">✂️</span>
+                  <strong>Gợi ý may đo tối ưu:</strong>
+                </div>
+                <p class="compat-item-text" id="ai-tailoring-advice-text">
+                  Nên để tà áo cách mắt cá chân khoảng 18-22cm để tỷ lệ cơ thể trông cao ráo, đĩnh đạc nhất.
+                </p>
+              </div>
+            </div>
+            <!-- Khung nhắc nhẹ khi chưa nhập hồ sơ -->
+            <div id="ai-compat-missing-notice" class="compat-missing-box" style="display: none;">
+              <span class="compat-missing-icon">💡</span>
+              <p class="compat-missing-text" id="ai-missing-profile-msg">
+                Bạn chưa lưu đặc điểm ngoại hình trong mục Hồ Sơ. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận tư vấn độ tương thích cá nhân chuyên sâu!
+              </p>
+              <button type="button" class="btn-open-profile-quick" id="btn-quick-open-profile">
+                <span>👤 Mở Hồ Sơ Cá Nhân</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 4. Cảnh Báo Phụ Kiện Đúng Hay Không (Cultural Guardrail) -->
+          <article class="insight-data-card" id="ai-guardrail-card">
+            <div class="insight-card-head">
+              <span class="insight-card-tag">⚖️ ĐIỂN LỄ & CẢNH BÁO PHỤ KIỆN</span>
+              <span class="insight-taboo-flag" id="ai-guardrail-flag">✓ An Toàn Di Sản</span>
+            </div>
+            <p class="insight-card-text" id="ai-guardrail-advice">
+              Các phụ kiện được kết hợp hài hòa chuẩn mực với quy chuẩn di sản. Không có kiêng kỵ lịch sử nào.
+            </p>
+          </article>
+
+          <!-- 5. Gợi Ý Dáng Chụp Ảnh Nghệ Thuật -->
           <article class="insight-data-card">
             <div class="insight-card-head">
-              <span class="insight-card-tag">✂️ CẤU TRÚC MAY ĐO BẮT BUỘC</span>
+              <span class="insight-card-tag">📸 GỢI Ý DÁNG CHỤP ẢNH TÔN VÓC</span>
             </div>
-            <ul class="insight-features-list" id="insight-garment-features">
-              <li>Cổ áo lập lĩnh (cổ đứng vuông vức) cao từ 2-3 cm ôm khít cổ.</li>
-              <li>Cài 5 cúc bên nách phải tượng trưng cho Ngũ Thường (Nhân, Lễ, Nghĩa, Trí, Tín).</li>
-              <li>Năm thân áo khép kín (2 thân trước, 2 thân sau, 1 thân con bên trong).</li>
-            </ul>
-          </article>
-
-          <!-- 4. Quy Chuẩn Kiêng Kỵ Vùng Miền (Guardrail Rules) -->
-          <article class="insight-data-card" id="insight-taboo-card">
-            <div class="insight-card-head">
-              <span class="insight-card-tag">⚖️ ĐIỀU KIÊNG KỴ & LỆCH VÙNG MIỀN</span>
-              <span class="insight-taboo-flag" id="insight-taboo-status">An Toàn</span>
-            </div>
-            <p class="insight-card-text" id="insight-taboo-explanation">
-              Không kết hợp cùng phụ kiện đối nghịch vùng miền để giữ trọn điển lễ thời kỳ.
+            <p class="insight-card-text" id="ai-pose-text">
+              Đứng thẳng người đoan chính, một tay khẽ che quạt giấy ngang eo hoặc trước ngực, tay kia buông tà tự nhiên, ánh mắt nhìn thẳng thanh thoát.
             </p>
           </article>
 
-          <!-- 5. Nguồn Trích Dẫn Khảo Cứu Xác Thực (Citations) -->
-          <article class="insight-data-card citation-card">
+          <!-- 6. Mặc Trong 2-3 Dịp Gì -->
+          <article class="insight-data-card">
             <div class="insight-card-head">
-              <span class="insight-card-tag">🏛️ BẢO CHỨNG TƯ LIỆU UY TÍN</span>
+              <span class="insight-card-tag">🏮 DỊP MẶC PHÙ HỢP NHẤT</span>
             </div>
-            <div class="insight-citation-body">
-              <div class="citation-work-title" id="insight-citation-title">Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam 1009–1945</div>
-              <div class="citation-author-org" id="insight-citation-author">Bảo tàng Lịch sử Quốc gia & Nhà nghiên cứu Trần Quang Đức</div>
-              <a href="https://baotanglichsu.vn/vi/Articles/3097/15293/ngan-nam-ao-mu.html" target="_blank" rel="noopener noreferrer" class="insight-citation-link" id="insight-citation-url">
-                <span>Tra cứu hồ sơ di sản gốc ↗</span>
-              </a>
+            <div class="ai-occasions-chips" id="ai-occasions-chips-list">
+              <span class="ai-occasion-chip">🌸 Dạo phố Tết truyền thống & du xuân</span>
+              <span class="ai-occasion-chip">🎓 Chụp kỷ yếu tốt nghiệp / thanh xuân</span>
+              <span class="ai-occasion-chip">🏛️ Đi lễ chùa đầu năm & hội làng</span>
             </div>
           </article>
         </div>
       </section>
 
       <!-- ==========================================================
-           TẦNG DƯỚI (MOBILE) / CỘT 3 (DESKTOP) — STUDIO CONTROL SHEET
+           CỘT STUDIO ĐIỀU KHIỂN (STUDIO CONTROL SHEET)
+           Ban đầu xuất hiện duy nhất trên màn hình, căn giữa trang nhã
            ========================================================== -->
-      <footer class="workshop-sheet-tier" role="region" aria-label="Bảng tùy chọn phối đồ">
+      <footer class="workshop-sheet-tier" id="workshop-studio-column" role="region" aria-label="Bảng tùy chọn phối đồ">
         
         <!-- Tiêu đề Studio dành riêng cho Desktop -->
         <div class="workshop-desktop-header">
           <h3 class="workshop-desktop-title">Studio Phối Đồ Lụa Thanh</h3>
-          <p class="workshop-desktop-sub">Tùy biến sắc lụa, phụ kiện và kiểu dáng chuẩn phong vị đương đại</p>
+          <p class="workshop-desktop-sub">Tùy biến dáng áo, sắc lụa, phong cách & thẩm định phụ kiện AI</p>
         </div>
 
-        <!-- 4 Nhóm tùy chọn dạng Tab/Chip ngang (Dáng Áo, Màu Sắc, Phong Cách & Tính Cách, Gợi Ý AI & Tự Nhập) -->
+        <!-- 4 Nhóm tùy chọn dạng Tab/Chip ngang -->
         <nav class="sheet-tabs-nav" role="tablist" aria-label="Nhóm tùy chọn phối đồ">
           <button type="button" class="sheet-tab-btn active" id="tab-opt-garments" data-target="panel-garments" role="tab" aria-selected="true">
-            <span>👘</span> Dáng Áo (9)
+            <span>👘</span> <span class="tab-label-text">Dáng Áo</span>
+            <span class="tab-check-badge" id="badge-check-garment" style="display: none;">✓</span>
           </button>
           <button type="button" class="sheet-tab-btn" id="tab-opt-colors" data-target="panel-colors" role="tab" aria-selected="false">
-            <span>🎨</span> Màu Sắc
+            <span>🎨</span> <span class="tab-label-text">Màu Sắc</span>
+            <span class="tab-check-badge" id="badge-check-color" style="display: none;">✓</span>
           </button>
           <button type="button" class="sheet-tab-btn" id="tab-opt-styles" data-target="panel-styles" role="tab" aria-selected="false">
-            <span>🎭</span> Phong Cách
+            <span>🎭</span> <span class="tab-label-text">Phong Cách</span>
+            <span class="tab-check-badge" id="badge-check-style" style="display: none;">✓</span>
           </button>
-          <button type="button" class="sheet-tab-btn" id="tab-opt-ai-styling" data-target="panel-ai-styling" role="tab" aria-selected="false">
-            <span>✨</span> Gợi Ý AI & Tự Nhập
+          <button type="button" class="sheet-tab-btn sheet-tab-locked" id="tab-opt-ai-styling" data-target="panel-ai-styling" role="tab" aria-selected="false" title="Vui lòng chọn Dáng áo, Màu sắc và Phong cách trước">
+            <span>🪭</span> <span class="tab-label-text">Phụ Kiện</span>
+            <span class="tab-lock-indicator" id="tab-lock-indicator">🔒</span>
           </button>
         </nav>
 
         <!-- Container chứa các nhóm lựa chọn con -->
         <div class="sheet-sub-options-container">
           
-          <!-- NHÓM 0: DÁNG ÁO (CẢ 9 LOẠI ÁO DI SẢN CHUẨN MỰC) -->
+          <!-- NHÓM 0: DÁNG ÁO (9 LOẠI ÁO DI SẢN CHUẨN MỰC) -->
           <div class="sheet-options-panel active-panel" id="panel-garments" role="tabpanel">
-            <button type="button" class="sheet-option-card active" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
+            <button type="button" class="sheet-option-card" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
               <span class="sheet-option-icon">👘</span>
               <div class="sheet-option-texts">
                 <span class="sheet-option-label">Áo Ngũ Thân</span>
@@ -612,7 +510,7 @@
               <span class="heritage-palette-title">Hoặc chọn nhanh sắc lụa di sản:</span>
             </div>
             <div class="sheet-colors-row">
-              <button type="button" class="sheet-color-circle active" data-color="#F4C9D6" data-name="Hồng Phấn Sen" style="background-color: #F4C9D6;" title="Hồng Phấn Sen" aria-label="Hồng Phấn Sen">
+              <button type="button" class="sheet-color-circle" data-color="#F4C9D6" data-name="Hồng Phấn Sen" style="background-color: #F4C9D6;" title="Hồng Phấn Sen" aria-label="Hồng Phấn Sen">
                 <span class="color-desktop-label">Hồng Sen</span>
               </button>
               <button type="button" class="sheet-color-circle" data-color="#4A8577" data-name="Xanh Ngọc Đậm" style="background-color: #4A8577;" title="Xanh Ngọc Đậm" aria-label="Xanh Ngọc Đậm">
@@ -637,133 +535,127 @@
                 <span class="color-desktop-label">Xanh Chàm</span>
               </button>
             </div>
-            <div class="color-panel-footer">
-              <span class="color-selected-badge" id="color-selected-label">Sắc lụa: <strong>Hồng Phấn Sen</strong></span>
-              <button type="button" class="btn-color-next-step" id="btn-color-next-acc" title="Chuyển sang chọn phong cách">
-                <span>Tiếp: Phong Cách 👉</span>
-              </button>
-            </div>
           </div>
 
-          <!-- NHÓM 2: PHONG CÁCH & TÍNH CÁCH -->
+          <!-- NHÓM 2: PHONG CÁCH (BUBBLE MULTI-SELECT & SLIDER PHÁ CÁCH) -->
           <div class="sheet-options-panel" id="panel-styles" role="tabpanel">
-            <div class="style-personality-subgroup">
-              <span class="subgroup-title">1. Phong cách thời trang:</span>
-              <div class="sheet-cards-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
-                <button type="button" class="sheet-option-card active" data-style="THANH_TAO" aria-label="Thanh tao">
-                  <span class="sheet-option-icon">🌸</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Thanh Tao</span>
-                    <span class="sheet-option-sub">Chuẩn mực cung đình</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-style="DUONG_DAI" aria-label="Đương đại">
-                  <span class="sheet-option-icon">✨</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Đương Đại</span>
-                    <span class="sheet-option-sub">Phá cách Gen Z</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-style="LE_HOI" aria-label="Lễ hội">
-                  <span class="sheet-option-icon">🏮</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Lễ Hội</span>
-                    <span class="sheet-option-sub">Rực rỡ trang trọng</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-style="MOC_MAC" aria-label="Mộc mạc">
-                  <span class="sheet-option-icon">🌾</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Mộc Mạc</span>
-                    <span class="sheet-option-sub">Bình dị thôn dã</span>
-                  </div>
-                </button>
+            <div class="style-bubble-section">
+              <div class="style-section-header">
+                <span class="subgroup-title">1. Chọn các phong cách bạn muốn phối (Có thể chọn nhiều):</span>
+                <span class="style-multi-count" id="style-selected-count">Đã chọn: 0</span>
+              </div>
+              <div class="style-bubbles-grid" id="style-bubbles-container">
+                <button type="button" class="style-bubble-chip" data-style="Thanh tao cung đình">🌸 Thanh tao cung đình</button>
+                <button type="button" class="style-bubble-chip" data-style="Đương đại Gen Z">✨ Đương đại Gen Z</button>
+                <button type="button" class="style-bubble-chip" data-style="Lễ hội rực rỡ">🏮 Lễ hội rực rỡ</button>
+                <button type="button" class="style-bubble-chip" data-style="Mộc mạc thôn dã">🌾 Mộc mạc thôn dã</button>
+                <button type="button" class="style-bubble-chip" data-style="Nho nhã đoan trang">📜 Nho nhã đoan trang</button>
+                <button type="button" class="style-bubble-chip" data-style="Phóng khoáng cá tính">⚡ Phóng khoáng cá tính</button>
+                <button type="button" class="style-bubble-chip" data-style="Tối giản thanh lịch">🪷 Tối giản thanh lịch</button>
+                <button type="button" class="style-bubble-chip" data-style="Hoài cổ sâu lắng">⏳ Hoài cổ sâu lắng</button>
               </div>
             </div>
 
-            <div class="style-personality-subgroup" style="margin-top: 12px;">
-              <span class="subgroup-title">2. Tính cách người mặc:</span>
-              <div class="personality-chips-wrap" id="personality-chips-container">
-                <button type="button" class="personality-chip active" data-personality="Nho nhã đoan trang">Nho nhã đoan trang</button>
-                <button type="button" class="personality-chip" data-personality="Phóng khoáng trẻ trung">Phóng khoáng trẻ trung</button>
-                <button type="button" class="personality-chip" data-personality="Cá tính nổi bật">Cá tính nổi bật</button>
-                <button type="button" class="personality-chip" data-personality="Kín đáo ý nhị">Kín đáo ý nhị</button>
-                <button type="button" class="personality-chip" data-personality="Hoài cổ sâu lắng">Hoài cổ sâu lắng</button>
+            <!-- Slider Độ phá cách của ý tưởng (Creativity Slider) -->
+            <div class="creativity-slider-section" style="margin-top: 14px;">
+              <div class="slider-title-row">
+                <span class="subgroup-title">2. Độ phá cách của ý tưởng:</span>
+                <span class="slider-badge-val" id="creativity-slider-val">Cân bằng di sản (35%)</span>
               </div>
-            </div>
-
-            <div style="margin-top: 14px;">
-              <button type="button" class="btn-primary" id="btn-goto-ai-styling" style="width: 100%; min-height: 40px;">
-                <span>✨ Chuyển Sang AI Gợi Ý Phụ Kiện & Tóc 👉</span>
-              </button>
+              <p class="slider-hint-text">
+                Điều chỉnh mức độ sáng tạo của AI: Từ bám sát 100% điển lễ truyền thống đến phá cách đương đại táo bạo.
+              </p>
+              <div class="slider-control-wrap">
+                <span class="slider-end-label">🏛️ Truyền thống</span>
+                <input type="range" id="creativity-slider" class="creativity-slider-input" min="0" max="100" value="35" aria-label="Độ phá cách của ý tưởng" />
+                <span class="slider-end-label">⚡ Phá cách</span>
+              </div>
             </div>
           </div>
 
-          <!-- NHÓM 3: GỢI Ý AI (MINI GEMINI) & TỰ NHẬP PHỤ KIỆN/KIỂU TÓC -->
+          <!-- NHÓM 3: PHỤ KIỆN & GỢI Ý AI -->
           <div class="sheet-options-panel" id="panel-ai-styling" role="tabpanel">
-            <!-- Nút kích hoạt Mini Gemini Generator -->
-            <div class="ai-styling-generator-bar">
-              <button type="button" class="btn-trigger-ai-styling" id="btn-trigger-mini-gemini" aria-label="Khởi tạo gợi ý AI">
-                <span class="ai-sparkle-icon">✨</span>
-                <span class="ai-trigger-label" id="mini-gemini-label">Khởi Tạo Gợi Ý AI (Mini Gemini)</span>
-                <span class="ai-loading-spinner" id="mini-gemini-spinner" style="display: none;"></span>
-              </button>
-              <p class="ai-generator-hint">AI phân tích dáng áo, sắc màu và tính cách để sinh ra 3 phụ kiện & 3 kiểu tóc tương thích di sản.</p>
-            </div>
-
-            <!-- Nhận xét Stylist & Đánh giá hòa hợp với người mặc -->
-            <div class="ai-stylist-note-box" id="ai-stylist-note-box" style="display: none; padding: 10px 12px; background: rgba(74, 133, 119, 0.08); border: 1px solid rgba(74, 133, 119, 0.22); border-radius: 12px; margin-bottom: 12px;">
-              <div style="font-family: var(--font-title); font-size: 0.78rem; font-weight: 700; color: #4A8577; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-                <span>💡</span> Gợi Ý Hòa Hợp Cá Nhân & Di Sản:
+            
+            <!-- Trạng thái ban đầu: CHỈ DUY NHẤT 1 NÚT "XEM GỢI Ý AI" Ở GIỮA MÀN HÌNH -->
+            <div class="ai-styling-center-box" id="ai-styling-center-trigger-wrap">
+              <div class="center-trigger-card">
+                <div class="center-trigger-seal">吉</div>
+                <h4 class="center-trigger-title">Khám Phá Gợi Ý Phụ Kiện AI</h4>
+                <p class="center-trigger-desc">
+                  AI sẽ kết hợp dáng áo, sắc màu, phong cách và đặc điểm cơ thể để gợi ý bộ phụ kiện, kiểu tóc và bản thẩm định di sản đa chiều.
+                </p>
+                <button type="button" class="btn-primary btn-large-center-trigger" id="btn-trigger-mini-gemini">
+                  <span class="ai-sparkle-icon">✨</span>
+                  <span id="center-trigger-btn-text">Xem Gợi Ý AI</span>
+                  <span class="ai-loading-spinner" id="mini-gemini-spinner" style="display: none;"></span>
+                </button>
               </div>
-              <p id="ai-stylist-note-content" style="font-family: var(--font-body); font-size: 0.8rem; color: #2B2B28; line-height: 1.45; margin: 0;"></p>
             </div>
 
-            <!-- Cảnh Báo Thuần Phong Mỹ Tục / Sanity Alert -->
-            <div class="styling-sanity-alert" id="styling-sanity-alert" style="display: none;" role="alert">
-              <span class="sanity-alert-icon">⚠</span>
-              <span class="sanity-alert-text" id="styling-sanity-msg"></span>
-            </div>
-
-            <!-- VÙNG 1: PHỤ KIỆN (MULTIPLE SELECT + TỰ NHẬP) -->
-            <div class="ai-styling-section">
-              <div class="section-header-flex">
-                <span class="section-title">🪭 Phụ Kiện <small>(Chọn nhiều món tùy ý)</small>:</span>
-                <span class="section-count-badge" id="accessories-selected-count">Đã chọn: 1</span>
-              </div>
-
-              <!-- Danh sách phụ kiện gợi ý (Chọn nhiều checkbox) -->
-              <div class="accessories-multi-grid" id="accessories-multi-container"></div>
-
-              <!-- Khung Tự Nhập Phụ Kiện -->
-              <div class="custom-input-group">
-                <label class="custom-input-label" for="input-custom-accessory">Hoặc tự nhập phụ kiện riêng của bạn:</label>
-                <div class="custom-input-row">
-                  <input type="text" id="input-custom-accessory" class="custom-text-field" placeholder="Ví dụ: chuỗi ngọc trai, quạt nan tre..." maxlength="60" />
-                  <button type="button" id="btn-add-custom-accessory" class="btn-custom-add">+ Thêm</button>
+            <!-- Trạng thái sau khi nhấn: Hiện danh sách phụ kiện, kiểu tóc và nút chuyển xuống đáy -->
+            <div id="ai-styling-results-wrapper" style="display: none;">
+              <!-- Nhận xét Stylist -->
+              <div class="ai-stylist-note-box" id="ai-stylist-note-box" style="display: none; padding: 10px 12px; background: rgba(74, 133, 119, 0.08); border: 1px solid rgba(74, 133, 119, 0.22); border-radius: 12px; margin-bottom: 12px;">
+                <div style="font-family: var(--font-title); font-size: 0.78rem; font-weight: 700; color: #4A8577; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                  <span>💡</span> Gợi Ý Hòa Hợp Cá Nhân & Di Sản:
                 </div>
-                <div class="custom-chips-display" id="custom-accessories-chips"></div>
-              </div>
-            </div>
-
-            <!-- VÙNG 2: KIỂU TÓC (SINGLE SELECT + TỰ NHẬP) -->
-            <div class="ai-styling-section" style="margin-top: 14px;">
-              <div class="section-header-flex">
-                <span class="section-title">💇 Kiểu Tóc Phù Hợp <small>(Chọn 1 kiểu)</small>:</span>
+                <p id="ai-stylist-note-content" style="font-family: var(--font-body); font-size: 0.8rem; color: #2B2B28; line-height: 1.45; margin: 0;"></p>
               </div>
 
-              <!-- Danh sách kiểu tóc gợi ý -->
-              <div class="hairstyles-single-grid" id="hairstyles-single-container"></div>
+              <!-- Cảnh Báo Thuần Phong Mỹ Tục / Sanity Alert -->
+              <div class="styling-sanity-alert" id="styling-sanity-alert" style="display: none;" role="alert">
+                <span class="sanity-alert-icon">⚠</span>
+                <span class="sanity-alert-text" id="styling-sanity-msg"></span>
+              </div>
 
-              <!-- Khung Tự Nhập Kiểu Tóc -->
-              <div class="custom-input-group">
-                <label class="custom-input-label" for="input-custom-hair">Hoặc tự nhập kiểu tóc bạn thích:</label>
-                <div class="custom-input-row">
-                  <input type="text" id="input-custom-hair" class="custom-text-field" placeholder="Ví dụ: tóc búi củ tỏi gài hoa sen..." maxlength="60" />
-                  <button type="button" id="btn-apply-custom-hair" class="btn-custom-add">Áp Dụng</button>
+              <!-- VÙNG 1: PHỤ KIỆN (MULTIPLE SELECT + TỰ NHẬP) -->
+              <div class="ai-styling-section">
+                <div class="section-header-flex">
+                  <span class="section-title">🪭 Phụ Kiện <small>(Chọn nhiều món tùy ý)</small>:</span>
+                  <span class="section-count-badge" id="accessories-selected-count">Đã chọn: 1</span>
                 </div>
-                <div class="custom-hair-active-badge" id="custom-hair-active-badge" style="display: none;"></div>
+
+                <!-- Danh sách phụ kiện gợi ý -->
+                <div class="accessories-multi-grid" id="accessories-multi-container"></div>
+
+                <!-- Khung Tự Nhập Phụ Kiện -->
+                <div class="custom-input-group">
+                  <label class="custom-input-label" for="input-custom-accessory">Hoặc tự nhập phụ kiện riêng của bạn:</label>
+                  <div class="custom-input-row">
+                    <input type="text" id="input-custom-accessory" class="custom-text-field" placeholder="Ví dụ: chuỗi ngọc trai, quạt nan tre..." maxlength="60" />
+                    <button type="button" id="btn-add-custom-accessory" class="btn-custom-add">+ Thêm</button>
+                  </div>
+                  <div class="custom-chips-display" id="custom-accessories-chips"></div>
+                </div>
               </div>
+
+              <!-- VÙNG 2: KIỂU TÓC (SINGLE SELECT + TỰ NHẬP) -->
+              <div class="ai-styling-section" style="margin-top: 14px;">
+                <div class="section-header-flex">
+                  <span class="section-title">💇 Kiểu Tóc Phù Hợp <small>(Chọn 1 kiểu)</small>:</span>
+                </div>
+
+                <!-- Danh sách kiểu tóc gợi ý -->
+                <div class="hairstyles-single-grid" id="hairstyles-single-container"></div>
+
+                <!-- Khung Tự Nhập Kiểu Tóc -->
+                <div class="custom-input-group">
+                  <label class="custom-input-label" for="input-custom-hair">Hoặc tự nhập kiểu tóc bạn thích:</label>
+                  <div class="custom-input-row">
+                    <input type="text" id="input-custom-hair" class="custom-text-field" placeholder="Ví dụ: tóc búi củ tỏi gài hoa sen..." maxlength="60" />
+                    <button type="button" id="btn-apply-custom-hair" class="btn-custom-add">Áp Dụng</button>
+                  </div>
+                  <div class="custom-hair-active-badge" id="custom-hair-active-badge" style="display: none;"></div>
+                </div>
+              </div>
+
+              <!-- Nút Nằm Ở Dưới Cùng: Cập nhật / Tạo lại gợi ý AI -->
+              <div class="ai-styling-retrigger-bar" style="margin-top: 16px;">
+                <button type="button" class="btn-secondary btn-retrigger-styling" id="btn-retrigger-mini-gemini" style="width: 100%; min-height: 42px;">
+                  <span>✨ Cập Nhật / Tạo Lại Gợi Ý AI</span>
+                </button>
+              </div>
+
             </div>
 
           </div>
@@ -771,16 +663,13 @@
         </div>
 
         <!-- Thanh nút hành động nhanh trong Thumb Zone (Mobile & Desktop) -->
-        <div class="workshop-sheet-cta-bar" style="display: flex; flex-direction: column; gap: 8px;">
-          <button type="button" id="btn-view-result" class="btn-primary btn-workshop-cta" title="Thẩm định & Xem kết quả phối đồ hoàn chỉnh" aria-label="Thẩm định & Xem kết quả phối đồ">
-            <span>✨ Thẩm Định & Xem Kết Quả</span>
+        <div class="workshop-sheet-cta-bar">
+          <button type="button" id="btn-view-result" class="btn-primary btn-workshop-cta btn-cta-pending" title="Vui lòng hoàn thành chọn lựa & xem gợi ý AI trước khi thẩm định" aria-label="Thẩm định & Xem kết quả phối đồ">
+            <span id="btn-view-result-text">✨ Thẩm Định & Xem Kết Quả</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
-          </button>
-          <button type="button" id="btn-inspect-outfit-prompt" class="btn-secondary" style="border: 1px dashed rgba(74, 133, 119, 0.4); background: rgba(74,133,119,0.06); color: var(--color-accent-secondary); font-size: 0.8rem; padding: 7px 12px; border-radius: 9999px; cursor: pointer; text-align: center; width: 100%;" title="Xem câu lệnh AI Prompt đầy đủ dùng để sinh ảnh trang phục hoàn chỉnh (Dành cho Giám khảo & Người thẩm định)">
-            <span>🖼️ Xem Cấu Trúc AI Prompt Sinh Ảnh Bộ Này (Demo Quota)</span>
           </button>
         </div>
 
@@ -976,11 +865,6 @@
                 <span>Phối lại</span>
               </button>
             </div>
-
-            <!-- Nút Xem Cấu Trúc Prompt Sinh Ảnh Trang Phục Dành Cho Giám Khảo -->
-            <button type="button" id="btn-result-prompt-inspect" class="btn-result-secondary" style="border-style: dashed; font-size: 0.82rem; padding: 6px 12px; min-height: 38px;">
-              <span>🖼️ Xem Cấu Trúc AI Prompt Sinh Ảnh Bộ Này (Demo Quota)</span>
-            </button>
           </footer>
 
         </div>
@@ -1945,7 +1829,7 @@
           <input type="text" id="profile-name" placeholder="VD: An Nhiên, Minh Triết..." class="profile-input" />
         </div>
 
-        <!-- 2. Chiều cao & Cân nặng (Gọn gàng 2 cột kèm quick chips) -->
+        <!-- 2. Chiều cao & Cân nặng -->
         <div class="profile-metrics-row">
           <div class="profile-field-group">
             <label class="profile-field-label" for="profile-height">
@@ -1954,13 +1838,6 @@
             <div class="profile-unit-input-wrap">
               <input type="number" id="profile-height" placeholder="160" min="120" max="220" class="profile-input profile-num-input" />
               <span class="profile-unit-tag">cm</span>
-            </div>
-            <div class="profile-quick-chips" data-target="profile-height">
-              <button type="button" class="quick-metric-chip" data-val="155">155</button>
-              <button type="button" class="quick-metric-chip" data-val="160">160</button>
-              <button type="button" class="quick-metric-chip" data-val="165">165</button>
-              <button type="button" class="quick-metric-chip" data-val="170">170</button>
-              <button type="button" class="quick-metric-chip" data-val="175">175</button>
             </div>
           </div>
 
@@ -1971,13 +1848,6 @@
             <div class="profile-unit-input-wrap">
               <input type="number" id="profile-weight" placeholder="50" min="30" max="150" class="profile-input profile-num-input" />
               <span class="profile-unit-tag">kg</span>
-            </div>
-            <div class="profile-quick-chips" data-target="profile-weight">
-              <button type="button" class="quick-metric-chip" data-val="45">45</button>
-              <button type="button" class="quick-metric-chip" data-val="50">50</button>
-              <button type="button" class="quick-metric-chip" data-val="55">55</button>
-              <button type="button" class="quick-metric-chip" data-val="60">60</button>
-              <button type="button" class="quick-metric-chip" data-val="68">68</button>
             </div>
           </div>
         </div>

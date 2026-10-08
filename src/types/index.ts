@@ -51,10 +51,42 @@ export interface StylingSuggestionItem {
   vibe_tag?: string;
 }
 
+export interface VisualReferenceItem {
+  title: string;
+  desc: string;
+  imageUrl?: string;
+  searchKeyword: string;
+}
+
 export interface MiniStylingResponse {
   accessories: StylingSuggestionItem[];
   hairstyles: StylingSuggestionItem[];
   stylist_note: string;
+  color_analysis?: {
+    cultural_meaning: string;
+    five_elements: string;
+    harmony_rating: string;
+    visual_tone: string;
+  };
+  personal_compatibility?: {
+    is_profile_provided: boolean;
+    skin_tone_effect: string;
+    silhouette_effect: string;
+    tailoring_advice: string;
+    missing_profile_reminder: string;
+  };
+  cultural_guardrail?: {
+    is_safe: boolean;
+    warning_msg: string;
+    advice: string;
+  };
+  pose_suggestions?: string;
+  recommended_occasions?: string[];
+  visual_references?: {
+    garment: VisualReferenceItem;
+    hair: VisualReferenceItem;
+    accessory: VisualReferenceItem;
+  };
 }
 
 export interface CulturalRecommendationInput {
@@ -148,6 +180,8 @@ export interface CurrentOutfitState {
   custom_hairstyle?: string;
   style?: string;
   style_mode?: string;
+  styles?: string[];
+  creativityLevel?: number;
   personality?: string;
   pattern?: PatternItem | null;
   genzActive?: boolean;
@@ -164,6 +198,7 @@ export interface DiscoveryOutfit {
   accessory: 'QUAT_GIAY' | 'KHAN_RAN' | 'NON_QUAI_THAO';
   seal: string;
   desc: string;
+  imageUrl?: string;
 }
 
 export interface WardrobeItem extends DiscoveryOutfit {

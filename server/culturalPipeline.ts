@@ -111,9 +111,95 @@ const miniStylingSchema = {
     stylist_note: {
       type: Type.STRING,
       description: 'Lời khuyên stylist ngắn gọn, truyền cảm hứng cho Gen Z'
+    },
+    color_analysis: {
+      type: Type.OBJECT,
+      description: 'Phân tích màu sắc động cụ thể theo văn hóa và ngũ hành',
+      properties: {
+        cultural_meaning: { type: Type.STRING },
+        five_elements: { type: Type.STRING },
+        harmony_rating: { type: Type.STRING },
+        visual_tone: { type: Type.STRING }
+      },
+      required: ['cultural_meaning', 'five_elements', 'harmony_rating', 'visual_tone']
+    },
+    personal_compatibility: {
+      type: Type.OBJECT,
+      description: 'Độ tương thích màu sắc và kiểu dáng với đặc điểm cá nhân người dùng',
+      properties: {
+        is_profile_provided: { type: Type.BOOLEAN },
+        skin_tone_effect: { type: Type.STRING },
+        silhouette_effect: { type: Type.STRING },
+        tailoring_advice: { type: Type.STRING },
+        missing_profile_reminder: { type: Type.STRING }
+      },
+      required: ['is_profile_provided', 'skin_tone_effect', 'silhouette_effect', 'tailoring_advice', 'missing_profile_reminder']
+    },
+    cultural_guardrail: {
+      type: Type.OBJECT,
+      description: 'Đánh giá cảnh báo phụ kiện và phối đồ di sản đúng hay không',
+      properties: {
+        is_safe: { type: Type.BOOLEAN },
+        warning_msg: { type: Type.STRING },
+        advice: { type: Type.STRING }
+      },
+      required: ['is_safe', 'warning_msg', 'advice']
+    },
+    pose_suggestions: {
+      type: Type.STRING,
+      description: 'Gợi ý 1-2 dáng chụp ảnh nghệ thuật tôn trang phục'
+    },
+    recommended_occasions: {
+      type: Type.ARRAY,
+      items: { type: Type.STRING },
+      description: '2-3 dịp thích hợp nhất để diện bộ phục trang này'
+    },
+    visual_references: {
+      type: Type.OBJECT,
+      description: 'Thông tin và từ khóa tìm kiếm minh họa mẫu áo, mẫu tóc, phụ kiện',
+      properties: {
+        garment: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            desc: { type: Type.STRING },
+            searchKeyword: { type: Type.STRING }
+          },
+          required: ['title', 'desc', 'searchKeyword']
+        },
+        hair: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            desc: { type: Type.STRING },
+            searchKeyword: { type: Type.STRING }
+          },
+          required: ['title', 'desc', 'searchKeyword']
+        },
+        accessory: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            desc: { type: Type.STRING },
+            searchKeyword: { type: Type.STRING }
+          },
+          required: ['title', 'desc', 'searchKeyword']
+        }
+      },
+      required: ['garment', 'hair', 'accessory']
     }
   },
-  required: ['accessories', 'hairstyles', 'stylist_note']
+  required: [
+    'accessories',
+    'hairstyles',
+    'stylist_note',
+    'color_analysis',
+    'personal_compatibility',
+    'cultural_guardrail',
+    'pose_suggestions',
+    'recommended_occasions',
+    'visual_references'
+  ]
 };
 
 const round1ResponseSchema = {
@@ -356,6 +442,177 @@ export function getOfflineMiniStylingSuggestions(context: {
 
   const garmentSet = suggestionsByGarment[garmentId] || suggestionsByGarment.AO_NGU_THAN;
 
+  // 1. Phân tích màu sắc động dựa trên mã màu HEX
+  let cleanHex = (context.primary_color || '#F4C9D6').replace('#', '').trim();
+  if (cleanHex.length === 3) {
+    cleanHex = cleanHex.split('').map((c) => c + c).join('');
+  }
+  const r = parseInt(cleanHex.substring(0, 2) || 'F4', 16);
+  const g = parseInt(cleanHex.substring(2, 4) || 'C9', 16);
+  const b = parseInt(cleanHex.substring(4, 6) || 'D6', 16);
+
+  const rNorm = r / 255, gNorm = g / 255, bNorm = b / 255;
+  const max = Math.max(rNorm, gNorm, bNorm), min = Math.min(rNorm, gNorm, bNorm);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rNorm: h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0); break;
+      case gNorm: h = (bNorm - rNorm) / d + 2; break;
+      case bNorm: h = (rNorm - gNorm) / d + 4; break;
+    }
+    h *= 60;
+  }
+
+  let fiveElements = 'Thổ Hoàng Cúc (Trù Phú)';
+  let culturalMeaning = `Sắc độ này gợi cảm giác nền nã, dung dị và ấm áp, biểu trưng cho nếp nhà gia phong và đạo trung dung bền vững.`;
+  let harmonyRating = 'Hài Hòa Di Sản';
+  let visualTone = 'Tông ấm tự nhiên, dịu mắt';
+
+  if (l > 0.82 && s < 0.25) {
+    fiveElements = 'Kim Bạch Lạp (Tinh Khôi)';
+    culturalMeaning = `Sắc sáng ngà ngọc sương biểu trưng cho sự thanh khiết, chính trực và cốt cách tinh khôi của người quân tử.`;
+    harmonyRating = 'Thanh Bạch Chuẩn Mực';
+    visualTone = 'Tông sáng tinh khôi, bừng sáng diện mạo';
+  } else if (l < 0.25) {
+    fiveElements = 'Thủy Dưỡng Sắc (Huyền Bí)';
+    culturalMeaning = `Sắc trầm sâu lắng biểu trưng cho sự thâm trầm, uy nghi, đĩnh đạc và bề dày tri thức uyên bác của tầng lớp sĩ đại phu.`;
+    harmonyRating = 'Trang Trọng Quý Phái';
+    visualTone = 'Tông tối đằm thắm, chiều sâu tương phản cao';
+  } else if (h >= 330 || h < 25) {
+    fiveElements = 'Hỏa Chu Tước (Khởi Sắc)';
+    culturalMeaning = `Sắc đỏ son / hồng phấn biểu trưng cho vận hội hanh thông, tài lộc đầu năm và tấm lòng nhiệt huyết son sắt.`;
+    harmonyRating = 'Rực Rỡ Hanh Thông';
+    visualTone = 'Tông ấm rạng rỡ, giàu sinh khí';
+  } else if (h >= 25 && h < 65) {
+    fiveElements = 'Thổ Hoàng Cúc (Trù Phú)';
+    culturalMeaning = `Sắc vàng đất / hoàng y biểu trưng cho đất mẹ chở che, phú quý thịnh vượng và sự điềm đạm bao dung.`;
+    harmonyRating = 'An Định Hoàng Cung';
+    visualTone = 'Tông ấm đằm thắm, cổ kính thân thuộc';
+  } else if (h >= 65 && h < 175) {
+    fiveElements = 'Mộc Sinh Khí (Trường Tồn)';
+    culturalMeaning = `Sắc xanh rêu / ngọc bích biểu trưng cho sự sinh sôi nảy nở, trường tồn và nét tươi trẻ tự nhiên của non nước.`;
+    harmonyRating = 'Sinh Khí Tươi Mới';
+    visualTone = 'Tông mát dịu êm, thanh thoát an nhiên';
+  } else {
+    fiveElements = 'Thủy Hải Lam (Tri Thức)';
+    culturalMeaning = `Sắc xanh chàm biểu trưng cho sự thông tuệ, biển học vô bờ và chí hướng thanh vân cao vời.`;
+    harmonyRating = 'Thanh Vân Uyên Bác';
+    visualTone = 'Tông lạnh thanh lịch, phong thái đĩnh đạc';
+  }
+
+  const dynamicColorAnalysis = {
+    cultural_meaning: `${culturalMeaning} Khi phối cùng ${truth.name}, sắc thái này tôn trọn vẹn đường nét cổ phục.`,
+    five_elements: fiveElements,
+    harmony_rating: harmonyRating,
+    visual_tone: visualTone
+  };
+
+  // 2. Độ tương thích cá nhân
+  let personalCompatibility = {
+    is_profile_provided: false,
+    skin_tone_effect: '',
+    silhouette_effect: '',
+    tailoring_advice: '',
+    missing_profile_reminder: '💡 Bạn chưa lưu thông tin ngoại hình trong Hồ Sơ Cá Nhân. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn!'
+  };
+
+  if (context.user_profile && (context.user_profile.skin || context.user_profile.height || context.user_profile.shape || context.user_profile.weight)) {
+    const { height, weight, shape, skin } = context.user_profile;
+    const numH = parseInt(height, 10) || 0;
+    const numW = parseInt(weight, 10) || 0;
+
+    let skinEffect = '';
+    if (skin) {
+      if (skin.includes('Trắng hồng') || skin.includes('Trắng')) {
+        skinEffect = `Làn da ${skin} của bạn rất dễ tôn sắc phục; màu này tôn vẻ hồng hào tươi tắn, không làm bợt da.`;
+      } else if (skin.includes('Bánh mật') || skin.includes('ngăm') || skin.includes('Nâu')) {
+        if (l > 0.6) {
+          skinEffect = `Tông màu tươi sáng tạo độ tương phản thời thượng với làn da ${skin} khỏe khoắn, giúp gương mặt bắt sáng rất tốt dưới nắng mai.`;
+        } else {
+          skinEffect = `Tông màu trầm ấm này hòa hợp tuyệt đối với làn da ${skin}, tôn nét mặn mà, đằm thắm và sang trọng chuẩn phong vị Á Đông.`;
+        }
+      } else {
+        skinEffect = `Tông da ${skin} kết hợp màu này tạo cảm giác hài hòa, tươi sáng và không gây xỉn da.`;
+      }
+    } else {
+      skinEffect = `Tông màu trang nhã, dễ phối và làm sáng gương mặt tự nhiên.`;
+    }
+
+    let silhouetteEffect = '';
+    const hStr = numH > 0 ? `chiều cao ${numH}cm` : 'chiều cao của bạn';
+    const sStr = shape ? `vóc dáng ${shape}` : 'vóc dáng của bạn';
+
+    if (truth.id === 'AO_BA_BA') {
+      silhouetteEffect = `Áo bà ba xẻ tà hai bên hông tạo đường thắt eo mềm mại, kết hợp quần lụa suông kéo dài đôi chân, rất tôn ${sStr} và giúp ${hStr} trông thanh thoát gọn gàng, không bị cảm giác dìm chiều cao.`;
+    } else if (truth.id === 'AO_TAC') {
+      silhouetteEffect = `Áo tấc tay thụng rộng mang tính lễ nghi trang nghiêm; với ${hStr}, nên căn chỉnh tà dài vừa qua bắp chân và kết hợp guốc mộc/giày độn nhẹ để tránh cảm giác bị nuốt dáng.`;
+    } else if (truth.id === 'AO_NHAT_BINH') {
+      silhouetteEffect = `Áo Nhật Bình vạt đối khâm thẳng song song trước ngực tạo trục dọc thị giác, giúp người mặc trông cao ráo, giấu khuyết điểm vòng 2 khéo léo.`;
+    } else {
+      silhouetteEffect = `Thiết kế 5 thân ghép dọc và nẹp áo lượn chữ S của ${truth.name} tạo hiệu ứng kéo dài trục cơ thể, giúp ${hStr} trông cao ráo, thanh mảnh và đĩnh đạc hơn, tôn trọn vẹn ${sStr}.`;
+    }
+
+    let tailoringAdvice = '';
+    if (numH > 0 && numH < 162) {
+      tailoringAdvice = `Gợi ý may đo: Gấu tà áo nên cách mắt cá chân khoảng 18-22cm, ống tay chẽn ôm vừa cổ tay để tỷ lệ cơ thể trông cao ráo, gọn gàng nhất.`;
+    } else if (numH >= 162) {
+      tailoringAdvice = `Gợi ý may đo: Dáng người cao ráo phù hợp để tà buông dài quét nhẹ mu bàn chân cùng quần ống rộng, tạo phong thái thướt tha uyển chuyển.`;
+    } else {
+      tailoringAdvice = `Gợi ý may đo: Cổ áo lập lĩnh ôm khít 2.5-3cm và thân áo khép kín vừa vặn để tôn dáng đứng thẳng trang nhã.`;
+    }
+
+    personalCompatibility = {
+      is_profile_provided: true,
+      skin_tone_effect: skinEffect,
+      silhouette_effect: silhouetteEffect,
+      tailoring_advice: tailoringAdvice,
+      missing_profile_reminder: ''
+    };
+  }
+
+  // 3. Cảnh báo phụ kiện đúng hay không
+  let guardrailIsSafe = true;
+  let guardrailWarning = '';
+  let guardrailAdvice = `Các phụ kiện đi kèm hài hòa chuẩn mực với quy chuẩn di sản [${truth.originRegion}]. Không vi phạm kiêng kỵ lịch sử nào.`;
+
+  if (truth.strictTaboos.length > 0) {
+    const tabooNames = truth.strictTaboos.map((t) => t.incompatibleName).join(', ');
+    guardrailAdvice = `Lưu ý chuẩn di sản: Tránh phối cùng ${tabooNames} để giữ trọn điển lễ ${truth.name}.`;
+  }
+
+  // 4. Gợi ý dáng chụp
+  const poseSuggestions = truth.id === 'AO_BA_BA'
+    ? 'Đứng nghiêng 45 độ bên mạn xuồng hoặc tựa nhẹ hàng rào tre, hai tay khẽ giữ vạt khăn rằn buông trước ngực, nụ cười tươi tắn hiền hòa.'
+    : 'Đứng thẳng người đoan chính, một tay khẽ che quạt giấy ngang eo hoặc trước ngực, tay kia buông tà tự nhiên, ánh mắt nhìn thẳng thanh thoát.';
+
+  // 5. Mặc trong 2-3 dịp gì
+  const occasions = [
+    'Dạo phố Tết truyền thống & du xuân',
+    'Chụp kỷ yếu tốt nghiệp / lưu giữ thanh xuân',
+    'Đi lễ chùa đầu năm & hội làng an tĩnh'
+  ];
+
+  // 6. Minh họa hình ảnh mẫu áo, mẫu tóc, phụ kiện
+  const visualReferences = {
+    garment: {
+      title: truth.name,
+      desc: `${truth.originRegion} • ${truth.historicalEra}`,
+      searchKeyword: `${truth.name} cổ phục Việt Nam`
+    },
+    hair: {
+      title: garmentSet.hairstyles[0]?.name || 'Búi Tóc Cài Trâm',
+      desc: garmentSet.hairstyles[0]?.cultural_reason || 'Kiểu tóc truyền thống thanh nhã',
+      searchKeyword: `${garmentSet.hairstyles[0]?.name || 'Búi tóc cài trâm'} cổ phục`
+    },
+    accessory: {
+      title: garmentSet.accessories[0]?.name || 'Quạt Giấy Thư Pháp',
+      desc: garmentSet.accessories[0]?.cultural_reason || 'Phụ kiện đoan trang nho nhã',
+      searchKeyword: `${garmentSet.accessories[0]?.name || 'Quạt giấy thư pháp'} truyền thống`
+    }
+  };
+
   let note = `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`;
   if (context.user_profile) {
     const { name, skin, shape, hair } = context.user_profile;
@@ -372,7 +629,17 @@ export function getOfflineMiniStylingSuggestions(context: {
   return {
     accessories: garmentSet.accessories,
     hairstyles: garmentSet.hairstyles,
-    stylist_note: note
+    stylist_note: note,
+    color_analysis: dynamicColorAnalysis,
+    personal_compatibility: personalCompatibility,
+    cultural_guardrail: {
+      is_safe: guardrailIsSafe,
+      warning_msg: guardrailWarning,
+      advice: guardrailAdvice
+    },
+    pose_suggestions: poseSuggestions,
+    recommended_occasions: occasions,
+    visual_references: visualReferences
   };
 }
 
@@ -390,7 +657,7 @@ export async function runOnlineMiniStylingSuggestions(
 
   const userProfileStr = context.user_profile
     ? `\nĐặc điểm cá nhân của người mặc:\n- Tên/Biệt danh: ${context.user_profile.name || 'Người mặc'}\n- Chiều cao: ${context.user_profile.height ? context.user_profile.height + 'cm' : 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight ? context.user_profile.weight + 'kg' : 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
-    : '';
+    : '\nNgười mặc chưa nhập hồ sơ ngoại hình (cần để trống personal_compatibility.skin_tone_effect và gửi lời nhắc nhẹ nhàng trong missing_profile_reminder).';
 
   const prompt = `Bạn là Giám đốc Phong cách Cổ phục Việt Y đương đại.
 Người dùng đang thiết kế bộ trang phục:
@@ -402,15 +669,16 @@ Người dùng đang thiết kế bộ trang phục:
 Các kiêng kỵ nghiêm ngặt (KHÔNG ĐƯỢC GỢI Ý các món này):
 ${truth.strictTaboos.map((t) => `- Không gợi ý: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}
 
-YÊU CẦU ĐẶC BIỆT VỀ SỰ TƯƠNG THÍCH GIỮA TRANG PHỤC VÀ ĐẶC ĐIỂM CÁ NHÂN:
-- Cân nhắc kỹ lưỡng tính chất trang phục (${truth.name}, sắc ${context.primary_color}) và đặc điểm cá nhân của người mặc (dáng người, màu da, chiều cao, màu tóc) xem có hợp nhau không.
-- Gợi ý phụ kiện và kiểu tóc phải tôn vinh vóc dáng, làm sáng tông da, cân đối tỷ lệ cơ thể và làm nổi bật nét đẹp tự nhiên của người mặc một cách thanh tao, lịch thiệp và chuẩn mực di sản.
-- Trong stylist_note: Đưa ra nhận xét tinh tế, khéo léo (< 40 từ) về sự hòa hợp giữa đặc điểm cá nhân người mặc và bộ phục trang này.
-
 NHIỆM VỤ CỦA BẠN:
-1. Sáng tạo CHÍNH XÁC 3 gợi ý PHỤ KIỆN phù hợp với loại áo này và ngoại hình người mặc (không phạm kiêng kỵ, tôn dáng, có ý nghĩa văn hóa và vibe tag).
-2. Sáng tạo CHÍNH XÁC 3 gợi ý KIỂU TÓC nghệ thuật, hài hòa với cổ áo, phong cách và vóc dáng/màu tóc người mặc.
-3. Đưa ra 1 câu stylist note truyền cảm hứng ngắn gọn (< 40 từ) nhận xét về sự tương thích giữa người mặc và trang phục.
+1. Gợi ý CHÍNH XÁC 3 phụ kiện và 3 kiểu tóc phù hợp với dáng áo và phong cách.
+2. Phân tích màu sắc người dùng chọn (${context.primary_color}) theo văn hóa, ngũ hành, cảm xúc thị giác cụ thể (không dùng câu mẫu chung chung).
+3. Đánh giá độ tương thích với cá nhân người dùng:
+   - Nếu có thông tin ngoại hình: Phân tích cụ thể màu này làm sáng da hay tối da đối với tông da của họ; dáng áo này tôn chiều cao hay có làm cảm giác lùn/thấp đi không, và gợi ý may đo/tỷ lệ để khắc phục.
+   - Nếu không có thông tin ngoại hình: Để trống skin_tone_effect, silhouette_effect, tailoring_advice và ghi lời nhắc nhẹ nhàng trong missing_profile_reminder yêu cầu bổ sung thông tin trong Hồ Sơ.
+4. Đánh giá cảnh báo phụ kiện đúng hay không theo quy chuẩn di sản.
+5. Gợi ý 1-2 dáng chụp ảnh nghệ thuật tôn trang phục.
+6. Gợi ý 2-3 dịp thích hợp nhất để mặc.
+7. Cung cấp từ khóa tìm kiếm Google Images chuẩn xác cho mẫu áo, mẫu tóc, phụ kiện.
 
 Trả về định dạng JSON theo đúng schema được yêu cầu.`;
 
@@ -427,7 +695,7 @@ Trả về định dạng JSON theo đúng schema được yêu cầu.`;
     });
 
     const parsed: MiniStylingResponse = JSON.parse(response.text || '{}');
-    if (parsed.accessories?.length && parsed.hairstyles?.length) {
+    if (parsed.accessories?.length && parsed.hairstyles?.length && parsed.color_analysis) {
       return parsed;
     }
   } catch (err: any) {

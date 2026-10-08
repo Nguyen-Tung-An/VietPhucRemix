@@ -357,12 +357,15 @@ export class ResultEngine {
 
     triggerButtons.forEach((btn) => {
       btn?.addEventListener('click', () => {
+        // Kiểm tra điều kiện luồng bắt buộc: đã chọn 3 options và đã tạo AI gợi ý
+        if (!garmentEngine.canProceedToResult()) {
+          return;
+        }
+
         // Kiểm tra State-Proof Sanity trên toàn bộ input tự nhập
         const sanity = garmentEngine.validateCurrentInputs();
         if (!sanity.isValid) {
           garmentEngine.showSanityAlert(sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập theo thuần phong mỹ tục.');
-          const tabAI = document.getElementById('tab-opt-ai-styling');
-          tabAI?.click();
           return;
         }
 

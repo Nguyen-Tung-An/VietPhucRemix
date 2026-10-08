@@ -262,6 +262,47 @@ export function getMockStylingSuggestions(context: {
   return {
     accessories: garmentSet.accessories,
     hairstyles: garmentSet.hairstyles,
-    stylist_note: `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`
+    stylist_note: `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`,
+    color_analysis: {
+      cultural_meaning: `Sắc độ này biểu trưng cho sự đôn hậu, vững chãi và an yên của nếp nhà truyền thống, tôn vinh dáng vẻ ${truth.name}.`,
+      five_elements: 'Thổ Vị Trung Tâm',
+      harmony_rating: 'Hài Hòa Di Sản',
+      visual_tone: 'Tông màu trang nhã, dịu mắt'
+    },
+    personal_compatibility: {
+      is_profile_provided: false,
+      skin_tone_effect: '',
+      silhouette_effect: '',
+      tailoring_advice: '',
+      missing_profile_reminder: '💡 Bạn chưa lưu thông tin ngoại hình trong Hồ Sơ Cá Nhân. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn!'
+    },
+    cultural_guardrail: {
+      is_safe: true,
+      warning_msg: '',
+      advice: `Hài hòa chuẩn mực di sản [${truth.originRegion}]. Không vi phạm kiêng kỵ lịch sử nào.`
+    },
+    pose_suggestions: 'Đứng thẳng người đoan chính, một tay khẽ che quạt giấy ngang eo hoặc trước ngực, tay kia buông tà tự nhiên, ánh mắt nhìn thẳng thanh thoát.',
+    recommended_occasions: [
+      'Dạo phố Tết truyền thống & du xuân',
+      'Chụp kỷ yếu tốt nghiệp / lưu giữ thanh xuân',
+      'Đi lễ chùa đầu năm & hội làng an tĩnh'
+    ],
+    visual_references: {
+      garment: {
+        title: truth.name,
+        desc: `${truth.originRegion} • ${truth.historicalEra}`,
+        searchKeyword: `${truth.name} cổ phục Việt Nam`
+      },
+      hair: {
+        title: garmentSet.hairstyles[0]?.name || 'Búi Tóc Cài Trâm',
+        desc: garmentSet.hairstyles[0]?.cultural_reason || 'Kiểu tóc truyền thống thanh nhã',
+        searchKeyword: `${garmentSet.hairstyles[0]?.name || 'Búi tóc cài trâm'} cổ phục`
+      },
+      accessory: {
+        title: garmentSet.accessories[0]?.name || 'Quạt Giấy Thư Pháp',
+        desc: garmentSet.accessories[0]?.cultural_reason || 'Phụ kiện đoan trang nho nhã',
+        searchKeyword: `${garmentSet.accessories[0]?.name || 'Quạt giấy thư pháp'} truyền thống`
+      }
+    }
   };
 }

@@ -11,6 +11,7 @@ import { compareEngine } from '../compare/compareEngine.ts';
 
 export class AppRouter {
   private hasInitialWorkshopLoaded = false;
+  private isRemixing = false;
 
   public init(): void {
     this.setupSceneNavigation();
@@ -140,15 +141,12 @@ export class AppRouter {
       if (mobileIcon) mobileIcon.textContent = '🎨';
       if (mobileName) mobileName.textContent = 'Xưởng Phối';
 
-      // Khởi tạo phối đồ lần đầu tiên theo gu đã tích lũy (không ghi đè nếu người dùng đang phối dở)
-      if (!this.hasInitialWorkshopLoaded) {
-        this.hasInitialWorkshopLoaded = true;
-        const { topColor, topGarment, topEvent } = preferenceEngine.getTopPreferences();
-        garmentEngine.setFabricColor(topColor);
-        garmentEngine.setGarment(topGarment);
-        garmentEngine.setAccessory('QUAT_GIAY', true);
-        garmentEngine.callCulturalAI(topEvent, topColor, topGarment, 'QUAT_GIAY');
+      // Bất kì khi nào người dùng vào lại xưởng phối trừ khi là từ một bộ đồ quay lại xưởng phối (remix)
+      // thì đều bắt người dùng chọn lại hết option
+      if (!this.isRemixing) {
+        garmentEngine.resetWorkshopState();
       }
+      this.isRemixing = false;
     } else if (tabName === 'pattern') {
       tabPatternBtn?.classList.add('active');
       patternScene?.classList.add('scene-active');
@@ -187,20 +185,16 @@ export class AppRouter {
 
   public remixToWorkshop(outfit: DiscoveryOutfit): void {
     Sound.playClick();
+    this.isRemixing = true;
     feedbackState.showLoading({
       message: 'Đang đưa tà lụa vào Xưởng Phối...',
-      submessage: `Chuẩn bị bộ "${outfit.title}" và gọi thẩm định di sản AI...`
+      submessage: `Chuẩn bị bộ "${outfit.title}" và nạp vào Xưởng Phối...`
     });
 
     setTimeout(() => {
       feedbackState.hideLoading();
       this.switchTab('create');
-
-      garmentEngine.setFabricColor(outfit.color, outfit.colorName);
-      garmentEngine.setGarment(outfit.garment);
-      garmentEngine.setAccessory(outfit.accessory, true);
-      garmentEngine.callCulturalAI(outfit.event, outfit.color, outfit.garment, outfit.accessory);
-
+      garmentEngine.loadRemixOutfit(outfit);
       this.showToast(`✨ Đã nạp bộ "${outfit.title}" vào Xưởng Phối để bạn remix!`);
     }, 450);
   }
@@ -444,6 +438,12 @@ export class AppRouter {
       document.getElementById('nav-mobile-dropdown-menu')?.classList.remove('dropdown-open');
     });
 
+    // Mở profile từ nút nhắc nhẹ trong Cột Tổng Hợp AI
+    document.getElementById('btn-quick-open-profile')?.addEventListener('click', () => {
+      Sound.playClick();
+      openProfile();
+    });
+
     // Đóng modal
     document.getElementById('btn-close-profile')?.addEventListener('click', () => {
       Sound.playClick();
@@ -487,30 +487,6 @@ export class AppRouter {
   }
 
   private setupProfileChips(): void {
-    // Quick metric chips for height
-    document.querySelectorAll('.profile-quick-chips[data-target="profile-height"] .quick-metric-chip').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        Sound.playClick();
-        const val = (e.currentTarget as HTMLElement).dataset.val || '';
-        const input = document.getElementById('profile-height') as HTMLInputElement | null;
-        if (input) input.value = val;
-        document.querySelectorAll('.profile-quick-chips[data-target="profile-height"] .quick-metric-chip').forEach((b) => b.classList.remove('active'));
-        (e.currentTarget as HTMLElement).classList.add('active');
-      });
-    });
-
-    // Quick metric chips for weight
-    document.querySelectorAll('.profile-quick-chips[data-target="profile-weight"] .quick-metric-chip').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        Sound.playClick();
-        const val = (e.currentTarget as HTMLElement).dataset.val || '';
-        const input = document.getElementById('profile-weight') as HTMLInputElement | null;
-        if (input) input.value = val;
-        document.querySelectorAll('.profile-quick-chips[data-target="profile-weight"] .quick-metric-chip').forEach((b) => b.classList.remove('active'));
-        (e.currentTarget as HTMLElement).classList.add('active');
-      });
-    });
-
     // Chips for shape
     this.bindChipGroup('profile-shape-chips', 'profile-shape');
 

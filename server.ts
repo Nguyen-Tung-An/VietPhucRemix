@@ -341,13 +341,23 @@ function generateEditorialLookbookDataUri(promptText: string): string {
 
 // Endpoint API Mini Gemini: Sáng Tạo 3 Gợi Ý Phụ Kiện & Kiểu Tóc Theo Bối Cảnh
 app.post('/api/gemini/suggest-styling', async (req, res) => {
-  const { garment_type, primary_color, style_mode, personality, user_profile } = req.body;
+  const {
+    garment_type,
+    primary_color,
+    style_mode,
+    styles,
+    creativity_level,
+    personality,
+    user_profile
+  } = req.body;
+
+  const styleList = Array.isArray(styles) && styles.length ? styles.join(', ') : (style_mode || 'THANH_TAO');
 
   const context = {
     garment_type: garment_type || 'AO_NGU_THAN',
     primary_color: primary_color || '#F4C9D6',
-    style_mode: style_mode || 'THANH_TAO',
-    personality: personality || 'Đương đại, tự tin, yêu di sản',
+    style_mode: styleList,
+    personality: personality || (styleList + (creativity_level !== undefined ? ` (Độ phá cách sáng tạo: ${creativity_level}%)` : '')),
     user_profile: user_profile || null,
   };
 

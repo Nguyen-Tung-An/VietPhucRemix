@@ -7,6 +7,7 @@ import { garmentEngine } from '../workshop/garmentEngine.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
 import { adminEngine } from '../admin/adminEngine.ts';
+import { compareEngine } from '../compare/compareEngine.ts';
 
 export class AppRouter {
   private hasInitialWorkshopLoaded = false;
@@ -16,6 +17,7 @@ export class AppRouter {
     this.setupTabs();
     this.setupMobileDropdown();
     this.setupFeedbackDemos();
+    this.setupProfileChips();
   }
 
   private setupMobileDropdown(): void {
@@ -48,9 +50,14 @@ export class AppRouter {
           | 'create'
           | 'pattern'
           | 'discover'
-          | 'lookbook';
+          | 'lookbook'
+          | 'compare';
         if (targetTab) {
-          this.switchTab(targetTab);
+          if (targetTab === 'compare') {
+            this.openCompare();
+          } else {
+            this.switchTab(targetTab);
+          }
           this.closeMobileDropdown();
         }
       });
@@ -85,11 +92,12 @@ export class AppRouter {
     dropdownMenu?.setAttribute('aria-hidden', 'true');
   }
 
-  public switchTab(tabName: 'create' | 'pattern' | 'discover' | 'lookbook'): void {
+  public switchTab(tabName: 'create' | 'pattern' | 'discover' | 'lookbook' | 'compare'): void {
     const createScene = document.getElementById('create-scene');
     const patternScene = document.getElementById('pattern-scene');
     const discoverScene = document.getElementById('discover-scene');
     const lookbookScene = document.getElementById('lookbook-scene');
+    const compareScene = document.getElementById('compare-scene');
     const resultScene = document.getElementById('result-scene');
 
     const tabCreateBtn = document.getElementById('tab-create');
@@ -108,6 +116,7 @@ export class AppRouter {
     patternScene?.classList.remove('scene-active');
     discoverScene?.classList.remove('scene-active');
     lookbookScene?.classList.remove('scene-active');
+    compareScene?.classList.remove('scene-active');
 
     // Tắt active toàn bộ tabs
     tabCreateBtn?.classList.remove('active');
@@ -118,7 +127,7 @@ export class AppRouter {
     // Cập nhật trạng thái dropdown items
     dropdownItems.forEach((item) => {
       const el = item as HTMLElement;
-      if (el.dataset.tabTarget === tabName) {
+      if (el.dataset.tabTarget === tabName || (tabName === 'compare' && el.dataset.tabTarget === 'lookbook')) {
         el.classList.add('active');
       } else {
         el.classList.remove('active');
@@ -162,7 +171,18 @@ export class AppRouter {
       if (mobileName) mobileName.textContent = 'Lookbook';
 
       lookbookEngine.renderLookbook();
+    } else if (tabName === 'compare') {
+      tabLookbookBtn?.classList.add('active');
+      compareScene?.classList.add('scene-active');
+      if (mobileIcon) mobileIcon.textContent = '📖';
+      if (mobileName) mobileName.textContent = 'Lookbook • So Sánh';
     }
+  }
+
+  public openCompare(presetAId?: string, presetBId?: string): void {
+    Sound.playClick();
+    this.switchTab('compare');
+    compareEngine.openCompare(presetAId, presetBId);
   }
 
   public remixToWorkshop(outfit: DiscoveryOutfit): void {
@@ -326,6 +346,7 @@ export class AppRouter {
     const tabPatternBtn = document.getElementById('tab-pattern');
     const tabDiscoverBtn = document.getElementById('tab-discover');
     const tabLookbookBtn = document.getElementById('tab-lookbook');
+    const tabCompareBtn = document.getElementById('tab-compare');
     const btnOpenWardrobe = document.getElementById('btn-open-wardrobe');
     const btnEmptyDiscover = document.getElementById('btn-empty-discover');
 
@@ -347,6 +368,29 @@ export class AppRouter {
     tabLookbookBtn?.addEventListener('click', () => {
       Sound.playClick();
       this.switchTab('lookbook');
+    });
+
+    tabCompareBtn?.addEventListener('click', () => {
+      Sound.playClick();
+      this.openCompare();
+    });
+
+    // Nút mở so sánh từ Xưởng Phối
+    document.getElementById('btn-workshop-compare')?.addEventListener('click', () => {
+      Sound.playClick();
+      this.openCompare('current-workshop');
+    });
+
+    // Nút mở so sánh từ Lookbook header
+    document.getElementById('btn-lookbook-compare-head')?.addEventListener('click', () => {
+      Sound.playClick();
+      this.openCompare();
+    });
+
+    // Nút mở so sánh từ Màn hình Kết quả
+    document.getElementById('btn-result-compare')?.addEventListener('click', () => {
+      Sound.playClick();
+      this.openCompare('current-workshop');
     });
 
     btnOpenWardrobe?.addEventListener('click', () => {
@@ -379,9 +423,10 @@ export class AppRouter {
           (document.getElementById('profile-name') as HTMLInputElement).value = profile.name || '';
           (document.getElementById('profile-height') as HTMLInputElement).value = profile.height || '';
           (document.getElementById('profile-weight') as HTMLInputElement).value = profile.weight || '';
-          (document.getElementById('profile-shape') as HTMLInputElement).value = profile.shape || '';
-          (document.getElementById('profile-skin') as HTMLInputElement).value = profile.skin || '';
-          (document.getElementById('profile-hair') as HTMLInputElement).value = profile.hair || '';
+
+          this.syncSavedChipToGroup('profile-shape-chips', 'profile-shape', profile.shape);
+          this.syncSavedChipToGroup('profile-skin-chips', 'profile-skin', profile.skin);
+          this.syncSavedChipToGroup('profile-hair-chips', 'profile-hair', profile.hair);
         }
       } catch (e) {}
       modal.style.display = 'flex';
@@ -396,11 +441,16 @@ export class AppRouter {
     document.getElementById('btn-mobile-profile')?.addEventListener('click', () => {
       Sound.playClick();
       openProfile();
-      document.getElementById('nav-mobile-dropdown-menu')?.classList.remove('open');
+      document.getElementById('nav-mobile-dropdown-menu')?.classList.remove('dropdown-open');
     });
 
     // Đóng modal
     document.getElementById('btn-close-profile')?.addEventListener('click', () => {
+      Sound.playClick();
+      closeProfile();
+    });
+
+    document.getElementById('btn-close-profile-top')?.addEventListener('click', () => {
       Sound.playClick();
       closeProfile();
     });
@@ -434,6 +484,92 @@ export class AppRouter {
         closeProfile();
       }
     });
+  }
+
+  private setupProfileChips(): void {
+    // Quick metric chips for height
+    document.querySelectorAll('.profile-quick-chips[data-target="profile-height"] .quick-metric-chip').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        Sound.playClick();
+        const val = (e.currentTarget as HTMLElement).dataset.val || '';
+        const input = document.getElementById('profile-height') as HTMLInputElement | null;
+        if (input) input.value = val;
+        document.querySelectorAll('.profile-quick-chips[data-target="profile-height"] .quick-metric-chip').forEach((b) => b.classList.remove('active'));
+        (e.currentTarget as HTMLElement).classList.add('active');
+      });
+    });
+
+    // Quick metric chips for weight
+    document.querySelectorAll('.profile-quick-chips[data-target="profile-weight"] .quick-metric-chip').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        Sound.playClick();
+        const val = (e.currentTarget as HTMLElement).dataset.val || '';
+        const input = document.getElementById('profile-weight') as HTMLInputElement | null;
+        if (input) input.value = val;
+        document.querySelectorAll('.profile-quick-chips[data-target="profile-weight"] .quick-metric-chip').forEach((b) => b.classList.remove('active'));
+        (e.currentTarget as HTMLElement).classList.add('active');
+      });
+    });
+
+    // Chips for shape
+    this.bindChipGroup('profile-shape-chips', 'profile-shape');
+
+    // Chips for skin
+    this.bindChipGroup('profile-skin-chips', 'profile-skin');
+
+    // Chips for hair
+    this.bindChipGroup('profile-hair-chips', 'profile-hair');
+  }
+
+  private bindChipGroup(containerId: string, inputId: string): void {
+    const container = document.getElementById(containerId);
+    const input = document.getElementById(inputId) as HTMLInputElement | null;
+    if (!container || !input) return;
+
+    const chips = container.querySelectorAll('.profile-chip-btn');
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        Sound.playClick();
+        chips.forEach((c) => c.classList.remove('chip-selected'));
+        chip.classList.add('chip-selected');
+
+        const val = (chip as HTMLElement).dataset.val;
+        if (val === 'custom') {
+          input.style.display = 'block';
+          input.focus();
+        } else {
+          input.style.display = 'none';
+          input.value = val || '';
+        }
+      });
+    });
+  }
+
+  private syncSavedChipToGroup(containerId: string, inputId: string, savedValue?: string): void {
+    const container = document.getElementById(containerId);
+    const input = document.getElementById(inputId) as HTMLInputElement | null;
+    if (!container || !input || !savedValue) return;
+
+    input.value = savedValue;
+    const chips = container.querySelectorAll('.profile-chip-btn');
+    let matched = false;
+
+    chips.forEach((chip) => {
+      const val = (chip as HTMLElement).dataset.val;
+      if (val === savedValue) {
+        chip.classList.add('chip-selected');
+        matched = true;
+        input.style.display = 'none';
+      } else {
+        chip.classList.remove('chip-selected');
+      }
+    });
+
+    if (!matched && savedValue) {
+      const customChip = container.querySelector('.profile-chip-custom');
+      customChip?.classList.add('chip-selected');
+      input.style.display = 'block';
+    }
   }
 }
 

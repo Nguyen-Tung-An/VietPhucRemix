@@ -20,13 +20,13 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import {
   CULTURAL_DATABASE,
-  type CulturalHeritageEntry,
+  CulturalHeritageEntry,
   getCulturalTruth,
   checkMultipleStrictTaboos,
   validateUserInputSanity,
   getColorCulturalAnalysis
 } from '../src/data/culturalTruths.ts';
-import type {
+import {
   CulturalRecommendationInput,
   GroundedRecommendationResult,
   CulturalAuditResult,
@@ -237,6 +237,7 @@ export function getOfflineMiniStylingSuggestions(context: {
   primary_color: string;
   style_mode?: string;
   personality?: string;
+  user_profile?: any;
 }): MiniStylingResponse {
   const truth = getCulturalTruth(context.garment_type);
   const garmentId = truth.id;
@@ -355,10 +356,23 @@ export function getOfflineMiniStylingSuggestions(context: {
 
   const garmentSet = suggestionsByGarment[garmentId] || suggestionsByGarment.AO_NGU_THAN;
 
+  let note = `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`;
+  if (context.user_profile) {
+    const { name, skin, shape, hair } = context.user_profile;
+    const traits: string[] = [];
+    if (skin) traits.push(`nước da ${skin}`);
+    if (shape) traits.push(`vóc dáng ${shape}`);
+    if (hair) traits.push(`mái tóc ${hair}`);
+    if (traits.length > 0) {
+      const greeting = name ? `${name} thân mến, ` : '';
+      note = `${greeting}Dáng ${truth.name} sắc ${context.primary_color} rất tôn ${traits.join(' và ')}, tạo nên tổng thể thanh thoát và hài hòa.`;
+    }
+  }
+
   return {
     accessories: garmentSet.accessories,
     hairstyles: garmentSet.hairstyles,
-    stylist_note: `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`
+    stylist_note: note
   };
 }
 
@@ -375,7 +389,7 @@ export async function runOnlineMiniStylingSuggestions(
   const truth = getCulturalTruth(context.garment_type);
 
   const userProfileStr = context.user_profile
-    ? `\nĐặc điểm ngoại hình người mặc:\n- Tên: ${context.user_profile.name || 'Chưa rõ'}\n- Chiều cao: ${context.user_profile.height || 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight || 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
+    ? `\nĐặc điểm cá nhân của người mặc:\n- Tên/Biệt danh: ${context.user_profile.name || 'Người mặc'}\n- Chiều cao: ${context.user_profile.height ? context.user_profile.height + 'cm' : 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight ? context.user_profile.weight + 'kg' : 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
     : '';
 
   const prompt = `Bạn là Giám đốc Phong cách Cổ phục Việt Y đương đại.
@@ -388,10 +402,15 @@ Người dùng đang thiết kế bộ trang phục:
 Các kiêng kỵ nghiêm ngặt (KHÔNG ĐƯỢC GỢI Ý các món này):
 ${truth.strictTaboos.map((t) => `- Không gợi ý: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}
 
+YÊU CẦU ĐẶC BIỆT VỀ SỰ TƯƠNG THÍCH GIỮA TRANG PHỤC VÀ ĐẶC ĐIỂM CÁ NHÂN:
+- Cân nhắc kỹ lưỡng tính chất trang phục (${truth.name}, sắc ${context.primary_color}) và đặc điểm cá nhân của người mặc (dáng người, màu da, chiều cao, màu tóc) xem có hợp nhau không.
+- Gợi ý phụ kiện và kiểu tóc phải tôn vinh vóc dáng, làm sáng tông da, cân đối tỷ lệ cơ thể và làm nổi bật nét đẹp tự nhiên của người mặc một cách thanh tao, lịch thiệp và chuẩn mực di sản.
+- Trong stylist_note: Đưa ra nhận xét tinh tế, khéo léo (< 40 từ) về sự hòa hợp giữa đặc điểm cá nhân người mặc và bộ phục trang này.
+
 NHIỆM VỤ CỦA BẠN:
-1. Sáng tạo CHÍNH XÁC 3 gợi ý PHỤ KIỆN phù hợp với loại áo này (không phạm kiêng kỵ, tôn dáng, có ý nghĩa văn hóa và vibe tag).
-2. Sáng tạo CHÍNH XÁC 3 gợi ý KIỂU TÓC nghệ thuật, hài hòa với cổ áo và phong cách.
-3. Đưa ra 1 câu stylist note truyền cảm hứng ngắn gọn (< 40 từ).
+1. Sáng tạo CHÍNH XÁC 3 gợi ý PHỤ KIỆN phù hợp với loại áo này và ngoại hình người mặc (không phạm kiêng kỵ, tôn dáng, có ý nghĩa văn hóa và vibe tag).
+2. Sáng tạo CHÍNH XÁC 3 gợi ý KIỂU TÓC nghệ thuật, hài hòa với cổ áo, phong cách và vóc dáng/màu tóc người mặc.
+3. Đưa ra 1 câu stylist note truyền cảm hứng ngắn gọn (< 40 từ) nhận xét về sự tương thích giữa người mặc và trang phục.
 
 Trả về định dạng JSON theo đúng schema được yêu cầu.`;
 
@@ -411,8 +430,13 @@ Trả về định dạng JSON theo đúng schema được yêu cầu.`;
     if (parsed.accessories?.length && parsed.hairstyles?.length) {
       return parsed;
     }
-  } catch (err) {
-    console.warn('Lỗi gọi Gemini Mini Styling, chuyển sang Offline Generator:', err);
+  } catch (err: any) {
+    const isQuotaExceeded = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED');
+    if (isQuotaExceeded) {
+      console.log('Gemini API Quota 429: Chuyển sang Offline Heritage Generator mượt mà.');
+    } else {
+      console.warn('Lỗi gọi Gemini Mini Styling, dùng Offline Generator:', err?.message || err);
+    }
   }
 
   return getOfflineMiniStylingSuggestions(context);

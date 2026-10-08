@@ -27,6 +27,22 @@ export class LookbookEngine {
       Sound.playClick();
       appRouter.switchTab('discover');
     });
+
+    // 3. Nút So Sánh trên tiêu đề Lookbook
+    const btnCompareHead = document.getElementById('btn-lookbook-compare-head');
+    btnCompareHead?.addEventListener('click', () => {
+      Sound.playClick();
+      const outfits = wardrobeManager.savedWardrobe;
+      if (outfits.length === 0) {
+        appRouter.showToast('⚠️ Lookbook của bạn chưa có bộ đồ nào đã lưu!');
+        return;
+      }
+      if (outfits.length === 1) {
+        appRouter.showToast('💡 Bạn cần lưu ít nhất 2 bộ đồ trong Lookbook để tiến hành so sánh đối chiếu!');
+        return;
+      }
+      appRouter.openCompare(`wardrobe-${outfits[0].id}`, `wardrobe-${outfits[1].id}`);
+    });
   }
 
   /**
@@ -37,6 +53,7 @@ export class LookbookEngine {
     const emptyEl = document.getElementById('lookbook-empty-state');
     const countBadge = document.getElementById('lookbook-count-badge');
     const shareBtn = document.getElementById('btn-lookbook-share');
+    const btnCompareHead = document.getElementById('btn-lookbook-compare-head');
 
     const outfits = wardrobeManager.savedWardrobe;
     const count = outfits.length;
@@ -44,6 +61,22 @@ export class LookbookEngine {
     // 1. Cập nhật số lượng bộ đồ đã lưu
     if (countBadge) {
       countBadge.textContent = `${count} bộ đồ đã lưu`;
+    }
+
+    // Cập nhật trạng thái nút So Sánh trong header Lookbook
+    if (btnCompareHead) {
+      if (count === 0) {
+        btnCompareHead.style.display = 'none';
+      } else {
+        btnCompareHead.style.display = 'inline-flex';
+        if (count < 2) {
+          btnCompareHead.style.opacity = '0.55';
+          btnCompareHead.title = 'Lưu thêm 1 bộ nữa vào Lookbook để bắt đầu so sánh';
+        } else {
+          btnCompareHead.style.opacity = '1';
+          btnCompareHead.title = `So sánh giữa ${count} bộ đồ đã lưu trong Lookbook`;
+        }
+      }
     }
 
     if (!gridEl || !emptyEl) return;
@@ -96,6 +129,9 @@ export class LookbookEngine {
           <button type="button" class="btn-card-remix" data-remix-id="${item.id}" title="Phối lại trang phục này trong Xưởng">
             <span>🎨 Remix</span>
           </button>
+          <button type="button" class="btn-card-compare" data-compare-id="${item.id}" style="padding: 6px 10px; border-radius: 9999px; background: rgba(74,133,119,0.12); border: 1px solid rgba(74,133,119,0.25); color: #2A5A4E; font-size: 0.74rem; font-weight: 600; cursor: pointer;" title="So sánh bộ này với bộ khác">
+            <span>⚖️ So Sánh</span>
+          </button>
           <button type="button" class="btn-card-tailor" data-tailor-id="${item.id}" style="padding: 6px 10px; border-radius: 9999px; background: rgba(201,166,107,0.18); border: 1px solid rgba(201,166,107,0.35); color: #6B4E2E; font-size: 0.74rem; font-weight: 600; cursor: pointer;" title="Tìm tiệm may bộ này trên Google Maps">
             <span>📍 Tiệm May</span>
           </button>
@@ -111,8 +147,8 @@ export class LookbookEngine {
       // 3. Phản hồi thị giác khi chạm (scale nhẹ xuống rồi trở lại)
       card.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
-        // Tránh trigger khi bấm nút Xóa hoặc nút Remix trực tiếp
-        if (target.closest('.btn-card-remove') || target.closest('.btn-card-remix') || target.closest('.btn-card-tailor')) {
+        // Tránh trigger khi bấm nút Xóa hoặc nút Remix hoặc So Sánh trực tiếp
+        if (target.closest('.btn-card-remove') || target.closest('.btn-card-remix') || target.closest('.btn-card-tailor') || target.closest('.btn-card-compare')) {
           return;
         }
         Sound.playClick();
@@ -121,6 +157,14 @@ export class LookbookEngine {
           card.style.transform = '';
           appRouter.remixToWorkshop(item);
         }, 150);
+      });
+
+      // Bắt sự kiện nút So Sánh
+      const compareBtn = card.querySelector(`[data-compare-id="${item.id}"]`);
+      compareBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Sound.playClick();
+        appRouter.openCompare(`wardrobe-${item.id}`);
       });
 
       // Bắt sự kiện nút Tìm Tiệm May

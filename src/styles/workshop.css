@@ -77,50 +77,47 @@
 
 /* ==========================================================================
    2. CỘT 1 (DESKTOP) / TẦNG TRÊN (MOBILE) — SÀN DIỄN CROQUIS & THẺ KHẢO CỨU
-   - Desktop: Chiếm tỷ lệ thấp nhất (~320px - 340px, xêm xêm size thẻ khám phá)
-   - Phù hợp cả khi có hình SVG lẫn khi hiển thị Thẻ Khảo Cứu di sản
+   - Desktop: Chiếm tỷ lệ gọn gàng (~340px, tương đồng kích thước thẻ di sản)
+   - Mobile: Nằm trên đỉnh với chiều cao vừa vặn, hiển thị trọn vẹn tà áo
    ========================================================================== */
 .workshop-stage-tier {
   width: 100%;
+  min-height: 400px;
+  max-height: 480px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   position: relative;
   background: var(--color-card-bg);
   border: 1px solid var(--color-card-border);
   border-radius: var(--border-radius-card, 16px);
-  padding: 14px;
+  padding: 12px 14px;
   box-sizing: border-box;
   box-shadow: var(--shadow-card);
   flex-shrink: 0;
-  gap: 12px;
 }
 
 @media (min-width: 992px) {
   .workshop-stage-tier {
+    flex: 0 0 340px;
     width: 340px;
     height: calc(100vh - 56px);
-    max-width: 360px;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    background: var(--color-card-bg);
     border-radius: 0;
     border-top: none;
-    border-bottom: none;
     border-left: none;
+    border-bottom: none;
     border-right: 1px solid var(--color-card-border);
+    padding: 16px 14px;
+    box-sizing: border-box;
     box-shadow: none;
-    overflow-y: auto;
+    overflow: hidden;
   }
-}
-
-.stage-artwork-viewport {
-  width: 100%;
-  flex: 1;
-  min-height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(74, 133, 119, 0.04);
 }
 
 /* Thanh thông tin trạng thái nhẹ nhàng trên đỉnh stage */
@@ -131,26 +128,29 @@
   width: 100%;
   z-index: 10;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-stage-back {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   background: var(--color-card-bg);
   border: 1px solid var(--color-card-border);
-  padding: 5px 12px;
+  padding: 6px 14px;
   min-height: 34px;
   border-radius: var(--border-radius-pill, 9999px);
   color: var(--color-accent-secondary);
   font-family: var(--font-body);
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(74, 133, 119, 0.08);
   transition: transform 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
 }
 
 .btn-stage-back:hover {
@@ -166,7 +166,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: var(--border-radius-pill, 9999px);
   background: var(--color-card-bg);
   backdrop-filter: blur(10px);
@@ -179,7 +179,7 @@
 
 .stage-title-text {
   font-family: var(--font-title);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--color-text-primary);
   text-transform: none !important;
@@ -187,26 +187,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.btn-stage-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--color-card-bg);
-  border: 1px solid var(--color-card-border);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-.btn-stage-back:hover {
-  background: var(--color-bg);
-  transform: translateX(-2px);
-}
-.btn-stage-back span { display: none; }
 
 .stage-status-badge {
   display: inline-flex;
@@ -236,7 +216,33 @@
   white-space: nowrap;
 }
 
+/* Khung bao chứa Canvas SVG Vector Croquis */
+.stage-svg-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 2px 0;
+  overflow: hidden;
+}
 
+.croquis-svg-art {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 24px rgba(74, 133, 119, 0.16));
+  transition: transform 0.25s ease;
+}
+
+@media (min-width: 992px) {
+  .croquis-svg-art {
+    max-height: calc(100vh - 240px);
+    max-height: calc(100dvh - 240px);
+  }
+}
 
 /* ==========================================================================
    THẺ KHẢO CỨU DI SẢN (ARCHIVAL RESTORATION PLACEHOLDER)

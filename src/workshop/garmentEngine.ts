@@ -45,7 +45,40 @@ export class GarmentEngine {
 
   public setPattern(pattern: PatternItem | null): void {
     this.currentPattern = pattern;
-    this.updateArtworkDisplay();
+    const overlayPath = document.getElementById('layer-pattern-overlay');
+    const emblemGroup = document.getElementById('layer-emblem');
+    const dynPatternPath = document.getElementById('dynamic-ai-pattern-path');
+
+    if (!pattern) {
+      if (overlayPath) overlayPath.style.display = 'none';
+      if (emblemGroup) emblemGroup.style.display = 'none';
+      return;
+    }
+
+    if (pattern.pattern_type === 'SEAMLESS_JACQUARD') {
+      if (dynPatternPath) {
+        dynPatternPath.setAttribute('d', pattern.svg_path_data || '');
+        dynPatternPath.setAttribute('stroke', pattern.pattern_color || '#C9A66B');
+      }
+      if (overlayPath) {
+        overlayPath.style.display = 'block';
+        overlayPath.style.mixBlendMode = 'multiply';
+        overlayPath.style.opacity = '0.38';
+      }
+      if (emblemGroup) emblemGroup.style.display = 'none';
+    } else {
+      if (overlayPath) overlayPath.style.display = 'none';
+      if (emblemGroup) {
+        const color = pattern.pattern_color || '#C9A66B';
+        emblemGroup.innerHTML = `
+          <circle cx="0" cy="0" r="32" fill="none" stroke="${color}" stroke-width="2.2" stroke-dasharray="5,3" filter="drop-shadow(0 0 6px ${color})" />
+          <circle cx="0" cy="0" r="27" fill="rgba(30, 20, 15, 0.65)" stroke="${color}" stroke-width="1.2" />
+          <path d="${pattern.svg_path_data}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="0" cy="0" r="3.5" fill="${color}" />
+        `;
+        emblemGroup.style.display = 'block';
+      }
+    }
   }
 
   public getCurrentOutfitState(): CurrentOutfitState {
@@ -324,6 +357,7 @@ export class GarmentEngine {
       this.aiStylingData = data;
       this.renderAccessoriesList(data.accessories);
       this.renderHairstylesList(data.hairstyles);
+      this.renderStylistNote(data.stylist_note);
     } catch {
       // Offline fallback
     }
@@ -356,6 +390,7 @@ export class GarmentEngine {
       this.aiStylingData = data;
       this.renderAccessoriesList(data.accessories);
       this.renderHairstylesList(data.hairstyles);
+      this.renderStylistNote(data.stylist_note);
       Sound.playChime();
     } catch (err) {
       console.warn('Mini Gemini trigger failed:', err);
@@ -363,6 +398,18 @@ export class GarmentEngine {
       if (btnTrigger) btnTrigger.disabled = false;
       if (spinner) spinner.style.display = 'none';
       if (label) label.textContent = '✨ Tạo Lại Gợi Ý AI (Mini Gemini)';
+    }
+  }
+
+  private renderStylistNote(note?: string): void {
+    const noteBox = document.getElementById('ai-stylist-note-box');
+    const noteContent = document.getElementById('ai-stylist-note-content');
+    if (!noteBox || !noteContent) return;
+    if (note && note.trim()) {
+      noteContent.textContent = note;
+      noteBox.style.display = 'block';
+    } else {
+      noteBox.style.display = 'none';
     }
   }
 
@@ -541,16 +588,66 @@ export class GarmentEngine {
     return { isValid: true };
   }
 
-  private syncLegacyAccessoryVisual(): void {}
+  private syncLegacyAccessoryVisual(): void {
+    const fan = document.getElementById('acc-fan');
+    const scarf = document.getElementById('acc-scarf');
+    const hairpin = document.getElementById('acc-hairpin');
+    const pouch = document.getElementById('acc-pouch');
 
-  private syncLegacyHairstyleVisual(_hairId: string): void {}
+    const all = [...this.selectedAccessories, ...this.customAccessories];
+    const hasFan = all.some((x) => x.toUpperCase().includes('QUAT'));
+    const hasScarf = all.some((x) => x.toUpperCase().includes('KHAN_RAN') || x.toUpperCase().includes('KHĂN RẰN'));
+    const hasHairpin = all.some((x) => x.toUpperCase().includes('TRAM') || x.toUpperCase().includes('TRÂM'));
+    const hasPouch = all.some((x) => x.toUpperCase().includes('TUI') || x.toUpperCase().includes('TÚI'));
+
+    if (fan) fan.style.display = hasFan ? 'block' : 'none';
+    if (scarf) scarf.style.display = hasScarf ? 'block' : 'none';
+    if (hairpin) hairpin.style.display = hasHairpin ? 'block' : 'none';
+    if (pouch) pouch.style.display = hasPouch ? 'block' : 'none';
+  }
+
+  private syncLegacyHairstyleVisual(hairId: string): void {
+    const buiTram = document.getElementById('hair-bui-tram');
+    const xoaDai = document.getElementById('hair-xoa-dai');
+    const vanKhan = document.getElementById('hair-van-khan');
+    const buocThap = document.getElementById('hair-buoc-thap');
+
+    if (buiTram) buiTram.style.display = hairId === 'BUI_TRAM' || hairId.includes('BUI') ? 'block' : 'none';
+    if (xoaDai) xoaDai.style.display = hairId === 'XOA_DAI' || hairId.includes('XOA') ? 'block' : 'none';
+    if (vanKhan) vanKhan.style.display = hairId === 'VAN_KHAN' || hairId.includes('VAN') ? 'block' : 'none';
+    if (buocThap) buocThap.style.display = hairId === 'BUOC_THAP' || hairId.includes('BUOC') ? 'block' : 'none';
+  }
 
   /**
-   * Cập nhật màu sắc tà áo tức thì
+   * Cập nhật màu sắc tà áo tức thì lên SVG
    */
   public setFabricColor(colorHex: string, colorName?: string): void {
     this.currentColor = colorHex;
     if (colorName) this.currentColorName = colorName;
+
+    // Cập nhật SVG Áo Ngũ Thân
+    const nguthanBody = document.getElementById('nguthan-body-fill');
+    const nguthanLeft = document.getElementById('nguthan-left-sleeve');
+    const nguthanRight = document.getElementById('nguthan-right-sleeve');
+    const collarOuter = document.getElementById('collar-outer');
+
+    if (nguthanBody) nguthanBody.setAttribute('fill', colorHex);
+    if (nguthanLeft) nguthanLeft.setAttribute('fill', colorHex);
+    if (nguthanRight) nguthanRight.setAttribute('fill', colorHex);
+    if (collarOuter) collarOuter.setAttribute('fill', colorHex);
+
+    // Cập nhật SVG Áo Bà Ba
+    const babaBody = document.getElementById('baba-body-fill');
+    const babaLeft = document.getElementById('baba-left-sleeve');
+    const babaRight = document.getElementById('baba-right-sleeve');
+    const babaPocketL = document.getElementById('baba-pocket-left');
+    const babaPocketR = document.getElementById('baba-pocket-right');
+
+    if (babaBody) babaBody.setAttribute('fill', colorHex);
+    if (babaLeft) babaLeft.setAttribute('fill', colorHex);
+    if (babaRight) babaRight.setAttribute('fill', colorHex);
+    if (babaPocketL) babaPocketL.setAttribute('fill', colorHex);
+    if (babaPocketR) babaPocketR.setAttribute('fill', colorHex);
 
     // Cập nhật nhãn màu đang chọn
     const labelEl = document.getElementById('color-selected-label');
@@ -584,44 +681,6 @@ export class GarmentEngine {
     if (insightColorEvent) insightColorEvent.textContent = `🌸 Phù hợp: ${colorAnalysis.event_suitability}`;
 
     this.updateDesktopGuidance();
-  }
-
-  /**
-   * Cập nhật khung hình minh họa trang phục hoặc hiển thị thông báo còn trống
-   */
-  public updateArtworkDisplay(): void {
-    const artworkImg = document.getElementById('workshop-artwork-image') as HTMLImageElement | null;
-    const placeholder = document.getElementById('workshop-no-image-placeholder');
-    if (!artworkImg || !placeholder) return;
-
-    const GARMENT_IMAGE_MAP: Record<string, string> = {
-      AO_NGU_THAN: '/images/garments/ao-ngu-than.png',
-      AO_TAC: '/images/garments/ao-tac.png',
-      AO_NHAT_BINH: '/images/garments/ao-nhat-binh.png',
-      AO_GIAO_LINH: '/images/garments/ao-giao-linh.png',
-      AO_VIEN_LINH: '/images/garments/ao-vien-linh.png',
-      AO_DOI_KHAM: '/images/garments/ao-doi-kham.png',
-      AO_TU_THAN: '/images/garments/ao-tu-than.png',
-      AO_BA_BA: '/images/garments/ao-ba-ba.png',
-      AO_DAI_LEMUR: '/images/garments/ao-dai-lemur.png',
-    };
-
-    const targetSrc = this.currentPattern?.imageUrl || GARMENT_IMAGE_MAP[this.currentGarment];
-
-    if (targetSrc) {
-      artworkImg.src = targetSrc;
-      artworkImg.onload = () => {
-        artworkImg.style.display = 'block';
-        placeholder.style.display = 'none';
-      };
-      artworkImg.onerror = () => {
-        artworkImg.style.display = 'none';
-        placeholder.style.display = 'flex';
-      };
-    } else {
-      artworkImg.style.display = 'none';
-      placeholder.style.display = 'flex';
-    }
   }
 
   public setStyle(style: string): void {
@@ -664,8 +723,43 @@ export class GarmentEngine {
       stageEra.textContent = truth.historicalEra.split('(')[0].trim().slice(0, 32);
     }
 
-    // Hiển thị khung ảnh hoặc thông báo trống
-    this.updateArtworkDisplay();
+    // Hiển thị croquis vector hoặc Thẻ khảo cứu di sản (Archival Placeholder)
+    const svgEl = document.getElementById('nguthan-svg');
+    const nguthanGroup = document.getElementById('garment-nguthan-group');
+    const babaGroup = document.getElementById('garment-baba-group');
+    const archivalPlaceholder = document.getElementById('stage-archival-placeholder');
+    const archivalName = document.getElementById('archival-garment-name');
+    const btnInspectGarmentPrompt = document.getElementById('btn-inspect-garment-prompt');
+
+    if (garment === 'AO_NGU_THAN') {
+      if (svgEl) svgEl.style.display = 'block';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'none';
+      if (nguthanGroup) nguthanGroup.style.display = 'block';
+      if (babaGroup) babaGroup.style.display = 'none';
+    } else if (garment === 'AO_BA_BA') {
+      if (svgEl) svgEl.style.display = 'block';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'none';
+      if (nguthanGroup) nguthanGroup.style.display = 'none';
+      if (babaGroup) babaGroup.style.display = 'block';
+    } else {
+      // Các dáng áo khác đang trong diện nghiên cứu phục dựng đồ họa
+      if (svgEl) svgEl.style.display = 'none';
+      if (archivalPlaceholder) archivalPlaceholder.style.display = 'flex';
+      if (archivalName) archivalName.textContent = truth.name;
+
+      if (btnInspectGarmentPrompt) {
+        btnInspectGarmentPrompt.onclick = () => {
+          Sound.playChime();
+          const currentState = this.getCurrentOutfitState();
+          const assembled = assembleFashionPrompt(currentState);
+          patternEngine.openPromptInspectModal(
+            `Prompt AI: ${truth.name}`,
+            assembled,
+            'TRANG_PHUC'
+          );
+        };
+      }
+    }
 
     // Đồng bộ toàn bộ nội dung Cột 2: Góc Nhìn Di Sản Chuyên Sâu
     const insightEra = document.getElementById('insight-garment-era');
@@ -720,7 +814,6 @@ export class GarmentEngine {
   private setupWorkshopCta(): void {
     const topBtnView = document.getElementById('btn-view-result');
     const btnInspectOutfit = document.getElementById('btn-inspect-outfit-prompt');
-    const btnGotoDiscover = document.getElementById('btn-workshop-goto-discover');
 
     topBtnView?.addEventListener('click', () => {
       // Trigger kết quả
@@ -736,16 +829,12 @@ export class GarmentEngine {
         'TRANG_PHUC'
       );
     });
-
-    btnGotoDiscover?.addEventListener('click', () => {
-      Sound.playClick();
-      document.getElementById('tab-discover')?.click();
-    });
   }
 
   private applyAllVisuals(): void {
     this.setFabricColor(this.currentColor, this.currentColorName);
-    this.updateArtworkDisplay();
+    this.syncLegacyAccessoryVisual();
+    this.syncLegacyHairstyleVisual(this.selectedHairstyle);
     this.updateDesktopGuidance();
   }
 

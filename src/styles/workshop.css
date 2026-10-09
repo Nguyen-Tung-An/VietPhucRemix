@@ -691,16 +691,16 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 5px;
+  gap: 8px;
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   margin-top: 0px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  margin-bottom: 8px;
+  padding-top: 4px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
   box-sizing: border-box;
 }
 
@@ -710,17 +710,17 @@
 
 .sheet-tab-btn {
   flex: 0 0 auto;
-  min-height: 34px;
+  min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 5px 10px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: var(--border-radius-pill, 9999px);
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.55);
   border: 1px solid var(--color-card-border);
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -730,15 +730,38 @@
 
 @media (min-width: 768px) {
   .sheet-tabs-nav {
-    justify-content: space-between;
-    gap: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: visible;
   }
   .sheet-tab-btn {
-    flex: 1 1 0;
-    min-width: 0;
-    font-size: 0.76rem;
-    padding: 6px 4px;
+    flex: 1 1 calc(25% - 8px);
+    min-width: 90px;
+    font-size: 0.82rem;
+    padding: 8px 10px;
+    min-height: 38px;
+    box-sizing: border-box;
   }
+}
+
+/* Khi có Cột Gợi ý AI bên cạnh: Cho phép 4 Tab dàn 2 hàng cân đối, không bao giờ bị tràn hay ép nghẹt chữ */
+.workshop-container.has-ai-column .sheet-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-x: visible;
+  padding: 4px 0 8px 0;
+  margin-bottom: 8px;
+}
+
+.workshop-container.has-ai-column .sheet-tab-btn {
+  flex: 1 1 calc(50% - 6px);
+  min-width: 100px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  box-sizing: border-box;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2180,30 +2203,34 @@
   }
 
   .workshop-container.has-ai-column {
-    max-width: 1280px;
+    max-width: 1440px;
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    gap: 24px;
     align-items: flex-start;
   }
 
   .workshop-container.has-ai-column .workshop-sheet-tier {
     flex: 1 1 50%;
-    max-width: 600px;
+    max-width: 680px;
+    min-width: 0;
     order: 1;
+    padding: 18px 20px;
+    box-sizing: border-box;
   }
 
   .workshop-ai-column {
     flex: 1 1 50%;
-    max-width: 600px;
+    max-width: 680px;
     order: 2;
     height: calc(100vh - 56px);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 20px 22px;
+    padding: 24px 28px;
     border-radius: var(--border-radius-card, 16px);
     border: 1px solid var(--color-card-border);
     box-shadow: var(--shadow-card);
+    box-sizing: border-box;
   }
 }
 

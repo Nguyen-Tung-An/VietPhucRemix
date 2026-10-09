@@ -125,10 +125,6 @@ export class ResultEngine {
 
     const truth = getCulturalTruth(garment);
     
-    if (badgeText) {
-      badgeText.textContent = `✨ 98% Chuẩn Lụa Thanh`;
-    }
-
     if (heading) {
       heading.textContent = `${truth.name} • ${colorName}`;
     }
@@ -164,7 +160,7 @@ export class ResultEngine {
   }
 
   /**
-   * LỚP 3 — Thẻ tri thức văn hóa có trích dẫn nguồn xác thực (Progressive Disclosure)
+   * LỚP 3 — Thẻ tri thức văn hóa chuyên sâu có trích dẫn nguồn xác thực (Progressive Disclosure)
    */
   private renderKnowledgeCard(garment: string): void {
     const knowledgeText = document.getElementById('knowledge-text');
@@ -175,7 +171,7 @@ export class ResultEngine {
     const allSources = getAllSourcesForGarment(garment);
 
     if (knowledgeTitle) {
-      knowledgeTitle.textContent = `${truth.name} • Tri Thức Di Sản Khảo Cứu`;
+      knowledgeTitle.textContent = `${truth.name} • Tri Thức Khảo Cứu & Quy Chuẩn Cấu Trúc`;
     }
 
     const citationItemsHtml = allSources.map((src, index) => {
@@ -195,6 +191,21 @@ export class ResultEngine {
       `;
     }).join('');
 
+    const definingFeaturesHtml = truth.definingFeatures && truth.definingFeatures.length > 0
+      ? `
+        <div style="margin-top: 10px; padding: 8px 12px; background: rgba(74, 133, 119, 0.06); border-radius: 8px; border-left: 3px solid #4A8577;">
+          <div style="font-weight: 700; color: #2A5A4E; font-size: 0.8rem; margin-bottom: 4px;">✂️ Quy chuẩn cấu trúc may mặc cốt lõi:</div>
+          <ul style="margin: 0; padding-left: 18px; font-size: 0.78rem; color: #333; line-height: 1.5;">
+            ${truth.definingFeatures.map(f => `<li>${f}</li>`).join('')}
+          </ul>
+        </div>
+      `
+      : '';
+
+    const socialContextHtml = truth.socialContext
+      ? `<div style="margin-top: 8px; font-size: 0.78rem; color: #555;"><strong>Bối cảnh & Tầng lớp sử dụng nguyên bản:</strong> ${truth.socialContext}</div>`
+      : '';
+
     const citationHtml = `
       <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(201,166,107,0.4); font-size: 11px;">
         <div style="font-weight: 700; color: #4A8577; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
@@ -206,12 +217,14 @@ export class ResultEngine {
     `;
 
     knowledgeText.innerHTML = `
-      <div>${truth.culturalSignificance}</div>
-      <div style="margin-top: 8px; font-size: 12px; color: #555;">
+      <div style="font-size: 0.86rem; line-height: 1.6; color: #2B2B28;">${truth.culturalSignificance}</div>
+      ${definingFeaturesHtml}
+      ${socialContextHtml}
+      <div style="margin-top: 8px; font-size: 0.78rem; color: #555;">
         <strong>Niên đại lịch sử:</strong> ${truth.historicalEra}
       </div>
-      <div style="margin-top: 6px; font-size: 12px; color: #555;">
-        <strong>Vùng miền cội nguồn:</strong> ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ / Huế' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}
+      <div style="margin-top: 4px; font-size: 0.78rem; color: #555;">
+        <strong>Vùng miền cội nguồn:</strong> ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ / Cố Đô Huế' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}
       </div>
       ${citationHtml}
     `;
@@ -262,10 +275,18 @@ export class ResultEngine {
     const btnGotoDiscover = document.getElementById('btn-result-goto-discover');
     const btnCopyPrompt = document.getElementById('btn-result-copy-prompt');
     const btnPlaceholderPrompt = document.getElementById('btn-result-placeholder-prompt');
+    const btnGotoCompare = document.getElementById('btn-result-goto-compare');
 
     btnGotoDiscover?.addEventListener('click', () => {
       this.hideResult();
       appRouter.switchTab('discover');
+    });
+
+    // Nút Dẫn qua Màn hình So Sánh (Chọn ngay bộ đồ hiện tại vào Slot A)
+    btnGotoCompare?.addEventListener('click', () => {
+      Sound.playClick();
+      this.hideResult();
+      appRouter.openCompare('current-workshop');
     });
 
     // Nút Sao Chép Prompt Tạo Sinh Ảnh Gemini Thủ Công
@@ -293,10 +314,21 @@ export class ResultEngine {
       appRouter.switchTab('create');
     });
 
-    // Nút chính: "Lưu vào Lookbook" (Pill Gradient) -> Lưu và chuyển sang màn Lookbook
+    // Nút chính: "Lưu vào Lookbook" -> Lưu đầy đủ data di sản & AI và chuyển sang màn Lookbook
     btnSaveLookbook?.addEventListener('click', () => {
       Sound.playChime();
       const outfitState = garmentEngine.getCurrentOutfitState();
+      const truth = getCulturalTruth(outfitState.garment);
+      const allSources = getAllSourcesForGarment(outfitState.garment);
+      const colorAnalysis = getColorCulturalAnalysis(outfitState.color, outfitState.garment, outfitState.event);
+
+      let userProfile = null;
+      try {
+        const raw = localStorage.getItem('viet_y_user_profile');
+        if (raw) userProfile = JSON.parse(raw);
+      } catch {}
+
+      const fullPrompt = assembleFashionPrompt(outfitState, userProfile);
       
       const garmentNames: Record<string, string> = {
         AO_NGU_THAN: 'Áo Ngũ Thân',
@@ -308,25 +340,44 @@ export class ResultEngine {
       };
       const gName = garmentNames[outfitState.garment] || 'Việt Y';
       const eventTag = outfitState.bestOccasion || outfitState.eventLabel || 'Dạo phố Tết';
+      const allAcc = outfitState.accessories && outfitState.accessories.length > 0 
+        ? outfitState.accessories 
+        : [outfitState.accessory];
 
-      const savedOutfit: DiscoveryOutfit = {
+      const savedOutfit: any = {
         id: `custom-${Date.now()}`,
         title: `${gName} ${outfitState.colorName}`,
-        garment: outfitState.garment as any,
+        garment: outfitState.garment,
         color: outfitState.color,
         colorName: outfitState.colorName,
         event: outfitState.event,
         eventLabel: eventTag,
         bestOccasion: eventTag,
-        accessory: (outfitState.accessory === 'KHAN_RAN' ? 'KHAN_RAN' : 'QUAT_GIAY') as 'QUAT_GIAY' | 'KHAN_RAN',
+        accessory: outfitState.accessory,
+        accessories: allAcc,
+        custom_accessories: outfitState.custom_accessories || [],
+        hairstyle: outfitState.hairstyle || 'Tóc búi cao thanh thoát',
+        custom_hairstyle: outfitState.custom_hairstyle,
         seal: 'Lụa',
-        desc: `Bộ phối ${outfitState.colorName} hoàn chỉnh theo phong vị đương đại Lụa Thanh.`
+        desc: `Bộ phối ${outfitState.colorName} hoàn chỉnh theo phong vị đương đại Lụa Thanh kết hợp ${allAcc.map(a => a.replace(/_/g, ' ')).join(', ')}.`,
+        imageUrl: assetConfig.getGarmentImageUrl(outfitState.garment),
+        assembledPrompt: fullPrompt,
+        aiStylingData: garmentEngine.aiStylingData,
+        colorCulturalAnalysis: colorAnalysis,
+        culturalStory: truth.culturalSignificance,
+        historicalEra: truth.historicalEra,
+        originRegion: truth.originRegion,
+        definingFeatures: truth.definingFeatures,
+        socialContext: truth.socialContext,
+        citations: allSources,
+        isCustomWorkshopOutfit: true,
+        savedAt: new Date().toLocaleDateString('vi-VN')
       };
 
       // Kích hoạt Trạng thái Đang Tải Lụa Thanh dùng chung
       feedbackState.showLoading({
         message: 'Đang lưu tà phục vào Lookbook...',
-        submessage: 'Ghi nhận sắc lụa và đường may vào bộ sưu tập cá nhân...'
+        submessage: 'Ghi nhận sắc lụa, phụ kiện và cấu trúc AI prompt vào bộ sưu tập cá nhân...'
       });
 
       setTimeout(() => {
@@ -408,6 +459,7 @@ export class ResultEngine {
     }
 
     const closeModal = () => {
+      modal.classList.remove('active');
       modal.style.display = 'none';
     };
 
@@ -417,6 +469,7 @@ export class ResultEngine {
     };
 
     modal.style.display = 'flex';
+    modal.classList.add('active');
   }
 
   /**

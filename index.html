@@ -711,12 +711,6 @@
              LỚP 1 — HÌNH ẢNH KẾT QUẢ (Luôn hiện đầu tiên, chiếm phần lớn)
              ========================================================== -->
         <div class="result-illustration-layer" id="result-illustration-layer">
-          <!-- Badge nhỏ góc trên -->
-          <div class="result-badge-top" id="result-badge-top">
-            <span class="badge-icon">✨</span>
-            <span class="badge-text" id="result-badge-text">98% Chuẩn Lụa Thanh</span>
-          </div>
-
           <!-- Slot hiển thị ảnh demo đã chuẩn bị sẵn (nếu có) -->
           <div class="result-artwork-viewport" id="result-artwork-viewport">
             <img id="result-demo-image" src="" alt="Minh họa trang phục" style="display: none; width: 100%; height: 100%; object-fit: contain; border-radius: 12px;" />
@@ -726,18 +720,10 @@
               <div class="result-placeholder-seal">審</div>
               <h3 class="result-placeholder-title">Bản Vẽ Kiến Trúc AI Di Sản</h3>
               <p class="result-placeholder-desc">
-                Tổ hợp tà phục và phụ kiện này đã được AI mã hóa cấu trúc prompt chuyên sâu theo chuẩn di sản. Bạn có thể sao chép prompt và dán trực tiếp vào Gemini AI để kết xuất hình ảnh thời trang siêu thực!
+                Tổ hợp tà phục và phụ kiện này đã được hệ thống mã hóa cấu trúc prompt chuyên sâu theo quy chuẩn di sản. Bạn có thể sao chép prompt bên dưới để kết xuất hình ảnh thời trang siêu thực trên Gemini AI!
               </p>
-              <div class="result-placeholder-cta-row">
-                <button type="button" id="btn-result-placeholder-prompt" class="btn-result-placeholder-btn btn-ph-copy">
-                  <span>📋 Sao Chép Prompt AI</span>
-                </button>
-                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-result-placeholder-btn btn-ph-gemini">
-                  <span>✨ Thử Trên Gemini AI ↗</span>
-                </a>
-              </div>
               <button type="button" id="btn-result-goto-discover" class="btn-result-placeholder-link">
-                <span>📖 Xem Bộ Sưu Tập Minh Họa Có Sẵn</span>
+                <span>📖 Khám Phá Bộ Sưu Tập Minh Họa Có Sẵn</span>
               </button>
             </div>
           </div>
@@ -821,38 +807,50 @@
                Phân cấp thị giác rõ ràng tuyệt đối
                ========================================================== -->
           <footer class="result-actions-footer">
-            <!-- Hàng Nút Prompt Tạo Sinh Ảnh Gemini & Thử Nghiệm -->
-            <div class="result-prompt-actions-row">
-              <button type="button" id="btn-result-copy-prompt" class="btn-result-action-prompt" title="Xem & sao chép prompt hoàn chỉnh">
-                <span>📋</span>
-                <span id="btn-result-copy-prompt-text">Sao Chép Prompt Gemini</span>
-              </button>
-              <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-result-action-gemini" title="Mở Google Gemini để dán prompt tạo sinh ảnh miễn phí">
-                <span>✨</span>
-                <span>Thử Trên Gemini AI ↗</span>
-              </a>
-            </div>
-
-            <!-- Nút Hành Trình Sở Hữu Cổ Phục (Google Maps & Search) -->
-            <button type="button" id="btn-result-tailor-journey" class="btn-result-journey-action">
-              <span>📍 May Đo & Tìm Tiệm (Google Maps & Search)</span>
+            <!-- 1. HÀNG HÀNH ĐỘNG CHÍNH: LƯU VÀO LOOKBOOK -->
+            <button type="button" id="btn-result-save-lookbook" class="btn-res-action-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span id="btn-save-lookbook-text">Lưu Vào Lookbook</span>
             </button>
 
-            <div style="display: flex; gap: 10px; width: 100%;">
-              <button type="button" id="btn-result-save-lookbook" class="btn-primary btn-result-primary">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span id="btn-save-lookbook-text">Lưu vào Lookbook</span>
+            <!-- 2. HÀNG TIỆN ÍCH: SO SÁNH BỘ ĐỒ NÀY & PHỐI LẠI -->
+            <div class="result-sub-actions-row">
+              <button type="button" id="btn-result-goto-compare" class="btn-res-action-compare" title="Đưa bộ đồ này vào bàn cân so sánh với bộ khác">
+                <span>⚖️ So Sánh Bộ Đồ Này</span>
               </button>
-
-              <button type="button" id="btn-result-remix" class="btn-result-secondary">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" id="btn-result-remix" class="btn-res-action-secondary" title="Quay lại xưởng để tinh chỉnh">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="1 4 1 10 7 10"></polyline>
                   <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                 </svg>
-                <span>Phối lại</span>
+                <span>Phối Lại</span>
               </button>
+            </div>
+
+            <!-- 3. TIỆN ÍCH BẢN ĐỒ & MAY ĐO -->
+            <button type="button" id="btn-result-tailor-journey" class="btn-res-action-tailor">
+              <span>📍 May Đo & Tìm Tiệm (Google Maps & Search)</span>
+            </button>
+
+            <!-- 4. KHỐI CÔNG CỤ PROMPT GEMINI AI ĐỘC LẬP -->
+            <div class="result-prompt-studio-card">
+              <div class="prompt-studio-card-head">
+                <div class="prompt-studio-title-wrap">
+                  <span class="prompt-studio-icon">✨</span>
+                  <span class="prompt-studio-title">Prompt Sinh Ảnh Gemini AI</span>
+                </div>
+                <span class="prompt-studio-sub">Tạo ảnh siêu thực 4K</span>
+              </div>
+              <div class="prompt-studio-buttons-row">
+                <button type="button" id="btn-result-copy-prompt" class="btn-res-prompt-copy" title="Sao chép prompt chi tiết">
+                  <span>📋 Sao Chép Prompt</span>
+                </button>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-res-prompt-gemini" title="Mở Google Gemini để dán prompt tạo ảnh">
+                  <span>✨ Mở Gemini AI ↗</span>
+                </a>
+              </div>
             </div>
           </footer>
 
@@ -1217,80 +1215,200 @@
         </button>
       </div>
 
-      <!-- Lưới 2 cột so sánh trực quan -->
-      <div class="compare-grid">
+      <!-- Sticky Top Preview Bar (Ghim thumbnail 2 bộ khi cuộn xuống) -->
+      <div class="compare-sticky-preview-bar" id="compare-sticky-preview-bar" style="display: none;">
+        <div class="sticky-preview-slot" id="sticky-preview-slot-a">
+          <img id="compare-sticky-img-a" src="" alt="Bộ A" class="sticky-mini-thumb" />
+          <div class="sticky-mini-meta">
+            <span class="sticky-mini-tag">Bộ A</span>
+            <span id="compare-sticky-name-a" class="sticky-mini-name">Áo Ngũ Thân</span>
+          </div>
+        </div>
+        <span class="sticky-vs-label">VS</span>
+        <div class="sticky-preview-slot" id="sticky-preview-slot-b">
+          <img id="compare-sticky-img-b" src="" alt="Bộ B" class="sticky-mini-thumb" />
+          <div class="sticky-mini-meta">
+            <span class="sticky-mini-tag">Bộ B</span>
+            <span id="compare-sticky-name-b" class="sticky-mini-name">Áo Tấc</span>
+          </div>
+        </div>
+      </div>
 
-        <!-- CỘT A -->
-        <article class="compare-column mobile-col-active" id="compare-col-a">
-          <!-- Hero Box -->
-          <div class="compare-hero-box">
-            <div class="compare-thumb-wrap">
-              <img id="compare-slot-a-img" src="/images/garments/ao-ngu-than.png" alt="Phương án A" class="compare-thumb-img" />
-            </div>
-            <div class="compare-hero-info">
+      <!-- BẢNG MA TRẬN ĐỐI CHIẾU ĐỒNG BỘ HÀNG NGANG (SYNCHRONIZED GRID MATRIX) -->
+      <div class="compare-matrix-table" id="compare-matrix-table">
+
+        <!-- HÀNG 1: TẦNG 1 — THỊ GIÁC (VISUAL MATCH: Sticky Images & Hero Info) -->
+        <div class="matrix-row matrix-hero-row" id="row-hero">
+          <!-- Cột A -->
+          <div class="matrix-cell matrix-cell-a hero-cell" id="matrix-hero-a">
+            <div class="matrix-thumb-box">
+              <img id="compare-slot-a-img" src="/images/garments/ao-ngu-than.png" alt="Phương án A" class="matrix-thumb-img" />
               <span class="compare-source-badge" id="compare-slot-a-source-badge">🎨 Đang Phối</span>
-              <h3 class="compare-hero-title" id="compare-slot-a-title">Áo Ngũ Thân Lập Lĩnh</h3>
-              <span class="compare-verdict-badge verdict-safe" id="compare-slot-a-status-badge">✓ Chuẩn Mực Di Sản</span>
+            </div>
+            <div class="matrix-hero-info">
+              <h3 class="matrix-hero-title" id="compare-slot-a-title">Áo Ngũ Thân Lập Lĩnh</h3>
+              <div class="matrix-tags-group">
+                <span class="compare-verdict-badge verdict-safe" id="compare-slot-a-status-badge">✓ Chuẩn Mực Di Sản</span>
+                <span class="matrix-occasion-tag" id="compare-slot-a-occasion-tag">🏷️ Dạo Phố Tết</span>
+              </div>
+              <div class="matrix-color-swatch-box" id="matrix-swatch-a">
+                <span class="matrix-color-dot" id="compare-slot-a-color-dot" style="background: #F4C9D6;"></span>
+                <span class="matrix-color-label" id="compare-slot-a-color-name">Hồng Phấn Sen</span>
+              </div>
             </div>
           </div>
 
-          <!-- Ma trận dữ liệu khảo cứu thực tế -->
-          <div class="compare-data-list">
-            <!-- 1. Dáng áo & Niên đại -->
-            <div class="compare-row">
-              <span class="compare-row-label">1. Phom Dáng & Niên Đại</span>
-              <div class="compare-row-val">
-                <strong id="compare-slot-a-garment-name">Áo Ngũ Thân Lập Lĩnh</strong>
-                <div style="font-size: 0.78rem; color: #5C635F;" id="compare-slot-a-era">Thời Nguyễn (1802–1945)</div>
-                <div style="font-size: 0.76rem; color: #4A8577;" id="compare-slot-a-region">Toàn Quốc</div>
+          <!-- Cột B -->
+          <div class="matrix-cell matrix-cell-b hero-cell" id="matrix-hero-b">
+            <div class="matrix-thumb-box">
+              <img id="compare-slot-b-img" src="/images/garments/ao-tac.png" alt="Phương án B" class="matrix-thumb-img" />
+              <span class="compare-source-badge" id="compare-slot-b-source-badge">📖 Lookbook</span>
+            </div>
+            <div class="matrix-hero-info">
+              <h3 class="matrix-hero-title" id="compare-slot-b-title">Áo Tấc Lễ Phục</h3>
+              <div class="matrix-tags-group">
+                <span class="compare-verdict-badge verdict-safe" id="compare-slot-b-status-badge">✓ Chuẩn Mực Di Sản</span>
+                <span class="matrix-occasion-tag" id="compare-slot-b-occasion-tag">🏷️ Đại Lễ Cung Đình</span>
+              </div>
+              <div class="matrix-color-swatch-box" id="matrix-swatch-b">
+                <span class="matrix-color-dot" id="compare-slot-b-color-dot" style="background: #4A8577;"></span>
+                <span class="matrix-color-label" id="compare-slot-b-color-name">Xanh Chàm</span>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- 2. Sắc lụa & Ngũ hành -->
-            <div class="compare-row">
-              <span class="compare-row-label">2. Sắc Lụa & Triết Lý Ngũ Hành</span>
-              <div class="compare-row-val">
-                <div class="compare-color-val">
-                  <span class="compare-color-dot" id="compare-slot-a-color-dot" style="background: #F4C9D6;"></span>
-                  <span id="compare-slot-a-color-name">Hồng Phấn Sen</span>
+        <!-- HÀNG 2: TẦNG 2 — MỤC ĐÍCH SỬ DỤNG (CONTEXT & OCCASION) -->
+        <div class="matrix-divider-label">
+          <span>🎯 BỐI CẢNH PHÙ HỢP NHẤT</span>
+        </div>
+        <div class="matrix-row matrix-compare-row" id="row-occasion">
+          <div class="matrix-cell matrix-cell-a" id="cell-occasion-a">
+            <span class="matrix-pill-badge" id="compare-slot-a-event">🌸 Đi Hội Xuân, Chụp Ảnh Kỷ Niệm</span>
+          </div>
+          <div class="matrix-cell matrix-cell-b" id="cell-occasion-b">
+            <span class="matrix-pill-badge" id="compare-slot-b-event">🏛️ Đi Lễ Tế, Sự Kiện Trọng Đại</span>
+          </div>
+        </div>
+
+        <!-- HÀNG 3: MÀU SẮC & NGŨ HÀNH -->
+        <div class="matrix-divider-label">
+          <span>🎨 MÀU SẮC & NGŨ HÀNH</span>
+        </div>
+        <div class="matrix-row matrix-compare-row" id="row-color">
+          <div class="matrix-cell matrix-cell-a" id="cell-color-a">
+            <div class="matrix-element-headline">
+              <span class="matrix-element-badge" id="compare-slot-a-element">Hành Hỏa (Chu Tước)</span>
+            </div>
+            <p class="matrix-short-desc" id="compare-slot-a-harmony">Ấm áp, rực rỡ, hanh thông tài lộc</p>
+          </div>
+          <div class="matrix-cell matrix-cell-b" id="cell-color-b">
+            <div class="matrix-element-headline">
+              <span class="matrix-element-badge" id="compare-slot-b-element">Hành Mộc (Sinh Khí)</span>
+            </div>
+            <p class="matrix-short-desc" id="compare-slot-b-harmony">Thủy Mộc tương sinh, thanh thuần</p>
+          </div>
+        </div>
+
+        <!-- HÀNG 4: TẦNG 3 — ĐIỂM NHẤN & PHỤ KIỆN & KIỂU TÓC (BADGES) -->
+        <div class="matrix-divider-label">
+          <span>👑 PHỤ KIỆN & DIỆN MẠO</span>
+        </div>
+        <div class="matrix-row matrix-compare-row" id="row-accessories">
+          <div class="matrix-cell matrix-cell-a" id="cell-acc-a">
+            <div class="matrix-meta-cluster">
+              <div class="matrix-badge-line">
+                <span class="cluster-label">• Phụ kiện:</span>
+                <div class="matrix-badges-wrap" id="compare-slot-a-accessories">
+                  <span class="matrix-badge-pill">Quạt Giấy</span>
                 </div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: #6B4E2E; margin-top: 2px;" id="compare-slot-a-element">Hành Hỏa (Chu Tước)</div>
-                <div style="font-size: 0.76rem; color: #5C635F;" id="compare-slot-a-harmony">Hồng Sen Đoan Trang</div>
+              </div>
+              <div class="matrix-badge-line">
+                <span class="cluster-label">• Kiểu tóc:</span>
+                <span class="matrix-badge-pill badge-hair" id="compare-slot-a-hair">Tóc búi cao</span>
               </div>
             </div>
+            <div id="compare-slot-a-taboo-notice"></div>
+          </div>
 
-            <!-- 3. Phụ kiện & Kiểm định kiêng kỵ -->
-            <div class="compare-row">
-              <span class="compare-row-label">3. Tổ Hợp Phụ Kiện & Kiêng Kỵ Lịch Sử</span>
-              <div class="compare-row-val">
-                <div class="compare-acc-tags" id="compare-slot-a-accessories">
-                  <span class="compare-acc-tag">❖ Quạt Giấy</span>
+          <div class="matrix-cell matrix-cell-b" id="cell-acc-b">
+            <div class="matrix-meta-cluster">
+              <div class="matrix-badge-line">
+                <span class="cluster-label">• Phụ kiện:</span>
+                <div class="matrix-badges-wrap" id="compare-slot-b-accessories">
+                  <span class="matrix-badge-pill">Trâm Cài</span>
                 </div>
-                <div id="compare-slot-a-taboo-notice"></div>
+              </div>
+              <div class="matrix-badge-line">
+                <span class="cluster-label">• Kiểu tóc:</span>
+                <span class="matrix-badge-pill badge-hair" id="compare-slot-b-hair">Tóc vấn khăn đóng</span>
               </div>
             </div>
+            <div id="compare-slot-b-taboo-notice"></div>
+          </div>
+        </div>
 
-            <!-- 4. Kiểu tóc -->
-            <div class="compare-row">
-              <span class="compare-row-label">4. Kiểu Tóc & Diện Mạo Đề Xuất</span>
-              <div class="compare-row-val" id="compare-slot-a-hair">Tóc búi cao thanh thoát cài trâm gốm</div>
+        <!-- HÀNG 5: NIÊN ĐẠI LỊCH SỬ (THU GỌN READ MORE) -->
+        <div class="matrix-divider-label">
+          <span>⏳ NIÊN ĐẠI & LỊCH SỬ SÂU (THU GỌN)</span>
+        </div>
+        <div class="matrix-row matrix-compare-row" id="row-history">
+          <div class="matrix-cell matrix-cell-a" id="cell-history-a">
+            <div class="matrix-era-brief">
+              <strong id="compare-slot-a-garment-name">Áo Ngũ Thân Lập Lĩnh</strong>
+              <span id="compare-slot-a-era" class="era-muted">Thời Nguyễn (1802–1945)</span>
+              <span id="compare-slot-a-region" class="region-badge">Toàn Quốc</span>
             </div>
-
-            <!-- 5. Bối cảnh thích hợp -->
-            <div class="compare-row">
-              <span class="compare-row-label">5. Bối Cảnh Phù Hợp Nhất</span>
-              <div class="compare-row-val" id="compare-slot-a-event">Tết Nguyên Đán & Hội Xuân</div>
-            </div>
-
-            <!-- 6. Thư tịch khảo cứu -->
-            <div class="compare-row">
-              <span class="compare-row-label">6. Bảo Chứng Nguồn Khảo Cứu</span>
-              <div class="compare-row-val" id="compare-slot-a-citations">Ngàn Năm Áo Mũ</div>
+            <button type="button" class="btn-toggle-matrix-history" data-target="history-collapse-a">
+              <span>📜 Xem Lịch Sử Sâu ▼</span>
+            </button>
+            <div id="history-collapse-a" class="matrix-collapsible-body" style="display: none;">
+              <p id="compare-slot-a-history-text" class="history-body-text"></p>
             </div>
           </div>
 
-          <!-- Nút hành động chân cột A -->
-          <div class="compare-col-actions">
+          <div class="matrix-cell matrix-cell-b" id="cell-history-b">
+            <div class="matrix-era-brief">
+              <strong id="compare-slot-b-garment-name">Áo Tấc Lễ Phục</strong>
+              <span id="compare-slot-b-era" class="era-muted">Thời Nguyễn (1802–1945)</span>
+              <span id="compare-slot-b-region" class="region-badge">Trung Bộ & Toàn Quốc</span>
+            </div>
+            <button type="button" class="btn-toggle-matrix-history" data-target="history-collapse-b">
+              <span>📜 Xem Lịch Sử Sâu ▼</span>
+            </button>
+            <div id="history-collapse-b" class="matrix-collapsible-body" style="display: none;">
+              <p id="compare-slot-b-history-text" class="history-body-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- HÀNG 6: TẦNG 4 — NGUỒN KHẢO CỨU (ACCORDION THU GỌN) -->
+        <div class="matrix-divider-label">
+          <span>📚 BẢO CHỨNG NGUỒN KHẢO CỨU (THU GỌN)</span>
+        </div>
+        <div class="matrix-row matrix-compare-row" id="row-citations">
+          <div class="matrix-cell matrix-cell-a" id="cell-citations-a">
+            <button type="button" class="btn-toggle-matrix-citations" data-target="citations-collapse-a">
+              <span id="compare-slot-a-citations-summary">► Xem tài liệu trích dẫn khảo cứu</span>
+            </button>
+            <div id="citations-collapse-a" class="matrix-collapsible-body" style="display: none;">
+              <div id="compare-slot-a-citations" class="citations-inner-list"></div>
+            </div>
+          </div>
+
+          <div class="matrix-cell matrix-cell-b" id="cell-citations-b">
+            <button type="button" class="btn-toggle-matrix-citations" data-target="citations-collapse-b">
+              <span id="compare-slot-b-citations-summary">► Xem tài liệu trích dẫn khảo cứu</span>
+            </button>
+            <div id="citations-collapse-b" class="matrix-collapsible-body" style="display: none;">
+              <div id="compare-slot-b-citations" class="citations-inner-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HÀNG 7: NÚT HÀNH ĐỘNG ĐỒNG BỘ -->
+        <div class="matrix-row matrix-actions-row" id="row-actions">
+          <div class="matrix-cell matrix-cell-a actions-cell">
             <button type="button" class="btn-compare-apply" id="compare-slot-a-btn-apply">
               🎨 Chọn Bộ Này Vào Xưởng
             </button>
@@ -1298,79 +1416,8 @@
               📍 Tiệm May
             </button>
           </div>
-        </article>
 
-        <!-- CỘT B -->
-        <article class="compare-column" id="compare-col-b">
-          <!-- Hero Box -->
-          <div class="compare-hero-box">
-            <div class="compare-thumb-wrap">
-              <img id="compare-slot-b-img" src="/images/garments/ao-tac.png" alt="Phương án B" class="compare-thumb-img" />
-            </div>
-            <div class="compare-hero-info">
-              <span class="compare-source-badge" id="compare-slot-b-source-badge">📜 Khám Phá</span>
-              <h3 class="compare-hero-title" id="compare-slot-b-title">Áo Tấc Lễ Phục</h3>
-              <span class="compare-verdict-badge verdict-safe" id="compare-slot-b-status-badge">✓ Chuẩn Mực Di Sản</span>
-            </div>
-          </div>
-
-          <!-- Ma trận dữ liệu khảo cứu thực tế -->
-          <div class="compare-data-list">
-            <!-- 1. Dáng áo & Niên đại -->
-            <div class="compare-row">
-              <span class="compare-row-label">1. Phom Dáng & Niên Đại</span>
-              <div class="compare-row-val">
-                <strong id="compare-slot-b-garment-name">Áo Tấc (Tay Thụ Thụ)</strong>
-                <div style="font-size: 0.78rem; color: #5C635F;" id="compare-slot-b-era">Thời Nguyễn (1802–1945)</div>
-                <div style="font-size: 0.76rem; color: #4A8577;" id="compare-slot-b-region">Trung Bộ & Toàn Quốc</div>
-              </div>
-            </div>
-
-            <!-- 2. Sắc lụa & Ngũ hành -->
-            <div class="compare-row">
-              <span class="compare-row-label">2. Sắc Lụa & Triết Lý Ngũ Hành</span>
-              <div class="compare-row-val">
-                <div class="compare-color-val">
-                  <span class="compare-color-dot" id="compare-slot-b-color-dot" style="background: #4A8577;"></span>
-                  <span id="compare-slot-b-color-name">Xanh Chàm</span>
-                </div>
-                <div style="font-size: 0.78rem; font-weight: 600; color: #6B4E2E; margin-top: 2px;" id="compare-slot-b-element">Hành Mộc (Sinh Khí)</div>
-                <div style="font-size: 0.76rem; color: #5C635F;" id="compare-slot-b-harmony">Thủy Mộc Tương Sinh</div>
-              </div>
-            </div>
-
-            <!-- 3. Phụ kiện & Kiểm định kiêng kỵ -->
-            <div class="compare-row">
-              <span class="compare-row-label">3. Tổ Hợp Phụ Kiện & Kiêng Kỵ Lịch Sử</span>
-              <div class="compare-row-val">
-                <div class="compare-acc-tags" id="compare-slot-b-accessories">
-                  <span class="compare-acc-tag">❖ Quạt Giấy</span>
-                </div>
-                <div id="compare-slot-b-taboo-notice"></div>
-              </div>
-            </div>
-
-            <!-- 4. Kiểu tóc -->
-            <div class="compare-row">
-              <span class="compare-row-label">4. Kiểu Tóc & Diện Mạo Đề Xuất</span>
-              <div class="compare-row-val" id="compare-slot-b-hair">Tóc vấn khăn đóng trang trọng</div>
-            </div>
-
-            <!-- 5. Bối cảnh thích hợp -->
-            <div class="compare-row">
-              <span class="compare-row-label">5. Bối Cảnh Phù Hợp Nhất</span>
-              <div class="compare-row-val" id="compare-slot-b-event">Đại Lễ & Lễ Cưới Truyền Thống</div>
-            </div>
-
-            <!-- 6. Thư tịch khảo cứu -->
-            <div class="compare-row">
-              <span class="compare-row-label">6. Bảo Chứng Nguồn Khảo Cứu</span>
-              <div class="compare-row-val" id="compare-slot-b-citations">Khâm Định Đại Nam Hội Điển Sự Lệ</div>
-            </div>
-          </div>
-
-          <!-- Nút hành động chân cột B -->
-          <div class="compare-col-actions">
+          <div class="matrix-cell matrix-cell-b actions-cell">
             <button type="button" class="btn-compare-apply" id="compare-slot-b-btn-apply">
               🎨 Chọn Bộ Này Vào Xưởng
             </button>
@@ -1378,7 +1425,7 @@
               📍 Tiệm May
             </button>
           </div>
-        </article>
+        </div>
 
       </div>
 
@@ -1945,6 +1992,126 @@
           <span>✨ Mở Gemini AI Để Test ↗</span>
         </a>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL CHI TIẾT TOÀN DIỆN BỘ ĐỒ ĐÃ LƯU TRONG LOOKBOOK
+       Hiển thị đầy đủ thông tin tà phục, phụ kiện, kiểu tóc, bối cảnh,
+       phân tích ngũ hành, và toàn bộ Prompt AI (nếu lưu từ Xưởng Phối)
+       ============================================================ -->
+  <div id="lookbook-detail-modal" class="toast-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="lookbook-detail-title">
+    <div class="profile-modal-card lookbook-detail-card" style="max-width: 680px; max-height: 90vh; display: flex; flex-direction: column;">
+      
+      <!-- Modal Header -->
+      <div class="profile-modal-header" style="flex-shrink: 0;">
+        <div class="profile-modal-title-wrap">
+          <span class="profile-modal-icon" id="lookbook-detail-icon">📖</span>
+          <div>
+            <h3 id="lookbook-detail-title" class="profile-modal-title">Chi Tiết Bộ Đồ Đã Lưu</h3>
+            <p class="profile-modal-sub" id="lookbook-detail-subtitle">Hồ sơ thẩm định & phong vị tà lụa di sản</p>
+          </div>
+        </div>
+        <button id="btn-close-lookbook-detail" type="button" class="profile-modal-close" aria-label="Đóng chi tiết bộ đồ">✕</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="profile-modal-body lookbook-detail-scroll-body" style="overflow-y: auto; padding-top: 12px; display: flex; flex-direction: column; gap: 14px;">
+        
+        <!-- Hero Section: Hình ảnh lớn & Tóm tắt nhanh -->
+        <div class="lookbook-detail-hero" style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+          <div class="lookbook-detail-img-box" style="width: 140px; height: 180px; border-radius: 12px; overflow: hidden; background: rgba(74,133,119,0.08); border: 1px solid rgba(74,133,119,0.2); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+            <img id="lookbook-detail-img" src="" alt="Hình minh họa bộ đồ" style="width: 100%; height: 100%; object-fit: contain;" />
+            <div id="lookbook-detail-img-ph" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px;">
+              <span style="font-size: 2.2rem; opacity: 0.5;">🏛️</span>
+              <span style="font-size: 0.72rem; color: #888; margin-top: 4px;">Minh họa AI</span>
+            </div>
+          </div>
+
+          <div class="lookbook-detail-hero-meta" style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span class="compare-verdict-badge verdict-safe" id="lookbook-detail-verdict">✓ Chuẩn Mực Di Sản</span>
+              <span id="lookbook-detail-saved-at" style="font-size: 0.75rem; color: #7A5338;">Đã lưu: Hôm nay</span>
+            </div>
+            
+            <h4 id="lookbook-detail-heading" style="margin: 0; font-family: var(--font-title); font-size: 1.25rem; font-weight: 700; color: #2B2B28;">Áo Ngũ Thân Lập Lĩnh</h4>
+
+            <!-- Bối cảnh phù hợp -->
+            <div style="margin-top: 2px;">
+              <span style="font-size: 0.78rem; font-weight: 600; color: #4A8577;">🎯 Bối cảnh phù hợp:</span>
+              <span id="lookbook-detail-occasion-tag" style="display: inline-block; padding: 3px 10px; border-radius: 9999px; background: rgba(74,133,119,0.12); color: #2A5A4E; font-size: 0.8rem; font-weight: 600; margin-left: 6px;">🌸 Dạo Phố Tết</span>
+            </div>
+
+            <!-- Sắc Lụa & Ngũ Hành -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+              <span id="lookbook-detail-color-dot" style="width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); display: inline-block; flex-shrink: 0;"></span>
+              <strong id="lookbook-detail-color-name" style="font-size: 0.85rem; color: #2B2B28;">Sắc Lụa</strong>
+              <span id="lookbook-detail-color-element" style="font-size: 0.75rem; color: #6B4E2E; padding: 2px 8px; border-radius: 6px; background: rgba(201,166,107,0.15);">Ngũ Hành</span>
+            </div>
+
+            <p id="lookbook-detail-desc" style="margin: 4px 0 0 0; font-size: 0.82rem; color: #555; line-height: 1.45;"></p>
+          </div>
+        </div>
+
+        <!-- Cụm Phụ Kiện & Kiểu Tóc -->
+        <div style="background: rgba(74,133,119,0.06); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(74,133,119,0.15);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #2A5A4E; margin-bottom: 8px;">👑 DIỆN MẠO & PHỤ KIỆN PHỐI CÙNG</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: flex-start; gap: 8px;">
+              <span style="font-size: 0.8rem; color: #666; width: 80px; flex-shrink: 0;">• Phụ kiện:</span>
+              <div id="lookbook-detail-acc-list" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <span class="matrix-badge-pill">Quạt Giấy</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.8rem; color: #666; width: 80px; flex-shrink: 0;">• Kiểu tóc:</span>
+              <span id="lookbook-detail-hair" class="matrix-badge-pill badge-hair">Tóc búi cao thanh thoát</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tri thức di sản & Khảo cứu -->
+        <div style="background: rgba(201,166,107,0.08); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(201,166,107,0.25);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #7A5338; margin-bottom: 6px;">📜 BẢO CHỨNG DI SẢN & LỊCH SỬ</div>
+          <p id="lookbook-detail-cultural-story" style="margin: 0; font-size: 0.82rem; color: #333; line-height: 1.5;"></p>
+          <div id="lookbook-detail-citations" style="margin-top: 8px; font-size: 0.78rem; color: #555;"></div>
+        </div>
+
+        <!-- Khối Prompt AI Chuyên Sâu (Nếu bộ đồ được lưu từ Xưởng Phối) -->
+        <div id="lookbook-detail-prompt-section" style="display: none; background: #FFFFFF; border-radius: 12px; padding: 14px; border: 1.5px solid rgba(74,133,119,0.3); box-shadow: 0 4px 12px rgba(74,133,119,0.08);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 1.1rem;">✨</span>
+              <strong style="font-size: 0.86rem; color: #2A5A4E;">CẤU TRÚC PROMPT AI TẠO SINH CỦA BỘ ĐỒ NÀY:</strong>
+            </div>
+            <span id="lookbook-detail-copy-hint" style="font-size: 0.75rem; color: #E5A93C; font-weight: 600; display: none;">✓ Đã sao chép!</span>
+          </div>
+          <textarea id="lookbook-detail-prompt-textarea" readonly rows="5" style="width: 100%; border-radius: 8px; border: 1px solid rgba(74,133,119,0.25); background: rgba(245,242,235,0.5); padding: 10px; font-family: monospace; font-size: 0.78rem; color: #2B2B28; line-height: 1.45; resize: vertical; box-sizing: border-box;"></textarea>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button type="button" id="btn-copy-lookbook-prompt" class="btn-profile-primary" style="flex: 1; padding: 8px 14px; font-size: 0.82rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>📋 Sao Chép Prompt Này</span>
+            </button>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-prompt-external-gemini" style="padding: 8px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="Mở Gemini để dán prompt tạo ảnh">
+              <span>✨ Mở Gemini AI ↗</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer (Action Buttons) -->
+      <div class="profile-modal-actions" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(74,133,119,0.18); display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;">
+        <button id="btn-detail-modal-remix" type="button" class="btn-profile-primary" style="flex: 1; min-width: 140px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>🎨 Phối Lại Trong Xưởng</span>
+        </button>
+        <button id="btn-detail-modal-compare" type="button" class="btn-profile-secondary" style="flex: 1; min-width: 130px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: rgba(201,166,107,0.18); border-color: rgba(201,166,107,0.4); color: #7A5338;">
+          <span>⚖️ So Sánh Bộ Này</span>
+        </button>
+        <button id="btn-detail-modal-tailor" type="button" class="btn-profile-secondary" style="flex: 1; min-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          <span>📍 Tiệm May</span>
+        </button>
+      </div>
+
     </div>
   </div>
 

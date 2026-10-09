@@ -206,6 +206,20 @@ export interface WardrobeItem extends DiscoveryOutfit {
   savedAt: string;
   imageUrl?: string;
   bestOccasion?: string;
+  accessories?: string[];
+  hairstyle?: string;
+  custom_accessories?: string[];
+  custom_hairstyle?: string;
+  assembledPrompt?: string;
+  aiStylingData?: MiniStylingResponse | null;
+  colorCulturalAnalysis?: ColorCulturalAnalysis;
+  culturalStory?: string;
+  historicalEra?: string;
+  originRegion?: string;
+  definingFeatures?: string[];
+  socialContext?: string;
+  citations?: CitationSource[];
+  isCustomWorkshopOutfit?: boolean;
 }
 
 export interface UserPreferenceVector {

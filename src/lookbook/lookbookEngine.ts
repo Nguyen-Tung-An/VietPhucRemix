@@ -4,10 +4,13 @@ import { appRouter } from '../navigation/router.ts';
 import { WardrobeItem } from '../types/index.ts';
 import { feedbackState } from '../services/feedbackState.ts';
 import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
+import { getCulturalTruth, getColorCulturalAnalysis } from '../data/culturalTruths.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 export class LookbookEngine {
   public init(): void {
     this.setupUI();
+    this.setupDetailModalEvents();
     this.renderLookbook();
   }
 
@@ -144,7 +147,7 @@ export class LookbookEngine {
         </div>
       `;
 
-      // 3. Phản hồi thị giác khi chạm (scale nhẹ xuống rồi trở lại)
+      // 3. Phản hồi thị giác khi chạm và MỞ MODAL CHI TIẾT ĐẦY ĐỦ CỦA BỘ ĐỒ
       card.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         // Tránh trigger khi bấm nút Xóa hoặc nút Remix hoặc So Sánh trực tiếp
@@ -155,8 +158,8 @@ export class LookbookEngine {
         card.style.transform = 'scale(0.96)';
         setTimeout(() => {
           card.style.transform = '';
-          appRouter.remixToWorkshop(item);
-        }, 150);
+          this.openOutfitDetailModal(item);
+        }, 120);
       });
 
       // Bắt sự kiện nút So Sánh
@@ -225,6 +228,186 @@ export class LookbookEngine {
         appRouter.showToast('✨ Đã sao chép liên kết chia sẻ Lookbook Lụa Thanh của bạn!');
       }
     }, 700);
+  }
+
+  private currentDetailOutfit: WardrobeItem | null = null;
+
+  private setupDetailModalEvents(): void {
+    const modal = document.getElementById('lookbook-detail-modal');
+    const btnClose = document.getElementById('btn-close-lookbook-detail');
+    const btnRemix = document.getElementById('btn-detail-modal-remix');
+    const btnCompare = document.getElementById('btn-detail-modal-compare');
+    const btnTailor = document.getElementById('btn-detail-modal-tailor');
+    const btnCopyPrompt = document.getElementById('btn-copy-lookbook-prompt');
+
+    btnClose?.addEventListener('click', () => {
+      this.closeOutfitDetailModal();
+    });
+
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeOutfitDetailModal();
+      }
+    });
+
+    btnRemix?.addEventListener('click', () => {
+      if (!this.currentDetailOutfit) return;
+      this.closeOutfitDetailModal();
+      appRouter.remixToWorkshop(this.currentDetailOutfit);
+    });
+
+    btnCompare?.addEventListener('click', () => {
+      if (!this.currentDetailOutfit) return;
+      this.closeOutfitDetailModal();
+      appRouter.openCompare(`wardrobe-${this.currentDetailOutfit.id}`);
+    });
+
+    btnTailor?.addEventListener('click', () => {
+      if (!this.currentDetailOutfit) return;
+      this.closeOutfitDetailModal();
+      tailorJourneyEngine.openJourney(
+        this.currentDetailOutfit.garment,
+        this.currentDetailOutfit.title,
+        this.currentDetailOutfit.colorName
+      );
+    });
+
+    btnCopyPrompt?.addEventListener('click', () => {
+      const textarea = document.getElementById('lookbook-detail-prompt-textarea') as HTMLTextAreaElement | null;
+      const hint = document.getElementById('lookbook-detail-copy-hint');
+      if (textarea && textarea.value) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          Sound.playChime();
+          if (hint) {
+            hint.style.display = 'inline';
+            setTimeout(() => {
+              hint.style.display = 'none';
+            }, 2500);
+          }
+          appRouter.showToast('📋 Đã sao chép câu Prompt Gemini vào clipboard!');
+        });
+      }
+    });
+  }
+
+  public openOutfitDetailModal(item: WardrobeItem): void {
+    this.currentDetailOutfit = item;
+    const modal = document.getElementById('lookbook-detail-modal');
+    if (!modal) return;
+
+    Sound.playChime();
+
+    const truth = getCulturalTruth(item.garment);
+    const colorAnalysis = getColorCulturalAnalysis(item.color, item.garment, item.event);
+
+    // Tiêu đề & ngày lưu
+    const titleEl = document.getElementById('lookbook-detail-title');
+    const headingEl = document.getElementById('lookbook-detail-heading');
+    const savedAtEl = document.getElementById('lookbook-detail-saved-at');
+    const descEl = document.getElementById('lookbook-detail-desc');
+    const occasionEl = document.getElementById('lookbook-detail-occasion-tag');
+
+    if (titleEl) titleEl.textContent = item.title;
+    if (headingEl) headingEl.textContent = item.title;
+    if (savedAtEl) savedAtEl.textContent = `Đã lưu: ${item.savedAt || 'Gần đây'}`;
+    if (descEl) descEl.textContent = item.desc || `Bộ phối ${item.colorName || 'Sắc Lụa'} theo phong vị đương đại Lụa Thanh.`;
+    if (occasionEl) occasionEl.textContent = `🏷️ ${item.bestOccasion || item.eventLabel || 'Dạo Phố Tết'}`;
+
+    // Hình ảnh
+    const imgEl = document.getElementById('lookbook-detail-img') as HTMLImageElement | null;
+    const phEl = document.getElementById('lookbook-detail-img-ph');
+    const imageSrc = item.imageUrl || assetConfig.getGarmentImageUrl(item.garment);
+
+    if (imgEl) {
+      imgEl.src = imageSrc;
+      imgEl.style.display = 'block';
+      if (phEl) phEl.style.display = 'none';
+      imgEl.onerror = () => {
+        imgEl.style.display = 'none';
+        if (phEl) phEl.style.display = 'flex';
+      };
+    }
+
+    // Sắc lụa & Ngũ hành
+    const dotEl = document.getElementById('lookbook-detail-color-dot');
+    const colorNameEl = document.getElementById('lookbook-detail-color-name');
+    const elementEl = document.getElementById('lookbook-detail-color-element');
+
+    if (dotEl) dotEl.style.backgroundColor = item.color || '#F4C9D6';
+    if (colorNameEl) colorNameEl.textContent = `${item.colorName || 'Sắc Lụa'} (${item.color || ''})`;
+    if (elementEl) elementEl.textContent = `${colorAnalysis.five_elements_element || 'Ngũ Hành'} • ${colorAnalysis.harmony_title}`;
+
+    // Phụ kiện & Kiểu tóc
+    const accListEl = document.getElementById('lookbook-detail-acc-list');
+    const hairEl = document.getElementById('lookbook-detail-hair');
+    const allAcc = item.accessories && item.accessories.length > 0
+      ? item.accessories
+      : (item.accessory ? [item.accessory] : ['Quạt Giấy']);
+
+    if (accListEl) {
+      accListEl.innerHTML = allAcc
+        .map((acc) => `<span class="matrix-badge-pill">❖ ${acc.replace(/_/g, ' ')}</span>`)
+        .join('');
+    }
+
+    if (hairEl) {
+      hairEl.textContent = item.hairstyle || item.custom_hairstyle || 'Tóc búi cao thanh thoát';
+    }
+
+    // Tri thức văn hóa & Lịch sử
+    const storyEl = document.getElementById('lookbook-detail-cultural-story');
+    const citationsEl = document.getElementById('lookbook-detail-citations');
+
+    if (storyEl) {
+      storyEl.innerHTML = `
+        <strong>${truth.name} (${truth.historicalEra}):</strong> ${item.culturalStory || truth.culturalSignificance}
+        <br/><span style="color: #4A8577; font-size: 0.78rem;">• Xuất xứ cội nguồn: ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ / Cố Đô Huế' : 'Nam Bộ'}</span>
+      `;
+    }
+
+    if (citationsEl) {
+      const citations = item.citations || [
+        {
+          title: truth.sourceTitle,
+          author_or_institution: truth.authorOrInstitution,
+          url: truth.sourceUrl
+        }
+      ];
+      citationsEl.innerHTML = citations
+        .map(
+          (c, idx) => `
+          <div style="margin-top: 4px;">
+            [${idx + 1}] <strong>${c.title}</strong> — <em>${(c as any).author_or_institution || (c as any).authorOrInstitution || ''}</em>
+            <a href="${c.url}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; margin-left: 6px;">Nguồn gốc ↗</a>
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    // Khối Prompt AI (nếu bộ đồ có prompt được tạo từ AI)
+    const promptSection = document.getElementById('lookbook-detail-prompt-section');
+    const promptTextarea = document.getElementById('lookbook-detail-prompt-textarea') as HTMLTextAreaElement | null;
+
+    if (item.assembledPrompt && promptSection && promptTextarea) {
+      promptSection.style.display = 'block';
+      promptTextarea.value = item.assembledPrompt;
+    } else if (promptSection) {
+      promptSection.style.display = 'none';
+    }
+
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+  }
+
+  public closeOutfitDetailModal(): void {
+    Sound.playClick();
+    const modal = document.getElementById('lookbook-detail-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.classList.remove('show');
+    }
+    this.currentDetailOutfit = null;
   }
 }
 

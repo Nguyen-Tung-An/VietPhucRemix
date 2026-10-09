@@ -1102,6 +1102,7 @@ export class GarmentEngine {
     if (actionBtn) {
       actionBtn.innerHTML = `<span>Điền Ngay: ${firstMissing ? firstMissing.label : 'Hoàn thiện'}</span>`;
       actionBtn.onclick = () => {
+        modal.classList.remove('active');
         modal.style.display = 'none';
         if (firstMissing) {
           this.switchSheetTab(firstMissing.targetPanel);
@@ -1110,6 +1111,7 @@ export class GarmentEngine {
     }
 
     const closeModal = () => {
+      modal.classList.remove('active');
       modal.style.display = 'none';
     };
 
@@ -1119,6 +1121,7 @@ export class GarmentEngine {
     };
 
     modal.style.display = 'flex';
+    modal.classList.add('active');
   }
 
   public showSanityAlert(message: string): void {

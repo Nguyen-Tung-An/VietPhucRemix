@@ -44,8 +44,8 @@ export class ResultEngine {
     this.renderKnowledgeCard(outfitState.garment);
     this.renderColorEvaluation(outfitState.color, outfitState.colorName, outfitState.garment, outfitState.event);
 
-    // Đặt lại trạng thái ẩn mặc định cho Lớp 3 (Progressive Disclosure)
-    this.setKnowledgeRevealed(false);
+    // Hiển thị đầy đủ thông tin tìm hiểu về di sản cho người dùng
+    this.setKnowledgeRevealed(true);
 
     // Kích hoạt màn hình kết quả
     resultScene.classList.add('scene-active');
@@ -94,6 +94,7 @@ export class ResultEngine {
   private renderArtwork(garment: string, _colorHex: string, _accessory: string): void {
     const demoImg = document.getElementById('result-demo-image') as HTMLImageElement;
     const placeholder = document.getElementById('result-no-image-placeholder');
+    const btnCopyPromptFooter = document.getElementById('btn-result-copy-prompt');
     if (!demoImg || !placeholder) return;
 
     const demoSrc = assetConfig.getGarmentImageUrl(garment);
@@ -102,6 +103,9 @@ export class ResultEngine {
     demoImg.onload = () => {
       demoImg.style.display = 'block';
       placeholder.style.display = 'none';
+      if (btnCopyPromptFooter) {
+        btnCopyPromptFooter.style.display = 'inline-flex';
+      }
     };
 
     assetConfig.attachSafeImageLoad(
@@ -111,6 +115,10 @@ export class ResultEngine {
       () => {
         demoImg.style.display = 'none';
         placeholder.style.display = 'flex';
+        // Khi không có tranh: nút sao chép prompt đưa qua phần bên trái (bên trong placeholder)
+        if (btnCopyPromptFooter) {
+          btnCopyPromptFooter.style.display = 'none';
+        }
       }
     );
   }
@@ -125,6 +133,10 @@ export class ResultEngine {
 
     const truth = getCulturalTruth(garment);
     
+    if (badgeText) {
+      badgeText.textContent = `Chuẩn Quy Thức Di Sản • ${truth.name}`;
+    }
+
     if (heading) {
       heading.textContent = `${truth.name} • ${colorName}`;
     }
@@ -274,19 +286,11 @@ export class ResultEngine {
     const btnTailorJourney = document.getElementById('btn-result-tailor-journey');
     const btnGotoDiscover = document.getElementById('btn-result-goto-discover');
     const btnCopyPrompt = document.getElementById('btn-result-copy-prompt');
-    const btnPlaceholderPrompt = document.getElementById('btn-result-placeholder-prompt');
-    const btnGotoCompare = document.getElementById('btn-result-goto-compare');
+    const btnPlaceholderPrompt = document.getElementById('btn-result-placeholder-copy-prompt') || document.getElementById('btn-result-placeholder-prompt');
 
     btnGotoDiscover?.addEventListener('click', () => {
       this.hideResult();
       appRouter.switchTab('discover');
-    });
-
-    // Nút Dẫn qua Màn hình So Sánh (Chọn ngay bộ đồ hiện tại vào Slot A)
-    btnGotoCompare?.addEventListener('click', () => {
-      Sound.playClick();
-      this.hideResult();
-      appRouter.openCompare('current-workshop');
     });
 
     // Nút Sao Chép Prompt Tạo Sinh Ảnh Gemini Thủ Công
@@ -460,6 +464,7 @@ export class ResultEngine {
 
     const closeModal = () => {
       modal.classList.remove('active');
+      modal.classList.remove('show');
       modal.style.display = 'none';
     };
 
@@ -468,8 +473,17 @@ export class ResultEngine {
       if (e.target === modal) closeModal();
     };
 
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        window.removeEventListener('keydown', handleEsc);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
     modal.style.display = 'flex';
     modal.classList.add('active');
+    modal.classList.add('show');
   }
 
   /**

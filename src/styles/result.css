@@ -143,8 +143,8 @@
   position: relative;
   width: 100%;
   flex: 1;
-  min-height: 320px;
-  max-height: 48vh;
+  min-height: 340px;
+  max-height: none;
   border-radius: var(--border-radius-card, 16px);
   background: var(--color-card-bg);
   backdrop-filter: blur(16px);
@@ -155,8 +155,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  overflow: hidden;
+  padding: 14px;
+  overflow: visible;
   animation: fadeInArtwork 0.4s ease-out;
 }
 
@@ -173,6 +173,7 @@
     border-right: 1px solid var(--color-card-border);
     box-shadow: none;
     background: linear-gradient(160deg, var(--color-card-bg) 0%, var(--color-bg) 100%);
+    overflow: hidden;
   }
 }
 
@@ -256,32 +257,43 @@
 }
 
 .result-desktop-headline {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.result-title {
+  font-family: var(--font-title);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-transform: none !important;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.result-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
 }
 
 @media (min-width: 768px) {
   .result-desktop-headline {
-    display: flex;
-    flex-direction: column;
     gap: 6px;
-    margin-bottom: 8px;
   }
 
   .result-title {
-    font-family: var(--font-title);
     font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    text-transform: none !important;
     letter-spacing: -0.02em;
     line-height: 1.2;
   }
 
   .result-subtitle {
-    font-family: var(--font-body);
     font-size: 0.95rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
   }
 }
 
@@ -452,10 +464,10 @@
 }
 
 .result-knowledge-layer.layer-knowledge-revealed .knowledge-content-box {
-  max-height: 650px;
+  max-height: 2500px;
   opacity: 1;
   padding: 0 18px 16px 18px;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .result-knowledge-layer.layer-knowledge-revealed .chevron-toggle-icon {
@@ -534,40 +546,11 @@
   transform: scale(0.98);
 }
 
-/* 2. HÀNG TIỆN ÍCH: SO SÁNH & PHỐI LẠI */
+/* 2. HÀNG TIỆN ÍCH PHỤ: PHỐI LẠI TRONG XƯỞNG & TIỆM MAY ĐO */
 .result-sub-actions-row {
   display: flex;
   gap: 10px;
   width: 100%;
-}
-
-.btn-res-action-compare {
-  flex: 1;
-  min-height: 46px;
-  border-radius: var(--border-radius-pill, 9999px);
-  background: rgba(201, 166, 107, 0.15);
-  border: 1.5px solid rgba(201, 166, 107, 0.6);
-  color: #7A5338;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(201, 166, 107, 0.15);
-}
-
-.btn-res-action-compare:hover {
-  background: rgba(201, 166, 107, 0.28);
-  border-color: #C9A66B;
-  transform: translateY(-1px);
-}
-
-.btn-res-action-compare:active {
-  transform: scale(0.97);
 }
 
 .btn-res-action-secondary {
@@ -586,6 +569,7 @@
   gap: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .btn-res-action-secondary:hover {
@@ -601,14 +585,14 @@
 
 /* 3. NÚT TIỆM MAY ĐO & BẢN ĐỒ */
 .btn-res-action-tailor {
-  width: 100%;
-  min-height: 44px;
+  flex: 1;
+  min-height: 46px;
   border-radius: var(--border-radius-pill, 9999px);
-  background: rgba(201, 166, 107, 0.18);
+  background: rgba(201, 166, 107, 0.16);
   border: 1px solid rgba(201, 166, 107, 0.45);
   color: #6B4E2E;
   font-family: var(--font-body);
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -616,15 +600,17 @@
   gap: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .btn-res-action-tailor:hover {
-  background: rgba(201, 166, 107, 0.3);
+  background: rgba(201, 166, 107, 0.28);
+  border-color: #C9A66B;
   transform: translateY(-1px);
 }
 
 .btn-res-action-tailor:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* 4. KHỐI CÔNG CỤ PROMPT GEMINI AI ĐỘC LẬP */
@@ -966,22 +952,213 @@
   box-shadow: 0 4px 14px rgba(66, 133, 244, 0.3);
 }
 
-.result-placeholder-link {
-  background: none;
-  border: none;
-  color: var(--color-accent-secondary);
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  transition: all 0.15s ease;
-  text-decoration: underline;
+/* Nút trong Placeholder bên trái khi không có hình minh họa demo */
+.result-placeholder-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 340px;
+  margin-top: 8px;
 }
 
-.result-placeholder-link:hover {
-  background: rgba(74, 133, 119, 0.1);
+.btn-res-placeholder-copy {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: linear-gradient(135deg, #4A8577, #2A5A4E);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.35);
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+}
+
+.btn-res-placeholder-copy:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.45);
+}
+
+.btn-res-placeholder-copy:active {
+  transform: scale(0.98);
+}
+
+.btn-res-placeholder-discover {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1.5px solid var(--color-accent-secondary, #4A8577);
+  color: var(--color-accent-secondary, #4A8577);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.btn-res-placeholder-discover:hover {
+  background: rgba(74, 133, 119, 0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 133, 119, 0.15);
+}
+
+.btn-res-placeholder-discover:active {
+  transform: scale(0.98);
+}
+
+/* Nút xem prompt ở cột phải */
+.btn-res-prompt-card-btn {
+  width: 100%;
+  min-height: 42px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1.5px dashed var(--color-accent-secondary, #4A8577);
+  color: var(--color-accent-secondary, #4A8577);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.btn-res-prompt-card-btn:hover {
+  background: rgba(74, 133, 119, 0.16);
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   MODAL PROMPT GEMINI STYLING (PROMPT STUDIO MODAL)
+   ========================================================================== */
+#prompt-view-modal {
+  z-index: 10002 !important;
+}
+
+#prompt-view-modal .profile-modal-card {
+  background: #FAF7F0 !important;
+  border: 1.5px solid rgba(74, 133, 119, 0.3) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
+  border-radius: 20px;
+  max-width: 620px;
+  width: 92%;
+  padding: 24px;
+  position: relative;
+  z-index: 10003;
+}
+
+#prompt-modal-textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid rgba(74, 133, 119, 0.35);
+  background: #FFFFFF !important;
+  padding: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  color: #2B2B28;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 150px;
+  max-height: 250px;
+  box-sizing: border-box;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.prompt-modal-actions-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-copy-prompt-flex {
+  flex: 1;
+  min-width: 170px;
+  min-height: 46px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: linear-gradient(135deg, #4A8577, #2A5A4E);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(74, 133, 119, 0.35);
+  transition: all 0.18s ease;
+}
+
+.btn-copy-prompt-flex:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.45);
+}
+
+.btn-prompt-external-gemini {
+  flex: 1;
+  min-width: 170px;
+  min-height: 46px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(66, 133, 244, 0.12);
+  border: 1.5px solid #4285F4;
+  color: #1a73e8;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(66, 133, 244, 0.18);
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+}
+
+.btn-prompt-external-gemini:hover {
+  background: #4285F4;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(66, 133, 244, 0.35);
+}
+
+@media (max-width: 480px) {
+  .prompt-modal-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-copy-prompt-flex,
+  .btn-prompt-external-gemini {
+    width: 100%;
+    min-width: 100%;
+  }
 }
 
 /* Keyframe animations */

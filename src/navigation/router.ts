@@ -381,12 +381,6 @@ export class AppRouter {
       this.openCompare();
     });
 
-    // Nút mở so sánh từ Màn hình Kết quả
-    document.getElementById('btn-result-compare')?.addEventListener('click', () => {
-      Sound.playClick();
-      this.openCompare('current-workshop');
-    });
-
     btnOpenWardrobe?.addEventListener('click', () => {
       Sound.playClick();
       this.switchTab('lookbook');

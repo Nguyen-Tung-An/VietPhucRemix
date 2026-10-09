@@ -263,25 +263,54 @@
   align-items: center;
   gap: 6px;
   width: 100%;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-.btn-card-remix {
+.btn-card-detail {
   flex: 1;
-  min-height: 34px;
+  min-height: 32px;
+  padding: 0 6px;
   border-radius: var(--border-radius-pill, 9999px);
-  background: var(--gradient-btn-primary);
-  border: none;
-  color: var(--color-btn-text, #0D1714);
+  background: rgba(74, 133, 119, 0.12);
+  border: 1px solid rgba(74, 133, 119, 0.28);
+  color: #2A5A4E;
   font-family: var(--font-body);
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.btn-card-detail:hover {
+  background: rgba(74, 133, 119, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-card-remix {
+  flex: 1;
+  min-height: 32px;
+  padding: 0 6px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: var(--gradient-btn-primary);
+  border: none;
+  color: var(--color-btn-text, #0D1714);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   transition: transform 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .btn-card-remix:hover {
@@ -289,23 +318,27 @@
 }
 
 .btn-card-remove {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
   border-radius: 50%;
-  background: rgba(74, 133, 119, 0.1);
-  border: 1px solid rgba(74, 133, 119, 0.2);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1px solid rgba(74, 133, 119, 0.18);
   color: var(--color-accent-secondary, #4A8577);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .btn-card-remove:hover {
-  background: rgba(74, 133, 119, 0.2);
+  background: rgba(211, 47, 47, 0.12);
+  border-color: rgba(211, 47, 47, 0.35);
+  color: #D32F2F;
   transform: scale(1.08);
 }
 

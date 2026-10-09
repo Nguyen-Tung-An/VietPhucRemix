@@ -35,6 +35,7 @@ export class GarmentEngine {
 
   // Trạng thái AI Styling & Cột Tổng Hợp
   public hasGeneratedAISuggestions: boolean = false;
+  public needsReappraisal: boolean = false;
   public isGeneratingMiniStyling: boolean = false;
   public aiStylingData: MiniStylingResponse | null = null;
 
@@ -52,6 +53,7 @@ export class GarmentEngine {
 
   public setPattern(pattern: PatternItem | null): void {
     this.currentPattern = pattern;
+    this.onOutfitInputModified();
   }
 
   public getCurrentOutfitState(): CurrentOutfitState {
@@ -134,41 +136,98 @@ export class GarmentEngine {
   }
 
   /**
-   * Kiểm tra điều kiện khi người dùng nhấn nút Thẩm Định xem kết quả:
-   * - Nếu chưa chọn đủ 3 options: Yêu cầu chọn và chuyển tới tab tương ứng.
-   * - Nếu đủ 3 options nhưng CHƯA tạo AI gợi ý lần nào:
-   *   -> Highlight option phụ kiện (Tab 4) và yêu cầu phải làm cái đó trước.
-   * - Nếu đủ quy trình flow rồi (đã có AI gợi ý): Cho phép tiếp tục!
+   * Kích hoạt khi người dùng chỉnh sửa BẤT KỲ input gì sau khi đã cho AI tư vấn:
+   * Chặn không cho nhấn thẩm định & xem kết quả trực tiếp,
+   * bắt buộc phải nhấn thẩm định lại để AI kiểm tra quy chuẩn.
    */
-  public canProceedToResult(): boolean {
-    if (!this.selectedGarment || !this.selectedColor || this.selectedStyles.length === 0 || !this.hasGeneratedAISuggestions) {
-      this.openValidationAlertModal('RESULT');
-      return false;
-    }
+  public onOutfitInputModified(): void {
+    if (this.hasGeneratedAISuggestions) {
+      this.hasGeneratedAISuggestions = false;
+      this.needsReappraisal = true;
 
-    // Nếu chưa tạo AI gợi ý lần nào -> Highlight Tab 4 Phụ Kiện và yêu cầu thực hiện
-    if (!this.hasGeneratedAISuggestions) {
-      Sound.playClick();
-      this.switchSheetTab('panel-ai-styling');
-      const tabAI = document.getElementById('tab-opt-ai-styling');
-      if (tabAI) {
-        tabAI.classList.add('tab-highlight-pulse');
+      const btnViewResult = document.getElementById('btn-view-result');
+      const btnViewResultText = document.getElementById('btn-view-result-text');
+      if (btnViewResult) {
+        btnViewResult.classList.add('btn-cta-pending');
+        btnViewResult.classList.remove('btn-cta-ready');
+        btnViewResult.setAttribute('title', 'Phối đồ đã thay đổi — Vui lòng nhấn nhờ AI tư vấn lại trước khi thẩm định');
+      }
+      if (btnViewResultText) {
+        btnViewResultText.textContent = '🔄 Cần Nhờ AI Tư Vấn Lại';
+      }
+
+      // Đánh dấu trạng thái trong cột AI nếu đang mở
+      const statusPill = document.getElementById('ai-guardrail-status-pill');
+      if (statusPill) {
+        statusPill.textContent = '⚠️ Đã Đổi — Cần Thẩm Định Lại';
+        statusPill.style.background = 'rgba(201, 166, 107, 0.25)';
+        statusPill.style.color = '#7A5338';
+      }
+
+      // Highlight gợi ý bấm nút Tư vấn lại
+      const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
+      if (retriggerBtn) {
+        retriggerBtn.classList.add('tab-highlight-pulse');
       }
       const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');
       if (centerTriggerBtn) {
         centerTriggerBtn.classList.add('tab-highlight-pulse');
-        setTimeout(() => {
-          centerTriggerBtn.classList.remove('tab-highlight-pulse');
-        }, 3000);
       }
-      this.openValidationAlertModal('RESULT');
+    }
+    this.checkOptionsProgress();
+  }
+
+  /**
+   * Kiểm tra điều kiện khi người dùng nhấn nút Thẩm Định xem kết quả:
+   * - Nếu chưa chọn đủ 3 options: Thông báo popup nhỏ bên dưới và chuyển tới tab tương ứng.
+   * - Nếu vừa thay đổi input: Yêu cầu nhấn nhờ AI tư vấn lại trước.
+   * - Nếu CHƯA tạo AI gợi ý lần nào: Yêu cầu nhấn Xem Gợi Ý AI trước.
+   */
+  public canProceedToResult(): boolean {
+    if (!this.selectedGarment) {
+      appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có. Vui lòng chọn dáng áo đã ra mắt để tiếp tục!');
+      this.switchSheetTab('panel-garments');
+      return false;
+    }
+
+    if (!this.selectedColor) {
+      appRouter.showToast('🎨 Vui lòng chọn sắc lụa di sản hoặc màu tùy chỉnh trước khi thẩm định!');
+      this.switchSheetTab('panel-colors');
+      return false;
+    }
+
+    if (this.selectedStyles.length === 0) {
+      appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 phong cách phối đồ mong muốn!');
+      this.switchSheetTab('panel-styles');
+      return false;
+    }
+
+    if (!this.hasGeneratedAISuggestions) {
+      if (this.needsReappraisal) {
+        appRouter.showToast('⚠️ Bạn vừa chỉnh sửa phối đồ! Bắt buộc nhấn "Nhờ AI Tư Vấn Lại" để kiểm tra quy chuẩn trước khi xem kết quả.');
+      } else {
+        appRouter.showToast('🪭 Vui lòng nhấn "Xem Gợi Ý AI" để thẩm định bộ phụ kiện & quy chuẩn di sản trước!');
+      }
+
+      this.switchSheetTab('panel-ai-styling');
+      const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');
+      const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
+      const bottomRetriggerBtn = document.getElementById('btn-retrigger-mini-gemini');
+      centerTriggerBtn?.classList.add('tab-highlight-pulse');
+      retriggerBtn?.classList.add('tab-highlight-pulse');
+      bottomRetriggerBtn?.classList.add('tab-highlight-pulse');
+      setTimeout(() => {
+        centerTriggerBtn?.classList.remove('tab-highlight-pulse');
+        retriggerBtn?.classList.remove('tab-highlight-pulse');
+        bottomRetriggerBtn?.classList.remove('tab-highlight-pulse');
+      }, 3000);
       return false;
     }
 
     // Kiểm tra tính hợp lệ của input tự nhập
     const sanity = this.validateCurrentInputs();
     if (!sanity.isValid) {
-      this.showSanityAlert(sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập theo thuần phong mỹ tục.');
+      appRouter.showToast(`⚠️ ${sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập.'}`);
       this.switchSheetTab('panel-ai-styling');
       return false;
     }
@@ -193,7 +252,13 @@ export class GarmentEngine {
     this.selectedHairstyle = '';
     this.customHairstyle = '';
     this.hasGeneratedAISuggestions = false;
+    this.needsReappraisal = false;
     this.aiStylingData = null;
+
+    const btnViewResultText = document.getElementById('btn-view-result-text');
+    if (btnViewResultText) {
+      btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+    }
 
     // 1. Reset giao diện Dáng Áo
     document.querySelectorAll('[data-garment-select]').forEach((card) => {
@@ -361,9 +426,18 @@ export class GarmentEngine {
         const targetBtn = e.currentTarget as HTMLElement;
         const targetPanelId = targetBtn.dataset.target;
 
-        // Nếu nhấn vào Tab 4 (Phụ Kiện) mà chưa chọn đủ 3 options đầu -> Chặn lại và hiện modal thông báo
+        // Nếu nhấn vào Tab 4 (Phụ Kiện) mà chưa chọn đủ 3 options đầu -> Chặn lại và hiện toast thông báo
         if (targetPanelId === 'panel-ai-styling' && !this.areFirstThreeOptionsComplete()) {
-          this.openValidationAlertModal('ACCESSORIES');
+          if (!this.selectedGarment) {
+            appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có. Vui lòng chọn dáng áo đã ra mắt trước!');
+            this.switchSheetTab('panel-garments');
+          } else if (!this.selectedColor) {
+            appRouter.showToast('🎨 Vui lòng chọn Sắc Lụa trước khi chuyển qua Phụ Kiện!');
+            this.switchSheetTab('panel-colors');
+          } else {
+            appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 Phong Cách trước khi chuyển qua Phụ Kiện!');
+            this.switchSheetTab('panel-styles');
+          }
           return;
         }
 
@@ -406,7 +480,7 @@ export class GarmentEngine {
         const checkBadge = document.getElementById('badge-check-garment');
         if (checkBadge) checkBadge.style.display = 'inline-flex';
 
-        this.checkOptionsProgress();
+        this.onOutfitInputModified();
         this.hideSanityAlert();
       });
     });
@@ -417,7 +491,7 @@ export class GarmentEngine {
       card.addEventListener('click', (e) => {
         e.preventDefault();
         Sound.playClick();
-        appRouter.showToast('⏳ Mẫu áo này đang trong quá trình khảo cứu di sản và sẽ ra mắt ở phiên bản tiếp theo!');
+        appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có.');
       });
     });
   }
@@ -446,7 +520,7 @@ export class GarmentEngine {
       const checkBadge = document.getElementById('badge-check-color');
       if (checkBadge) checkBadge.style.display = 'inline-flex';
 
-      this.checkOptionsProgress();
+      this.onOutfitInputModified();
       this.hideSanityAlert();
     };
 
@@ -514,7 +588,7 @@ export class GarmentEngine {
           checkBadge.style.display = this.selectedStyles.length > 0 ? 'inline-flex' : 'none';
         }
 
-        this.checkOptionsProgress();
+        this.onOutfitInputModified();
         this.hideSanityAlert();
       });
     });
@@ -541,6 +615,8 @@ export class GarmentEngine {
       if (sliderValBadge) {
         sliderValBadge.textContent = labelText;
       }
+
+      this.onOutfitInputModified();
     });
   }
 
@@ -594,6 +670,7 @@ export class GarmentEngine {
         this.renderCustomAccessoriesChips();
         inputCustomAcc.value = '';
         this.updateSelectedAccessoriesCount();
+        this.onOutfitInputModified();
       }
     };
 
@@ -623,6 +700,7 @@ export class GarmentEngine {
       this.hideSanityAlert();
       this.customHairstyle = text;
       Sound.playClick();
+      this.onOutfitInputModified();
 
       // Bỏ active trên danh sách card gợi ý
       document.querySelectorAll('#hairstyles-single-container .styling-item-card').forEach((c) => {
@@ -639,6 +717,7 @@ export class GarmentEngine {
           this.customHairstyle = '';
           badge.style.display = 'none';
           Sound.playClick();
+          this.onOutfitInputModified();
         };
       }
     };
@@ -725,6 +804,27 @@ export class GarmentEngine {
       this.populateAISynthesisColumn(data, userProfile);
 
       // 5. Cập nhật nút Thẩm Định sang trạng thái Sẵn Sàng (Ready)
+      this.hasGeneratedAISuggestions = true;
+      this.needsReappraisal = false;
+
+      const btnViewResult = document.getElementById('btn-view-result');
+      const btnViewResultText = document.getElementById('btn-view-result-text');
+      if (btnViewResult) {
+        btnViewResult.classList.remove('btn-cta-pending');
+        btnViewResult.classList.add('btn-cta-ready');
+      }
+      if (btnViewResultText) {
+        btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+      }
+      const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
+      if (retriggerBtn) {
+        retriggerBtn.classList.remove('tab-highlight-pulse');
+      }
+      const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');
+      if (centerTriggerBtn) {
+        centerTriggerBtn.classList.remove('tab-highlight-pulse');
+      }
+      appRouter.showToast('✓ Đã hoàn tất thẩm định AI! Bạn có thể xem kết quả ngay.');
       this.checkOptionsProgress();
 
       Sound.playChime();
@@ -941,6 +1041,7 @@ export class GarmentEngine {
         }
 
         this.updateSelectedAccessoriesCount();
+        this.onOutfitInputModified();
       });
 
       container.appendChild(card);
@@ -991,6 +1092,7 @@ export class GarmentEngine {
         card.classList.add('selected');
         const check = card.querySelector('.item-check-indicator');
         if (check) check.textContent = '●';
+        this.onOutfitInputModified();
       });
 
       container.appendChild(card);
@@ -1016,6 +1118,7 @@ export class GarmentEngine {
         this.customAccessories = this.customAccessories.filter((x) => x !== accName);
         this.renderCustomAccessoriesChips();
         this.updateSelectedAccessoriesCount();
+        this.onOutfitInputModified();
       });
 
       container.appendChild(chip);
@@ -1031,97 +1134,42 @@ export class GarmentEngine {
   }
 
   public openValidationAlertModal(mode: 'ACCESSORIES' | 'RESULT'): void {
-    const modal = document.getElementById('validation-alert-modal');
-    const titleEl = document.getElementById('validation-alert-title');
-    const subEl = document.getElementById('validation-alert-subtitle');
-    const listEl = document.getElementById('validation-missing-list');
-    const actionBtn = document.getElementById('btn-action-validation-alert');
-    const closeBtn = document.getElementById('btn-close-validation-alert');
-
-    if (!modal || !listEl) return;
-
     Sound.playClick();
-
-    const missingItems: { label: string; desc: string; targetPanel: string; icon: string }[] = [];
-
     if (!this.selectedGarment) {
-      missingItems.push({
-        label: 'Dáng Áo Di Sản',
-        desc: 'Chưa chọn loại áo (Áo ngũ thân, Áo tấc, Áo nhật bình, Áo tứ thân, Áo bà ba, Áo dài)',
-        targetPanel: 'panel-garments',
-        icon: '👘'
-      });
+      appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có. Vui lòng chọn dáng áo đã ra mắt để tiếp tục!');
+      this.switchSheetTab('panel-garments');
+      return;
     }
-
     if (!this.selectedColor) {
-      missingItems.push({
-        label: 'Sắc Lụa / Màu Sắc',
-        desc: 'Chưa chọn màu sắc từ bảng màu di sản hoặc bộ phối tự chọn',
-        targetPanel: 'panel-colors',
-        icon: '🎨'
-      });
+      appRouter.showToast('🎨 Vui lòng chọn sắc lụa di sản hoặc màu tùy chỉnh!');
+      this.switchSheetTab('panel-colors');
+      return;
     }
-
     if (this.selectedStyles.length === 0) {
-      missingItems.push({
-        label: 'Phong Cách Phối',
-        desc: 'Chưa chọn ít nhất 1 phong cách mong muốn',
-        targetPanel: 'panel-styles',
-        icon: '🎭'
-      });
+      appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 phong cách phối đồ mong muốn!');
+      this.switchSheetTab('panel-styles');
+      return;
     }
-
-    if (mode === 'RESULT' && !this.hasGeneratedAISuggestions && missingItems.length === 0) {
-      missingItems.push({
-        label: 'Gợi Ý Phụ Kiện AI',
-        desc: 'Chưa nhấn "Xem Gợi Ý AI" để nhận tư vấn phụ kiện & thẩm định văn hóa',
-        targetPanel: 'panel-ai-styling',
-        icon: '🪭'
-      });
+    if (!this.hasGeneratedAISuggestions) {
+      if (this.needsReappraisal) {
+        appRouter.showToast('⚠️ Bạn vừa chỉnh sửa phối đồ! Bắt buộc nhấn "Nhờ AI Tư Vấn Lại" trước khi xem kết quả.');
+      } else {
+        appRouter.showToast('🪭 Vui lòng nhấn "Xem Gợi Ý AI" để hoàn tất thẩm định phụ kiện & quy chuẩn di sản!');
+      }
+      this.switchSheetTab('panel-ai-styling');
+      const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');
+      const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
+      const bottomRetriggerBtn = document.getElementById('btn-retrigger-mini-gemini');
+      centerTriggerBtn?.classList.add('tab-highlight-pulse');
+      retriggerBtn?.classList.add('tab-highlight-pulse');
+      bottomRetriggerBtn?.classList.add('tab-highlight-pulse');
+      setTimeout(() => {
+        centerTriggerBtn?.classList.remove('tab-highlight-pulse');
+        retriggerBtn?.classList.remove('tab-highlight-pulse');
+        bottomRetriggerBtn?.classList.remove('tab-highlight-pulse');
+      }, 3000);
+      return;
     }
-
-    if (mode === 'ACCESSORIES') {
-      if (titleEl) titleEl.textContent = 'Chưa Đủ 3 Tùy Chọn Cơ Bản';
-      if (subEl) subEl.textContent = 'Vui lòng hoàn thành Dáng áo, Màu sắc và Phong cách trước khi xem Gợi Ý Phụ Kiện AI.';
-    } else {
-      if (titleEl) titleEl.textContent = 'Chưa Thể Thẩm Định Phục Trang';
-      if (subEl) subEl.textContent = 'Vui lòng hoàn thành đầy đủ tất cả các bước phối đồ trước khi thẩm định.';
-    }
-
-    listEl.innerHTML = missingItems.map(item => `
-      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: rgba(184, 51, 42, 0.06); border: 1px solid rgba(184, 51, 42, 0.2); border-radius: 10px;">
-        <span style="font-size: 1.2rem; flex-shrink: 0;">${item.icon}</span>
-        <div style="flex: 1;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: #B8332A;">${item.label}</div>
-          <div style="font-size: 0.74rem; color: #4A5568; line-height: 1.4; margin-top: 2px;">${item.desc}</div>
-        </div>
-      </div>
-    `).join('');
-
-    const firstMissing = missingItems[0];
-    if (actionBtn) {
-      actionBtn.innerHTML = `<span>Điền Ngay: ${firstMissing ? firstMissing.label : 'Hoàn thiện'}</span>`;
-      actionBtn.onclick = () => {
-        modal.classList.remove('active');
-        modal.style.display = 'none';
-        if (firstMissing) {
-          this.switchSheetTab(firstMissing.targetPanel);
-        }
-      };
-    }
-
-    const closeModal = () => {
-      modal.classList.remove('active');
-      modal.style.display = 'none';
-    };
-
-    if (closeBtn) closeBtn.onclick = closeModal;
-    modal.onclick = (e) => {
-      if (e.target === modal) closeModal();
-    };
-
-    modal.style.display = 'flex';
-    modal.classList.add('active');
   }
 
   public showSanityAlert(message: string): void {
@@ -1158,17 +1206,18 @@ export class GarmentEngine {
   public setFabricColor(colorHex: string, colorName?: string): void {
     this.selectedColor = colorHex;
     if (colorName) this.selectedColorName = colorName;
-    this.checkOptionsProgress();
+    this.onOutfitInputModified();
   }
 
   public setGarment(garment: string): void {
     this.selectedGarment = garment;
-    this.checkOptionsProgress();
+    this.onOutfitInputModified();
   }
 
   public setAccessory(acc: string, _isInitial?: boolean): void {
     this.selectedAccessories = [acc];
     this.updateSelectedAccessoriesCount();
+    this.onOutfitInputModified();
   }
 
   public callCulturalAI(_event?: string, _color?: string, _garment?: string, _accessory?: string): void {

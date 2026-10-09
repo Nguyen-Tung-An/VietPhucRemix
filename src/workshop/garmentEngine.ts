@@ -140,24 +140,8 @@ export class GarmentEngine {
    * - Nếu đủ quy trình flow rồi (đã có AI gợi ý): Cho phép tiếp tục!
    */
   public canProceedToResult(): boolean {
-    if (!this.selectedGarment) {
-      Sound.playClick();
-      this.switchSheetTab('panel-garments');
-      this.showSanityAlert('Vui lòng chọn Dáng Áo cho phục trang trước!');
-      return false;
-    }
-
-    if (!this.selectedColor) {
-      Sound.playClick();
-      this.switchSheetTab('panel-colors');
-      this.showSanityAlert('Vui lòng chọn Sắc Lụa / Màu Sắc cho tà áo!');
-      return false;
-    }
-
-    if (this.selectedStyles.length === 0) {
-      Sound.playClick();
-      this.switchSheetTab('panel-styles');
-      this.showSanityAlert('Vui lòng chọn ít nhất 1 Phong Cách thời trang mong muốn!');
+    if (!this.selectedGarment || !this.selectedColor || this.selectedStyles.length === 0 || !this.hasGeneratedAISuggestions) {
+      this.openValidationAlertModal('RESULT');
       return false;
     }
 
@@ -176,7 +160,7 @@ export class GarmentEngine {
           centerTriggerBtn.classList.remove('tab-highlight-pulse');
         }, 3000);
       }
-      this.showSanityAlert('💡 Bước bắt buộc: Vui lòng nhấn "Xem Gợi Ý AI" để nhận phân tích phụ kiện & thẩm định di sản trước khi kết xuất kết quả!');
+      this.openValidationAlertModal('RESULT');
       return false;
     }
 
@@ -376,19 +360,9 @@ export class GarmentEngine {
         const targetBtn = e.currentTarget as HTMLElement;
         const targetPanelId = targetBtn.dataset.target;
 
-        // Nếu nhấn vào Tab 4 (Phụ Kiện) mà chưa chọn đủ 3 options đầu -> Chặn lại và nhắc nhở
+        // Nếu nhấn vào Tab 4 (Phụ Kiện) mà chưa chọn đủ 3 options đầu -> Chặn lại và hiện modal thông báo
         if (targetPanelId === 'panel-ai-styling' && !this.areFirstThreeOptionsComplete()) {
-          Sound.playClick();
-          if (!this.selectedGarment) {
-            this.switchSheetTab('panel-garments');
-            this.showSanityAlert('Vui lòng chọn Dáng Áo trước!');
-          } else if (!this.selectedColor) {
-            this.switchSheetTab('panel-colors');
-            this.showSanityAlert('Vui lòng chọn Màu Sắc trước!');
-          } else {
-            this.switchSheetTab('panel-styles');
-            this.showSanityAlert('Vui lòng chọn ít nhất 1 Phong Cách trước!');
-          }
+          this.openValidationAlertModal('ACCESSORIES');
           return;
         }
 
@@ -566,6 +540,10 @@ export class GarmentEngine {
     // 1. Nút Xem Gợi Ý AI ở giữa màn hình (Trạng thái ban đầu)
     const btnCenterTrigger = document.getElementById('btn-trigger-mini-gemini');
     btnCenterTrigger?.addEventListener('click', () => {
+      if (!this.areFirstThreeOptionsComplete()) {
+        this.openValidationAlertModal('ACCESSORIES');
+        return;
+      }
       Sound.playChime();
       this.triggerMiniGeminiGeneration();
     });
@@ -750,48 +728,7 @@ export class GarmentEngine {
   private populateAISynthesisColumn(data: MiniStylingResponse, userProfile: any): void {
     const truth = getCulturalTruth(this.selectedGarment || 'AO_NGU_THAN');
 
-    // 1. Hàng Minh Họa Trực Quan Mẫu Áo, Mẫu Tóc, Phụ Kiện (Search Google Images & Gallery Strip)
-    const garmentRef = data.visual_references?.garment || {
-      title: truth.name,
-      desc: `${truth.originRegion} • ${truth.historicalEra}`,
-      searchKeyword: `${truth.name} cổ phục Việt Nam`
-    };
-    const hairRef = data.visual_references?.hair || {
-      title: data.hairstyles[0]?.name || 'Búi Tóc Cài Trâm',
-      desc: data.hairstyles[0]?.cultural_reason || 'Thanh nhã cổ truyền',
-      searchKeyword: `${data.hairstyles[0]?.name || 'Búi tóc cài trâm'} cổ phục`
-    };
-    const accRef = data.visual_references?.accessory || {
-      title: data.accessories[0]?.name || 'Quạt Giấy Thư Pháp',
-      desc: data.accessories[0]?.cultural_reason || 'Đoan trang nho nhã',
-      searchKeyword: `${data.accessories[0]?.name || 'Quạt giấy thư pháp'} truyền thống`
-    };
-
-    // Áo
-    const elGarmentName = document.getElementById('visual-garment-name');
-    const elGarmentDesc = document.getElementById('visual-garment-desc');
-    const elGarmentLink = document.getElementById('visual-garment-search-link') as HTMLAnchorElement | null;
-    if (elGarmentName) elGarmentName.textContent = garmentRef.title;
-    if (elGarmentDesc) elGarmentDesc.textContent = garmentRef.desc;
-    if (elGarmentLink) elGarmentLink.href = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(garmentRef.searchKeyword)}`;
-
-    // Tóc
-    const elHairName = document.getElementById('visual-hair-name');
-    const elHairDesc = document.getElementById('visual-hair-desc');
-    const elHairLink = document.getElementById('visual-hair-search-link') as HTMLAnchorElement | null;
-    if (elHairName) elHairName.textContent = hairRef.title;
-    if (elHairDesc) elHairDesc.textContent = hairRef.desc;
-    if (elHairLink) elHairLink.href = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(hairRef.searchKeyword)}`;
-
-    // Phụ kiện
-    const elAccName = document.getElementById('visual-acc-name');
-    const elAccDesc = document.getElementById('visual-acc-desc');
-    const elAccLink = document.getElementById('visual-acc-search-link') as HTMLAnchorElement | null;
-    if (elAccName) elAccName.textContent = accRef.title;
-    if (elAccDesc) elAccDesc.textContent = accRef.desc;
-    if (elAccLink) elAccLink.href = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(accRef.searchKeyword)}`;
-
-    // 2. Phân Tích Màu Sắc Động (Từ Gemini API)
+    // 1. Phân Tích Màu Sắc Động (Từ Gemini API)
     let colorMeaning = 'Sắc phục nền nã, tôn vinh nét đẹp văn hóa.';
     let colorFiveElements = 'Thổ Hoàng Cúc';
     let colorHarmony = 'Hài Hòa Di Sản';
@@ -1074,6 +1011,97 @@ export class GarmentEngine {
     if (badge) {
       badge.textContent = `Đã chọn: ${total}`;
     }
+  }
+
+  public openValidationAlertModal(mode: 'ACCESSORIES' | 'RESULT'): void {
+    const modal = document.getElementById('validation-alert-modal');
+    const titleEl = document.getElementById('validation-alert-title');
+    const subEl = document.getElementById('validation-alert-subtitle');
+    const listEl = document.getElementById('validation-missing-list');
+    const actionBtn = document.getElementById('btn-action-validation-alert');
+    const closeBtn = document.getElementById('btn-close-validation-alert');
+
+    if (!modal || !listEl) return;
+
+    Sound.playClick();
+
+    const missingItems: { label: string; desc: string; targetPanel: string; icon: string }[] = [];
+
+    if (!this.selectedGarment) {
+      missingItems.push({
+        label: 'Dáng Áo Di Sản',
+        desc: 'Chưa chọn loại áo (Áo ngũ thân, Áo tấc, Áo nhật bình, Áo tứ thân, Áo bà ba, Áo dài)',
+        targetPanel: 'panel-garments',
+        icon: '👘'
+      });
+    }
+
+    if (!this.selectedColor) {
+      missingItems.push({
+        label: 'Sắc Lụa / Màu Sắc',
+        desc: 'Chưa chọn màu sắc từ bảng màu di sản hoặc bộ phối tự chọn',
+        targetPanel: 'panel-colors',
+        icon: '🎨'
+      });
+    }
+
+    if (this.selectedStyles.length === 0) {
+      missingItems.push({
+        label: 'Phong Cách Phối',
+        desc: 'Chưa chọn ít nhất 1 phong cách mong muốn',
+        targetPanel: 'panel-styles',
+        icon: '🎭'
+      });
+    }
+
+    if (mode === 'RESULT' && !this.hasGeneratedAISuggestions && missingItems.length === 0) {
+      missingItems.push({
+        label: 'Gợi Ý Phụ Kiện AI',
+        desc: 'Chưa nhấn "Xem Gợi Ý AI" để nhận tư vấn phụ kiện & thẩm định văn hóa',
+        targetPanel: 'panel-ai-styling',
+        icon: '🪭'
+      });
+    }
+
+    if (mode === 'ACCESSORIES') {
+      if (titleEl) titleEl.textContent = 'Chưa Đủ 3 Tùy Chọn Cơ Bản';
+      if (subEl) subEl.textContent = 'Vui lòng hoàn thành Dáng áo, Màu sắc và Phong cách trước khi xem Gợi Ý Phụ Kiện AI.';
+    } else {
+      if (titleEl) titleEl.textContent = 'Chưa Thể Thẩm Định Phục Trang';
+      if (subEl) subEl.textContent = 'Vui lòng hoàn thành đầy đủ tất cả các bước phối đồ trước khi thẩm định.';
+    }
+
+    listEl.innerHTML = missingItems.map(item => `
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: rgba(184, 51, 42, 0.06); border: 1px solid rgba(184, 51, 42, 0.2); border-radius: 10px;">
+        <span style="font-size: 1.2rem; flex-shrink: 0;">${item.icon}</span>
+        <div style="flex: 1;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: #B8332A;">${item.label}</div>
+          <div style="font-size: 0.74rem; color: #4A5568; line-height: 1.4; margin-top: 2px;">${item.desc}</div>
+        </div>
+      </div>
+    `).join('');
+
+    const firstMissing = missingItems[0];
+    if (actionBtn) {
+      actionBtn.innerHTML = `<span>Điền Ngay: ${firstMissing ? firstMissing.label : 'Hoàn thiện'}</span>`;
+      actionBtn.onclick = () => {
+        modal.style.display = 'none';
+        if (firstMissing) {
+          this.switchSheetTab(firstMissing.targetPanel);
+        }
+      };
+    }
+
+    const closeModal = () => {
+      modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+
+    modal.style.display = 'flex';
   }
 
   public showSanityAlert(message: string): void {

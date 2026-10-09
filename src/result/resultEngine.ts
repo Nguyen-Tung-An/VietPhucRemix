@@ -13,6 +13,7 @@ import {
   getColorCulturalAnalysis
 } from '../data/culturalTruths.ts';
 import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
+import { assembleFashionPrompt } from '../workshop/promptEngine.ts';
 
 export class ResultEngine {
   private isKnowledgeRevealed: boolean = false;
@@ -98,9 +99,6 @@ export class ResultEngine {
       AO_NGU_THAN: '/images/garments/ao-ngu-than.png',
       AO_TAC: '/images/garments/ao-tac.png',
       AO_NHAT_BINH: '/images/garments/ao-nhat-binh.png',
-      AO_GIAO_LINH: '/images/garments/ao-giao-linh.png',
-      AO_VIEN_LINH: '/images/garments/ao-vien-linh.png',
-      AO_DOI_KHAM: '/images/garments/ao-doi-kham.png',
       AO_TU_THAN: '/images/garments/ao-tu-than.png',
       AO_BA_BA: '/images/garments/ao-ba-ba.png',
       AO_DAI_LEMUR: '/images/garments/ao-dai-lemur.png',
@@ -269,10 +267,16 @@ export class ResultEngine {
     const btnBack = document.getElementById('btn-result-back');
     const btnTailorJourney = document.getElementById('btn-result-tailor-journey');
     const btnGotoDiscover = document.getElementById('btn-result-goto-discover');
+    const btnCopyPrompt = document.getElementById('btn-result-copy-prompt');
 
     btnGotoDiscover?.addEventListener('click', () => {
       this.hideResult();
       appRouter.switchTab('discover');
+    });
+
+    // Nút Sao Chép Prompt Tạo Sinh Ảnh Gemini Thủ Công
+    btnCopyPrompt?.addEventListener('click', () => {
+      this.openPromptModal();
     });
 
     // Nút Hành trình Sở hữu Cổ phục (Google Maps & Search tiệm may đo thực tế)
@@ -297,14 +301,26 @@ export class ResultEngine {
       Sound.playChime();
       const outfitState = garmentEngine.getCurrentOutfitState();
       
+      const garmentNames: Record<string, string> = {
+        AO_NGU_THAN: 'Áo Ngũ Thân',
+        AO_TAC: 'Áo Tấc',
+        AO_NHAT_BINH: 'Áo Nhật Bình',
+        AO_TU_THAN: 'Áo Tứ Thân',
+        AO_BA_BA: 'Áo Bà Ba',
+        AO_DAI_LEMUR: 'Áo Dài'
+      };
+      const gName = garmentNames[outfitState.garment] || 'Việt Y';
+      const eventTag = outfitState.bestOccasion || outfitState.eventLabel || 'Dạo phố Tết';
+
       const savedOutfit: DiscoveryOutfit = {
         id: `custom-${Date.now()}`,
-        title: `${outfitState.garment === 'AO_BA_BA' ? 'Áo Bà Ba' : 'Áo Ngũ Thân'} ${outfitState.colorName}`,
-        garment: (outfitState.garment === 'AO_BA_BA' ? 'AO_BA_BA' : 'AO_NGU_THAN') as 'AO_NGU_THAN' | 'AO_BA_BA',
+        title: `${gName} ${outfitState.colorName}`,
+        garment: outfitState.garment as any,
         color: outfitState.color,
         colorName: outfitState.colorName,
         event: outfitState.event,
-        eventLabel: 'Bộ Phối Tự Chọn',
+        eventLabel: eventTag,
+        bestOccasion: eventTag,
         accessory: (outfitState.accessory === 'KHAN_RAN' ? 'KHAN_RAN' : 'QUAT_GIAY') as 'QUAT_GIAY' | 'KHAN_RAN',
         seal: 'Lụa',
         desc: `Bộ phối ${outfitState.colorName} hoàn chỉnh theo phong vị đương đại Lụa Thanh.`
@@ -344,6 +360,66 @@ export class ResultEngine {
         }, 450);
       }, 650);
     });
+  }
+
+  /**
+   * Mở modal hiển thị và sao chép cấu trúc Prompt Gemini hoàn chỉnh
+   */
+  public openPromptModal(): void {
+    const modal = document.getElementById('prompt-view-modal');
+    const textarea = document.getElementById('prompt-modal-textarea') as HTMLTextAreaElement | null;
+    const copyBtn = document.getElementById('btn-copy-prompt-clipboard');
+    const closeBtn = document.getElementById('btn-close-prompt-view-modal');
+    const copyStatus = document.getElementById('prompt-copy-status');
+
+    if (!modal) return;
+
+    Sound.playChime();
+
+    const outfitState = garmentEngine.getCurrentOutfitState();
+    let userProfile = null;
+    try {
+      const raw = localStorage.getItem('viet_y_user_profile');
+      if (raw) userProfile = JSON.parse(raw);
+    } catch {}
+
+    const fullPrompt = assembleFashionPrompt(outfitState, userProfile);
+    if (textarea) {
+      textarea.value = fullPrompt;
+    }
+
+    if (copyStatus) copyStatus.style.display = 'none';
+
+    const handleCopy = async () => {
+      Sound.playChime();
+      try {
+        await navigator.clipboard.writeText(fullPrompt);
+        if (copyStatus) copyStatus.style.display = 'inline';
+        appRouter.showToast('✨ Đã sao chép prompt Gemini vào bộ nhớ tạm!');
+      } catch {
+        if (textarea) {
+          textarea.select();
+          document.execCommand('copy');
+          if (copyStatus) copyStatus.style.display = 'inline';
+          appRouter.showToast('✨ Đã sao chép prompt Gemini!');
+        }
+      }
+    };
+
+    if (copyBtn) {
+      copyBtn.onclick = handleCopy;
+    }
+
+    const closeModal = () => {
+      modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    modal.onclick = (e) => {
+      if (e.target === modal) closeModal();
+    };
+
+    modal.style.display = 'flex';
   }
 
   /**

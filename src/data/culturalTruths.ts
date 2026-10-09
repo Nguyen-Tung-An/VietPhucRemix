@@ -94,7 +94,7 @@ export interface CulturalDatabase {
  * 
  * HƯỚNG DẪN BẠN TỰ THÊM NGUỒN & TRANG PHỤC MỚI VÀO HỆ THỐNG:
  * Chỉ cần thêm một khối mới vào object `CULTURAL_DATABASE` bên dưới với:
- * - `id`: Mã trang phục viết hoa không dấu (ví dụ: 'AO_VIEN_LINH', 'AO_DOI_KHAM')
+ * - `id`: Mã trang phục viết hoa không dấu (ví dụ: 'AO_NGU_THAN', 'AO_NHAT_BINH')
  * - `name`: Tên tiếng Việt có dấu
  * - `historicalEra`, `originRegion`, `definingFeatures`: Kiến thức lịch sử chuẩn
  * - `strictTaboos`: Các món kỵ phối cùng (nếu có)
@@ -208,7 +208,7 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     originRegion: 'TRUNG_BO',
     socialContext: 'Thường phục của Hoàng Hậu, Công Chúa, Phi Tần và lễ phục của các mệnh phụ quý tộc triều đình Huế.',
     definingFeatures: [
-      'Cổ áo khoét hình chữ nhật lớn trước ngực (đối khâm xẻ giữa), có nẹp cổ thêu hoa văn hoa mẫu đơn, phượng, loan chỉ vàng kim tuyến.',
+      'Cổ áo khoét hình chữ nhật lớn trước ngực (xẻ giữa), có nẹp cổ thêu hoa văn hoa mẫu đơn, phượng, loan chỉ vàng kim tuyến.',
       'Hai dải ngũ sắc (tượng trưng ngũ hành: Kim - Mộc - Thủy - Hỏa - Thổ) viền ở tay áo.',
       'Cố định vạt áo bằng hai dải dây buộc trước ngực hoặc trâm cài ngọc.'
     ],
@@ -232,34 +232,6 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     sourceUrl: 'https://hueworldheritage.org.vn/',
     sourceReferenceNote: 'Chương: Phẩm phục Cung闱 — Quy chế may thêu và màu sắc Áo Nhật Bình',
     publicationYear: 2012
-  },
-
-  AO_GIAO_LINH: {
-    id: 'AO_GIAO_LINH',
-    name: 'Áo Giao Lĩnh (Cổ Chéo Cổ Truyền)',
-    commonNames: ['Áo tràng vạt chéo', 'Giao lĩnh'],
-    historicalEra: 'Xuất hiện từ thời Lý - Trần và thịnh hành suốt thời Lê sơ - Lê Trung Hưng (Thế kỷ 11 đến 18)',
-    originRegion: 'BAC_BO',
-    socialContext: 'Lễ phục trang trọng của vua quan, quý tộc và thường dân trước khi có cuộc cải cách y phục của chúa Nguyễn Phúc Khoát.',
-    definingFeatures: [
-      'Hai vạt áo giao nhau (cổ chéo), vạt bên trái đè lên vạt bên phải trước ngực.',
-      'Thân áo rộng rãi, tay áo rộng hoặc tay thụng buông dài tự nhiên.',
-      'Thường dùng đai lụa hoặc thắt lưng vải buộc ngang eo để cố định tà áo.'
-    ],
-    strictTaboos: [
-      {
-        incompatibleWith: 'KHAN_RAN',
-        incompatibleName: 'Khăn Rằn Nam Bộ',
-        historicalConflictReason: 'Áo Giao Lĩnh có niên đại từ thời Lý - Trần - Lê (khi chưa định hình văn hóa khăn rằn Nam Bộ), lệch niên đại lịch sử hàng trăm năm.',
-        suggestedAlternative: 'QUAT_GIAY'
-      }
-    ],
-    culturalSignificance: 'Biểu trưng cho nếp mặc cổ phong ngàn năm của các triều đại hưng thịnh phương Bắc Đại Việt, mang dáng dấp khoáng đạt, tao nhã.',
-    sourceTitle: 'Sưu tập Di sản Y phục Cổ truyền Việt Nam thời Lý - Trần - Lê',
-    authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia Việt Nam',
-    sourceUrl: 'https://baotanglichsu.vn/',
-    sourceReferenceNote: 'Hồ sơ hiện vật mộ táng và tượng thờ thời Lê Trung Hưng',
-    publicationYear: 2015
   },
 
   AO_TU_THAN: {
@@ -323,62 +295,6 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     sourceUrl: 'https://baotangphunu.com/',
     sourceReferenceNote: 'Khu trưng bày chuyên đề: Trang phục phụ nữ miền sông nước Cửu Long',
     publicationYear: 2020
-  },
-
-  AO_VIEN_LINH: {
-    id: 'AO_VIEN_LINH',
-    name: 'Áo Viên Lĩnh (Cổ Tròn Bàn Lĩnh)',
-    commonNames: ['Áo viên lĩnh', 'Áo bàn lĩnh', 'Áo cổ tròn đại triều'],
-    historicalEra: 'Thịnh hành từ triều Lý, Trần đến thời Lê sơ và Lê Trung Hưng (Thế kỷ 11 đến 18)',
-    originRegion: 'BAC_BO',
-    socialContext: 'Đại triều phục và thường phục cao cấp của hoàng đế, đại thần và tầng lớp quý tộc Đại Việt.',
-    definingFeatures: [
-      'Cổ áo hình tròn ôm khít chân cổ (viên lĩnh / bàn lĩnh), vạt áo cài nút bên vai phải.',
-      'Thân áo thụng rộng, hai ống tay áo buông dài trang nghiêm bề thế.',
-      'Trước ngực và sau lưng của phẩm quan thường đính bổ tử thêu chim muông hoặc thú dữ để phân định phẩm hàm.'
-    ],
-    strictTaboos: [
-      {
-        incompatibleWith: 'KHAN_RAN',
-        incompatibleName: 'Khăn Rằn Nam Bộ',
-        historicalConflictReason: 'Áo Viên Lĩnh là triều phục tôn nghiêm thời Lý - Trần - Lê, tuyệt đối không phối cùng khăn rằn lao động sông nước thế kỷ 19.',
-        suggestedAlternative: 'THE_BAI'
-      }
-    ],
-    culturalSignificance: 'Biểu trưng cho uy quyền và chế độ văn hiến ngàn năm của các vương triều phong kiến Đại Việt thời cực thịnh.',
-    sourceTitle: 'Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam giai đoạn 1009–1945',
-    authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Nhà nghiên cứu Trần Quang Đức',
-    sourceUrl: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu-cong-trinh-nghien-cuu-trang-phuc-viet-nam.html',
-    sourceReferenceNote: 'Chương 2 & 3: Trang phục triều Lý - Trần - Lê sơ — Cổ tròn Viên Lĩnh',
-    publicationYear: 2013
-  },
-
-  AO_DOI_KHAM: {
-    id: 'AO_DOI_KHAM',
-    name: 'Áo Đối Khâm (Xẻ Ngực Song Song)',
-    commonNames: ['Áo đối khâm', 'Áo vạt song song', 'Đối khâm thời Lê'],
-    historicalEra: 'Thịnh hành thời Lý, Trần và đặc biệt phát triển rực rỡ thời Lê sơ - Lê Trung Hưng',
-    originRegion: 'BAC_BO',
-    socialContext: 'Thường phục thanh lịch của quý tộc, mệnh phụ và hoàng gia Đại Việt khi dạo chơi, đàm đạo.',
-    definingFeatures: [
-      'Hai vạt áo buông thẳng song song trước ngực (đối khâm), không cài cúc giao nhau.',
-      'Bên trong mặc áo giao lĩnh hoặc yếm lót kín đáo.',
-      'Hai bên nẹp vạt áo thường thêu hoa văn hoặc viền gấm rủ mềm mại tạo phong thái thanh thoát.'
-    ],
-    strictTaboos: [
-      {
-        incompatibleWith: 'KHAN_RAN',
-        incompatibleName: 'Khăn Rằn Nam Bộ',
-        historicalConflictReason: 'Áo Đối Khâm xuất hiện từ thời Lý - Trần - Lê, khác biệt thời đại và không gian văn hóa với khăn rằn Nam Bộ.',
-        suggestedAlternative: 'QUAT_GIAY'
-      }
-    ],
-    culturalSignificance: 'Thể hiện phong thái khoáng đạt, tự do và khi chất quý phái của nếp sống phong lưu Đại Việt cổ xưa.',
-    sourceTitle: 'Sưu tập Di sản Y phục Cổ truyền Việt Nam thời Lý - Trần - Lê',
-    authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia Việt Nam',
-    sourceUrl: 'https://baotanglichsu.vn/',
-    sourceReferenceNote: 'Chuyên đề: Áo khoác ngoài Đối Khâm của tầng lớp quý tộc thời Lê',
-    publicationYear: 2015
   },
 
   AO_DAI_LEMUR: {

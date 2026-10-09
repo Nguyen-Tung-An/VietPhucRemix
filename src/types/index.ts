@@ -10,9 +10,6 @@ export type GarmentType =
   | 'AO_NGU_THAN' 
   | 'AO_TAC' 
   | 'AO_NHAT_BINH' 
-  | 'AO_GIAO_LINH' 
-  | 'AO_VIEN_LINH'
-  | 'AO_DOI_KHAM'
   | 'AO_TU_THAN' 
   | 'AO_BA_BA'
   | 'AO_DAI_LEMUR';
@@ -82,6 +79,7 @@ export interface MiniStylingResponse {
   };
   pose_suggestions?: string;
   recommended_occasions?: string[];
+  best_occasion?: string;
   visual_references?: {
     garment: VisualReferenceItem;
     hair: VisualReferenceItem;
@@ -185,17 +183,19 @@ export interface CurrentOutfitState {
   personality?: string;
   pattern?: PatternItem | null;
   genzActive?: boolean;
+  bestOccasion?: string;
 }
 
 export interface DiscoveryOutfit {
   id: string;
   title: string;
-  garment: 'AO_NGU_THAN' | 'AO_BA_BA';
+  garment: string;
   color: string;
   colorName: string;
   event: string;
   eventLabel: string;
-  accessory: 'QUAT_GIAY' | 'KHAN_RAN' | 'NON_QUAI_THAO';
+  bestOccasion?: string;
+  accessory: string;
   seal: string;
   desc: string;
   imageUrl?: string;
@@ -204,6 +204,7 @@ export interface DiscoveryOutfit {
 export interface WardrobeItem extends DiscoveryOutfit {
   savedAt: string;
   imageUrl?: string;
+  bestOccasion?: string;
 }
 
 export interface UserPreferenceVector {

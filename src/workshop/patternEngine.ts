@@ -103,7 +103,7 @@ export const SIX_PLACEHOLDER_HERITAGE_PATTERNS: HeritagePatternEntry[] = [
     vietnameseTitle: 'Liên Hoa Bồ Đề Cổ Kính',
     dynastyEra: 'Thời Lý - Trần (Thế kỷ 11–14)',
     technique: 'Huy hiệu chạm nổi mạ vàng / Thêu chỉ vàng kim',
-    compatibleGarments: ['Áo Giao Lĩnh', 'Áo Ngũ Thân', 'Áo Nhật Bình'],
+    compatibleGarments: ['Áo Tấc', 'Áo Ngũ Thân', 'Áo Nhật Bình'],
     historicalStory: 'Cánh sen thanh tịnh lồng trong dáng lá bồ đề mang âm hưởng triết lý Phật giáo nhập thế rực rỡ thời Lý - Trần, tượng trưng cho sự thuần khiết và từ bi.',
     aiPromptSnippet: 'Ly-Tran dynasty sacred lotus inside bodhi leaf outline, Buddhist courtly elegance, gold leaf texture',
     fullImagePrompt: 'Editorial heritage design detail: Vietnamese Ly-Tran dynasty stylized sacred lotus enclosed inside a graceful Bodhi leaf silhouette. Intricate curling petal engravings inspired by ancient Thang Long Imperial Citadel ceramics, textured gold leaf foil stamped onto deep carmine and earthen brown natural raw silk. Crisp details, macro photography, luxury historical preservation aesthetic.',

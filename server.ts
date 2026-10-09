@@ -379,7 +379,7 @@ app.post('/api/gemini/suggest-styling', async (req, res) => {
   return res.json(offlineSuggestions);
 });
 
-// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Hệ thống 2 vòng kiểm định di sản
+// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Giữ Offline Ground Truth bảo toàn Quota đợi user review
 app.post('/api/gemini/cultural-ai', async (req, res) => {
   const {
     event,
@@ -409,27 +409,7 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
     personality: personality || '',
   };
 
-  // 1. Chế độ Online: Gọi Gemini 2-Round Pipeline nếu AI_OFFLINE_MODE = false và có API Key
-  if (!AI_OFFLINE_MODE && ai) {
-    try {
-      const onlineResult = await runOnlineGeminiCulturalPipeline(ai, contextPayload);
-      return res.json({
-        ...onlineResult.final_guardrail,
-        recommendation: onlineResult.recommendation,
-        audit: onlineResult.audit,
-        pipeline_metadata: onlineResult.pipeline_metadata,
-      });
-    } catch (err: any) {
-      const isQuotaExceeded = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED');
-      if (isQuotaExceeded) {
-        console.log('Gemini API Quota 429: Chuyển sang Offline Cultural Pipeline.');
-      } else {
-        console.warn('Lỗi gọi Gemini Cultural Pipeline, chuyển sang Offline Engine:', err?.message || err);
-      }
-    }
-  }
-
-  // 2. Chế độ Offline / Ground Truth Deterministic Engine (Bảo vệ quota 100%, có trích dẫn URL)
+  // Chế độ Ground Truth Deterministic Engine (Bảo vệ quota 100%, đợi review)
   const offlineResult = runOfflineCulturalPipeline(contextPayload);
   return res.json({
     ...offlineResult.final_guardrail,

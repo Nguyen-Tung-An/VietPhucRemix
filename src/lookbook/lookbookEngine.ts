@@ -106,8 +106,8 @@ export class LookbookEngine {
 
       card.innerHTML = `
         <div class="lookbook-card-top-tag">
-          <span>✨</span>
-          <span>${item.eventLabel || 'Lụa Thanh'}</span>
+          <span>📍</span>
+          <span>Phù hợp: ${item.bestOccasion || item.eventLabel || 'Dạo phố Tết'}</span>
         </div>
 
         <div class="lookbook-card-thumb-box" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.06); border-radius: 12px; width: 100%; height: 180px;">

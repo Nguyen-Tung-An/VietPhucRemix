@@ -179,20 +179,8 @@ export function getMockStylingSuggestions(context: {
       ],
       hairstyles: [
         { id: 'VAN_KHAN_VANH', name: 'Vấn Khăn Vành Dây Xứ Huế', cultural_reason: 'Quy chuẩn hoàng triều của các bậc hoàng thái hậu, công chúa triều Nguyễn.', vibe_tag: 'Quyền Quý' },
-        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ khoét sâu đối khâm thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
+        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ Nhật Bình thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
         { id: 'BUOC_THAP', name: 'Buộc Thấp Đính Dải Lụa Ngũ Sắc', cultural_reason: 'Đồng điệu với dải ngũ sắc ở viền tay áo Nhật Bình.', vibe_tag: 'Đương Đại' }
-      ]
-    },
-    AO_GIAO_LINH: {
-      accessories: [
-        { id: 'DAI_LUA', name: 'Đai Lụa Buộc Vạt Thắt Nút Thả Dài', cultural_reason: 'Giữ vạt áo cổ chéo Lý - Trần - Lê buông rủ khoáng đạt.', vibe_tag: 'Cổ Phong' },
-        { id: 'BOI_NGOC', name: 'Bội Ngọc Khắc Hình Rồng Mây Thời Lý', cultural_reason: 'Tôn nét hào hoa phong nhã của tầng lớp quý tộc Thăng Long.', vibe_tag: 'Trầm Mặc' },
-        { id: 'QUAT_GIAY', name: 'Quạt Xếp Gỗ Mun Đề Thơ Cổ', cultural_reason: 'Phong thái văn nhân nho nhã dạo chơi danh lam thắng cảnh.', vibe_tag: 'Tao Nhã' }
-      ],
-      hairstyles: [
-        { id: 'BUI_CUA_DONG', name: 'Búi Tóc Đỉnh Đầu Cài Trâm Gỗ', cultural_reason: 'Hình tượng phổ biến trên tượng đá và bia ký thời Lê.', vibe_tag: 'Cổ Điển' },
-        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Tự Nhiên Rẽ Ngôi Giữa', cultural_reason: 'Tự nhiên, mộc mạc đúng tinh thần nếp mặc phương Bắc xưa.', vibe_tag: 'Thanh Thuần' },
-        { id: 'TET_BIEM', name: 'Tóc Thắt Bím Đuôi Sam Buông Lơi', cultural_reason: 'Nét trẻ trung duyên dáng của thiếu nữ đương đại phục dựng cổ phong.', vibe_tag: 'Thơ Mộng' }
       ]
     },
     AO_TU_THAN: {
@@ -217,30 +205,6 @@ export function getMockStylingSuggestions(context: {
         { id: 'TET_BIEM', name: 'Tóc Bím Đuôi Sam Buông Một Bên Vai', cultural_reason: 'Nét e ấp dịu dàng của người con gái miền Tây Nam Bộ.', vibe_tag: 'Ngọt Ngào' },
         { id: 'XOA_DAI', name: 'Tóc Xõa Dài Thẳng Mượt Tự Nhiên', cultural_reason: 'Nổi bật vẻ mộc mạc thanh thoát khi mặc áo bà ba lụa mềm.', vibe_tag: 'Mộc Mạc' },
         { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Gọn Gàng Cài Nơ Vải', cultural_reason: 'Năng động, tươi trẻ dành cho các hoạt động trải nghiệm văn hóa.', vibe_tag: 'Năng Động' }
-      ]
-    },
-    AO_VIEN_LINH: {
-      accessories: [
-        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khảm Xà Cừ Triều Đình', cultural_reason: 'Tái hiện uy nghi hoàng gia triều Lý - Trần Đại Việt.', vibe_tag: 'Trang Nghiêm' },
-        { id: 'BOI_NGOC', name: 'Đai Bội Ngọc Chạm Khắc Long Ẩn', cultural_reason: 'Phối cùng cổ tròn đại triều tôn phong thái bậc tôn quý.', vibe_tag: 'Quyền Quý' },
-        { id: 'QUAT_GIAY', name: 'Quạt Xếp Thư Pháp Gỗ Hoàng Đàn', cultural_reason: 'Đạo cụ nhã nhặn của bậc vương hầu danh gia.', vibe_tag: 'Đĩnh Đạc' }
-      ],
-      hairstyles: [
-        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Vấn Đai Ngọc Triều Đình', cultural_reason: 'Để lộ đường viền tròn hoàn mỹ của cổ áo viên lĩnh.', vibe_tag: 'Uy Nghi' },
-        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Thêu Chỉ Kim Tuyến', cultural_reason: 'Quy chuẩn lễ phục tôn kính lịch sử.', vibe_tag: 'Chuẩn Mực' },
-        { id: 'XOA_DAI', name: 'Tóc Dài Suôn Mượt Cài Bờm Ngọc Bích', cultural_reason: 'Nét thanh lịch đương đại giao thoa di sản ngàn năm.', vibe_tag: 'Đương Đại' }
-      ]
-    },
-    AO_DOI_KHAM: {
-      accessories: [
-        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Xứ Đoài', cultural_reason: 'Tôn nét phóng khoáng đàm đạo thi ca bên tà áo vạt thẳng song song.', vibe_tag: 'Thanh Tao' },
-        { id: 'BOI_NGOC', name: 'Bội Ngọc Chạm Hoa Cúc Chu Đậu', cultural_reason: 'Thả nhẹ trước vạt áo hở tinh tế tôn nét duyên ngầm.', vibe_tag: 'Tinh Tế' },
-        { id: 'TUI_GAM', name: 'Túi Gấm Thêu Chỉ Vàng Cổ Điển', cultural_reason: 'Phụ kiện cầm tay nhã nhặn chứa vật dụng khi du xuân.', vibe_tag: 'Duyên Dáng' }
-      ],
-      hairstyles: [
-        { id: 'BUI_TRAM', name: 'Búi Tóc Tiên Nữ Cài Trâm Bạc', cultural_reason: 'Hình tượng mỹ nhân tao nhã trong tranh tượng thời Lê.', vibe_tag: 'Kiêu Kỳ' },
-        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Rẽ Ngôi Thanh Thoát', cultural_reason: 'Tạo cảm giác bồng bềnh phiêu dật khi bước đi.', vibe_tag: 'Phiêu Dật' },
-        { id: 'TET_BIEM', name: 'Tóc Tết Bím Đuôi Sam Kẹp Nơ Lụa', cultural_reason: 'Hiện đại, trẻ trung, kết nối nét cổ phong với Gen Z.', vibe_tag: 'Trẻ Trung' }
       ]
     },
     AO_DAI_LEMUR: {

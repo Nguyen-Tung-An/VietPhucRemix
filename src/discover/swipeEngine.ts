@@ -1,6 +1,5 @@
 import { DiscoveryOutfit } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
-import { preferenceEngine } from './preferenceLearning.ts';
 import { wardrobeManager } from './wardrobeManager.ts';
 
 export interface EventContext {
@@ -25,101 +24,81 @@ export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
     colorName: 'Hồng Phấn Sen',
     event: 'tet',
     eventLabel: 'Dạo phố Tết',
+    bestOccasion: 'Dạo phố Tết',
     accessory: 'QUAT_GIAY',
     seal: 'Lụa',
     desc: 'Tà ngũ thân lụa mềm mại phối quạt thanh tao, tươi tắn đón nắng xuân.',
-    imageUrl: '/images/garments/outfit-1.png'
+    imageUrl: '/images/garments/ao-ngu-than.jpg'
   },
   {
     id: 'outfit-2',
-    title: 'Áo Ngũ Thân Xanh Ngọc Đậm',
-    garment: 'AO_NGU_THAN',
-    color: '#4A8577',
-    colorName: 'Xanh Ngọc Đậm',
-    event: 'grad',
-    eventLabel: 'Lễ tốt nghiệp',
-    accessory: 'QUAT_GIAY',
-    seal: 'Thanh',
-    desc: 'Sắc ngọc trầm tĩnh biểu trưng cho trí tuệ và chí hướng thanh vân.',
-    imageUrl: '/images/garments/outfit-2.png'
+    title: 'Áo Nhật Bình Hoàng Triều Ngũ Sắc',
+    garment: 'AO_NHAT_BINH',
+    color: '#C9A66B',
+    colorName: 'Vàng Đất Cố Đô',
+    event: 'festival',
+    eventLabel: 'Đại Lễ Cung Đình',
+    bestOccasion: 'Đại Lễ Cung Đình',
+    accessory: 'TRAM_GOM',
+    seal: 'Vương',
+    desc: 'Viền cổ ngũ sắc thêu hoa mẫu đơn và phượng hoàng, phong vị hoàng tộc triều Nguyễn.',
+    imageUrl: '/images/garments/ao-nhat-binh.jpg'
   },
   {
     id: 'outfit-3',
-    title: 'Áo Bà Ba Trắng Bưởi Phù Sa',
-    garment: 'AO_BA_BA',
-    color: '#E8F3EE',
-    colorName: 'Ngọc Sương',
-    event: 'festival',
-    eventLabel: 'Lễ hội làng',
-    accessory: 'KHAN_RAN',
-    seal: 'Mộc',
-    desc: 'Áo bà ba xẻ tà buông rủ mộc mạc, điểm khăn rằn sông nước phương Nam.',
-    imageUrl: '/images/garments/outfit-3.png'
+    title: 'Áo Tấc Đại Lễ Xanh Chàm',
+    garment: 'AO_TAC',
+    color: '#1D3557',
+    colorName: 'Xanh Chàm Đêm',
+    event: 'grad',
+    eventLabel: 'Lễ Trọng Thể',
+    bestOccasion: 'Lễ Tốt Nghiệp & Đại Lễ',
+    accessory: 'QUAT_GIAY',
+    seal: 'Trọng',
+    desc: 'Tay thụng rộng trang nghiêm tôn phong thái uy nghiêm, trí tuệ và đĩnh đạc.',
+    imageUrl: '/images/garments/ao-tac.jpg'
   },
   {
     id: 'outfit-4',
-    title: 'Áo Ngũ Thân Vàng Đất Cố Đô',
-    garment: 'AO_NGU_THAN',
-    color: '#C9A66B',
-    colorName: 'Vàng Đất',
-    event: 'yearbook',
-    eventLabel: 'Chụp kỷ yếu',
-    accessory: 'QUAT_GIAY',
-    seal: 'Cổ',
-    desc: 'Ánh vàng đất hoài niệm, tạo chiều sâu nghệ thuật cho từng khung hình kỷ yếu.',
-    imageUrl: '/images/garments/outfit-4.png'
+    title: 'Áo Tứ Thân Kinh Bắc Yếm Đào',
+    garment: 'AO_TU_THAN',
+    color: '#B22222',
+    colorName: 'Đỏ Son Đại Triều',
+    event: 'festival',
+    eventLabel: 'Lễ Hội Quan Họ',
+    bestOccasion: 'Lễ Hội Dân Gian',
+    accessory: 'NON_QUAI_THAO',
+    seal: 'Hội',
+    desc: 'Bốn vạt lụa buông rủ thắt nút duyên dáng trước bụng cùng nón quai thao trứ danh.',
+    imageUrl: '/images/garments/ao-tu-than.png'
   },
   {
     id: 'outfit-5',
-    title: 'Áo Bà Ba Hồng Phấn Du Xuân',
-    garment: 'AO_BA_BA',
-    color: '#F4C9D6',
-    colorName: 'Hồng Phấn Sen',
-    event: 'tet',
-    eventLabel: 'Dạo phố Tết',
-    accessory: 'KHAN_RAN',
-    seal: 'Xuân',
-    desc: 'Dáng áo bà ba cách điệu sắc hồng sen nhẹ nhàng bên bến hoa ngày Tết.',
-    imageUrl: '/images/garments/outfit-5.png'
-  },
-  {
-    id: 'outfit-6',
-    title: 'Áo Ngũ Thân Ngọc Sương Thanh Lịch',
-    garment: 'AO_NGU_THAN',
-    color: '#E8F3EE',
-    colorName: 'Ngọc Sương',
-    event: 'grad',
-    eventLabel: 'Lễ tốt nghiệp',
-    accessory: 'QUAT_GIAY',
-    seal: 'Nhã',
-    desc: 'Chất liệu lụa dệt sắc ngọc sương tinh khôi, tôn phong thái đĩnh đạc tự tin.',
-    imageUrl: '/images/garments/outfit-6.png'
-  },
-  {
-    id: 'outfit-7',
-    title: 'Áo Ngũ Thân Xanh Rêu Đêm Hội Phố',
-    garment: 'AO_NGU_THAN',
-    color: '#1C2B26',
-    colorName: 'Rêu Đêm',
-    event: 'festival',
-    eventLabel: 'Lễ hội làng',
-    accessory: 'QUAT_GIAY',
-    seal: 'Hội',
-    desc: 'Lập lĩnh tối màu đơm cúc mạ vàng, nổi bật lung linh dưới ánh đèn lồng cổ.',
-    imageUrl: '/images/garments/outfit-7.png'
-  },
-  {
-    id: 'outfit-8',
-    title: 'Áo Bà Ba Xanh Ngọc Đậm Kỷ Yếu',
+    title: 'Áo Bà Ba Nam Bộ Phù Sa',
     garment: 'AO_BA_BA',
     color: '#4A8577',
     colorName: 'Xanh Ngọc Đậm',
-    event: 'yearbook',
-    eventLabel: 'Chụp kỷ yếu',
+    event: 'tet',
+    eventLabel: 'Du Xuân Sông Nước',
+    bestOccasion: 'Du Xuân & Dã Ngoại',
     accessory: 'KHAN_RAN',
-    seal: 'Kỷ',
-    desc: 'Nét đẹp hồn nhiên tươi trẻ trong bộ bà ba xanh ngọc đậm cùng chúng bạn.',
-    imageUrl: '/images/garments/outfit-8.png'
+    seal: 'Mộc',
+    desc: 'Chất liệu lụa tơ mềm mát, xẻ tà phóng khoáng cùng khăn rằn sông nước phương Nam.',
+    imageUrl: '/images/garments/ao-ba-ba.jpg'
+  },
+  {
+    id: 'outfit-6',
+    title: 'Áo Dài Lemur Thập Niên 1930',
+    garment: 'AO_DAI_LEMUR',
+    color: '#E8F3EE',
+    colorName: 'Ngọc Sương',
+    event: 'yearbook',
+    eventLabel: 'Chụp Kỷ Yếu & Nghệ Thuật',
+    bestOccasion: 'Chụp Kỷ Yếu Nghệ Thuật',
+    accessory: 'CHUOI_NGOC',
+    seal: 'Tân',
+    desc: 'Âm hưởng tân thời đầu thế kỷ 20 với bờ vai bồng thanh lịch, chiết eo nhẹ tôn dáng.',
+    imageUrl: '/images/garments/ao-dai-lemur.png'
   }
 ];
 
@@ -137,9 +116,10 @@ export class SwipeEngine {
 
   public init(onRemix: (outfit: DiscoveryOutfit) => void): void {
     this.onRemixCallback = onRemix;
-    this.setupContextSelection();
+    // Vào thẳng trang explore không qua phân loại bối cảnh hay trang phục
+    this.currentDeck = [...DISCOVERY_OUTFITS_POOL];
     this.setupSwipeButtons();
-    this.setupChangeContextButton();
+    this.renderDeckStack();
   }
 
   /**
@@ -174,13 +154,11 @@ export class SwipeEngine {
     if (desktopIconEl) desktopIconEl.textContent = foundContext.icon;
     if (desktopNameEl) desktopNameEl.textContent = foundContext.name;
 
-    // Lọc và sắp xếp deck theo bối cảnh & sở thích
+    // Lọc deck theo bối cảnh
     const filtered = DISCOVERY_OUTFITS_POOL.filter(
       (item) => item.event === eventKey || item.event === 'tet'
     );
-    this.currentDeck = preferenceEngine.sortDeckByPreference(
-      filtered.length >= 3 ? filtered : DISCOVERY_OUTFITS_POOL
-    );
+    this.currentDeck = filtered.length >= 3 ? filtered : [...DISCOVERY_OUTFITS_POOL];
 
     // Chuyển màn hình: Ẩn phần 1, hiện phần 2
     const step1 = document.getElementById('discover-context-step');
@@ -261,7 +239,7 @@ export class SwipeEngine {
     container.innerHTML = '';
 
     if (this.currentDeck.length === 0) {
-      this.currentDeck = preferenceEngine.sortDeckByPreference(DISCOVERY_OUTFITS_POOL);
+      this.currentDeck = [...DISCOVERY_OUTFITS_POOL];
     }
 
     // Đồng bộ hồ sơ desktop với thẻ trên cùng
@@ -278,13 +256,9 @@ export class SwipeEngine {
       }`;
       card.dataset.outfitId = outfit.id;
 
-      const score = preferenceEngine.calculateOutfitScore(outfit);
-      const matchPct = Math.min(99, Math.max(72, Math.round(75 + score * 4)));
-
       card.innerHTML = `
-        <div class="card-inner-top">
-          <span class="card-match-pill">✨ ${matchPct}% hợp gu</span>
-          <span class="card-tag-subtle">${outfit.eventLabel}</span>
+        <div class="card-inner-top" style="justify-content: flex-end;">
+          <span class="card-tag-subtle">📍 ${outfit.bestOccasion || outfit.eventLabel}</span>
         </div>
 
         <div class="card-illustration-box">
@@ -442,7 +416,6 @@ export class SwipeEngine {
     const card = this.activeCardElement;
     card.classList.add('card-anim-like');
 
-    preferenceEngine.recordPreference(outfit, 'LIKE');
     wardrobeManager.saveWardrobeOutfit(outfit);
 
     setTimeout(() => {
@@ -463,8 +436,6 @@ export class SwipeEngine {
 
     const card = this.activeCardElement;
     card.classList.add('card-anim-dislike');
-
-    preferenceEngine.recordPreference(outfit, 'DISLIKE');
 
     setTimeout(() => {
       this.currentDeck.shift();

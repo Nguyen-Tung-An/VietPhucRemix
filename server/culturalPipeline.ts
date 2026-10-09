@@ -154,39 +154,9 @@ const miniStylingSchema = {
       items: { type: Type.STRING },
       description: '2-3 dịp thích hợp nhất để diện bộ phục trang này'
     },
-    visual_references: {
-      type: Type.OBJECT,
-      description: 'Thông tin và từ khóa tìm kiếm minh họa mẫu áo, mẫu tóc, phụ kiện',
-      properties: {
-        garment: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            desc: { type: Type.STRING },
-            searchKeyword: { type: Type.STRING }
-          },
-          required: ['title', 'desc', 'searchKeyword']
-        },
-        hair: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            desc: { type: Type.STRING },
-            searchKeyword: { type: Type.STRING }
-          },
-          required: ['title', 'desc', 'searchKeyword']
-        },
-        accessory: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            desc: { type: Type.STRING },
-            searchKeyword: { type: Type.STRING }
-          },
-          required: ['title', 'desc', 'searchKeyword']
-        }
-      },
-      required: ['garment', 'hair', 'accessory']
+    best_occasion: {
+      type: Type.STRING,
+      description: 'Một bối cảnh sự kiện phù hợp cao nhất (ví dụ: Dạo phố Tết, Lễ tốt nghiệp, Đi lễ chùa, Dự sự kiện nghệ thuật)'
     }
   },
   required: [
@@ -198,7 +168,7 @@ const miniStylingSchema = {
     'cultural_guardrail',
     'pose_suggestions',
     'recommended_occasions',
-    'visual_references'
+    'best_occasion'
   ]
 };
 
@@ -362,20 +332,8 @@ export function getOfflineMiniStylingSuggestions(context: {
       ],
       hairstyles: [
         { id: 'VAN_KHAN_VANH', name: 'Vấn Khăn Vành Dây Xứ Huế', cultural_reason: 'Quy chuẩn hoàng triều của các bậc hoàng thái hậu, công chúa triều Nguyễn.', vibe_tag: 'Quyền Quý' },
-        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ khoét sâu đối khâm thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
+        { id: 'BUI_HOANG_GIA', name: 'Búi Tóc Phượng Cài Trâm Đôi', cultural_reason: 'Tôn vinh tối đa nẹp cổ Nhật Bình thêu hoa văn ngũ hành.', vibe_tag: 'Đài Các' },
         { id: 'BUOC_THAP', name: 'Buộc Thấp Đính Dải Lụa Ngũ Sắc', cultural_reason: 'Đồng điệu với dải ngũ sắc ở viền tay áo Nhật Bình.', vibe_tag: 'Đương Đại' }
-      ]
-    },
-    AO_GIAO_LINH: {
-      accessories: [
-        { id: 'DAI_LUA', name: 'Đai Lụa Buộc Vạt Thắt Nút Thả Dài', cultural_reason: 'Giữ vạt áo cổ chéo Lý - Trần - Lê buông rủ khoáng đạt.', vibe_tag: 'Cổ Phong' },
-        { id: 'BOI_NGOC', name: 'Bội Ngọc Khắc Hình Rồng Mây Thời Lý', cultural_reason: 'Tôn nét hào hoa phong nhã của tầng lớp quý tộc Thăng Long.', vibe_tag: 'Trầm Mặc' },
-        { id: 'QUAT_GIAY', name: 'Quạt Xếp Gỗ Mun Đề Thơ Cổ', cultural_reason: 'Phong thái văn nhân nho nhã dạo chơi danh lam thắng cảnh.', vibe_tag: 'Tao Nhã' }
-      ],
-      hairstyles: [
-        { id: 'BUI_CUA_DONG', name: 'Búi Tóc Đỉnh Đầu Cài Trâm Gỗ', cultural_reason: 'Hình tượng phổ biến trên tượng đá và bia ký thời Lê.', vibe_tag: 'Cổ Điển' },
-        { id: 'XOA_DAI', name: 'Tóc Xõa Dài Tự Nhiên Rẽ Ngôi Giữa', cultural_reason: 'Tự nhiên, mộc mạc đúng tinh thần nếp mặc phương Bắc xưa.', vibe_tag: 'Thanh Thuần' },
-        { id: 'TET_BIEM', name: 'Tóc Thắt Bím Đuôi Sam Buông Lơi', cultural_reason: 'Nét trẻ trung duyên dáng của thiếu nữ đương đại phục dựng cổ phong.', vibe_tag: 'Thơ Mộng' }
       ]
     },
     AO_TU_THAN: {
@@ -400,30 +358,6 @@ export function getOfflineMiniStylingSuggestions(context: {
         { id: 'TET_BIEM', name: 'Tóc Bím Đuôi Sam Buông Một Bên Vai', cultural_reason: 'Nét e ấp dịu dàng của người con gái miền Tây Nam Bộ.', vibe_tag: 'Ngọt Ngào' },
         { id: 'XOA_DAI', name: 'Tóc Xõa Dài Thẳng Mượt Tự Nhiên', cultural_reason: 'Nổi bật vẻ mộc mạc thanh thoát khi mặc áo bà ba lụa mềm.', vibe_tag: 'Mộc Mạc' },
         { id: 'BUOC_THAP', name: 'Buộc Tóc Thấp Gọn Gàng Cài Nơ Vải', cultural_reason: 'Năng động, tươi trẻ dành cho các hoạt động trải nghiệm văn hóa.', vibe_tag: 'Năng Động' }
-      ]
-    },
-    AO_VIEN_LINH: {
-      accessories: [
-        { id: 'THE_BAI', name: 'Thẻ Bài Sơn Mài Khảm Xà Cừ Triều Đình', cultural_reason: 'Tái hiện uy nghi hoàng gia triều Lý - Trần Đại Việt.', vibe_tag: 'Trang Nghiêm' },
-        { id: 'BOI_NGOC', name: 'Đai Bội Ngọc Chạm Khắc Long Ẩn', cultural_reason: 'Phối cùng cổ tròn đại triều tôn phong thái bậc tôn quý.', vibe_tag: 'Quyền Quý' },
-        { id: 'QUAT_GIAY', name: 'Quạt Xếp Thư Pháp Gỗ Hoàng Đàn', cultural_reason: 'Đạo cụ nhã nhặn của bậc vương hầu danh gia.', vibe_tag: 'Đĩnh Đạc' }
-      ],
-      hairstyles: [
-        { id: 'BUI_TRAM', name: 'Búi Tóc Cao Vấn Đai Ngọc Triều Đình', cultural_reason: 'Để lộ đường viền tròn hoàn mỹ của cổ áo viên lĩnh.', vibe_tag: 'Uy Nghi' },
-        { id: 'VAN_KHAN', name: 'Vấn Khăn Đóng Lụa Thêu Chỉ Kim Tuyến', cultural_reason: 'Quy chuẩn lễ phục tôn kính lịch sử.', vibe_tag: 'Chuẩn Mực' },
-        { id: 'XOA_DAI', name: 'Tóc Dài Suôn Mượt Cài Bờm Ngọc Bích', cultural_reason: 'Nét thanh lịch đương đại giao thoa di sản ngàn năm.', vibe_tag: 'Đương Đại' }
-      ]
-    },
-    AO_DOI_KHAM: {
-      accessories: [
-        { id: 'QUAT_GIAY', name: 'Quạt Giấy Thư Pháp Xứ Đoài', cultural_reason: 'Tôn nét phóng khoáng đàm đạo thi ca bên tà áo vạt thẳng song song.', vibe_tag: 'Thanh Tao' },
-        { id: 'BOI_NGOC', name: 'Bội Ngọc Chạm Hoa Cúc Chu Đậu', cultural_reason: 'Thả nhẹ trước vạt áo hở tinh tế tôn nét duyên ngầm.', vibe_tag: 'Tinh Tế' },
-        { id: 'TUI_GAM', name: 'Túi Gấm Thêu Chỉ Vàng Cổ Điển', cultural_reason: 'Phụ kiện cầm tay nhã nhặn chứa vật dụng khi du xuân.', vibe_tag: 'Duyên Dáng' }
-      ],
-      hairstyles: [
-        { id: 'BUI_TRAM', name: 'Búi Tóc Tiên Nữ Cài Trâm Bạc', cultural_reason: 'Hình tượng mỹ nhân tao nhã trong tranh tượng thời Lê.', vibe_tag: 'Kiêu Kỳ' },
-        { id: 'XOA_DAI', name: 'Tóc Xõa Tự Nhiên Rẽ Ngôi Thanh Thoát', cultural_reason: 'Tạo cảm giác bồng bềnh phiêu dật khi bước đi.', vibe_tag: 'Phiêu Dật' },
-        { id: 'TET_BIEM', name: 'Tóc Tết Bím Đuôi Sam Kẹp Nơ Lụa', cultural_reason: 'Hiện đại, trẻ trung, kết nối nét cổ phong với Gen Z.', vibe_tag: 'Trẻ Trung' }
       ]
     },
     AO_DAI_LEMUR: {
@@ -549,7 +483,7 @@ export function getOfflineMiniStylingSuggestions(context: {
     } else if (truth.id === 'AO_TAC') {
       silhouetteEffect = `Áo tấc tay thụng rộng mang tính lễ nghi trang nghiêm; với ${hStr}, nên căn chỉnh tà dài vừa qua bắp chân và kết hợp guốc mộc/giày độn nhẹ để tránh cảm giác bị nuốt dáng.`;
     } else if (truth.id === 'AO_NHAT_BINH') {
-      silhouetteEffect = `Áo Nhật Bình vạt đối khâm thẳng song song trước ngực tạo trục dọc thị giác, giúp người mặc trông cao ráo, giấu khuyết điểm vòng 2 khéo léo.`;
+      silhouetteEffect = `Áo Nhật Bình vạt nẹp cổ thẳng song song trước ngực tạo trục dọc thị giác, giúp người mặc trông cao ráo, giấu khuyết điểm vòng 2 khéo léo.`;
     } else {
       silhouetteEffect = `Thiết kế 5 thân ghép dọc và nẹp áo lượn chữ S của ${truth.name} tạo hiệu ứng kéo dài trục cơ thể, giúp ${hStr} trông cao ráo, thanh mảnh và đĩnh đạc hơn, tôn trọn vẹn ${sStr}.`;
     }
@@ -587,31 +521,25 @@ export function getOfflineMiniStylingSuggestions(context: {
     ? 'Đứng nghiêng 45 độ bên mạn xuồng hoặc tựa nhẹ hàng rào tre, hai tay khẽ giữ vạt khăn rằn buông trước ngực, nụ cười tươi tắn hiền hòa.'
     : 'Đứng thẳng người đoan chính, một tay khẽ che quạt giấy ngang eo hoặc trước ngực, tay kia buông tà tự nhiên, ánh mắt nhìn thẳng thanh thoát.';
 
-  // 5. Mặc trong 2-3 dịp gì
+  // 5. Mặc trong 2-3 dịp gì & bối cảnh phù hợp cao nhất
+  let bestOccasion = 'Dạo Phố Tết Truyền Thống';
+  if (truth.id === 'AO_TAC') {
+    bestOccasion = 'Đại Lễ & Lễ Cưới Cổ Truyền';
+  } else if (truth.id === 'AO_NHAT_BINH') {
+    bestOccasion = 'Sự Kiện Trọng Đại & Cung Đình';
+  } else if (truth.id === 'AO_TU_THAN') {
+    bestOccasion = 'Hội Làng & Dạo Phố Xuân';
+  } else if (truth.id === 'AO_BA_BA') {
+    bestOccasion = 'Du Ngoạn Sông Nước & Dạo Phố';
+  } else if (truth.id === 'AO_DAI_LEMUR') {
+    bestOccasion = 'Lễ Tốt Nghiệp & Thanh Xuân';
+  }
+
   const occasions = [
-    'Dạo phố Tết truyền thống & du xuân',
+    bestOccasion,
     'Chụp kỷ yếu tốt nghiệp / lưu giữ thanh xuân',
     'Đi lễ chùa đầu năm & hội làng an tĩnh'
   ];
-
-  // 6. Minh họa hình ảnh mẫu áo, mẫu tóc, phụ kiện
-  const visualReferences = {
-    garment: {
-      title: truth.name,
-      desc: `${truth.originRegion} • ${truth.historicalEra}`,
-      searchKeyword: `${truth.name} cổ phục Việt Nam`
-    },
-    hair: {
-      title: garmentSet.hairstyles[0]?.name || 'Búi Tóc Cài Trâm',
-      desc: garmentSet.hairstyles[0]?.cultural_reason || 'Kiểu tóc truyền thống thanh nhã',
-      searchKeyword: `${garmentSet.hairstyles[0]?.name || 'Búi tóc cài trâm'} cổ phục`
-    },
-    accessory: {
-      title: garmentSet.accessories[0]?.name || 'Quạt Giấy Thư Pháp',
-      desc: garmentSet.accessories[0]?.cultural_reason || 'Phụ kiện đoan trang nho nhã',
-      searchKeyword: `${garmentSet.accessories[0]?.name || 'Quạt giấy thư pháp'} truyền thống`
-    }
-  };
 
   let note = `Gợi ý sáng tạo cho ${truth.name} sắc ${context.primary_color}: kết hợp hài hòa nét trang nhã di sản cùng phong thái tự tin đương đại.`;
   if (context.user_profile) {
@@ -639,7 +567,7 @@ export function getOfflineMiniStylingSuggestions(context: {
     },
     pose_suggestions: poseSuggestions,
     recommended_occasions: occasions,
-    visual_references: visualReferences
+    best_occasion: bestOccasion
   };
 }
 
@@ -677,14 +605,13 @@ NHIỆM VỤ CỦA BẠN:
    - Nếu không có thông tin ngoại hình: Để trống skin_tone_effect, silhouette_effect, tailoring_advice và ghi lời nhắc nhẹ nhàng trong missing_profile_reminder yêu cầu bổ sung thông tin trong Hồ Sơ.
 4. Đánh giá cảnh báo phụ kiện đúng hay không theo quy chuẩn di sản.
 5. Gợi ý 1-2 dáng chụp ảnh nghệ thuật tôn trang phục.
-6. Gợi ý 2-3 dịp thích hợp nhất để mặc.
-7. Cung cấp từ khóa tìm kiếm Google Images chuẩn xác cho mẫu áo, mẫu tóc, phụ kiện.
+6. Gợi ý 2-3 dịp thích hợp nhất để mặc, và chọn ra 1 bối cảnh (best_occasion) có độ phù hợp cao nhất (ví dụ: "Dạo Phố Tết", "Lễ Tốt Nghiệp", "Lễ Hội Làng", "Lễ Cưới Cổ Truyền", v.v.).
 
 Trả về định dạng JSON theo đúng schema được yêu cầu.`;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: 'gemini-3.1-flash-lite',
       contents: prompt,
       config: {
         systemInstruction: 'Bạn là chuyên gia tư vấn thời trang cổ phục Việt Y tinh tế và sáng tạo.',
@@ -696,6 +623,9 @@ Trả về định dạng JSON theo đúng schema được yêu cầu.`;
 
     const parsed: MiniStylingResponse = JSON.parse(response.text || '{}');
     if (parsed.accessories?.length && parsed.hairstyles?.length && parsed.color_analysis) {
+      if (!parsed.best_occasion && parsed.recommended_occasions?.length) {
+        parsed.best_occasion = parsed.recommended_occasions[0];
+      }
       return parsed;
     }
   } catch (err: any) {

@@ -244,82 +244,123 @@
         <!-- Container chứa các nhóm lựa chọn con -->
         <div class="sheet-sub-options-container">
           
-          <!-- NHÓM 0: DÁNG ÁO (6 LOẠI ÁO DI SẢN CHUẨN MỰC THEO DOWNSCALE) -->
+          <!-- NHÓM 0: DÁNG ÁO (GOM 3 NHÓM × 2 THẺ & PHẦN SẮP RA MẮT COLLAPSIBLE) -->
           <div class="sheet-options-panel active-panel" id="panel-garments" role="tabpanel">
-            <button type="button" class="sheet-option-card" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
-              <span class="sheet-option-icon">👘</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Ngũ Thân</span>
-                <span class="sheet-option-sub">Lập lĩnh • Tay chẽn triều Nguyễn</span>
+            
+            <!-- Nhóm 1: Cung đình (Ngũ Thân, Nhật Bình) -->
+            <div class="garment-group-block">
+              <div class="garment-group-header">
+                <span class="garment-group-title">👑 Cung Đình Triều Nguyễn</span>
               </div>
-            </button>
-            <button type="button" class="sheet-option-card" data-garment-select="AO_TAC" aria-label="Áo Tấc">
-              <span class="sheet-option-icon">🏛️</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Tấc</span>
-                <span class="sheet-option-sub">Tay thụng • Đại lễ phục trang nghiêm</span>
+              <div class="garment-group-grid">
+                <button type="button" class="sheet-option-card active" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
+                  <span class="sheet-option-icon">👘</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Ngũ Thân</span>
+                    <span class="sheet-option-sub">Lập lĩnh • Tay chẽn quý phái</span>
+                  </div>
+                </button>
+                <button type="button" class="sheet-option-card" data-garment-select="AO_NHAT_BINH" aria-label="Áo Nhật Bình">
+                  <span class="sheet-option-icon">👑</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Nhật Bình</span>
+                    <span class="sheet-option-sub">Viền cổ ngũ sắc • Hậu phi cung đình</span>
+                  </div>
+                </button>
               </div>
-            </button>
-            <button type="button" class="sheet-option-card" data-garment-select="AO_NHAT_BINH" aria-label="Áo Nhật Bình">
-              <span class="sheet-option-icon">👑</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Nhật Bình</span>
-                <span class="sheet-option-sub">Viền cổ ngũ sắc • Hậu phi cung đình</span>
-              </div>
-            </button>
-            <button type="button" class="sheet-option-card" data-garment-select="AO_TU_THAN" aria-label="Áo Tứ Thân">
-              <span class="sheet-option-icon">🪭</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Tứ Thân</span>
-                <span class="sheet-option-sub">Yếm thắm dải lụa • Dân gian Kinh Bắc</span>
-              </div>
-            </button>
-            <button type="button" class="sheet-option-card" data-garment-select="AO_BA_BA" aria-label="Áo Bà Ba Nam Bộ">
-              <span class="sheet-option-icon">🌾</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Bà Ba</span>
-                <span class="sheet-option-sub">Xẻ tà hai hông • Mộc mạc sông nước</span>
-              </div>
-            </button>
-            <button type="button" class="sheet-option-card" data-garment-select="AO_DAI_LEMUR" aria-label="Áo Dài Lemur Cổ Điển">
-              <span class="sheet-option-icon">✨</span>
-              <div class="sheet-option-texts">
-                <span class="sheet-option-label">Áo Dài Lemur</span>
-                <span class="sheet-option-sub">Tân thời cổ điển • Thập niên 1930s</span>
-              </div>
-            </button>
+            </div>
 
-            <!-- 3 MẪU ÁO DI SẢN ĐANG KHẢO CỨU (INACTIVE - RA MẮT SAU) -->
-            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Giao Lĩnh đang khảo cứu di sản • Ra mắt sau">
-              <span class="sheet-option-icon" style="opacity: 0.65;">👘</span>
-              <div class="sheet-option-texts">
-                <div class="sheet-option-label-wrap">
-                  <span class="sheet-option-label">Áo Giao Lĩnh</span>
-                  <span class="badge-upcoming">Ra mắt sau</span>
-                </div>
-                <span class="sheet-option-sub">Cổ chéo giao vạt • Thời Hậu Lê</span>
+            <!-- Nhóm 2: Dân gian (Tứ Thân, Bà Ba) -->
+            <div class="garment-group-block">
+              <div class="garment-group-header">
+                <span class="garment-group-title">🌾 Dân Gian & Sông Nước</span>
               </div>
-            </button>
-            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Viên Lĩnh đang khảo cứu di sản • Ra mắt sau">
-              <span class="sheet-option-icon" style="opacity: 0.65;">🏛️</span>
-              <div class="sheet-option-texts">
-                <div class="sheet-option-label-wrap">
-                  <span class="sheet-option-label">Áo Viên Lĩnh</span>
-                  <span class="badge-upcoming">Ra mắt sau</span>
-                </div>
-                <span class="sheet-option-sub">Cổ tròn bàn lĩnh • Thời Lý - Trần</span>
+              <div class="garment-group-grid">
+                <button type="button" class="sheet-option-card" data-garment-select="AO_TU_THAN" aria-label="Áo Tứ Thân">
+                  <span class="sheet-option-icon">🪭</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Tứ Thân</span>
+                    <span class="sheet-option-sub">Yếm thắm dải lụa • Xứ Kinh Bắc</span>
+                  </div>
+                </button>
+                <button type="button" class="sheet-option-card" data-garment-select="AO_BA_BA" aria-label="Áo Bà Ba Nam Bộ">
+                  <span class="sheet-option-icon">🌾</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Bà Ba</span>
+                    <span class="sheet-option-sub">Xẻ tà hai hông • Mộc mạc sông nước</span>
+                  </div>
+                </button>
               </div>
-            </button>
-            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Đối Khâm đang khảo cứu di sản • Ra mắt sau">
-              <span class="sheet-option-icon" style="opacity: 0.65;">🪭</span>
-              <div class="sheet-option-texts">
-                <div class="sheet-option-label-wrap">
-                  <span class="sheet-option-label">Áo Đối Khâm</span>
-                  <span class="badge-upcoming">Ra mắt sau</span>
-                </div>
-                <span class="sheet-option-sub">Xẻ vạt song song • Thời Tiền Lê</span>
+            </div>
+
+            <!-- Nhóm 3: Cổ phục và cận đại (Giao Lĩnh, Dài Lemur) -->
+            <div class="garment-group-block">
+              <div class="garment-group-header">
+                <span class="garment-group-title">✨ Cổ Phục & Cận Đại</span>
               </div>
-            </button>
+              <div class="garment-group-grid">
+                <button type="button" class="sheet-option-card" data-garment-select="AO_GIAO_LINH" aria-label="Áo Giao Lĩnh Cổ Phục">
+                  <span class="sheet-option-icon">🏛️</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Giao Lĩnh</span>
+                    <span class="sheet-option-sub">Cổ chéo giao vạt • Thời Hậu Lê</span>
+                  </div>
+                </button>
+                <button type="button" class="sheet-option-card" data-garment-select="AO_DAI_LEMUR" aria-label="Áo Dài Lemur Cổ Điển">
+                  <span class="sheet-option-icon">✨</span>
+                  <div class="sheet-option-texts">
+                    <span class="sheet-option-label">Áo Dài Lemur</span>
+                    <span class="sheet-option-sub">Tân thời cổ điển • Thập niên 1930s</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- PHẦN SẮP RA MẮT: TOGGLE COLLAPSE (MẶC ĐỊNH THU GỌN ĐỂ TRÁNH QUÁ TẢI) -->
+            <div class="garment-upcoming-accordion">
+              <button type="button" class="garment-upcoming-toggle-btn" id="btn-toggle-upcoming-garments" aria-expanded="false">
+                <div class="upcoming-toggle-title-wrap">
+                  <span class="upcoming-toggle-icon">📜</span>
+                  <span>Cổ phục đang khảo cứu di sản (3 mẫu)</span>
+                </div>
+                <span class="upcoming-toggle-arrow" id="upcoming-toggle-arrow">▾</span>
+              </button>
+              <div class="garment-upcoming-collapse" id="garment-upcoming-collapse" style="display: none;">
+                <div class="garment-group-grid">
+                  <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Tấc đang khảo cứu di sản • Ra mắt sau">
+                    <span class="sheet-option-icon" style="opacity: 0.65;">🏛️</span>
+                    <div class="sheet-option-texts">
+                      <div class="sheet-option-label-wrap">
+                        <span class="sheet-option-label">Áo Tấc</span>
+                        <span class="badge-upcoming">Ra mắt sau</span>
+                      </div>
+                      <span class="sheet-option-sub">Tay thụng rộng • Đại lễ phục</span>
+                    </div>
+                  </button>
+                  <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Viên Lĩnh đang khảo cứu di sản • Ra mắt sau">
+                    <span class="sheet-option-icon" style="opacity: 0.65;">👘</span>
+                    <div class="sheet-option-texts">
+                      <div class="sheet-option-label-wrap">
+                        <span class="sheet-option-label">Áo Viên Lĩnh</span>
+                        <span class="badge-upcoming">Ra mắt sau</span>
+                      </div>
+                      <span class="sheet-option-sub">Cổ tròn bàn lĩnh • Lý - Trần</span>
+                    </div>
+                  </button>
+                  <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Đối Khâm đang khảo cứu di sản • Ra mắt sau">
+                    <span class="sheet-option-icon" style="opacity: 0.65;">🪭</span>
+                    <div class="sheet-option-texts">
+                      <div class="sheet-option-label-wrap">
+                        <span class="sheet-option-label">Áo Đối Khâm</span>
+                        <span class="badge-upcoming">Ra mắt sau</span>
+                      </div>
+                      <span class="sheet-option-sub">Xẻ vạt song song • Tiền Lê</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- NHÓM 1: MÀU SẮC (COLOR PICKER TỰ DO & BẢNG SẮC LỤA DI SẢN) -->
@@ -506,6 +547,9 @@
 
         <!-- Thanh nút hành động nhanh trong Thumb Zone (Mobile & Desktop) -->
         <div class="workshop-sheet-cta-bar">
+          <button type="button" id="btn-restore-validated-draft" class="btn-restore-draft" style="display: none;" title="Khôi phục về tổ hợp phối đồ đã được AI thẩm định thành công gần nhất" aria-label="Khôi phục bản thẩm định gần nhất">
+            <span>↩ Khôi Phục Bản Đã Thẩm Định</span>
+          </button>
           <button type="button" id="btn-view-result" class="btn-primary btn-workshop-cta btn-cta-pending" title="Vui lòng hoàn thành chọn lựa & xem gợi ý AI trước khi thẩm định" aria-label="Thẩm định & Xem kết quả phối đồ">
             <span id="btn-view-result-text">✨ Thẩm Định & Xem Kết Quả</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1000,44 +1044,83 @@
             </div>
           </div>
 
-          <!-- Cột 2 (Dành cho Desktop): Hồ Sơ Cổ Phục & Di Sản Chi Tiết -->
+          <!-- Cột 2 (Dành cho Desktop): Hồ Sơ Bento Cổ Phục Do Người Dùng Khác Sáng Tạo -->
           <aside class="discover-desktop-dossier card-base" aria-label="Hồ sơ cổ phục và gợi ý phối">
             
-            <div class="active-context-bar desktop-context-bar">
-              <div class="active-context-tag">
-                <span id="desktop-context-icon">🌸</span>
-                <span id="desktop-context-name">Dạo phố Tết</span>
-              </div>
-              <button type="button" class="btn-change-context" id="btn-change-context-desktop" aria-label="Đổi bối cảnh">
-                Đổi bối cảnh
-              </button>
-            </div>
-
             <div class="dossier-card-section">
-              <span class="dossier-pill-tag">✨ Thẩm Định Di Sản</span>
+              <div class="dossier-header-top-row">
+                <span class="dossier-pill-tag">✨ Sáng Tạo Cộng Đồng</span>
+                <span class="dossier-creator-badge" id="dossier-creator-name">Phối bởi: Minh Thảo @GenZ Huế</span>
+              </div>
               <h3 class="dossier-outfit-title" id="dossier-outfit-title">Áo Ngũ Thân Lập Lĩnh Hồng Sen</h3>
               <p class="dossier-outfit-desc" id="dossier-outfit-desc">
                 Tà ngũ thân lụa mềm mại dệt thủ công sắc hồng phấn sen, tôn phong thái tao nhã đón nắng mai.
               </p>
             </div>
 
-            <div class="dossier-specs-grid">
-              <div class="dossier-spec-box">
-                <span class="spec-label">Chất Liệu Lụa</span>
-                <span class="spec-value" id="dossier-spec-silk">Tơ Tằm Tự Nhiên</span>
+            <!-- Bento Box Grid 6 ô thông tin đồng nhất với Xưởng Phối -->
+            <div class="dossier-bento-grid">
+              
+              <!-- Bento 1: Mã Màu & Sắc Lụa -->
+              <div class="dossier-bento-item bento-color-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">🎨</span>
+                  <span class="spec-label">Mã Màu & Sắc Lụa</span>
+                </div>
+                <div class="bento-color-visual">
+                  <span class="bento-swatch-dot" id="dossier-color-dot" style="background-color: #F4C9D6;"></span>
+                  <div class="bento-color-text-wrap">
+                    <span class="bento-hex-code" id="dossier-color-hex">#F4C9D6</span>
+                    <span class="bento-color-name" id="dossier-color-name">Hồng Phấn Sen</span>
+                  </div>
+                </div>
               </div>
-              <div class="dossier-spec-box">
-                <span class="spec-label">Hòa Hợp Văn Hóa</span>
-                <span class="spec-value spec-success" id="dossier-spec-harmony">✓ 100% Chuẩn Mực</span>
+
+              <!-- Bento 2: Phong Thái Cấu Thành -->
+              <div class="dossier-bento-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">🎭</span>
+                  <span class="spec-label">Phong Thái</span>
+                </div>
+                <span class="spec-value bento-highlight-value" id="dossier-spec-mood">Thanh Tao Nhã Nhặn</span>
               </div>
-              <div class="dossier-spec-box">
-                <span class="spec-label">Phụ Kiện Khuyên Dùng</span>
-                <span class="spec-value" id="dossier-spec-acc">Quạt Giấy Xếp</span>
+
+              <!-- Bento 3: Dáng Cổ Phục -->
+              <div class="dossier-bento-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">👘</span>
+                  <span class="spec-label">Kiểu Cổ Phục</span>
+                </div>
+                <span class="spec-value" id="dossier-spec-garment">Áo Ngũ Thân Lập Lĩnh</span>
               </div>
-              <div class="dossier-spec-box">
-                <span class="spec-label">Phong Thái</span>
-                <span class="spec-value" id="dossier-spec-mood">Thanh Tao Nhã Nhặn</span>
+
+              <!-- Bento 4: Chất Liệu / Hoa Văn -->
+              <div class="dossier-bento-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">✨</span>
+                  <span class="spec-label">Chất Liệu & Hoa Văn</span>
+                </div>
+                <span class="spec-value" id="dossier-spec-material">Lụa Tơ Tằm Hà Đông</span>
               </div>
+
+              <!-- Bento 5: Bối Cảnh Phù Hợp Nhất -->
+              <div class="dossier-bento-item bento-full-width-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">📍</span>
+                  <span class="spec-label">Bối Cảnh Phù Hợp Nhất</span>
+                </div>
+                <span class="spec-value spec-success" id="dossier-spec-occasion">Dạo Phố Du Xuân & Check-in Phố Cổ</span>
+              </div>
+
+              <!-- Bento 6: Phụ Kiện & Kiểu Tóc Đi Kèm -->
+              <div class="dossier-bento-item bento-full-width-item">
+                <div class="bento-item-header">
+                  <span class="bento-item-icon">🪭</span>
+                  <span class="spec-label">Phụ Kiện & Tạo Hình Tóc</span>
+                </div>
+                <span class="spec-value" id="dossier-spec-styling">Quạt Giấy Xếp Trúc • Búi Tóc Cài Trâm Bạc</span>
+              </div>
+
             </div>
 
             <!-- Gợi Ý Phối Đương Đại Gen Z -->
@@ -1080,8 +1163,15 @@
       <!-- 1. Tiêu đề "Lookbook của bạn" và số lượng bộ đồ đã lưu -->
       <header class="lookbook-header-group">
         <div class="lookbook-title-row">
-          <h2 class="lookbook-title">Lookbook của bạn</h2>
-          <span id="lookbook-count-badge" class="lookbook-count-badge">0 bộ đồ đã lưu</span>
+          <div class="lookbook-title-left">
+            <h2 class="lookbook-title">Lookbook của bạn</h2>
+            <span id="lookbook-count-badge" class="lookbook-count-badge">0 bộ đồ đã lưu</span>
+          </div>
+          <!-- Nút dẫn nhanh tới màn hình So Sánh dễ tiếp cận và đẹp mắt -->
+          <button type="button" id="btn-lookbook-quick-compare" class="btn-lookbook-quick-compare" title="Mở Bàn So Sánh Đối Chiếu Tơ Lụa" aria-label="So sánh các bộ đồ">
+            <span class="compare-icon-badge">⚖️</span>
+            <span class="compare-btn-label">Bàn So Sánh Cổ Phục</span>
+          </button>
         </div>
         <p class="lookbook-subtitle">
           Không gian lưu giữ những tà phục tơ lụa do chính bạn thẩm định và phối sắc đương đại.

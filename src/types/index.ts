@@ -191,15 +191,21 @@ export interface DiscoveryOutfit {
   id: string;
   title: string;
   garment: string;
+  garmentLabel?: string;
   color: string;
   colorName: string;
   event: string;
   eventLabel: string;
   bestOccasion?: string;
   accessory: string;
+  accessoryLabel?: string;
   seal: string;
   desc: string;
   imageUrl?: string;
+  creatorName?: string;
+  patternName?: string;
+  mood?: string;
+  hairstyle?: string;
 }
 
 export interface WardrobeItem extends DiscoveryOutfit {

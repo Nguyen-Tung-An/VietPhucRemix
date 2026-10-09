@@ -547,3 +547,125 @@
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(74, 133, 119, 0.4);
 }
+
+/* ==========================================================================
+   PHẢN HỒI THỊ GIÁC CHO HỒ SƠ CÁ NHÂN (USER PROFILE CHIPS & SAVE FEEDBACK)
+   ========================================================================== */
+.profile-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.profile-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid var(--color-card-border, rgba(74, 133, 119, 0.2));
+  font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #2B2B28);
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.profile-chip-btn:hover {
+  background: rgba(74, 133, 119, 0.1);
+  border-color: var(--color-accent-secondary, #4A8577);
+  transform: translateY(-1px);
+}
+
+.profile-chip-btn:active {
+  transform: scale(0.96);
+}
+
+/* State đã chọn (Selected) - Phản hồi thị giác rõ rệt, sang trọng */
+.profile-chip-btn.chip-selected,
+.profile-chip-btn.active {
+  background: rgba(74, 133, 119, 0.16) !important;
+  border-color: var(--color-accent-secondary, #4A8577) !important;
+  color: var(--color-accent-secondary, #4A8577) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 10px rgba(74, 133, 119, 0.22) !important;
+  transform: scale(1.03);
+}
+
+.profile-chip-btn.chip-selected::after,
+.profile-chip-btn.active::after {
+  content: '✓';
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--color-accent-secondary, #4A8577);
+  margin-left: 2px;
+}
+
+.profile-color-swatch-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+/* Nút lưu phản hồi thị giác thành công */
+.btn-saved-success {
+  background: #4A8577 !important;
+  border-color: #4A8577 !important;
+  color: #FFFFFF !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 6px 18px rgba(74, 133, 119, 0.45) !important;
+}
+
+/* ==========================================================================
+   PHƯƠNG THỨC LOADING SKELETON (HERITAGE SHIMMER EFFECT)
+   Phục vụ các tác vụ đợi prompt AI hoặc tải tài nguyên
+   ========================================================================== */
+@keyframes heritage-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(74, 133, 119, 0.07) 20%,
+    rgba(201, 166, 107, 0.18) 50%,
+    rgba(74, 133, 119, 0.07) 80%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: heritage-shimmer 1.8s infinite ease-in-out !important;
+  border-radius: 12px !important;
+  pointer-events: none;
+  border: 1px solid rgba(74, 133, 119, 0.15) !important;
+}
+
+.skeleton-card-item {
+  min-height: 52px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeleton-box {
+  width: 100%;
+  height: 80px;
+  border-radius: 12px;
+}
+
+.skeleton-line {
+  width: 80%;
+  height: 14px;
+  border-radius: 6px;
+  margin: 6px 0;
+}

@@ -908,9 +908,9 @@
 
 .sheet-color-circle {
   width: 100%;
-  height: 26px;
-  min-height: 26px;
-  border-radius: 6px;
+  height: 32px;
+  min-height: 32px;
+  border-radius: 8px;
   border: 1.5px solid transparent;
   display: flex;
   align-items: center;
@@ -923,22 +923,23 @@
   position: relative;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 0 3px;
-  gap: 2px;
+  padding: 0 4px;
+  gap: 3px;
+  overflow: hidden;
 }
 
 .color-desktop-label {
   display: inline-block;
   font-family: var(--font-body);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 @media (min-width: 768px) {
   .sheet-color-circle {
-    height: 26px;
-    min-height: 26px;
+    height: 32px;
+    min-height: 32px;
   }
 }
 
@@ -1059,6 +1060,120 @@
     align-items: stretch;
     width: 100%;
   }
+}
+
+/* ==========================================================================
+   BỐ CỤC 3 NHÓM × 2 THẺ DÁNG ÁO (CUNG ĐÌNH, DÂN GIAN, CỔ PHỤC & CẬN ĐẠI)
+   ========================================================================== */
+.garment-group-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.garment-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.garment-group-title {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--color-accent-secondary, #4A8577);
+  letter-spacing: 0.02em;
+}
+
+.garment-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+/* Accordion Cổ phục sắp ra mắt */
+.garment-upcoming-accordion {
+  width: 100%;
+  margin-top: 4px;
+  border-top: 1px dashed var(--color-card-border);
+  padding-top: 6px;
+}
+
+.garment-upcoming-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(74, 133, 119, 0.06);
+  border: 1px dashed rgba(74, 133, 119, 0.25);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: all 0.16s ease;
+}
+
+.garment-upcoming-toggle-btn:hover {
+  background: rgba(74, 133, 119, 0.12);
+  color: var(--color-accent-secondary);
+}
+
+.upcoming-toggle-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upcoming-toggle-icon {
+  font-size: 0.9rem;
+}
+
+.upcoming-toggle-arrow {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.garment-upcoming-collapse {
+  margin-top: 8px;
+  animation: fadeInStep 0.2s ease-out;
+}
+
+/* Nút Khôi Phục Bản Thẩm Định Gần Nhất (Draft Restore Button) */
+.btn-restore-draft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(201, 166, 107, 0.16);
+  border: 1.5px solid var(--color-gold, #C9A66B);
+  color: #7A5338;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 2px 8px rgba(201, 166, 107, 0.14);
+  white-space: nowrap;
+}
+
+.btn-restore-draft:hover {
+  background: rgba(201, 166, 107, 0.28);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201, 166, 107, 0.25);
+}
+
+.btn-restore-draft:active {
+  transform: scale(0.96);
 }
 
 .sheet-option-card {

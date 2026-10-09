@@ -654,27 +654,111 @@
     color: var(--color-text-muted);
   }
 
-  /* Grid thông số */
-  .dossier-specs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+  /* Bento Grid thông số - Đồng nhất với Xưởng Phối */
+  .dossier-header-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
-  .dossier-spec-box {
-    background: rgba(255, 255, 255, 0.45);
+  .dossier-creator-badge {
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--color-gold, #C9A66B);
+    background: rgba(201, 166, 107, 0.12);
+    border: 1px solid rgba(201, 166, 107, 0.28);
+    padding: 3px 10px;
+    border-radius: var(--border-radius-pill, 9999px);
+  }
+
+  .dossier-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .dossier-bento-item {
+    background: rgba(255, 255, 255, 0.5);
     border: 1px solid var(--color-card-border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 14px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: transform 0.16s ease, border-color 0.16s ease;
+  }
+
+  .dossier-bento-item:hover {
+    border-color: rgba(74, 133, 119, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .bento-full-width-item {
+    grid-column: span 2;
   }
 
   @media (prefers-color-scheme: dark) {
-    .dossier-spec-box {
-      background: rgba(22, 34, 30, 0.5);
+    .dossier-bento-item {
+      background: rgba(22, 34, 30, 0.55);
     }
+  }
+
+  .bento-item-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bento-item-icon {
+    font-size: 0.85rem;
+  }
+
+  .bento-color-visual {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+  }
+
+  .bento-swatch-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+  }
+
+  .bento-color-text-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: hidden;
+  }
+
+  .bento-hex-code {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  .bento-color-name {
+    font-family: var(--font-body);
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .bento-highlight-value {
+    color: var(--color-accent-secondary, #4A8577);
   }
 
   .spec-label {
@@ -685,9 +769,10 @@
 
   .spec-value {
     font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 0.86rem;
     font-weight: 600;
     color: var(--color-text-primary);
+    line-height: 1.35;
   }
 
   .spec-success {

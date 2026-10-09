@@ -323,6 +323,34 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     sourceUrl: 'https://baotangphunu.org.vn/',
     sourceReferenceNote: 'Chuyên đề: Cải cách y phục Áo Dài thập niên 1930 phong trào Tự Lực Văn Đoàn',
     publicationYear: 2019
+  },
+  AO_GIAO_LINH: {
+    id: 'AO_GIAO_LINH',
+    name: 'Áo Giao Lĩnh (Cổ Chéo)',
+    commonNames: ['Áo giao lĩnh', 'Áo tràng vạt', 'Cổ phục thời Hậu Lê'],
+    historicalEra: 'Thời Lý, Trần và đạt đỉnh cao chuẩn mực định hình dưới triều Hậu Lê (thế kỷ 15–18)',
+    originRegion: 'BAC_BO',
+    socialContext: 'Cổ phục truyền thống của tầng lớp quý tộc, sĩ phu và quan lại trong các dịp đại lễ và tế tự thời Lê.',
+    definingFeatures: [
+      'Cổ áo giao chéo: Vạt bên trái vắt chéo đè lên vạt bên phải tạo thành cổ hình chữ Y cổ kính.',
+      'Ống tay rộng vừa hoặc tay thụng uy nghiêm, vạt áo buông dài phủ gối.',
+      'Thường buộc dây dải lụa ngang eo hoặc thắt đai đĩnh đạc.',
+      'Chất liệu lụa tơ tằm dệt hoa chìm hoặc gấm hoa thời Lê.'
+    ],
+    strictTaboos: [
+      {
+        incompatibleWith: 'KHAN_RAN',
+        incompatibleName: 'Khăn Rằn Nam Bộ',
+        historicalConflictReason: 'Khăn rằn là phụ kiện sông nước Nam Bộ thế kỷ 19, không phù hợp với quy chuẩn cổ phục Giao Lĩnh thời Lê.',
+        suggestedAlternative: 'QUAT_GIAY'
+      }
+    ],
+    culturalSignificance: 'Biểu trưng cho nếp cổ phong ngàn năm văn hiến, thể hiện khí phách đoan chính và chuẩn mực văn hóa Đại Việt thời Lê.',
+    sourceTitle: 'Ngàn Năm Áo Mũ — Trang phục triều Lý, Trần, Lê',
+    authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Trần Quang Đức',
+    sourceUrl: 'https://baotanglichsu.vn/',
+    sourceReferenceNote: 'Chương 3 & 4: Y phục thời Hậu Lê — Quy chế Áo Giao Lĩnh và Tràng Vạt',
+    publicationYear: 2013
   }
 };
 

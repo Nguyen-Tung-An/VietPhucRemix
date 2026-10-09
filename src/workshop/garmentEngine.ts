@@ -39,6 +39,21 @@ export class GarmentEngine {
   public isGeneratingMiniStyling: boolean = false;
   public aiStylingData: MiniStylingResponse | null = null;
 
+  // Bản lưu nháp snapshot đã thẩm định gần nhất để khôi phục tức thì
+  public lastValidatedDraft: {
+    garment: string;
+    color: string;
+    colorName: string;
+    styles: string[];
+    creativityLevel: number;
+    pattern: PatternItem | null;
+    accessories: string[];
+    customAccessories: string[];
+    hairstyle: string;
+    customHairstyle: string;
+    aiData: MiniStylingResponse | null;
+  } | null = null;
+
   public init(): void {
     this.setupSheetTabs();
     this.setupGarmentOptions();
@@ -174,7 +189,111 @@ export class GarmentEngine {
         centerTriggerBtn.classList.add('tab-highlight-pulse');
       }
     }
+
+    // Hiển thị nút Khôi phục bản thẩm định gần nhất nếu đã có draft hợp lệ
+    const btnRestore = document.getElementById('btn-restore-validated-draft');
+    if (btnRestore) {
+      if (this.lastValidatedDraft && (this.needsReappraisal || !this.hasGeneratedAISuggestions)) {
+        btnRestore.style.display = 'inline-flex';
+      } else {
+        btnRestore.style.display = 'none';
+      }
+    }
+
     this.checkOptionsProgress();
+  }
+
+  /**
+   * Khôi phục ngay lập tức tổ hợp input đã được AI thẩm định thành công gần nhất,
+   * giúp người dùng không phải gọi lại API AI tốn tài nguyên và thời gian
+   */
+  public restoreLastValidatedDraft(): void {
+    if (!this.lastValidatedDraft) return;
+    Sound.playChime();
+    const draft = this.lastValidatedDraft;
+
+    this.selectedGarment = draft.garment;
+    this.selectedColor = draft.color;
+    this.selectedColorName = draft.colorName;
+    this.selectedStyles = [...draft.styles];
+    this.creativityLevel = draft.creativityLevel;
+    this.currentPattern = draft.pattern;
+    this.selectedAccessories = [...draft.accessories];
+    this.customAccessories = [...draft.customAccessories];
+    this.selectedHairstyle = draft.hairstyle;
+    this.customHairstyle = draft.customHairstyle;
+    this.hasGeneratedAISuggestions = true;
+    this.needsReappraisal = false;
+
+    // 1. Cập nhật thẻ áo active
+    const garmentCards = document.querySelectorAll('[data-garment-select]');
+    garmentCards.forEach((c) => {
+      const el = c as HTMLElement;
+      if (el.dataset.garmentSelect === this.selectedGarment) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+
+    // 2. Cập nhật bảng màu
+    const colorInput = document.getElementById('workshop-color-input') as HTMLInputElement | null;
+    const hexInput = document.getElementById('workshop-color-hex-input') as HTMLInputElement | null;
+    const livePreviewDot = document.getElementById('color-live-preview-dot');
+    if (livePreviewDot) livePreviewDot.style.backgroundColor = this.selectedColor;
+    if (hexInput) hexInput.value = this.selectedColor.toUpperCase();
+    if (colorInput) colorInput.value = this.selectedColor;
+
+    document.querySelectorAll('.sheet-color-circle').forEach((swatch) => {
+      const el = swatch as HTMLElement;
+      if (el.dataset.color === this.selectedColor) {
+        el.classList.add('selected-color');
+      } else {
+        el.classList.remove('selected-color');
+      }
+    });
+
+    // 3. Cập nhật phong cách
+    document.querySelectorAll('.style-chip-option').forEach((chip) => {
+      const el = chip as HTMLElement;
+      const text = el.dataset.styleText || el.textContent?.trim() || '';
+      if (this.selectedStyles.includes(text)) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+
+    // 4. Ẩn nút khôi phục, đưa nút Xem Kết Quả về trạng thái Ready
+    const btnRestore = document.getElementById('btn-restore-validated-draft');
+    if (btnRestore) btnRestore.style.display = 'none';
+
+    const btnViewResult = document.getElementById('btn-view-result');
+    const btnViewResultText = document.getElementById('btn-view-result-text');
+    if (btnViewResult) {
+      btnViewResult.classList.remove('btn-cta-pending');
+      btnViewResult.classList.add('btn-cta-ready');
+      btnViewResult.setAttribute('title', 'Xem kết quả phối đồ di sản');
+    }
+    if (btnViewResultText) {
+      btnViewResultText.textContent = '✨ Xem Kết Quả Phối Đồ';
+    }
+
+    const statusPill = document.getElementById('ai-guardrail-status-pill');
+    if (statusPill) {
+      statusPill.textContent = '✓ Chuẩn Mực Di Sản';
+      statusPill.style.background = 'rgba(74, 133, 119, 0.14)';
+      statusPill.style.color = '#4A8577';
+    }
+
+    if (draft.aiData) {
+      this.populateAISynthesisColumn(draft.aiData, null);
+      this.renderAccessoriesList(draft.aiData.accessories || []);
+      this.renderHairstylesList(draft.aiData.hairstyles || []);
+    }
+
+    this.checkOptionsProgress();
+    appRouter.showToast('✨ Đã khôi phục tổ hợp đã thẩm định! Bạn có thể xem kết quả ngay mà không cần gọi lại AI.');
   }
 
   /**
@@ -494,6 +613,18 @@ export class GarmentEngine {
         appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có.');
       });
     });
+
+    // Toggle thu gọn/mở rộng danh sách cổ phục đang nghiên cứu di sản
+    const toggleUpcomingBtn = document.getElementById('btn-toggle-upcoming-garments');
+    const upcomingCollapse = document.getElementById('garment-upcoming-collapse');
+    const upcomingArrow = document.getElementById('upcoming-toggle-arrow');
+    toggleUpcomingBtn?.addEventListener('click', () => {
+      Sound.playClick();
+      const isClosed = upcomingCollapse?.style.display === 'none' || !upcomingCollapse?.style.display;
+      if (upcomingCollapse) upcomingCollapse.style.display = isClosed ? 'block' : 'none';
+      toggleUpcomingBtn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
+      if (upcomingArrow) upcomingArrow.textContent = isClosed ? '▴' : '▾';
+    });
   }
 
   /**
@@ -749,6 +880,23 @@ export class GarmentEngine {
     if (centerSpinner) centerSpinner.style.display = 'inline-block';
     if (centerText) centerText.textContent = 'AI Đang Phân Tích & Sáng Tạo...';
 
+    // Hiển thị giao diện Skeleton Shimmer trong khi chờ AI phản hồi
+    const accessoriesContainer = document.getElementById('accessories-list-container');
+    const hairstylesContainer = document.getElementById('hairstyles-single-container');
+    if (accessoriesContainer) {
+      accessoriesContainer.innerHTML = `
+        <div class="skeleton-shimmer skeleton-card-item"></div>
+        <div class="skeleton-shimmer skeleton-card-item"></div>
+        <div class="skeleton-shimmer skeleton-card-item"></div>
+      `;
+    }
+    if (hairstylesContainer) {
+      hairstylesContainer.innerHTML = `
+        <div class="skeleton-shimmer skeleton-card-item"></div>
+        <div class="skeleton-shimmer skeleton-card-item"></div>
+      `;
+    }
+
     try {
       let userProfile = null;
       try {
@@ -770,6 +918,24 @@ export class GarmentEngine {
 
       this.aiStylingData = data;
       this.hasGeneratedAISuggestions = true;
+
+      // Lưu snapshot nháp đã thẩm định thành công để khôi phục nhanh nếu người dùng bấm nhầm
+      this.lastValidatedDraft = {
+        garment: this.selectedGarment || 'AO_NGU_THAN',
+        color: this.selectedColor || '#F4C9D6',
+        colorName: this.selectedColorName || 'Hồng Phấn Sen',
+        styles: [...this.selectedStyles],
+        creativityLevel: this.creativityLevel,
+        pattern: this.currentPattern ? { ...this.currentPattern } : null,
+        accessories: [...this.selectedAccessories],
+        customAccessories: [...this.customAccessories],
+        hairstyle: this.selectedHairstyle,
+        customHairstyle: this.customHairstyle,
+        aiData: data
+      };
+
+      const btnRestore = document.getElementById('btn-restore-validated-draft');
+      if (btnRestore) btnRestore.style.display = 'none';
 
       // Chọn mặc định món đầu tiên nếu chưa chọn món nào
       if (this.selectedAccessories.length === 0 && data.accessories?.length) {
@@ -1228,6 +1394,11 @@ export class GarmentEngine {
     const btnView = document.getElementById('btn-view-result');
     btnView?.addEventListener('click', () => {
       // Logic thẩm định được bảo vệ bởi canProceedToResult()
+    });
+
+    const btnRestore = document.getElementById('btn-restore-validated-draft');
+    btnRestore?.addEventListener('click', () => {
+      this.restoreLastValidatedDraft();
     });
   }
 }

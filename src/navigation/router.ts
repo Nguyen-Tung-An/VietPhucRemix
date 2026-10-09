@@ -375,11 +375,13 @@ export class AppRouter {
       this.openCompare('current-workshop');
     });
 
-    // Nút mở so sánh từ Lookbook header
-    document.getElementById('btn-lookbook-compare-head')?.addEventListener('click', () => {
+    // Nút mở so sánh từ Lookbook header (dễ tiếp cận)
+    const openCompareLookbook = () => {
       Sound.playClick();
       this.openCompare();
-    });
+    };
+    document.getElementById('btn-lookbook-compare-head')?.addEventListener('click', openCompareLookbook);
+    document.getElementById('btn-lookbook-quick-compare')?.addEventListener('click', openCompareLookbook);
 
     btnOpenWardrobe?.addEventListener('click', () => {
       Sound.playClick();
@@ -449,8 +451,13 @@ export class AppRouter {
       closeProfile();
     });
 
-    // Lưu profile vào localStorage
-    document.getElementById('btn-save-profile')?.addEventListener('click', () => {
+    // Lưu profile vào localStorage với phản hồi thị giác
+    const btnSaveProfile = document.getElementById('btn-save-profile');
+    btnSaveProfile?.addEventListener('click', () => {
+      const origHtml = btnSaveProfile.innerHTML;
+      btnSaveProfile.innerHTML = '<span>✓ Đã Lưu Thành Công!</span>';
+      btnSaveProfile.classList.add('btn-saved-success');
+
       const profile = {
         name: (document.getElementById('profile-name') as HTMLInputElement)?.value?.trim() || '',
         height: (document.getElementById('profile-height') as HTMLInputElement)?.value?.trim() || '',
@@ -460,9 +467,14 @@ export class AppRouter {
         hair: (document.getElementById('profile-hair') as HTMLInputElement)?.value?.trim() || '',
       };
       localStorage.setItem('viet_y_user_profile', JSON.stringify(profile));
-      closeProfile();
-      this.showToast(`✅ Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}! AI sẽ tư vấn phù hợp hơn.`);
       Sound.playChime();
+      this.showToast(`✅ Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}! AI sẽ tư vấn phù hợp hơn.`);
+
+      setTimeout(() => {
+        closeProfile();
+        btnSaveProfile.innerHTML = origHtml;
+        btnSaveProfile.classList.remove('btn-saved-success');
+      }, 450);
     });
 
     // Đóng modal khi bấm ra ngoài backdrop

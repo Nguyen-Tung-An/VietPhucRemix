@@ -4,6 +4,7 @@ import { feedbackState } from '../services/feedbackState.ts';
 import { garmentEngine } from './garmentEngine.ts';
 import { appRouter } from '../navigation/router.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 export interface HeritagePatternEntry {
   id: string;
@@ -139,7 +140,7 @@ export class PatternEngine {
         <article class="pattern-heritage-card" id="card-${pat.id}">
           <div class="pattern-card-preview" style="background: ${pat.previewBg};">
             <div class="pattern-card-art-wrap" style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-              <img src="${pat.imageUrl}" alt="${pat.name}" class="pattern-card-img" style="width: 100%; height: 100%; object-fit: cover; display: block;" onload="this.style.display='block'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='none';" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='flex';" />
+              <img src="${assetConfig.resolveAssetUrl(pat.imageUrl)}" alt="${pat.name}" class="pattern-card-img" style="width: 100%; height: 100%; object-fit: cover; display: block;" onload="this.style.display='block'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='none';" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='flex';" />
               <div class="pattern-no-img-box" style="display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 12px; background: rgba(28,43,38,0.7);">
                 <span style="font-size: 1.8rem; opacity: 0.55;">🏛️</span>
                 <span style="font-family: var(--font-body); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.3;">Tổ hợp này chưa có ảnh minh họa demo</span>

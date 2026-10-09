@@ -1,6 +1,7 @@
 import { DiscoveryOutfit } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import { wardrobeManager } from './wardrobeManager.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 export interface EventContext {
   key: string;
@@ -264,7 +265,7 @@ export class SwipeEngine {
         <div class="card-illustration-box">
           <div class="card-image-wrap" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 16px;">
             ${outfit.imageUrl ? `
-              <img src="${outfit.imageUrl}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
+              <img src="${assetConfig.resolveAssetUrl(outfit.imageUrl)}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
             ` : ''}
             <div class="card-no-image-placeholder" style="display: ${outfit.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 16px; width: 100%; height: 100%; box-sizing: border-box;">
               <div style="font-size: 3rem; opacity: 0.4;">🏛️</div>

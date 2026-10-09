@@ -1153,6 +1153,55 @@
   color: var(--color-accent-secondary);
 }
 
+/* THẺ TRANG PHỤC KHẢO CỨU / SẮP RA MẮT (INACTIVE) */
+.sheet-option-card-inactive {
+  opacity: 0.62;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px dashed rgba(74, 133, 119, 0.3) !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sheet-option-card-inactive {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(74, 133, 119, 0.25) !important;
+  }
+}
+
+.sheet-option-card-inactive:hover {
+  opacity: 0.85;
+  transform: none !important;
+  border-color: var(--color-accent-secondary, #4A8577) !important;
+}
+
+.sheet-option-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .sheet-option-label-wrap {
+    justify-content: flex-start;
+  }
+}
+
+.badge-upcoming {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #7A5338;
+  background: rgba(201, 166, 107, 0.22);
+  border: 1px solid rgba(201, 166, 107, 0.4);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
 /* --------------------------------------------------------------------------
    THẺ GHI CHÚ DI SẢN DESKTOP
    -------------------------------------------------------------------------- */
@@ -2200,6 +2249,87 @@
   background: rgba(74, 133, 119, 0.14);
   color: #4A8577;
   border: 1px solid rgba(74, 133, 119, 0.3);
+  white-space: nowrap;
+}
+
+.ai-header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn-ai-header-retrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill, 9999px);
+  border: 1px solid var(--color-accent-secondary, #4A8577);
+  background: rgba(74, 133, 119, 0.1);
+  color: var(--color-accent-secondary, #4A8577);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.btn-ai-header-retrigger:hover {
+  background: var(--color-accent-secondary, #4A8577);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(74, 133, 119, 0.25);
+}
+
+.btn-ai-header-retrigger:active {
+  transform: scale(0.96);
+}
+
+/* NÚT THẨM ĐỊNH LẠI TRONG PANEL PHỤ KIỆN (PANEL-AI-STYLING) */
+.ai-styling-retrigger-bar {
+  width: 100%;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(74, 133, 119, 0.15);
+}
+
+.btn-retrigger-styling {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(74, 133, 119, 0.08);
+  border: 1.5px solid var(--color-accent-secondary, #4A8577);
+  color: var(--color-accent-secondary, #4A8577);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(74, 133, 119, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.btn-retrigger-styling:hover {
+  background: var(--color-accent-secondary, #4A8577);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(74, 133, 119, 0.28);
+}
+
+.btn-retrigger-styling:active {
+  transform: scale(0.98);
+}
+
+.btn-retrigger-icon {
+  font-size: 1rem;
 }
 
 .ai-cards-scroll {

@@ -160,10 +160,13 @@ export class AdminEngine {
             <div class="admin-prompt-text" id="prompt-pat-${pat.id}">${pat.fullImagePrompt}</div>
           </div>
 
-          <div class="admin-card-actions">
+          <div class="admin-card-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="btn-admin-action btn-copy-prompt-action" data-copy-target="prompt-pat-${pat.id}">
               📋 Copy Prompt Nhanh
             </button>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-admin-action" style="text-decoration: none; color: #1a73e8; font-weight: 600;">
+              ✨ Thử Trên Gemini AI ↗
+            </a>
           </div>
         </div>
       `;
@@ -217,10 +220,13 @@ export class AdminEngine {
             <div class="admin-prompt-text" id="prompt-outfit-${outfit.id}">${assembledPrompt}</div>
           </div>
 
-          <div class="admin-card-actions">
+          <div class="admin-card-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="btn-admin-action btn-copy-prompt-action" data-copy-target="prompt-outfit-${outfit.id}">
               📋 Copy Prompt Nhanh
             </button>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-admin-action" style="text-decoration: none; color: #1a73e8; font-weight: 600;">
+              ✨ Thử Trên Gemini AI ↗
+            </a>
           </div>
         </div>
       `;

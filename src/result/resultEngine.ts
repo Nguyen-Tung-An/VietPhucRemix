@@ -14,6 +14,7 @@ import {
 } from '../data/culturalTruths.ts';
 import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
 import { assembleFashionPrompt } from '../workshop/promptEngine.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 export class ResultEngine {
   private isKnowledgeRevealed: boolean = false;
@@ -95,31 +96,23 @@ export class ResultEngine {
     const placeholder = document.getElementById('result-no-image-placeholder');
     if (!demoImg || !placeholder) return;
 
-    const GARMENT_IMAGE_MAP: Record<string, string> = {
-      AO_NGU_THAN: '/images/garments/ao-ngu-than.png',
-      AO_TAC: '/images/garments/ao-tac.png',
-      AO_NHAT_BINH: '/images/garments/ao-nhat-binh.png',
-      AO_TU_THAN: '/images/garments/ao-tu-than.png',
-      AO_BA_BA: '/images/garments/ao-ba-ba.png',
-      AO_DAI_LEMUR: '/images/garments/ao-dai-lemur.png',
+    const demoSrc = assetConfig.getGarmentImageUrl(garment);
+    const localFallback = `/images/garments/${garment.toLowerCase().replace(/_/g, '-')}.png`;
+
+    demoImg.onload = () => {
+      demoImg.style.display = 'block';
+      placeholder.style.display = 'none';
     };
 
-    const demoSrc = GARMENT_IMAGE_MAP[garment] || '';
-
-    if (demoSrc) {
-      demoImg.src = demoSrc;
-      demoImg.onload = () => {
-        demoImg.style.display = 'block';
-        placeholder.style.display = 'none';
-      };
-      demoImg.onerror = () => {
+    assetConfig.attachSafeImageLoad(
+      demoImg,
+      demoSrc,
+      localFallback,
+      () => {
         demoImg.style.display = 'none';
         placeholder.style.display = 'flex';
-      };
-    } else {
-      demoImg.style.display = 'none';
-      placeholder.style.display = 'flex';
-    }
+      }
+    );
   }
 
   /**
@@ -268,6 +261,7 @@ export class ResultEngine {
     const btnTailorJourney = document.getElementById('btn-result-tailor-journey');
     const btnGotoDiscover = document.getElementById('btn-result-goto-discover');
     const btnCopyPrompt = document.getElementById('btn-result-copy-prompt');
+    const btnPlaceholderPrompt = document.getElementById('btn-result-placeholder-prompt');
 
     btnGotoDiscover?.addEventListener('click', () => {
       this.hideResult();
@@ -276,6 +270,9 @@ export class ResultEngine {
 
     // Nút Sao Chép Prompt Tạo Sinh Ảnh Gemini Thủ Công
     btnCopyPrompt?.addEventListener('click', () => {
+      this.openPromptModal();
+    });
+    btnPlaceholderPrompt?.addEventListener('click', () => {
       this.openPromptModal();
     });
 

@@ -184,6 +184,7 @@ export interface CurrentOutfitState {
   pattern?: PatternItem | null;
   genzActive?: boolean;
   bestOccasion?: string;
+  eventLabel?: string;
 }
 
 export interface DiscoveryOutfit {

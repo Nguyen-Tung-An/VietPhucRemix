@@ -10,6 +10,7 @@ import {
   getAllSourcesForGarment
 } from '../data/culturalTruths.ts';
 import { WardrobeItem } from '../types/index.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 export interface CompareOutfitModel {
   id: string;
@@ -172,7 +173,7 @@ export class CompareEngine {
       event: ws.event || 'tet',
       accessories: allAcc,
       hairstyle: ws.custom_hairstyle || ws.hairstyle || 'Tóc búi cao thanh thoát',
-      imageUrl: GARMENT_IMAGE_MAP[ws.garment] || '/images/garments/ao-ngu-than.png',
+      imageUrl: assetConfig.getGarmentImageUrl(ws.garment),
       desc: 'Phương án đang được tinh chỉnh trực tiếp trong Xưởng Phối Đồ.'
     };
   }
@@ -187,7 +188,7 @@ export class CompareEngine {
       colorName: w.colorName,
       event: w.event,
       accessories: [w.accessory],
-      imageUrl: w.imageUrl || GARMENT_IMAGE_MAP[w.garment] || '/images/garments/ao-ngu-than.png',
+      imageUrl: w.imageUrl || assetConfig.getGarmentImageUrl(w.garment),
       desc: `Lưu trong Lookbook cá nhân lúc ${w.savedAt || 'gần đây'}.`
     };
   }
@@ -269,7 +270,7 @@ export class CompareEngine {
     const sourceBadge = document.getElementById(`${prefix}-source-badge`);
 
     if (imgEl) {
-      imgEl.src = outfit.imageUrl || GARMENT_IMAGE_MAP[outfit.garment] || '/images/garments/ao-ngu-than.png';
+      imgEl.src = outfit.imageUrl || assetConfig.getGarmentImageUrl(outfit.garment);
       imgEl.alt = outfit.title;
     }
 

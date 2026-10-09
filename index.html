@@ -288,6 +288,38 @@
                 <span class="sheet-option-sub">Tân thời cổ điển • Thập niên 1930s</span>
               </div>
             </button>
+
+            <!-- 3 MẪU ÁO DI SẢN ĐANG KHẢO CỨU (INACTIVE - RA MẮT SAU) -->
+            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Giao Lĩnh đang khảo cứu di sản • Ra mắt sau">
+              <span class="sheet-option-icon" style="opacity: 0.65;">👘</span>
+              <div class="sheet-option-texts">
+                <div class="sheet-option-label-wrap">
+                  <span class="sheet-option-label">Áo Giao Lĩnh</span>
+                  <span class="badge-upcoming">Ra mắt sau</span>
+                </div>
+                <span class="sheet-option-sub">Cổ chéo giao vạt • Thời Hậu Lê</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Viên Lĩnh đang khảo cứu di sản • Ra mắt sau">
+              <span class="sheet-option-icon" style="opacity: 0.65;">🏛️</span>
+              <div class="sheet-option-texts">
+                <div class="sheet-option-label-wrap">
+                  <span class="sheet-option-label">Áo Viên Lĩnh</span>
+                  <span class="badge-upcoming">Ra mắt sau</span>
+                </div>
+                <span class="sheet-option-sub">Cổ tròn bàn lĩnh • Thời Lý - Trần</span>
+              </div>
+            </button>
+            <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Đối Khâm đang khảo cứu di sản • Ra mắt sau">
+              <span class="sheet-option-icon" style="opacity: 0.65;">🪭</span>
+              <div class="sheet-option-texts">
+                <div class="sheet-option-label-wrap">
+                  <span class="sheet-option-label">Áo Đối Khâm</span>
+                  <span class="badge-upcoming">Ra mắt sau</span>
+                </div>
+                <span class="sheet-option-sub">Xẻ vạt song song • Thời Tiền Lê</span>
+              </div>
+            </button>
           </div>
 
           <!-- NHÓM 1: MÀU SẮC (COLOR PICKER TỰ DO & BẢNG SẮC LỤA DI SẢN) -->
@@ -458,10 +490,11 @@
                 </div>
               </div>
 
-              <!-- Nút Nằm Ở Dưới Cùng: Cập nhật / Tạo lại gợi ý AI -->
-              <div class="ai-styling-retrigger-bar" style="margin-top: 16px;">
-                <button type="button" class="btn-secondary btn-retrigger-styling" id="btn-retrigger-mini-gemini" style="width: 100%; min-height: 42px;">
-                  <span>✨ Cập Nhật / Tạo Lại Gợi Ý AI</span>
+              <!-- Nút Thẩm Định Lại: Cập nhật / Thẩm định lại gợi ý AI -->
+              <div class="ai-styling-retrigger-bar">
+                <button type="button" class="btn-retrigger-styling" id="btn-retrigger-mini-gemini" title="Thẩm định lại & cập nhật gợi ý AI">
+                  <span class="btn-retrigger-icon">🔄</span>
+                  <span>Thẩm Định Lại & Cập Nhật Gợi Ý AI</span>
                 </button>
               </div>
 
@@ -499,7 +532,12 @@
               <p class="ai-sub-title">Phân tích sắc phục, vóc dáng cá nhân & quy chuẩn di sản</p>
             </div>
           </div>
-          <span class="ai-status-badge" id="ai-guardrail-status-pill">✓ Chuẩn Mực Di Sản</span>
+          <div class="ai-header-right-actions">
+            <button type="button" class="btn-ai-header-retrigger" id="btn-ai-header-retrigger" title="Thẩm định lại & cập nhật gợi ý AI">
+              <span>🔄 Thẩm Định Lại</span>
+            </button>
+            <span class="ai-status-badge" id="ai-guardrail-status-pill">✓ Chuẩn Mực Di Sản</span>
+          </div>
         </div>
 
         <div class="ai-cards-scroll">
@@ -684,14 +722,22 @@
             <img id="result-demo-image" src="" alt="Minh họa trang phục" style="display: none; width: 100%; height: 100%; object-fit: contain; border-radius: 12px;" />
 
             <!-- Placeholder khi không có ảnh demo cho tổ hợp này -->
-            <div id="result-no-image-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 32px 24px; height: 100%;">
-              <div style="font-size: 3rem; opacity: 0.4;">🏛️</div>
-              <p style="font-family: var(--font-body); font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; max-width: 280px;">
-                Tổ hợp này chưa có ảnh minh họa demo. Ảnh dưới đây là những bộ phục trang sử dụng chính xác prompt AI từ hệ thống để hình dung sản phẩm thực tế.
+            <div id="result-no-image-placeholder" class="result-placeholder-box">
+              <div class="result-placeholder-seal">審</div>
+              <h3 class="result-placeholder-title">Bản Vẽ Kiến Trúc AI Di Sản</h3>
+              <p class="result-placeholder-desc">
+                Tổ hợp tà phục và phụ kiện này đã được AI mã hóa cấu trúc prompt chuyên sâu theo chuẩn di sản. Bạn có thể sao chép prompt và dán trực tiếp vào Gemini AI để kết xuất hình ảnh thời trang siêu thực!
               </p>
-              <button type="button" id="btn-result-goto-discover"
-                style="padding: 10px 20px; border-radius: 9999px; background: linear-gradient(135deg, #4A8577, #2A5A4E); color: white; border: none; cursor: pointer; font-family: var(--font-body); font-size: 0.88rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                <span>📖</span> Khám Phá Minh Họa AI Thực Tế
+              <div class="result-placeholder-cta-row">
+                <button type="button" id="btn-result-placeholder-prompt" class="btn-result-placeholder-btn btn-ph-copy">
+                  <span>📋 Sao Chép Prompt AI</span>
+                </button>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-result-placeholder-btn btn-ph-gemini">
+                  <span>✨ Thử Trên Gemini AI ↗</span>
+                </a>
+              </div>
+              <button type="button" id="btn-result-goto-discover" class="btn-result-placeholder-link">
+                <span>📖 Xem Bộ Sưu Tập Minh Họa Có Sẵn</span>
               </button>
             </div>
           </div>
@@ -775,14 +821,20 @@
                Phân cấp thị giác rõ ràng tuyệt đối
                ========================================================== -->
           <footer class="result-actions-footer">
-            <!-- Nút Sao Chép Prompt Tạo Sinh Ảnh Gemini Thủ Công -->
-            <button type="button" id="btn-result-copy-prompt" class="btn-primary" style="background: linear-gradient(135deg, #4A8577, #2A5A4E); color: #FFF; width: 100%; min-height: 48px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(74,133,119,0.3); margin-bottom: 8px;">
-              <span>✨</span>
-              <span id="btn-result-copy-prompt-text">Sao Chép Prompt Gemini Tạo Sinh Ảnh</span>
-            </button>
+            <!-- Hàng Nút Prompt Tạo Sinh Ảnh Gemini & Thử Nghiệm -->
+            <div class="result-prompt-actions-row">
+              <button type="button" id="btn-result-copy-prompt" class="btn-result-action-prompt" title="Xem & sao chép prompt hoàn chỉnh">
+                <span>📋</span>
+                <span id="btn-result-copy-prompt-text">Sao Chép Prompt Gemini</span>
+              </button>
+              <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-result-action-gemini" title="Mở Google Gemini để dán prompt tạo sinh ảnh miễn phí">
+                <span>✨</span>
+                <span>Thử Trên Gemini AI ↗</span>
+              </a>
+            </div>
 
             <!-- Nút Hành Trình Sở Hữu Cổ Phục (Google Maps & Search) -->
-            <button type="button" id="btn-result-tailor-journey" class="btn-primary" style="background: linear-gradient(135deg, #C9A66B, #8B6528); color: #FFF; width: 100%; min-height: 48px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(201,166,107,0.35);">
+            <button type="button" id="btn-result-tailor-journey" class="btn-result-journey-action">
               <span>📍 May Đo & Tìm Tiệm (Google Maps & Search)</span>
             </button>
 
@@ -1583,6 +1635,9 @@
         <button type="button" id="btn-copy-prompt-text" class="btn-copy-prompt">
           📋 Sao Chép Toàn Bộ Prompt
         </button>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-prompt-external-gemini" title="Mở Google Gemini để dán prompt và sinh ảnh trực tiếp">
+          <span>✨ Mở Gemini AI Để Test ↗</span>
+        </a>
       </footer>
 
     </div>
@@ -1882,10 +1937,13 @@
         </p>
       </div>
 
-      <div class="profile-modal-actions" style="margin-top: 14px;">
-        <button id="btn-copy-prompt-clipboard" type="button" class="btn-profile-primary" style="width: 100%; background: linear-gradient(135deg, #4A8577, #2A5A4E);">
-          <span>📋 Sao Chép Prompt Vào Bộ Nhớ Tạm</span>
+      <div class="profile-modal-actions prompt-modal-actions-row" style="margin-top: 14px;">
+        <button id="btn-copy-prompt-clipboard" type="button" class="btn-profile-primary btn-copy-prompt-flex">
+          <span>📋 Sao Chép Prompt</span>
         </button>
+        <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="btn-prompt-external-gemini" title="Mở Google Gemini để dán prompt và sinh ảnh trực tiếp">
+          <span>✨ Mở Gemini AI Để Test ↗</span>
+        </a>
       </div>
     </div>
   </div>

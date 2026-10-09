@@ -8,6 +8,7 @@ import {
 } from '../data/culturalTruths.ts';
 import { fetchStylingSuggestionsAPI } from '../services/api.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
+import { appRouter } from '../navigation/router.ts';
 
 export class GarmentEngine {
   // 1. Dáng Áo (bắt đầu null khi reset)
@@ -409,6 +410,16 @@ export class GarmentEngine {
         this.hideSanityAlert();
       });
     });
+
+    // Thông báo cho các thẻ cổ phục đang nghiên cứu di sản (Ra mắt sau)
+    const inactiveCards = document.querySelectorAll('.sheet-option-card-inactive');
+    inactiveCards.forEach((card) => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        Sound.playClick();
+        appRouter.showToast('⏳ Mẫu áo này đang trong quá trình khảo cứu di sản và sẽ ra mắt ở phiên bản tiếp theo!');
+      });
+    });
   }
 
   /**
@@ -548,9 +559,15 @@ export class GarmentEngine {
       this.triggerMiniGeminiGeneration();
     });
 
-    // 2. Nút Cập Nhật / Tạo Lại Gợi Ý AI ở dưới cùng (Trạng thái sau khi có kết quả)
+    // 2. Nút Thẩm Định Lại & Cập Nhật Gợi Ý AI (ở cuối panel và trên đỉnh cột AI)
     const btnBottomRetrigger = document.getElementById('btn-retrigger-mini-gemini');
     btnBottomRetrigger?.addEventListener('click', () => {
+      Sound.playChime();
+      this.triggerMiniGeminiGeneration();
+    });
+
+    const btnHeaderRetrigger = document.getElementById('btn-ai-header-retrigger');
+    btnHeaderRetrigger?.addEventListener('click', () => {
       Sound.playChime();
       this.triggerMiniGeminiGeneration();
     });

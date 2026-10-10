@@ -71,7 +71,7 @@ export class WardrobeManager {
         localStorage.setItem('viet_y_wardrobe', JSON.stringify(this.savedWardrobe));
       } catch {}
       this.updateWardrobeUI();
-      this.showToast(`❤️ Đã lưu "${outfit.title}" vào Tủ Đồ Yêu Thích! (+2 điểm Gu)`);
+      this.showToast(`❤️ Đã lưu "${outfit.title}" vào Tủ Đồ Yêu Thích!`);
     } else {
       this.showToast(`✨ "${outfit.title}" đã có sẵn trong Tủ Đồ.`);
     }

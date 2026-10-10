@@ -250,10 +250,19 @@ export class PatternEngine {
       });
     });
 
-    btnGenerate?.addEventListener('click', () => {
-      const keyword = (inputKeyword?.value || '').trim() || 'Hoa sen liên hoa, mây ngũ sắc thời Nguyễn';
-      Sound.playClick();
-      this.handleGenerateCreativePattern(keyword);
+    const btnInlineCopy = document.getElementById('btn-inline-copy-pattern-prompt');
+    btnInlineCopy?.addEventListener('click', () => {
+      const promptText = document.getElementById('gen-pattern-prompt-display')?.textContent;
+      if (promptText) {
+        navigator.clipboard.writeText(promptText).then(() => {
+          Sound.playChime();
+          const orig = btnInlineCopy.innerHTML;
+          btnInlineCopy.innerHTML = '<span>✓ Đã Sao Chép Prompt!</span>';
+          setTimeout(() => {
+            btnInlineCopy.innerHTML = orig;
+          }, 2000);
+        });
+      }
     });
 
     inputKeyword?.addEventListener('keydown', (e) => {

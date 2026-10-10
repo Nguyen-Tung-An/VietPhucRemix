@@ -152,16 +152,8 @@
     <div class="landing-content-frame">
       <!-- Cột Trái (Desktop) / Cụm Trên (Mobile) -->
       <div class="landing-text-column">
-        <div class="landing-brand-crest" aria-label="Biểu trưng Việt Y Remix">
-          <img
-            src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp"
-            alt="Việt Y Remix Hoàng Triều"
-            class="landing-brand-crest-logo"
-            title="Biểu trưng Việt Y Remix"
-          />
-          <div class="landing-badge">
-            <span>Di sản mềm mại · Gen Z remix</span>
-          </div>
+        <div class="landing-badge">
+          <span>Di sản mềm mại · Gen Z remix</span>
         </div>
 
         <header class="landing-header">
@@ -173,7 +165,7 @@
 
         <!-- CTA dành riêng cho giao diện Desktop (nằm ngay dưới chữ theo F-Pattern) -->
         <div class="landing-desktop-cta">
-          <div class="landing-cta-row">
+          <div class="landing-cta-column-group">
             <button id="btn-enter" class="btn-primary btn-landing-cta" aria-label="Khám phá ngay">
               <span>Khám Phá Di Sản</span>
               <svg class="btn-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1034,6 +1026,15 @@
           <div>
             <div style="font-size: 0.76rem; font-weight: 700; color: #6B4E2E; margin-bottom: 4px;">CÂU LỆNH PROMPT KỸ THUẬT SINH ẢNH ĐÃ ĐƯỢC HỆ THỐNG GHÉP NỐI:</div>
             <div id="gen-pattern-prompt-display" class="result-prompt-snippet"></div>
+          </div>
+          <!-- Nút thao tác trực tiếp bên ngoài không cần modal popup -->
+          <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+            <button type="button" id="btn-inline-copy-pattern-prompt" class="btn-primary" style="padding: 10px 18px; font-size: 0.86rem; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              <span>📋 Sao Chép Prompt Tạo Ảnh</span>
+            </button>
+            <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" id="btn-inline-open-gemini-pattern" class="btn-secondary" style="padding: 10px 18px; font-size: 0.86rem; border-radius: 10px; text-decoration: none; border: 1px solid rgba(74,133,119,0.35); background: rgba(74,133,119,0.08); color: #2A5A4E; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+              <span>✨ Mở Gemini AI Trực Tiếp</span>
+            </a>
           </div>
         </div>
       </section>

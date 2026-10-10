@@ -439,46 +439,7 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
   });
 });
 
-// Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI Vector Trực Tuyến
-app.post('/api/gemini/generate-pattern', async (req, res) => {
-  const { keyword, overlay_mode } = req.body;
-  const userKeyword = keyword || 'chiều mưa xứ Huế';
-  const userMode = overlay_mode || 'SEAMLESS_JACQUARD';
 
-  if (!AI_OFFLINE_MODE && ai) {
-    try {
-      const patternPrompt = `Bạn là Chuyên gia Đồ họa Di sản Dệt may Cổ phục Việt Nam.
-Hãy sáng tạo 1 hoa văn mỹ thuật vector (SVG path) thuần Việt lấy cảm hứng từ từ khóa: "${userKeyword}".
-Chế độ hiển thị: ${userMode}.
-
-Yêu cầu định dạng JSON chuẩn:
-{
-  "pattern_name": "Tên hoa văn thuần Việt (ví dụ: Gấm Dệt Kim Liên Ngự Đạo)",
-  "pattern_type": "${userMode}",
-  "svg_path_data": "Chuỗi SVG path d attribute hợp lệ (ví dụ: M 10,20 Q 25,5 40,20 ...)",
-  "pattern_color": "#E5A93C",
-  "pattern_story": "Ý nghĩa văn hóa và câu chuyện di sản của hoa văn bằng tiếng Việt"
-}`;
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-lite',
-        contents: patternPrompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.4
-        }
-      });
-      const parsed = JSON.parse(response.text || '{}');
-      if (parsed.pattern_name && parsed.svg_path_data) {
-        return res.json(parsed);
-      }
-    } catch (err: any) {
-      console.warn('Lỗi gọi Gemini Pattern Generation Online, dùng fallback local:', err?.message || err);
-    }
-  }
-
-  // Trả về hoa văn di sản nội bộ theo từ khóa
-  return res.json(getLocalPattern(userKeyword, userMode));
-});
 
 // Endpoint API Gemini Flash: Sáng Tạo Master Prompt Hoa Văn AI (Textile Motif Prompt Generator)
 app.post('/api/gemini/generate-pattern-prompt', async (req, res) => {
@@ -537,15 +498,7 @@ app.post('/api/gemini/synthesize-prompt-parts', async (req, res) => {
   return res.json(getOfflineSynthesizedPromptParts(input));
 });
 
-// Endpoint API Gemini/Imagen: Sinh Ảnh Lookbook Thời Trang AI - Chế độ Mock Bảo Vệ Quota
-app.post('/api/gemini/fashion-image', async (req, res) => {
-  const { prompt } = req.body;
-  const fashionPrompt = prompt || '';
 
-  // Trả về ảnh Lookbook thời trang di sản cao cấp tức thì (Zero quota consumption)
-  const editorialImage = generateEditorialLookbookDataUri(fashionPrompt);
-  return res.json({ imageUrl: editorialImage });
-});
 
 // Tích hợp Vite Dev Server Middlewares
 async function startServer() {

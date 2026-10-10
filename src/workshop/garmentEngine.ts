@@ -716,8 +716,8 @@ export class GarmentEngine {
     const workshopContainer = document.getElementById('workshop-container');
     if (workshopContainer) workshopContainer.classList.remove('has-ai-column');
 
-    // Chuyển về Tab 1 Dáng Áo để người dùng chiêm ngưỡng và tiếp tục tùy chỉnh
-    this.switchSheetTab('panel-garment');
+    // Chuyển về Tab 1 Dáng Áo (panel-garments) để người dùng không bị màn hình trống
+    this.switchSheetTab('panel-garments');
 
     // Cập nhật tiến độ
     this.checkOptionsProgress();

@@ -148,81 +148,56 @@
   padding: 16px 0;
 }
 
-/* Showcase Dải Lụa Bay Di Sản (Mobile & Desktop) - Khung chạm khắc Cửa Võng hoàng kim */
+/* Showcase Dải Lụa Bay Di Sản (Mobile & Desktop) - Kiểu hiện đại bo góc theo thiết kế mẫu */
 .landing-silk-showcase {
   position: relative;
-  width: clamp(230px, 62vw, 300px);
+  width: clamp(280px, 86vw, 440px);
+  aspect-ratio: 16 / 10;
   max-width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  background: radial-gradient(135% 125% at 50% 12%, rgba(255, 255, 255, 0.95) 0%, rgba(248, 245, 239, 0.8) 55%, rgba(232, 243, 238, 0.65) 100%);
-  border-radius: 6px;
-  --frame-width: 20px;
-  --frame-slice: 280;
-  border: var(--frame-width) solid transparent;
-  border-image: var(--asset-cua-vong) var(--frame-slice) / var(--frame-width) round;
-  box-shadow: 0 16px 44px -8px rgba(74, 133, 119, 0.28),
-              0 6px 20px -4px rgba(201, 166, 107, 0.22),
-              inset 0 0 0 1px rgba(201, 166, 107, 0.45);
+  background: #BCD7C6;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 16px 42px -10px rgba(74, 133, 119, 0.22);
   cursor: pointer;
   touch-action: manipulation;
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 0.3s ease,
-              filter 0.3s ease;
+              box-shadow 0.3s ease;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .landing-silk-showcase:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 24px 54px -10px rgba(74, 133, 119, 0.38),
-              0 10px 28px -4px rgba(201, 166, 107, 0.32),
-              inset 0 0 0 1.5px rgba(201, 166, 107, 0.65);
-  filter: drop-shadow(0 8px 24px rgba(74, 133, 119, 0.35));
+  transform: translateY(-4px);
+  box-shadow: 0 22px 52px -12px rgba(74, 133, 119, 0.32);
 }
 
 .landing-silk-showcase:active {
   transform: scale(0.98);
 }
 
-/* Vầng sáng hoàng kim & ngọc bích thở nhẹ phía sau */
+/* Vầng sáng ngọc bích hòa sắc tự nhiên */
 .landing-silk-glow {
   position: absolute;
-  inset: -18px;
-  border-radius: 32px;
-  background: radial-gradient(circle at 50% 50%, rgba(201, 166, 107, 0.28) 0%, rgba(74, 133, 119, 0.22) 50%, transparent 75%);
-  filter: blur(16px);
+  inset: -12px;
+  border-radius: 36px;
+  background: radial-gradient(circle at 50% 50%, rgba(188, 215, 198, 0.45) 0%, rgba(74, 133, 119, 0.15) 60%, transparent 75%);
+  filter: blur(14px);
   pointer-events: none;
   z-index: -1;
-  animation: silkGlowGentle 4.5s ease-in-out infinite alternate;
-}
-
-@keyframes silkGlowGentle {
-  0% {
-    transform: scale(0.96);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
 }
 
 /* Video Dải Lụa Bay (Focused element: video#landing-silk-video) */
 .landing-silk-video {
   width: 100%;
-  height: auto;
-  max-height: 330px;
-  aspect-ratio: 4 / 4.7;
+  height: 100%;
   object-fit: cover;
-  border-radius: 12px;
-  background: rgba(244, 201, 214, 0.08);
-  border: 1px solid rgba(201, 166, 107, 0.35);
-  box-shadow: inset 0 0 14px rgba(74, 133, 119, 0.15),
-              0 4px 14px rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   display: block;
 }
 
@@ -230,7 +205,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 24px;
 }
 
 /* Nút CTA Desktop: Mặc định ẩn trên Mobile */

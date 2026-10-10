@@ -14,7 +14,7 @@ import {
   synthesizePromptPartsWithGemini,
   getOfflineSynthesizedPromptParts,
 } from './server/culturalPipeline.ts';
-import { getColorCulturalAnalysis } from './src/data/culturalTruths.ts';
+import { getColorCulturalAnalysis, validateUserInputSanity } from './src/data/culturalTruths.ts';
 
 dotenv.config();
 
@@ -414,6 +414,26 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
     personality: personality || '',
   };
 
+  // Kiểm tra thuần phong mỹ tục và từ ngữ nhạy cảm trên nội dung tự nhập
+  for (const acc of contextPayload.custom_accessories) {
+    const check = validateUserInputSanity(acc, 'accessory');
+    if (!check.isValid) {
+      return res.status(400).json({
+        error: check.reason || `Phụ kiện "${acc}" chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.`,
+        isRejected: true
+      });
+    }
+  }
+  if (contextPayload.custom_hairstyle) {
+    const check = validateUserInputSanity(contextPayload.custom_hairstyle, 'hairstyle');
+    if (!check.isValid) {
+      return res.status(400).json({
+        error: check.reason || `Kiểu tóc "${contextPayload.custom_hairstyle}" chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.`,
+        isRejected: true
+      });
+    }
+  }
+
   // 1. Thử gọi Pipeline 2 vòng Gemini Online khi có kết nối
   if (!AI_OFFLINE_MODE && ai) {
     try {
@@ -441,11 +461,45 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
 
 
 
+// Endpoint API Kiểm Duyệt Nội Dung & Từ Ngữ Nhạy Cảm (Sanity & Profanity Filter API)
+app.post('/api/validate-content', (req, res) => {
+  const { text, type } = req.body || {};
+  const rawText = typeof text === 'string' ? text.trim() : '';
+  const itemType = type === 'hairstyle' ? 'hairstyle' : 'accessory';
+  const result = validateUserInputSanity(rawText, itemType);
+
+  if (!result.isValid) {
+    return res.status(200).json({
+      isValid: false,
+      isOffensive: result.isOffensive,
+      reason: result.reason || 'Nội dung chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+      sanitizedText: result.sanitizedText
+    });
+  }
+
+  return res.status(200).json({
+    isValid: true,
+    isOffensive: false,
+    sanitizedText: result.sanitizedText
+  });
+});
+
 // Endpoint API Gemini Flash: Sáng Tạo Master Prompt Hoa Văn AI (Textile Motif Prompt Generator)
 app.post('/api/gemini/generate-pattern-prompt', async (req, res) => {
   const { keyword, technique, garment, color_palette } = req.body;
+  const rawKeyword = keyword || 'Hoa sen liên hoa, mây ngũ sắc thời Nguyễn';
+
+  // Kiểm tra thuần phong mỹ tục và từ ngữ nhạy cảm ngay tại API
+  const sanity = validateUserInputSanity(rawKeyword, 'accessory');
+  if (!sanity.isValid) {
+    return res.status(400).json({
+      error: sanity.reason || 'Từ khóa chứa nội dung nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+      isRejected: true
+    });
+  }
+
   const params = {
-    keyword: keyword || 'Hoa sen liên hoa, mây ngũ sắc thời Nguyễn',
+    keyword: rawKeyword,
     technique: technique || 'Gấm chìm Jacquard',
     garment: garment || 'Áo Ngũ Thân Lập Lĩnh',
     colorHex: color_palette || '#E5A93C'

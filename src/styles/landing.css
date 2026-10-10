@@ -148,19 +148,19 @@
   padding: 16px 0;
 }
 
-/* Showcase Dải Lụa Bay Di Sản (Mobile & Desktop) - Kiểu hiện đại bo góc theo thiết kế mẫu */
+/* Showcase Dải Lụa Bay Di Sản (Mobile & Desktop) - Thu nhỏ lại một chút tinh tế */
 .landing-silk-showcase {
   position: relative;
-  width: clamp(280px, 86vw, 440px);
+  width: clamp(340px, 78vw, 520px);
   aspect-ratio: 16 / 10;
   max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #BCD7C6;
-  border-radius: 24px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 16px 42px -10px rgba(74, 133, 119, 0.22);
+  box-shadow: 0 22px 52px -10px rgba(74, 133, 119, 0.32);
   cursor: pointer;
   touch-action: manipulation;
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -263,12 +263,12 @@
   transform: scale(0.97);
 }
 
-.landing-cta-row {
+.landing-cta-column-group {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 14px;
   width: 100%;
-  flex-wrap: wrap;
+  max-width: 320px;
 }
 
 .btn-arrow-icon {
@@ -370,23 +370,24 @@
 
   /* Cột Phải: Khung Dải Lụa Bay Di Sản Desktop */
   .landing-hero-center {
-    flex: 1;
-    min-height: 440px;
+    flex: 1.35;
+    min-height: 480px;
     padding: 0;
     justify-content: center;
   }
 
   .landing-silk-showcase {
-    width: clamp(280px, 28vw, 340px);
+    width: clamp(620px, 58vw, 880px);
+    aspect-ratio: 16 / 10;
     padding: 16px;
     --frame-width: 24px;
-    box-shadow: 0 28px 64px -12px rgba(74, 133, 119, 0.35),
-                0 10px 28px -6px rgba(201, 166, 107, 0.28),
+    box-shadow: 0 32px 72px -12px rgba(74, 133, 119, 0.38),
+                0 14px 34px -6px rgba(201, 166, 107, 0.32),
                 inset 0 0 0 1.5px rgba(201, 166, 107, 0.55);
   }
 
   .landing-silk-video {
-    max-height: 380px;
+    max-height: 640px;
   }
 
   /* Ẩn footer nút bấm ở dưới cùng của Mobile */

@@ -12,13 +12,90 @@ import { compareEngine } from '../compare/compareEngine.ts';
 export class AppRouter {
   private hasInitialWorkshopLoaded = false;
   private isRemixing = false;
+  private pendingExitAction: (() => void) | null = null;
 
   public init(): void {
     this.setupSceneNavigation();
     this.setupTabs();
     this.setupMobileDropdown();
+    this.setupExitWorkshopModal();
     this.setupFeedbackDemos();
     this.setupProfileChips();
+  }
+
+  /**
+   * Kiểm tra xem người dùng có đang ở phiên làm việc xưởng phối có tiến trình chưa lưu:
+   * 1. Đang ở màn hình kết quả cuối cùng (#result-scene.scene-active)
+   * 2. Hoặc đang ở xưởng phối và đã tạo gợi ý phụ kiện AI / đang ở bước xem gợi ý kết quả
+   */
+  public isInActiveWorkshopSession(): boolean {
+    const isCreateActive = document.getElementById('create-scene')?.classList.contains('scene-active');
+    const isResultActive = document.getElementById('result-scene')?.classList.contains('scene-active');
+    if (!isCreateActive && !isResultActive) return false;
+
+    // 1. Đang ở màn hình kết quả cuối cùng
+    if (isResultActive) return true;
+
+    // 2. Đang ở màn hình xưởng phối và đang ở bước xem gợi ý kết quả phụ kiện hoặc đã có dữ liệu gợi ý
+    const isAIStylingPanel = document.getElementById('panel-ai-styling')?.classList.contains('active-panel');
+    const resultsWrap = document.getElementById('ai-styling-results-wrapper');
+    const isResultsVisible = resultsWrap && resultsWrap.style.display !== 'none';
+
+    if (
+      garmentEngine.hasGeneratedAISuggestions ||
+      garmentEngine.aiStylingData !== null ||
+      garmentEngine.lastValidatedDraft !== null ||
+      isResultsVisible ||
+      (isAIStylingPanel && Boolean(garmentEngine.selectedGarment && garmentEngine.selectedColor))
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Hiển thị pop-up cảnh báo thoát nếu đang có tiến trình xưởng phối chưa lưu
+   */
+  public confirmExitWorkshopIfActive(action: () => void): void {
+    if (this.isInActiveWorkshopSession()) {
+      this.pendingExitAction = action;
+      const modal = document.getElementById('exit-workshop-confirm-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        return;
+      }
+    }
+    action();
+  }
+
+  private setupExitWorkshopModal(): void {
+    const modal = document.getElementById('exit-workshop-confirm-modal');
+    const btnCancel = document.getElementById('btn-cancel-exit-workshop');
+    const btnConfirm = document.getElementById('btn-confirm-exit-workshop');
+
+    btnCancel?.addEventListener('click', () => {
+      Sound.playClick();
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+      }
+      this.pendingExitAction = null;
+    });
+
+    btnConfirm?.addEventListener('click', () => {
+      Sound.playClick();
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+      }
+      const act = this.pendingExitAction;
+      this.pendingExitAction = null;
+      if (act) {
+        act();
+      }
+    });
   }
 
   private setupMobileDropdown(): void {
@@ -54,12 +131,18 @@ export class AppRouter {
           | 'lookbook'
           | 'compare';
         if (targetTab) {
-          if (targetTab === 'compare') {
-            this.openCompare();
-          } else {
-            this.switchTab(targetTab);
-          }
           this.closeMobileDropdown();
+          if (targetTab === 'create') {
+            this.switchTab('create');
+          } else {
+            this.confirmExitWorkshopIfActive(() => {
+              if (targetTab === 'compare') {
+                this.openCompare();
+              } else {
+                this.switchTab(targetTab);
+              }
+            });
+          }
         }
       });
     });
@@ -67,13 +150,17 @@ export class AppRouter {
     dropdownHome?.addEventListener('click', () => {
       Sound.playClick();
       this.closeMobileDropdown();
-      document.getElementById('btn-nav-home')?.click();
+      this.confirmExitWorkshopIfActive(() => {
+        document.getElementById('btn-nav-home')?.click();
+      });
     });
 
     dropdownAdmin?.addEventListener('click', () => {
       Sound.playClick();
       this.closeMobileDropdown();
-      adminEngine.openAdminScene();
+      this.confirmExitWorkshopIfActive(() => {
+        adminEngine.openAdminScene();
+      });
     });
   }
 
@@ -254,6 +341,7 @@ export class AppRouter {
     const mainNavBar = document.getElementById('main-nav-bar');
     const btnNavHome = document.getElementById('btn-nav-home');
     const btnBackLanding = document.getElementById('btn-back-landing');
+    const btnBackLandingInsight = document.getElementById('btn-back-landing-insight');
     const enterButtons = document.querySelectorAll('.btn-landing-cta');
     const enterWorkshopButtons = document.querySelectorAll('.btn-landing-cta-workshop');
 
@@ -289,44 +377,7 @@ export class AppRouter {
     const silkShowcase = document.getElementById('landing-silk-showcase');
     silkShowcase?.addEventListener('click', handleEnterWorkshop);
 
-    // Bấm nút "Về Tiền Sảnh" từ topbar canvas
-    btnBackLanding?.addEventListener('click', () => {
-      Sound.playClick();
-      mainNavBar?.classList.remove('nav-active');
-      document.getElementById('create-scene')?.classList.remove('scene-active');
-      document.getElementById('discover-scene')?.classList.remove('scene-active');
-      document.getElementById('lookbook-scene')?.classList.remove('scene-active');
-      document.getElementById('result-scene')?.classList.remove('scene-active');
-      setTimeout(() => {
-        landingScene?.classList.remove('scene-hidden');
-      }, 150);
-    });
-
-    // Bấm xem Khám phá thực tế từ màn hình Kết quả (khi không có demo)
-    document.getElementById('btn-result-goto-discover')?.addEventListener('click', () => {
-      Sound.playClick();
-      document.getElementById('result-scene')?.classList.remove('scene-active');
-      setTimeout(() => {
-        this.switchTab('discover');
-      }, 150);
-    });
-
-    // Nút Back từ cột Insight (layout mới không có stage tier)
-    document.getElementById('btn-back-landing-insight')?.addEventListener('click', () => {
-      Sound.playClick();
-      mainNavBar?.classList.remove('nav-active');
-      document.getElementById('create-scene')?.classList.remove('scene-active');
-      document.getElementById('discover-scene')?.classList.remove('scene-active');
-      document.getElementById('lookbook-scene')?.classList.remove('scene-active');
-      document.getElementById('result-scene')?.classList.remove('scene-active');
-      setTimeout(() => {
-        landingScene?.classList.remove('scene-hidden');
-      }, 150);
-    });
-
-    // Bấm logo để về lại Tiền sảnh 3D
-    btnNavHome?.addEventListener('click', () => {
-      Sound.playClick();
+    const navigateHome = () => {
       mainNavBar?.classList.remove('nav-active');
       document.getElementById('create-scene')?.classList.remove('scene-active');
       document.getElementById('pattern-scene')?.classList.remove('scene-active');
@@ -336,6 +387,35 @@ export class AppRouter {
       setTimeout(() => {
         landingScene?.classList.remove('scene-hidden');
       }, 150);
+    };
+
+    // Bấm nút "Về Tiền Sảnh" từ topbar canvas
+    btnBackLanding?.addEventListener('click', () => {
+      Sound.playClick();
+      this.confirmExitWorkshopIfActive(navigateHome);
+    });
+
+    // Bấm xem Khám phá thực tế từ màn hình Kết quả (khi không có demo)
+    document.getElementById('btn-result-goto-discover')?.addEventListener('click', () => {
+      Sound.playClick();
+      this.confirmExitWorkshopIfActive(() => {
+        document.getElementById('result-scene')?.classList.remove('scene-active');
+        setTimeout(() => {
+          this.switchTab('discover');
+        }, 150);
+      });
+    });
+
+    // Nút Back từ cột Insight (layout mới không có stage tier)
+    btnBackLandingInsight?.addEventListener('click', () => {
+      Sound.playClick();
+      this.confirmExitWorkshopIfActive(navigateHome);
+    });
+
+    // Bấm logo để về lại Tiền sảnh 3D
+    btnNavHome?.addEventListener('click', () => {
+      Sound.playClick();
+      this.confirmExitWorkshopIfActive(navigateHome);
     });
   }
 
@@ -350,33 +430,41 @@ export class AppRouter {
 
     tabCreateBtn?.addEventListener('click', () => {
       Sound.playClick();
-      this.switchTab('create');
+      const isResultActive = document.getElementById('result-scene')?.classList.contains('scene-active');
+      if (isResultActive) {
+        this.confirmExitWorkshopIfActive(() => this.switchTab('create'));
+      } else {
+        const isCreateActive = document.getElementById('create-scene')?.classList.contains('scene-active');
+        if (!isCreateActive) {
+          this.switchTab('create');
+        }
+      }
     });
 
     tabPatternBtn?.addEventListener('click', () => {
       Sound.playClick();
-      this.switchTab('pattern');
+      this.confirmExitWorkshopIfActive(() => this.switchTab('pattern'));
     });
 
     tabDiscoverBtn?.addEventListener('click', () => {
       Sound.playClick();
-      this.switchTab('discover');
+      this.confirmExitWorkshopIfActive(() => this.switchTab('discover'));
     });
 
     tabLookbookBtn?.addEventListener('click', () => {
       Sound.playClick();
-      this.switchTab('lookbook');
+      this.confirmExitWorkshopIfActive(() => this.switchTab('lookbook'));
     });
 
     tabCompareBtn?.addEventListener('click', () => {
       Sound.playClick();
-      this.openCompare();
+      this.confirmExitWorkshopIfActive(() => this.openCompare());
     });
 
     // Nút mở so sánh từ Xưởng Phối
     document.getElementById('btn-workshop-compare')?.addEventListener('click', () => {
       Sound.playClick();
-      this.openCompare('current-workshop');
+      this.confirmExitWorkshopIfActive(() => this.openCompare('current-workshop'));
     });
 
     // Nút mở so sánh từ Lookbook header (dễ tiếp cận)

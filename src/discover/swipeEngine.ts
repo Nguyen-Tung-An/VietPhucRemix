@@ -251,31 +251,8 @@ export class SwipeEngine {
             <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 9999px; background: rgba(74,133,119,0.14); color: #2A5A4E; font-weight: 700; white-space: nowrap; flex-shrink: 0;">${outfit.creativityLevel || 35}% Phá cách</span>
           </div>
           <p class="card-short-desc">${outfit.desc}</p>
-          <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-card-inspect-detail" data-outfit-id="${outfit.id}" style="padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(74,133,119,0.3); background: rgba(255,255,255,0.92); color: #2A5A4E; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-              🔍 Xem Input & Prompt AI
-            </button>
-            <button type="button" class="btn-card-remix-action" data-outfit-id="${outfit.id}" style="padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(74,133,119,0.35); background: rgba(74,133,119,0.1); color: #2A5A4E; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-              🎨 Phối Mẫu Này
-            </button>
-          </div>
         </div>
       `;
-
-      card.querySelector('.btn-card-inspect-detail')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        lookbookEngine.openOutfitDetailModal(outfit as any);
-      });
-
-      card.querySelector('.btn-card-remix-action')?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        Sound.playChime();
-        if (this.onRemixCallback) {
-          this.onRemixCallback(outfit);
-        }
-      });
 
       if (index === 0) {
         this.attachSwipeHandlers(card, outfit);

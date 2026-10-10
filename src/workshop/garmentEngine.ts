@@ -176,8 +176,9 @@ export class GarmentEngine {
   }
 
   /**
-   * Khi người dùng chọn/đổi phụ kiện hoặc kiểu tóc trong Bước 4 (sau khi đã có gợi ý AI),
-   * cập nhật trực tiếp trạng thái kiểm duyệt văn hóa mà không khóa nút Xem Kết Quả.
+   * Khi người dùng chọn/đổi phụ kiện hoặc kiểu tóc trong Bước 4:
+   * Bất kỳ hành động thay đổi nào so với lần thẩm định gần nhất đều được ghi nhận
+   * và yêu cầu thẩm định lại trước khi xem kết quả.
    */
   public onStylingDetailSelectionChanged(): void {
     this.aiEnrichedComponents = null;
@@ -185,11 +186,76 @@ export class GarmentEngine {
     const allAccessories = [...this.selectedAccessories, ...this.customAccessories];
     const tabooCheck = checkMultipleStrictTaboos(truth.id, allAccessories);
 
+    // Kiểm tra xem tổ hợp phụ kiện & tóc hiện tại có khác với bản draft đã thẩm định không
+    let isDifferentFromDraft = true;
+    if (this.lastValidatedDraft) {
+      const draftAcc = this.lastValidatedDraft.accessories || [];
+      const draftCustomAcc = this.lastValidatedDraft.customAccessories || [];
+      const currentAcc = this.selectedAccessories || [];
+      const currentCustomAcc = this.customAccessories || [];
+
+      const accMatch =
+        draftAcc.length === currentAcc.length &&
+        draftAcc.every((a) => currentAcc.includes(a)) &&
+        draftCustomAcc.length === currentCustomAcc.length &&
+        draftCustomAcc.every((a) => currentCustomAcc.includes(a));
+
+      const hairMatch =
+        this.selectedHairstyle === this.lastValidatedDraft.hairstyle &&
+        this.customHairstyle === this.lastValidatedDraft.customHairstyle;
+
+      if (accMatch && hairMatch) {
+        isDifferentFromDraft = false;
+      }
+    }
+
+    const btnViewResult = document.getElementById('btn-view-result');
+    const btnViewResultText = document.getElementById('btn-view-result-text');
+    const btnRestore = document.getElementById('btn-restore-validated-draft');
+
+    if (isDifferentFromDraft) {
+      this.hasGeneratedAISuggestions = false;
+      this.needsReappraisal = true;
+
+      if (btnViewResult) {
+        btnViewResult.classList.add('btn-cta-pending');
+        btnViewResult.classList.remove('btn-cta-ready');
+        btnViewResult.setAttribute('title', 'Phụ kiện hoặc kiểu tóc đã thay đổi — Vui lòng nhấn nhờ AI tư vấn lại trước khi thẩm định');
+      }
+      if (btnViewResultText) {
+        btnViewResultText.textContent = '🔄 Cần Nhờ AI Tư Vấn Lại';
+      }
+      if (btnRestore && this.lastValidatedDraft) {
+        btnRestore.style.display = 'inline-flex';
+      }
+    } else {
+      this.hasGeneratedAISuggestions = true;
+      this.needsReappraisal = false;
+
+      if (btnViewResult) {
+        btnViewResult.classList.remove('btn-cta-pending');
+        btnViewResult.classList.add('btn-cta-ready');
+        btnViewResult.setAttribute('title', 'Bấm để xem kết quả thẩm định hoàn chỉnh');
+      }
+      if (btnViewResultText) {
+        btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+      }
+      if (btnRestore) {
+        btnRestore.style.display = 'none';
+      }
+    }
+
     const elGuardrailStatusPill = document.getElementById('ai-guardrail-status-pill');
     const elGuardrailFlag = document.getElementById('ai-guardrail-flag');
     const elGuardrailAdvice = document.getElementById('ai-guardrail-advice');
 
-    if (!tabooCheck.hasTaboo) {
+    if (isDifferentFromDraft) {
+      if (elGuardrailStatusPill) {
+        elGuardrailStatusPill.textContent = '⚠️ Đã Đổi — Cần Thẩm Định Lại';
+        elGuardrailStatusPill.style.background = 'rgba(201, 166, 107, 0.25)';
+        elGuardrailStatusPill.style.color = '#7A5338';
+      }
+    } else if (!tabooCheck.hasTaboo) {
       if (elGuardrailStatusPill) {
         elGuardrailStatusPill.textContent = '✓ Chuẩn Mực Di Sản';
         elGuardrailStatusPill.style.color = '#4A8577';
@@ -285,9 +351,15 @@ export class GarmentEngine {
    * bắt buộc phải nhấn thẩm định lại để AI kiểm tra quy chuẩn.
    */
   public onOutfitInputModified(): void {
-    if (this.hasGeneratedAISuggestions) {
+    if (this.hasGeneratedAISuggestions || this.needsReappraisal) {
       this.hasGeneratedAISuggestions = false;
       this.needsReappraisal = true;
+
+      // Xóa hiển thị kết quả phụ kiện cũ và đưa về nút Xem gợi ý ở giữa
+      const centerWrap = document.getElementById('ai-styling-center-trigger-wrap');
+      const resultsWrap = document.getElementById('ai-styling-results-wrapper');
+      if (centerWrap) centerWrap.style.display = 'flex';
+      if (resultsWrap) resultsWrap.style.display = 'none';
 
       const btnViewResult = document.getElementById('btn-view-result');
       const btnViewResultText = document.getElementById('btn-view-result-text');
@@ -393,7 +465,38 @@ export class GarmentEngine {
       }
     });
 
-    // 4. Ẩn nút khôi phục, đưa nút Xem Kết Quả về trạng thái Ready
+    // 4. Hiển thị lại khung kết quả phụ kiện và ẩn nút xem gợi ý ở giữa:
+    const centerTriggerWrap = document.getElementById('ai-styling-center-trigger-wrap');
+    const resultsWrapper = document.getElementById('ai-styling-results-wrapper');
+    if (centerTriggerWrap) centerTriggerWrap.style.display = 'none';
+    if (resultsWrapper) resultsWrapper.style.display = 'block';
+
+    // Mở lại cột AI bên cạnh:
+    const aiColumn = document.getElementById('workshop-ai-column');
+    const workshopContainer = document.getElementById('workshop-container');
+    if (aiColumn) aiColumn.style.display = 'flex';
+    if (workshopContainer) workshopContainer.classList.add('has-ai-column');
+
+    // Chuyển thẳng tới Tab 4 Phụ Kiện để người dùng thấy ngay danh sách đã phục hồi
+    this.switchSheetTab('panel-ai-styling');
+
+    // Render lại phụ kiện và tóc đã lưu
+    if (draft.aiData) {
+      this.aiStylingData = draft.aiData;
+      this.populateAISynthesisColumn(draft.aiData, null);
+      this.renderAccessoriesList(draft.aiData.accessories || []);
+      this.renderHairstylesList(draft.aiData.hairstyles || []);
+      this.renderStylistNote(draft.aiData.stylist_note);
+    } else {
+      // Dự phòng nếu draft chưa có aiData
+      this.triggerMiniGeminiGeneration();
+      return;
+    }
+
+    this.renderCustomAccessoriesChips();
+    this.updateSelectedAccessoriesCount();
+
+    // 5. Ẩn nút khôi phục, đưa nút Xem Kết Quả về trạng thái Ready
     const btnRestore = document.getElementById('btn-restore-validated-draft');
     if (btnRestore) btnRestore.style.display = 'none';
 
@@ -402,11 +505,18 @@ export class GarmentEngine {
     if (btnViewResult) {
       btnViewResult.classList.remove('btn-cta-pending');
       btnViewResult.classList.add('btn-cta-ready');
-      btnViewResult.setAttribute('title', 'Xem kết quả phối đồ di sản');
+      btnViewResult.setAttribute('title', 'Bấm để xem kết quả thẩm định hoàn chỉnh');
     }
     if (btnViewResultText) {
-      btnViewResultText.textContent = '✨ Xem Kết Quả Phối Đồ';
+      btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
     }
+
+    const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
+    if (retriggerBtn) retriggerBtn.classList.remove('tab-highlight-pulse');
+    const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');
+    if (centerTriggerBtn) centerTriggerBtn.classList.remove('tab-highlight-pulse');
+    const bottomRetriggerBtn = document.getElementById('btn-retrigger-mini-gemini');
+    if (bottomRetriggerBtn) bottomRetriggerBtn.classList.remove('tab-highlight-pulse');
 
     const statusPill = document.getElementById('ai-guardrail-status-pill');
     if (statusPill) {
@@ -415,14 +525,8 @@ export class GarmentEngine {
       statusPill.style.color = '#4A8577';
     }
 
-    if (draft.aiData) {
-      this.populateAISynthesisColumn(draft.aiData, null);
-      this.renderAccessoriesList(draft.aiData.accessories || []);
-      this.renderHairstylesList(draft.aiData.hairstyles || []);
-    }
-
     this.checkOptionsProgress();
-    appRouter.showToast('✨ Đã khôi phục tổ hợp đã thẩm định! Bạn có thể xem kết quả ngay mà không cần gọi lại AI.');
+    appRouter.showToast('✨ Đã khôi phục thành công tổ hợp đã thẩm định! Bạn có thể xem kết quả ngay.');
   }
 
   /**

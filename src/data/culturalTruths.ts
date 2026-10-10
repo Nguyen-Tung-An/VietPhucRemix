@@ -546,7 +546,7 @@ export interface InputSanityResult {
 
 export function validateUserInputSanity(
   rawInput: string,
-  _itemType?: 'accessory' | 'hairstyle'
+  _itemType?: 'accessory' | 'hairstyle' | 'pattern'
 ): InputSanityResult {
   if (!rawInput || typeof rawInput !== 'string') {
     return {
@@ -583,6 +583,45 @@ export function validateUserInputSanity(
   }
 
   const lower = cleaned.toLowerCase();
+  // Loại bỏ dấu câu và khoảng trắng đặc biệt để chuẩn hóa
+  const normalizedNoPunct = lower.replace(/[\s\.\-_,\+]+/g, ' ');
+  const collapsed = lower.replace(/[^a-zA-Z0-9àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/gi, '');
+
+  // 1. Danh sách cụm từ nhạy cảm đa âm tiết (kiểm tra chuỗi)
+  const MULTI_WORD_SENSITIVE = [
+    'dương vật', 'duong vat', 'duongvat', 'dương cụ', 'duong cu',
+    'âm vật', 'am vat', 'amvat', 'âm đạo', 'am dao', 'amdao',
+    'bộ phận sinh dục', 'sinh dục', 'sinh duc', 'sinhduc', 'tinh hoàn', 'tinh hoan',
+    'thủ dâm', 'thu dam', 'khiêu dâm', 'khieu dam', 'dâm dục', 'dam duc', 'dâm ô', 'dam o',
+    'ngực trần', 'nguc tran', 'nhũ hoa', 'nhu hoa', 'khỏa thân', 'khoa than', 'lõa thể', 'loa the', 'khoe hàng', 'khoe hang',
+    'con cu', 'chim cu', 'con cặc', 'con cac', 'bú cu', 'bu cu', 'bú lồn', 'bu lon'
+  ];
+
+  for (const term of MULTI_WORD_SENSITIVE) {
+    if (lower.includes(term) || normalizedNoPunct.includes(term) || (term.length >= 5 && collapsed.includes(term.replace(/\s+/g, '')))) {
+      return {
+        isValid: false,
+        isOffensive: true,
+        isNonsensical: false,
+        isNotRealItem: false,
+        reason: 'Nội dung chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+        sanitizedText: cleaned
+      };
+    }
+  }
+
+  // 2. Danh sách từ thô tục đơn âm tiết (BẮT BUỘC kiểm tra ranh giới từ để tránh bắt nhầm chữ như "hoàng gia", "du xuân", "ví dụ")
+  const SINGLE_WORD_REGEX = /\b(đụ|địt|chịch|nện|xoạc|lồn|cặc|buồi|cứt|bựa|vú|ỉa|đái|dit|chich|nen|xoac|lon|cac|buoi|cut|bua|penis|vagina|dick|cock|pussy|fuck|boobs|tits|bitch|asshole|nude|porn|dildo)\b/i;
+  if (SINGLE_WORD_REGEX.test(lower) || SINGLE_WORD_REGEX.test(normalizedNoPunct)) {
+    return {
+      isValid: false,
+      isOffensive: true,
+      isNonsensical: false,
+      isNotRealItem: false,
+      reason: 'Nội dung chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.',
+      sanitizedText: cleaned
+    };
+  }
 
   // Kiểm tra chuỗi lặp ký tự vô nghĩa (spam, ví dụ: aaaaa, zzzzz)
   if (/(.)\1{4,}/.test(lower)) {

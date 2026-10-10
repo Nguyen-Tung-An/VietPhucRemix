@@ -563,15 +563,27 @@ export function getOfflineMiniStylingSuggestions(context: {
     let skinEffect = '';
     if (skin) {
       if (skin.includes('Trắng hồng') || skin.includes('Trắng')) {
-        skinEffect = `Làn da ${skin} của bạn rất dễ tôn sắc phục; màu này tôn vẻ hồng hào tươi tắn, không làm bợt da.`;
+        if (s > 0.85 && l > 0.6) {
+          skinEffect = `Làn da ${skin} có thể chịu được sắc độ này, tuy nhiên gam màu quá rực có thể lấn át nhẹ thần thái tự nhiên. Bạn có thể cân bằng lại bằng cách phối phụ kiện tông trung tính dịu mắt.`;
+        } else {
+          skinEffect = `Làn da ${skin} rất dễ tôn sắc phục; màu sắc này tôn vẻ hồng hào tươi tắn, không làm bợt da.`;
+        }
       } else if (skin.includes('Bánh mật') || skin.includes('ngăm') || skin.includes('Nâu')) {
-        if (l > 0.6) {
-          skinEffect = `Tông màu tươi sáng tạo độ tương phản thời thượng với làn da ${skin} khỏe khoắn, giúp gương mặt bắt sáng rất tốt dưới nắng mai.`;
+        if ((l > 0.62 && s < 0.42) || (s > 0.78 && l > 0.45)) {
+          // Màu pastel nhờ nhợt hoặc neon chói gắt xung khắc với da ngăm
+          skinEffect = `Làn da ${skin} khỏe khoắn khi đi cùng sắc độ quá sáng nhờ nhợt hoặc quá rực chói có thể tạo độ tương phản gắt, dễ làm xỉn da hoặc khiến diện mạo bớt tươi tắn. Với nước da này, bạn nên ưu tiên các gam màu trầm ấm (như đỏ đỗ quyên, vàng hổ phách, xanh chàm thẫm) hoặc phối thêm lớp lót cổ trắng ngà để tôn làn da sáng rạng rỡ nhất.`;
         } else {
           skinEffect = `Tông màu trầm ấm này hòa hợp tuyệt đối với làn da ${skin}, tôn nét mặn mà, đằm thắm và sang trọng chuẩn phong vị Á Đông.`;
         }
+      } else if (skin.includes('Vàng sáng') || skin.includes('tái') || skin.includes('Tái') || skin.includes('Xanh')) {
+        if (h >= 45 && h <= 100 && s < 0.65) {
+          // Màu vàng úa hoặc xanh rêu bợt nhạt
+          skinEffect = `Làn da tông ${skin} khi diện gam màu này có thể tạo cảm giác gương mặt hơi nhợt nhạt và kém sinh khí. Bạn có thể phối thêm lớp lụa phụ tông hồng đào, đỏ son hoặc điểm chút son tươi để sắc diện rạng rỡ, bừng sáng sức sống.`;
+        } else {
+          skinEffect = `Tông da ${skin} kết hợp màu này tạo cảm giác trang nhã, diện mạo sáng sủa và thanh thoát.`;
+        }
       } else {
-        skinEffect = `Tông da ${skin} kết hợp màu này tạo cảm giác hài hòa, tươi sáng và không gây xỉn da.`;
+        skinEffect = `Tông da ${skin} kết hợp màu này tạo cảm giác hài hòa, tươi sáng tự nhiên.`;
       }
     } else {
       skinEffect = `Tông màu trang nhã, dễ phối và làm sáng gương mặt tự nhiên.`;
@@ -753,16 +765,22 @@ BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
 ${groundTruthContext}
 
 NGUYÊN TẮC BẮT BUỘC TUÂN THỦ:
-1. TÍNH NGHIÊM KHẮC VÀ BẢO CHỨNG DI SẢN:
-   - Bạn cần nghiêm khắc, cẩn trọng và chuẩn mực trong việc bảo tồn di sản cổ phục Việt Nam.
+1. TÍNH CHỦ ĐỘNG PHÁN ĐOÁN VĂN HÓA & BẢO CHỨNG DI SẢN:
+   - Bạn cần chủ động phán đoán và phân tích toàn diện tính hợp chuẩn văn hóa dựa trên kiến thức sâu rộng về văn hóa - lịch sử Việt Nam kết hợp cùng bộ Ground Truth di sản.
+   - Không được dễ dãi duyệt mọi tổ hợp: Nếu có sự khập khiễng giữa tính chất trang nghiêm của đại lễ triều đình và đồ bình dân, hoặc phụ kiện/kiểu tóc lệch vùng miền, lệch niên đại hay lệch phong vị: BẮT BUỘC đánh dấu is_safe = false trong cultural_guardrail, nêu rõ lý do cảnh báo nghiêm khắc và hướng dẫn thay thế chuẩn chỉnh.
    - Tuyệt đối KHÔNG hiền hoặc dễ dãi với các cách phối lai tạp, sai lệch niên đại hoặc xung đột văn hóa vùng miền (ví dụ: áo cung đình phối đồ dân dã sông nước, nón quai thao với áo ngũ thân/bà ba, khăn rằn với áo lễ cung đình).
-   - Nếu có nguy cơ xung đột hoặc phạm Strict Taboos, BẮT BUỘC đánh dấu is_safe = false trong cultural_guardrail, nêu rõ lý do cảnh báo nghiêm khắc và hướng dẫn thay thế chuẩn chỉnh.
-2. 100% TIẾNG VIỆT THUẦN TÚY:
+2. TRUNG THỰC VÀ LỊCH THIỆP VỀ TƯƠNG THÍCH MÀU DA & VÓC DÁNG (TUYỆT ĐỐI KHÔNG NỊNH):
+   - BẮT BUỘC trung thực, khách quan và nghiêm túc, TUYỆT ĐỐI KHÔNG nịnh hoặc khen một cách sáo rỗng bất kể người dùng chọn màu gì.
+   - Nếu màu sắc đã chọn KHÔNG hợp hoặc gây bất lợi cho màu da người dùng (ví dụ: Da bánh mật/ngăm nhưng chọn màu chói neon, màu vàng chanh nhạt, pastel quá bợt làm xỉn da; Da vàng tái/xanh xao nhưng chọn màu vàng úa, xanh rêu nhờ nhợt làm gương mặt bợt bạt thiếu sinh khí; Da trắng hồng nhưng chọn màu quá chói lóa gắt gỏng): PHẢI chân thành cảnh báo rõ ràng bằng giọng văn lịch thiệp, tinh tế, hòa nhã, tôn trọng và đề xuất ngay cách khắc phục hoặc gợi ý màu/phụ kiện hỗ trợ làm sáng diện mạo.
+   - Tương tự với vóc dáng và chiều cao: Đưa ra lời khuyên may đo thực tế, chỉ ra điểm cần lưu ý để tránh nuốt dáng hay dìm chiều cao.
+3. 100% TIẾNG VIỆT THUẦN TÚY:
    - Tất cả các nhãn (vibe_tag), tên phụ kiện, lý do văn hóa, nhận xét, lời khuyên và mô tả BẮT BUỘC 100% bằng TIẾNG VIỆT (ví dụ: 'Thanh Nhã', 'Đài Các', 'Cung Đình', 'Trang Trọng', 'Tự Nhiên', 'Cổ Điển', 'Đương Đại', 'Phóng Khoáng', 'Ý Nhị', 'Duyên Dáng', 'Mộc Mạc', 'Tinh Xảo', 'Trang Nghiêm').
    - TUYỆT ĐỐI KHÔNG DÙNG TỪ TIẾNG ANH như 'elegant', 'chic', 'vintage', 'modern', 'casual', 'classic'.
-3. THÔNG TIN ĐÃ KIỂM CHỨNG & TRÍCH DẪN:
+4. THÔNG TIN ĐÃ KIỂM CHỨNG & TRÍCH DẪN:
    - Chuẩn bị sẵn 3-4 thông tin văn hóa đã được kiểm chứng từ Ground Truth về loại áo đó đưa vào verified_heritage_facts.
-   - Trích dẫn chính xác URL thật từ Ground Truth vào mảng citations.`;
+   - Trích dẫn chính xác URL thật từ Ground Truth vào mảng citations.
+5. LƯU Ý MIỄN TRỪ TRÁCH NHIỆM AI:
+   - Ghi nhớ: "Gemini là một AI và có thể mắc sai sót. Hãy đối chiếu tài liệu cổ phong để có độ chuẩn xác tối đa." Luôn khiêm nhường và bám sát chứng cứ lịch sử.`;
 
   const round1UserPrompt = `Người dùng đang thiết kế bộ trang phục:
 - Loại áo: [${truth.id}] ${truth.name} (Xuất xứ: ${truth.originRegion}, Niên đại: ${truth.historicalEra})
@@ -1160,10 +1178,37 @@ export function runOfflineCulturalPipeline(input: CulturalRecommendationInput): 
     ...(input.custom_accessories || [])
   ];
 
+  // 2.1 Kiểm tra Sanity trên các phụ kiện và kiểu tóc tự nhập
+  let sanityFailed = false;
+  let sanityReason = '';
+  for (const acc of input.custom_accessories || []) {
+    const s = validateUserInputSanity(acc, 'accessory');
+    if (!s.isValid) {
+      sanityFailed = true;
+      sanityReason = s.reason || `Phụ kiện "${acc}" chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục.`;
+      break;
+    }
+  }
+  if (!sanityFailed && input.custom_hairstyle) {
+    const s = validateUserInputSanity(input.custom_hairstyle, 'hairstyle');
+    if (!s.isValid) {
+      sanityFailed = true;
+      sanityReason = s.reason || `Kiểu tóc "${input.custom_hairstyle}" chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục.`;
+    }
+  }
+
   // 3. Kiểm tra Strict Taboos với toàn bộ danh sách phụ kiện
   const tabooCheck = checkMultipleStrictTaboos(truth.id, allAccessories);
-  const hasRisk = tabooCheck.hasTaboo;
-  const conflicts = tabooCheck.taboos;
+  const hasRisk = tabooCheck.hasTaboo || sanityFailed;
+  const conflicts = [...tabooCheck.taboos];
+  if (sanityFailed) {
+    conflicts.unshift({
+      incompatibleWith: 'SENSITIVE_INPUT',
+      incompatibleName: 'Nội dung tự nhập không chuẩn mực',
+      historicalConflictReason: sanityReason,
+      suggestedAlternative: 'QUAT_GIAY'
+    });
+  }
 
   const primaryColor = input.primary_color || '#F4C9D6';
   const event = input.event || 'tet';
@@ -1326,14 +1371,16 @@ BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
 ${groundTruthContext}
 
 NGUYÊN TẮC HOẠT ĐỘNG PHÂN ĐỊNH RẠCH RÒI:
-1. ĐIỀU BẮT BUỘC TUÂN THỦ THEO GROUND TRUTH (KHÔNG ĐƯỢC SAI):
+1. ĐIỀU BẮT BUỘC TUÂN THỦ THEO GROUND TRUTH & PHÁN ĐOÁN VĂN HÓA CỦA AI:
    - Bạn PHẢI đối chiếu chính xác loại áo, niên đại, vùng miền và các đặc trưng cấu trúc từ Ground Truth.
-   - Kiểm tra toàn bộ danh sách phụ kiện (cả món có sẵn và món người dùng tự nhập) đối với danh sách 'QUY CHUẨN KIÊNG KỴ NGHIÊM NGẶT (STRICT TABOOS)':
-     + Nếu có phụ kiện thuộc danh sách kiêng kỵ (ví dụ: Áo Ngũ Thân Lập Lĩnh + Khăn Rằn, Áo Bà Ba + Nón Quai Thao, Áo Nhật Bình + Khăn Rằn), bạn PHẢI đánh dấu has_cultural_risk = true và nêu rõ lý do xung đột lịch sử.
-     + Nếu không vi phạm, đánh dấu has_cultural_risk = false.
+   - CHỦ ĐỘNG PHÁN ĐOÁN VĂN HÓA DỰA TRÊN TRI THỨC VÀ GROUND TRUTH:
+     + Không chỉ kiểm tra Strict Taboos, bạn phải sử dụng kiến thức sâu sắc của bản thân về lịch sử văn hóa Việt Nam để đánh giá xem tổ hợp áo, phụ kiện, kiểu tóc và bối cảnh sự kiện có thực sự chuẩn mực, ăn nhập và phù hợp tính chất (trang nghiêm vs bình dị, cung đình vs thường dân) hay không.
+     + Nếu có sự lai tạp bất hợp lý, lệch niên đại hay xung đột vùng miền, bạn PHẢI đánh dấu has_cultural_risk = true và nêu rõ lý do phân tích lịch sử.
+     + Nếu tổ hợp hoàn toàn chuẩn mực và tinh tế, đánh dấu has_cultural_risk = false.
    - KIỂM ĐỊNH THUẦN PHONG MỸ TỤC TRÊN NỘI DUNG TỰ NHẬP:
-     + Nếu phát hiện từ ngữ thô tục, báng bổ hoặc không phải phụ kiện/kiểu tóc có thật, đánh dấu has_cultural_risk = true và nêu rõ lý do.
+     + Nếu phát hiện từ ngữ thô tục, báng bổ, bộ phận sinh dục hoặc không phải phụ kiện/kiểu tóc có thật, đánh dấu has_cultural_risk = true và nêu rõ lý do từ chối.
    - BẮT BUỘC TRÍCH DẪN NGUỒN: Bạn PHẢI trích dẫn chính xác 'sourceUrl', 'title', 'author_or_institution' từ Ground Truth của loại trang phục đó vào mảng 'citations'. Tuyệt đối không bịa đặt link URL.
+   - LƯU Ý: Ghi nhớ "Gemini là một AI và có thể mắc sai sót. Hãy đối chiếu tài liệu cổ phong để có độ chuẩn xác tối đa."
 
 2. VÙNG SÁNG TẠO TỰ NHIÊN CỦA AI (CREATIVE FREEDOM):
    - Đánh giá sự hài hòa giữa màu sắc người dùng chọn, các phụ kiện đã chọn và kiểu tóc.

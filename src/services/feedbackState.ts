@@ -316,11 +316,7 @@ class FeedbackStateManager {
         <div class="lua-blob-loading-stage" aria-hidden="true">
           <div class="lua-silk-loading-blob">
             <div class="lua-blob-silk-sheen"></div>
-            <!-- Họa tiết tơ lụa mềm uốn lượn bên trong khối -->
-            <svg class="lua-blob-inner-wave" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 20,48 Q 50,25 80,48 Q 50,70 20,48 Z" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-              <circle cx="50" cy="48" r="3" fill="#C9A66B" />
-            </svg>
+            <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/loading-icon.webp" alt="Đang xử lý" class="lua-blob-loading-img" />
           </div>
         </div>
 

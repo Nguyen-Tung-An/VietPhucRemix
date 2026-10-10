@@ -6,6 +6,7 @@ import { appRouter } from '../navigation/router.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
 import { assetConfig } from '../config/assetConfig.ts';
 import { fetchPatternPromptAI } from '../services/api.ts';
+import { validateUserInputSanity } from '../data/culturalTruths.ts';
 
 export interface HeritagePatternEntry {
   id: string;
@@ -265,6 +266,17 @@ export class PatternEngine {
       }
     });
 
+    btnGenerate?.addEventListener('click', () => {
+      const keyword = inputKeyword?.value.trim() || '';
+      if (!keyword) {
+        appRouter.showToast('Vui lòng nhập cảm hứng hoặc hoa văn bạn muốn sáng tạo!');
+        inputKeyword?.focus();
+        return;
+      }
+      Sound.playClick();
+      this.handleGenerateCreativePattern(keyword);
+    });
+
     inputKeyword?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -277,6 +289,29 @@ export class PatternEngine {
    * Xử lý sinh ảnh hoa văn từ từ khóa người dùng (Gọi Gemini AI sinh Master Prompt & hiển thị Quota Notice cho BGK)
    */
   public async handleGenerateCreativePattern(userKeyword: string): Promise<void> {
+    const btnGenerate = document.getElementById('btn-creative-generate-pattern');
+    const inputKeyword = document.getElementById('custom-pattern-keyword') as HTMLInputElement | null;
+
+    // 1. Kiểm tra thuần phong mỹ tục và từ ngữ nhạy cảm ngay từ đầu
+    const sanity = validateUserInputSanity(userKeyword, 'pattern');
+    if (!sanity.isValid) {
+      Sound.playClick();
+      appRouter.showToast(`⚠️ ${sanity.reason || 'Từ khóa chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.'}`);
+      if (inputKeyword) {
+        inputKeyword.style.borderColor = '#C5534A';
+        inputKeyword.focus();
+        setTimeout(() => {
+          if (inputKeyword) inputKeyword.style.borderColor = '';
+        }, 3000);
+      }
+      return;
+    }
+
+    if (btnGenerate) {
+      btnGenerate.classList.add('loading-active');
+      btnGenerate.setAttribute('aria-busy', 'true');
+    }
+
     feedbackState.showLoading({
       message: 'Gemini AI đang sáng tạo Prompt hoa văn...',
       submessage: `Chuyển hóa cảm hứng "${userKeyword}" thành Master Prompt dệt may di sản...`,
@@ -315,6 +350,8 @@ export class PatternEngine {
           : `Hệ thống đã tự động chuyển hóa từ khóa "${userKeyword}" thành cấu trúc câu lệnh AI đồ họa chuyên sâu tương thích hoàn toàn với phom dáng ${this.selectedGarmentTarget}.`;
       }
 
+      appRouter.showToast('✨ Đã khởi tạo thành công Master Prompt hoa văn AI!');
+
       // Mở modal thông cáo Quota và Prompt dành riêng cho Ban Giám khảo
       this.openPromptInspectModal(aiResult.pattern_title || `Hoa Văn Sáng Tạo: ${userKeyword}`, assembledPrompt, 'HOA_VAN');
 
@@ -325,6 +362,11 @@ export class PatternEngine {
       feedbackState.hideLoading();
       const errorMsg = err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau!';
       appRouter.showToast(`⚠️ ${errorMsg}`);
+    } finally {
+      if (btnGenerate) {
+        btnGenerate.classList.remove('loading-active');
+        btnGenerate.removeAttribute('aria-busy');
+      }
     }
   }
 

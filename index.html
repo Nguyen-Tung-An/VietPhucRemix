@@ -736,6 +736,11 @@
             </div>
             <div id="ai-citations-mini-preview" style="margin-top: 8px; font-size: 0.72rem; color: #6B4E2E; border-top: 1px dotted rgba(201,166,107,0.3); padding-top: 6px;"></div>
           </article>
+
+          <!-- Ghi chú lưu ý mô hình AI nhỏ gọn -->
+          <div class="ai-model-disclaimer-note" style="font-size: 0.72rem; color: #7A7A72; font-style: italic; text-align: center; margin-top: 10px; padding: 6px 10px; border-top: 1px dashed rgba(74,133,119,0.22); line-height: 1.4;">
+            💡 <em>Lưu ý: Gemini là một mô hình AI và có thể mắc sai sót. Vui lòng đối chiếu với tài liệu nghiên cứu di sản khi cần độ chuẩn xác tuyệt đối.</em>
+          </div>
         </div>
       </section>
 
@@ -900,6 +905,10 @@
                       </p>
                     </div>
                   </div>
+                </div>
+
+                <div class="result-ai-disclaimer-note" style="margin-top: 12px; font-size: 0.72rem; color: #7A7A72; font-style: italic; text-align: center; line-height: 1.4;">
+                  💡 <em>Lưu ý: Gemini là một mô hình AI và có thể mắc sai sót. Vui lòng đối chiếu với tài liệu nghiên cứu di sản khi cần độ chuẩn xác tuyệt đối.</em>
                 </div>
               </div>
             </div>
@@ -1191,14 +1200,8 @@
               </p>
             </div>
 
-            <!-- Nút Hành Động Trực Tiếp trên Desktop -->
+            <!-- Hướng dẫn thao tác trên Desktop -->
             <div class="dossier-actions-footer">
-              <button type="button" id="btn-dossier-remix-now" class="btn-primary btn-dossier-action">
-                <span>🎨 Đưa Vào Xưởng Phối Ngay</span>
-              </button>
-              <button type="button" id="btn-dossier-view-prompt" class="btn-secondary btn-dossier-action" style="margin-top: 6px; width: 100%; border: 1px solid rgba(74,133,119,0.3); background: rgba(74,133,119,0.08); color: #2A5A4E; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <span>✨ Xem Cấu Trúc Input & Prompt AI Đầy Đủ</span>
-              </button>
               <div class="desktop-keyboard-shortcuts">
                 <span>Phím tắt: <strong>←</strong> Bỏ qua &nbsp;•&nbsp; <strong>Phím Cách</strong> Xáo lại &nbsp;•&nbsp; <strong>→</strong> Thích</span>
               </div>
@@ -1605,10 +1608,7 @@
       <div class="lua-blob-loading-stage" aria-hidden="true">
         <div class="lua-silk-loading-blob">
           <div class="lua-blob-silk-sheen"></div>
-          <svg class="lua-blob-inner-wave" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 20,48 Q 50,25 80,48 Q 50,70 20,48 Z" stroke="rgba(255,255,255,0.75)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-            <circle cx="50" cy="48" r="3.2" fill="#C9A66B" />
-          </svg>
+          <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/loading-icon.webp" alt="Đang xử lý" class="lua-blob-loading-img" />
         </div>
       </div>
 
@@ -2039,6 +2039,27 @@
       <div class="profile-modal-actions">
         <button id="btn-close-profile" type="button" class="btn-profile-secondary">Đóng</button>
         <button id="btn-save-profile" type="button" class="btn-profile-primary">Lưu Hồ Sơ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL CẢNH BÁO THOÁT XƯỞNG PHỐI (EXIT WORKSHOP CONFIRMATION MODAL)
+       ============================================================ -->
+  <div id="exit-workshop-confirm-modal" class="profile-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="exit-workshop-title">
+    <div class="profile-modal-card" style="max-width: 440px; text-align: center;">
+      <div style="font-size: 2.2rem; margin-bottom: 8px;">⚠️</div>
+      <h3 id="exit-workshop-title" style="margin: 0 0 8px 0; font-family: var(--font-title); font-size: 1.25rem; color: #2B2B28;">Rời Khỏi Xưởng Phối Đồ?</h3>
+      <p style="font-size: 0.88rem; color: #555; line-height: 1.55; margin: 0 0 20px 0;">
+        Bạn sắp sửa thoát màn hình xưởng phối và hiện tại thì tiến trình của bạn sẽ không được lưu.
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" id="btn-cancel-exit-workshop" class="btn-profile-secondary" style="flex: 1; padding: 11px 16px; font-weight: 600;">
+          Ở Lại Xưởng Phối
+        </button>
+        <button type="button" id="btn-confirm-exit-workshop" class="btn-profile-primary" style="flex: 1; padding: 11px 16px; background: #C5534A; border-color: #B23B32; font-weight: 600;">
+          Rời Khỏi
+        </button>
       </div>
     </div>
   </div>

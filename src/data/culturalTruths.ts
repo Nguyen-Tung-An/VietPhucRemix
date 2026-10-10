@@ -131,16 +131,30 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
     culturalSignificance: '5 thân áo mang triết lý Tứ Thân Phụ Mẫu (cha mẹ mình và cha mẹ người phối ngẫu) ôm lấy thân con bên trong thể hiện Đạo Hiếu. 5 hạt cúc biểu trưng cho Ngũ Thường (Nhân - Lễ - Nghĩa - Trí - Tín) và Ngũ Luân đạo làm người.',
     sourceTitle: 'Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam giai đoạn 1009–1945',
     authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Nhà nghiên cứu Trần Quang Đức',
-    sourceUrl: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu-cong-trinh-nghien-cuu-trang-phuc-viet-nam.html',
+    sourceUrl: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu.html',
     sourceReferenceNote: 'Chương 5: Trang phục thời Nguyễn — Tiêu chuẩn hóa Áo Ngũ Thân thời Minh Mạng',
     publicationYear: 2013,
     sources: [
       {
-        title: 'Ngàn Năm Áo Mũ — Lịch sử trang phục Việt Nam giai đoạn 1009–1945',
-        authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Trần Quang Đức',
-        url: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu-cong-trinh-nghien-cuu-trang-phuc-viet-nam.html',
-        note: 'Chương 5: Chuẩn hóa Áo Ngũ Thân Lập Lĩnh thời vua Minh Mạng (1827-1837)',
+        title: 'Ngàn Năm Áo Mũ — Giới thiệu ấn phẩm nghiên cứu',
+        authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia',
+        url: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu.html',
+        note: 'Bài giới thiệu chuyên đề của Thư viện Bảo tàng Lịch sử Quốc gia',
         year: 2013
+      },
+      {
+        title: 'Áo Dài Ngũ Thân — Hành Trình Trở Lại',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/ao-dai-ngu-than-hanh-trinh-tro-lai/',
+        note: 'Khảo cứu về nguồn gốc Áo ngũ thân từ thời chúa Nguyễn Phúc Khoát (1744)',
+        year: 2024
+      },
+      {
+        title: 'Lễ trao tặng áo dài ngũ thân truyền thống nhân Ngày Di sản Văn hóa',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/le-trao-tang-ao-dai-ngu-than-truyen-thong-nhan-ngay-di-san-van-hoa-23-thang-11/',
+        note: 'Tư liệu cấu trúc 5 thân, 5 cúc và kỹ thuật may chẽn truyền thống',
+        year: 2021
       },
       {
         title: 'Đại Nam Thực Lục Chính Biên — Quy chế Y phục Triều Nguyễn',
@@ -148,20 +162,6 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
         url: 'https://vi.wikipedia.org/wiki/%C4%90%E1%BA%A1i_Nam_th%E1%BB%B1c_l%E1%BB%A5c',
         note: 'Đệ nhị kỷ: Chỉ dụ định chế y phục từ năm Minh Mạng thứ 8 đến thứ 18',
         year: 1844
-      },
-      {
-        title: 'Trang phục triều Nguyễn — Nghiên cứu di sản Cổ vật Huế',
-        authorOrInstitution: 'Trung tâm Bảo tồn Di tích Cố đô Huế',
-        url: 'https://hueworldheritage.org.vn/',
-        note: 'Bộ sưu tập Áo Dài Ngũ Thân quan lại và thường dân xứ Huế',
-        year: 2021
-      },
-      {
-        title: 'Áo Dài Ngũ Thân — Nét văn hiến và bản sắc dân tộc Việt Nam',
-        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
-        url: 'https://baotangphunu.com/',
-        note: 'Tư liệu hiện vật áo năm thân truyền thống thế kỷ 19-20',
-        year: 2020
       }
     ]
   },
@@ -193,11 +193,27 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Ống tay thụng rộng khi chắp tay hành lễ tạo nên phong thái khiêm nhường, kính cẩn trước tổ tiên và thần linh, biểu thị sự viên mãn và lễ nghi phép tắc.',
-    sourceTitle: 'Nghi lễ và Quy chế Y phục Cung đình Triều Nguyễn',
-    authorOrInstitution: 'Trung tâm Bảo tồn Di tích Cố đô Huế',
-    sourceUrl: 'https://hueworldheritage.org.vn/',
-    sourceReferenceNote: 'Quy chuẩn lễ phục Áo Tấc trong các nghi thức cung đình và gia lễ truyền thống',
-    publicationYear: 2007
+    sourceTitle: 'Muốn tôn vinh áo dài, cần hiểu đúng — Nghiên cứu về Áo Ngũ Thân và Áo Tấc',
+    authorOrInstitution: 'Báo Quân đội nhân dân & TS. Phan Thanh Hải (Nguyên GĐ TT Bảo tồn Di tích Cố đô Huế)',
+    sourceUrl: 'https://www.qdnd.vn/cuoi-tuan/dien-dan/muon-ton-vinh-ao-dai-can-hieu-dung-656360',
+    sourceReferenceNote: 'Khảo luận chuyên sâu về quy chế phân biệt Áo tấc (tay rộng làm lễ phục) và Áo ngũ thân tay chẽn (thường phục)',
+    publicationYear: 2021,
+    sources: [
+      {
+        title: 'Muốn tôn vinh áo dài, cần hiểu đúng',
+        authorOrInstitution: 'TS. Phan Thanh Hải — Giám đốc Sở VHTT Thừa Thiên Huế',
+        url: 'https://www.qdnd.vn/cuoi-tuan/dien-dan/muon-ton-vinh-ao-dai-can-hieu-dung-656360',
+        note: 'Khảo cứu về sự phục hồi của Áo Tấc trong nghi lễ truyền thống',
+        year: 2021
+      },
+      {
+        title: 'Bộ sưu tập áo dài phụ nữ Việt Nam',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/bo-suu-tap-ao-dai-phu-nu-viet-nam/',
+        note: 'Khảo sát kiểu áo năm thân tay rộng và tay hẹp thời Nguyễn',
+        year: 2022
+      }
+    ]
   },
 
   AO_NHAT_BINH: {
@@ -227,11 +243,27 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Mỗi họa tiết trên nẹp cổ và sắc màu áo phân định phẩm hàm tôn ti trật tự chốn hoàng triều, là đỉnh cao mỹ thuật thêu tay cung đình Việt Nam.',
-    sourceTitle: 'Khảo Cứu Về Trang Phục Triều Nguyễn',
-    authorOrInstitution: 'Nhà nghiên cứu Trần Đình Sơn & Trung tâm Bảo tồn Di tích Cố đô Huế',
-    sourceUrl: 'https://hueworldheritage.org.vn/',
-    sourceReferenceNote: 'Chương: Phẩm phục Cung闱 — Quy chế may thêu và màu sắc Áo Nhật Bình',
-    publicationYear: 2012
+    sourceTitle: 'Áo Nhật Bình — Tư liệu Cổ phục Cung đình Triều Nguyễn',
+    authorOrInstitution: 'Wikipedia tiếng Việt & Tư liệu Khâm Định Đại Nam Hội Điển Sự Lệ',
+    sourceUrl: 'https://vi.wikipedia.org/wiki/%C3%81o_Nh%E1%BA%ADt_b%C3%ACnh',
+    sourceReferenceNote: 'Mục: Lịch sử, quy chế phẩm hàm màu sắc và phụ kiện khăn vành đi kèm',
+    publicationYear: 2023,
+    sources: [
+      {
+        title: 'Áo Nhật bình — Điển chế phục trang Cung đình',
+        authorOrInstitution: 'Wikipedia tiếng Việt',
+        url: 'https://vi.wikipedia.org/wiki/%C3%81o_Nh%E1%BA%ADt_b%C3%ACnh',
+        note: 'Tổng hợp quy chế phẩm phục hậu phi triều Nguyễn',
+        year: 2023
+      },
+      {
+        title: 'Ao Dai Nhat Binh: Elevating Vietnamese Tradition with Timeless Elegance',
+        authorOrInstitution: 'Khám Phá Huế (Trung tâm Công nghệ Thông tin TT-Huế)',
+        url: 'https://khamphahue.com.vn/en-us/culture/culture-folk/ao-dai-nhat-binh-elevating-vietnamese-tradition-with-timeless-elegance',
+        note: 'Tư liệu chi tiết về cổ nẹp hình chữ nhật và dải ngũ sắc tay áo',
+        year: 2023
+      }
+    ]
   },
 
   AO_TU_THAN: {
@@ -255,11 +287,27 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Tôn vinh vẻ đẹp khỏe khoắn, cần lao mà ý nhị, kín đáo của người phụ nữ nông thôn phương Bắc với hình ảnh nụ cười hàm tiếu sau vành nón quai thao.',
-    sourceTitle: 'Không gian Di sản Văn hóa Dân gian Nữ xứ Bắc',
+    sourceTitle: 'Dân ca Quan họ Bắc Ninh — Di sản Văn hóa Phi vật thể Đại diện của Nhân loại',
     authorOrInstitution: 'Cục Di sản Văn hóa — Bộ Văn hóa, Thể thao và Du lịch',
-    sourceUrl: 'http://dsvh.gov.vn/',
-    sourceReferenceNote: 'Chuyên khảo: Nếp mặc truyền thống trong hội làng Bắc Bộ',
-    publicationYear: 2018
+    sourceUrl: 'https://dsvh.gov.vn/dan-ca-quan-ho-bac-ninh-1191',
+    sourceReferenceNote: 'Mục: Không gian văn hóa & Trang phục truyền thống (Áo mớ ba mớ bảy, áo tứ thân, nón quai thao)',
+    publicationYear: 2012,
+    sources: [
+      {
+        title: 'Hồ sơ Di sản Dân ca Quan họ Bắc Ninh',
+        authorOrInstitution: 'Cục Di sản Văn hóa',
+        url: 'https://dsvh.gov.vn/dan-ca-quan-ho-bac-ninh-1191',
+        note: 'Quy chuẩn trang phục liền chị trong không gian văn hóa quan họ',
+        year: 2012
+      },
+      {
+        title: 'Áo Tứ Thân — Trang phục truyền thống phụ nữ Bắc Bộ',
+        authorOrInstitution: 'Wikipedia tiếng Việt',
+        url: 'https://vi.wikipedia.org/wiki/%C3%81o_t%E1%BB%A9_th%C3%A2n',
+        note: 'Cấu tạo sống áo, yếm, dải lưng điều và nón quai thao',
+        year: 2023
+      }
+    ]
   },
 
   AO_BA_BA: {
@@ -290,11 +338,27 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Gắn liền với tính cách hào sảng, chân chất, đôn hậu của con người phương Nam giữa sông nước miệt vườn mênh mông phù sa.',
-    sourceTitle: 'Bộ sưu tập Di sản Áo Bà Ba và Khăn Rằn trong Đời sống Phụ nữ Nam Bộ',
+    sourceTitle: 'Chiếc Khăn Rằn và Trang phục Áo Bà Ba trong Đời sống Phụ nữ Nam Bộ',
     authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
-    sourceUrl: 'https://baotangphunu.com/',
-    sourceReferenceNote: 'Khu trưng bày chuyên đề: Trang phục phụ nữ miền sông nước Cửu Long',
-    publicationYear: 2020
+    sourceUrl: 'https://baotangphunu.com/chiec-khan-ran-cua-me-viet-nam-anh-hung-nguyen-thi-sang/',
+    sourceReferenceNote: 'Hiện vật và khảo luận: Chiếc áo bà ba đi cùng khăn rằn ô vuông truyền thống',
+    publicationYear: 2013,
+    sources: [
+      {
+        title: 'Chiếc khăn rằn của Mẹ Việt Nam Anh hùng Nguyễn Thị Sáng',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/chiec-khan-ran-cua-me-viet-nam-anh-hung-nguyen-thi-sang/',
+        note: 'Tư liệu hiện vật áo bà ba và khăn rằn truyền thống Nam Bộ',
+        year: 2013
+      },
+      {
+        title: 'Áo bà ba — Trang phục dân dã Nam Bộ',
+        authorOrInstitution: 'Wikipedia tiếng Việt',
+        url: 'https://vi.wikipedia.org/wiki/%C3%81o_b%C3%A0_ba',
+        note: 'Lịch sử xuất xứ, phom dáng xẻ tà hai bên hông và túi áo',
+        year: 2023
+      }
+    ]
   },
 
   AO_DAI_LEMUR: {
@@ -318,12 +382,29 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Dấu mốc vàng son của cuộc cách tân mỹ thuật phục trang Việt Nam, kết hợp tinh hoa phương Đông và hơi thở thời đại.',
-    sourceTitle: 'Lịch sử Áo Dài Việt Nam — Từ Áo Ngũ Thân Đến Tân Thời',
-    authorOrInstitution: 'Bảo tàng Phụ nữ Việt Nam',
-    sourceUrl: 'https://baotangphunu.org.vn/',
-    sourceReferenceNote: 'Chuyên đề: Cải cách y phục Áo Dài thập niên 1930 phong trào Tự Lực Văn Đoàn',
-    publicationYear: 2019
+    sourceTitle: 'Bộ Sưu Tập Áo Dài Phụ Nữ Việt Nam — Tiến trình Cải cách Y phục Tân thời',
+    authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+    sourceUrl: 'https://baotangphunu.com/bo-suu-tap-ao-dai-phu-nu-viet-nam/',
+    sourceReferenceNote: 'Mục: Giai đoạn 1932–1934 họa sĩ Cát Tường và Lê Phổ thiết kế áo dài Lemur cải cách từ áo ngũ thân',
+    publicationYear: 2022,
+    sources: [
+      {
+        title: 'Bộ sưu tập áo dài phụ nữ Việt Nam qua các thời kỳ',
+        authorOrInstitution: 'Bảo tàng Phụ nữ Nam Bộ',
+        url: 'https://baotangphunu.com/bo-suu-tap-ao-dai-phu-nu-viet-nam/',
+        note: 'Tư liệu chi tiết về cuộc cách tân áo dài Le Mur thập niên 1930',
+        year: 2022
+      },
+      {
+        title: 'Lemur Cát Tường và Lịch sử Áo Dài Tân Thời',
+        authorOrInstitution: 'Wikipedia tiếng Việt',
+        url: 'https://vi.wikipedia.org/wiki/Lemur_C%C3%A1t_T%C6%B0%E1%BB%9Dng',
+        note: 'Tiểu sử họa sĩ Nguyễn Cát Tường và trào lưu áo dài trên tuần báo Phong Hóa',
+        year: 2023
+      }
+    ]
   },
+
   AO_GIAO_LINH: {
     id: 'AO_GIAO_LINH',
     name: 'Áo Giao Lĩnh (Cổ Chéo)',
@@ -346,11 +427,27 @@ export const CULTURAL_DATABASE: CulturalDatabase = {
       }
     ],
     culturalSignificance: 'Biểu trưng cho nếp cổ phong ngàn năm văn hiến, thể hiện khí phách đoan chính và chuẩn mực văn hóa Đại Việt thời Lê.',
-    sourceTitle: 'Ngàn Năm Áo Mũ — Trang phục triều Lý, Trần, Lê',
+    sourceTitle: 'Ngàn Năm Áo Mũ — Khảo cứu Trang phục Triều Lý, Trần, Lê',
     authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia & Trần Quang Đức',
-    sourceUrl: 'https://baotanglichsu.vn/',
-    sourceReferenceNote: 'Chương 3 & 4: Y phục thời Hậu Lê — Quy chế Áo Giao Lĩnh và Tràng Vạt',
-    publicationYear: 2013
+    sourceUrl: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu.html',
+    sourceReferenceNote: 'Chương 3 & 4: Y phục triều Hậu Lê — Phân tích chi tiết quy chế Áo Giao Lĩnh và Tràng Vạt',
+    publicationYear: 2013,
+    sources: [
+      {
+        title: 'Ngàn Năm Áo Mũ',
+        authorOrInstitution: 'Bảo tàng Lịch sử Quốc gia',
+        url: 'https://baotanglichsu.vn/vi/Articles/3097/16382/ngan-nam-ao-mu.html',
+        note: 'Tài liệu Thư viện BTLSQG về cấu trúc áo giao lĩnh Đại Việt',
+        year: 2013
+      },
+      {
+        title: 'Giao Lĩnh — Cổ phục truyền thống',
+        authorOrInstitution: 'Wikipedia tiếng Việt',
+        url: 'https://vi.wikipedia.org/wiki/Giao_l%C4%A9nh',
+        note: 'Khảo cứu về dạng thức cổ chéo chữ Y và cách mặc vạt trái đè vạt phải',
+        year: 2023
+      }
+    ]
   }
 };
 

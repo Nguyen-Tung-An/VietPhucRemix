@@ -189,36 +189,11 @@ export class LookbookEngine {
   }
 
   /**
-   * 4. Xử lý chia sẻ Lookbook qua Floating Button
+   * 4. Xử lý chia sẻ Lookbook qua Floating Button (Tính năng đang phát triển)
    */
   private handleShareLookbook(): void {
-    Sound.playChime();
-    const count = wardrobeManager.savedWardrobe.length;
-
-    feedbackState.showLoading({
-      message: 'Đang chuẩn bị thiệp Lookbook...',
-      submessage: `Tổng hợp ${count} bộ tơ lụa di sản để chia sẻ cùng bạn bè...`
-    });
-
-    setTimeout(() => {
-      feedbackState.hideLoading();
-
-      const shareData = {
-        title: 'Lụa Là Gấm Vóc — Rương Gấm',
-        text: `Ghé xem ${count} tà áo cổ phục đương đại tôi vừa lưu giữ trong Rương Gấm trên Lụa Là Gấm Vóc nhé!`,
-        url: window.location.href
-      };
-
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-        navigator.share(shareData).catch(() => {});
-      } else {
-        // Sao chép liên kết vào Clipboard
-        try {
-          navigator.clipboard.writeText(window.location.href);
-        } catch {}
-        appRouter.showToast('Đã sao chép liên kết chia sẻ Rương Gấm của bạn.');
-      }
-    }, 700);
+    Sound.playClick();
+    appRouter.showToast('Tính năng chia sẻ Rương Gấm đang được phát triển và sẽ ra mắt trong phiên bản tiếp theo, vui lòng thử lại sau!');
   }
 
   private currentDetailOutfit: WardrobeItem | null = null;

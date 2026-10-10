@@ -5,7 +5,7 @@ import { assetConfig } from '../config/assetConfig.ts';
 import { CURATED_18_OUTFITS } from '../data/curatedOutfits.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { getCulturalTruth, checkStrictTaboo } from '../data/culturalTruths.ts';
-
+import { renderIcon } from '../icons/iconSystem.ts';
 
 export interface EventContext {
   key: string;
@@ -14,11 +14,11 @@ export interface EventContext {
 }
 
 export const DISCOVERY_CONTEXTS: EventContext[] = [
-  { key: 'all', name: 'Tất cả 18 bộ', icon: '✨' },
-  { key: 'tet', name: 'Dạo phố Tết', icon: '🌸' },
-  { key: 'festival', name: 'Lễ hội & Cung đình', icon: '🏮' },
-  { key: 'grad', name: 'Lễ tốt nghiệp', icon: '🎓' },
-  { key: 'yearbook', name: 'Kỷ yếu & Nghệ thuật', icon: '📷' }
+  { key: 'all', name: 'Tất cả 18 bộ', icon: 'sparkles' },
+  { key: 'tet', name: 'Dạo phố Tết', icon: 'calendar' },
+  { key: 'festival', name: 'Lễ hội & Cung đình', icon: 'landmark' },
+  { key: 'grad', name: 'Lễ tốt nghiệp', icon: 'graduationCap' },
+  { key: 'yearbook', name: 'Kỷ yếu & Nghệ thuật', icon: 'camera' }
 ];
 
 export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = CURATED_18_OUTFITS;
@@ -70,9 +70,9 @@ export class SwipeEngine {
     const nameEl = document.getElementById('active-context-name');
     const desktopIconEl = document.getElementById('desktop-context-icon');
     const desktopNameEl = document.getElementById('desktop-context-name');
-    if (iconEl) iconEl.textContent = foundContext.icon;
+    if (iconEl) iconEl.innerHTML = renderIcon(foundContext.icon, { size: 14 });
     if (nameEl) nameEl.textContent = foundContext.name;
-    if (desktopIconEl) desktopIconEl.textContent = foundContext.icon;
+    if (desktopIconEl) desktopIconEl.innerHTML = renderIcon(foundContext.icon, { size: 14 });
     if (desktopNameEl) desktopNameEl.textContent = foundContext.name;
 
     // Lọc deck theo bối cảnh
@@ -130,7 +130,7 @@ export class SwipeEngine {
     const stylingEl = document.getElementById('dossier-spec-styling');
     const adviceEl = document.getElementById('dossier-remix-advice');
 
-    if (creatorEl) creatorEl.textContent = `✨ Phối bởi: ${outfit.creatorName || 'Cộng đồng Việt Y Remix'}`;
+    if (creatorEl) creatorEl.textContent = `Phối bởi: ${outfit.creatorName || 'Cộng đồng Lụa Là Gấm Vóc'}`;
     if (titleEl) titleEl.textContent = outfit.title;
     if (descEl) descEl.textContent = outfit.desc;
 
@@ -222,7 +222,7 @@ export class SwipeEngine {
 
       card.innerHTML = `
         <div class="card-inner-top" style="justify-content: flex-end;">
-          <span class="card-tag-subtle">📍 ${outfit.bestOccasion || outfit.eventLabel}</span>
+          <span class="card-tag-subtle">${outfit.bestOccasion || outfit.eventLabel}</span>
         </div>
 
         <div class="card-illustration-box">
@@ -231,7 +231,9 @@ export class SwipeEngine {
               <img src="${resolvedCardImg}" data-fallback-src="${fallbackRawGithubImg}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
             ` : ''}
             <div class="card-no-image-placeholder" style="display: ${resolvedCardImg ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 16px; width: 100%; height: 100%; box-sizing: border-box;">
-              <div style="font-size: 3rem; opacity: 0.4;">🏛️</div>
+              <div style="opacity: 0.75;">
+                <img class="seal-badge" src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" alt="Lụa Là Gấm Vóc" style="width: 44px; height: 44px;" />
+              </div>
               <p style="font-family: var(--font-body); font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.5; max-width: 220px; margin: 0;">
                 Tổ hợp này chưa có ảnh minh họa demo.
               </p>
@@ -241,7 +243,7 @@ export class SwipeEngine {
             </div>
           </div>
 
-          <div class="card-stamp-feedback card-stamp-like">THÍCH</div>
+          <div class="card-stamp-feedback card-stamp-like">LƯU LẠI</div>
           <div class="card-stamp-feedback card-stamp-dislike">BỎ QUA</div>
         </div>
 
@@ -272,7 +274,7 @@ export class SwipeEngine {
     cardEl.style.cursor = 'grab';
     cardEl.setAttribute('role', 'button');
     cardEl.setAttribute('tabindex', '0');
-    cardEl.setAttribute('title', `Chạm để đưa ${outfit.title} vào Xưởng Phối (hoặc vuốt để thích/bỏ qua)`);
+    cardEl.setAttribute('title', `Chạm để đưa ${outfit.title} vào Khung Dệt (hoặc vuốt để lưu/bỏ qua)`);
 
     const stampLike = cardEl.querySelector('.card-stamp-like') as HTMLElement | null;
     const stampDislike = cardEl.querySelector('.card-stamp-dislike') as HTMLElement | null;

@@ -38,11 +38,11 @@ export class LookbookEngine {
       Sound.playClick();
       const outfits = wardrobeManager.savedWardrobe;
       if (outfits.length === 0) {
-        appRouter.showToast('⚠️ Lookbook của bạn chưa có bộ đồ nào đã lưu!');
+        appRouter.showToast('Rương Gấm của bạn hiện chưa có tác phẩm nào được lưu giữ.');
         return;
       }
       if (outfits.length === 1) {
-        appRouter.showToast('💡 Bạn cần lưu ít nhất 2 bộ đồ trong Lookbook để tiến hành so sánh đối chiếu!');
+        appRouter.showToast('Bạn hãy dệt và lưu ít nhất 2 tà áo trong Rương Gấm để bắt đầu so sánh nhé.');
         return;
       }
       appRouter.openCompare(`wardrobe-${outfits[0].id}`, `wardrobe-${outfits[1].id}`);
@@ -115,7 +115,6 @@ export class LookbookEngine {
 
       card.innerHTML = `
         <div class="lookbook-card-top-tag">
-          <span>📍</span>
           <span>Phù hợp: ${item.bestOccasion || item.eventLabel || 'Dạo phố Tết'}</span>
         </div>
 
@@ -136,12 +135,12 @@ export class LookbookEngine {
 
         <div class="lookbook-card-actions">
           <button type="button" class="btn-card-detail" data-detail-id="${item.id}" title="Xem chi tiết bộ đồ">
-            <span>🔍 Chi Tiết</span>
+            Chi Tiết
           </button>
-          <button type="button" class="btn-card-remix" data-remix-id="${item.id}" title="Phối lại trang phục này trong Xưởng">
-            <span>🎨 Remix</span>
+          <button type="button" class="btn-card-remix" data-remix-id="${item.id}" title="Phối lại trang phục này trong Khung Dệt">
+            Phối Lại
           </button>
-          <button type="button" class="btn-card-remove" data-remove-id="${item.id}" title="Xóa khỏi Lookbook" aria-label="Xóa bộ đồ">
+          <button type="button" class="btn-card-remove" data-remove-id="${item.id}" title="Gỡ khỏi Rương Gấm" aria-label="Gỡ tác phẩm">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -205,8 +204,8 @@ export class LookbookEngine {
       feedbackState.hideLoading();
 
       const shareData = {
-        title: 'Việt Y Remix — Lookbook Lụa Thanh',
-        text: `Ghé xem Lookbook ${count} bộ cổ phục tơ lụa đương đại tôi vừa phối trên Việt Y Remix nhé!`,
+        title: 'Lụa Là Gấm Vóc — Rương Gấm',
+        text: `Ghé xem ${count} tà áo cổ phục đương đại tôi vừa lưu giữ trong Rương Gấm trên Lụa Là Gấm Vóc nhé!`,
         url: window.location.href
       };
 
@@ -217,7 +216,7 @@ export class LookbookEngine {
         try {
           navigator.clipboard.writeText(window.location.href);
         } catch {}
-        appRouter.showToast('✨ Đã sao chép liên kết chia sẻ Lookbook Lụa Thanh của bạn!');
+        appRouter.showToast('Đã sao chép liên kết chia sẻ Rương Gấm của bạn.');
       }
     }, 700);
   }
@@ -281,7 +280,7 @@ export class LookbookEngine {
               hint.style.display = 'none';
             }, 2500);
           }
-          appRouter.showToast('📋 Đã sao chép câu Prompt Gemini vào clipboard!');
+          appRouter.showToast('Đã sao chép câu lệnh tạo ảnh vào bộ nhớ tạm.');
         });
       }
     });
@@ -308,7 +307,7 @@ export class LookbookEngine {
     if (headingEl) headingEl.textContent = item.title;
     if (savedAtEl) savedAtEl.textContent = `Đã lưu: ${item.savedAt || 'Gần đây'}`;
     if (descEl) descEl.textContent = item.desc || `Bộ phối ${item.colorName || 'Sắc Lụa'} theo phong vị đương đại Lụa Thanh.`;
-    if (occasionEl) occasionEl.textContent = `🏷️ ${item.bestOccasion || item.eventLabel || 'Dạo Phố Tết'}`;
+    if (occasionEl) occasionEl.textContent = item.bestOccasion || item.eventLabel || 'Dạo Phố Tết';
 
     // Hình ảnh (Ưu tiên giải quyết qua CDN GitHub, dự phòng GitHub Raw nếu cache jsDelivr chưa cập nhật)
     const imgEl = document.getElementById('lookbook-detail-img') as HTMLImageElement | null;
@@ -360,7 +359,7 @@ export class LookbookEngine {
 
     if (accListEl) {
       accListEl.innerHTML = allAcc
-        .map((acc) => `<span class="matrix-badge-pill">❖ ${acc.replace(/_/g, ' ')}</span>`)
+        .map((acc) => `<span class="matrix-badge-pill">${acc.replace(/_/g, ' ')}</span>`)
         .join('');
     }
 

@@ -1,6 +1,7 @@
 import { CulturalGuardrailResult } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import { getCulturalTruth, checkStrictTaboo } from '../data/culturalTruths.ts';
+import { renderIcon } from '../icons/iconSystem.ts';
 
 export const MOCK_HERITAGE_DATA: Record<string, CulturalGuardrailResult> = {
   tet: {
@@ -94,94 +95,26 @@ export class CulturalGuardrailManager {
 
   public setup(onFix: (suggestedFix: string) => void): void {
     this.onFixCallback = onFix;
-    const toastEl = document.getElementById('cultural-warning-toast');
-    const backdropEl = document.getElementById('toast-backdrop');
-    const btnCloseToast = document.getElementById('btn-close-toast');
-    const btnFixCultural = document.getElementById('btn-fix-cultural');
-    const btnKeepGenZ = document.getElementById('btn-keep-genz');
-    const scrollBtn = document.getElementById('btn-scroll-warning');
-    const card = document.getElementById('heritage-info-card');
-    const badgeEl = document.getElementById('cultural-status-badge');
-
-    const openToast = () => {
-      Sound.playClick();
-      toastEl?.classList.add('toast-open');
-      backdropEl?.classList.add('active');
-    };
-
-    const closeToast = () => {
-      toastEl?.classList.remove('toast-open');
-      backdropEl?.classList.remove('active');
-    };
-
-    scrollBtn?.addEventListener('click', openToast);
-    btnCloseToast?.addEventListener('click', closeToast);
-    backdropEl?.addEventListener('click', closeToast);
-
-    // Hành động 1: "Chỉnh về Chuẩn Văn Hóa"
-    btnFixCultural?.addEventListener('click', () => {
-      Sound.playChime();
-      closeToast();
-      card?.classList.remove('cultural-warning-border');
-      scrollBtn?.classList.remove('visible');
-      if (badgeEl) {
-        badgeEl.className = 'cultural-status-badge cultural-seal-safe';
-        badgeEl.innerHTML = '<span>✓ Việt Y Khớp Quy Chuẩn</span>';
-      }
-      if (this.onFixCallback) {
-        this.onFixCallback(this.currentState.suggested_fix || 'QUAT_GIAY');
-      }
-    });
-
-    // Hành động 2: "Giữ Góc Phá Cách Gen Z"
-    btnKeepGenZ?.addEventListener('click', () => {
-      Sound.playClick();
-      closeToast();
-      card?.classList.remove('cultural-warning-border');
-      scrollBtn?.classList.remove('visible');
-      if (badgeEl) {
-        badgeEl.className = 'cultural-status-badge cultural-seal-genz';
-        badgeEl.innerHTML = '<span>⚡ Góc Phá Cách Gen Z</span>';
-      }
-    });
   }
 
   public renderGuardrailUI(result: CulturalGuardrailResult): void {
     this.currentState = result;
     const card = document.getElementById('heritage-info-card');
     const badgeEl = document.getElementById('cultural-status-badge');
-    const scrollBtn = document.getElementById('btn-scroll-warning');
-    const toastMsg = document.getElementById('toast-warning-msg');
-    const toastHint = document.getElementById('toast-fix-hint');
 
     const isWarning = result.warning_level === 'WARNING' || !result.is_culturally_accurate;
 
     if (isWarning) {
       if (card) card.classList.add('cultural-warning-border');
-      if (scrollBtn) scrollBtn.classList.add('visible');
       if (badgeEl) {
         badgeEl.className = 'cultural-status-badge cultural-seal-warn';
-        badgeEl.innerHTML = '<span>⚠ Lệch Quy Chuẩn Văn Hóa</span>';
-      }
-      if (toastMsg) {
-        toastMsg.textContent =
-          result.cultural_warning_msg || 'Tổ hợp trang phục và phụ kiện này có sự giao thoa chưa đồng nhất theo điển lễ thời kỳ.';
-      }
-      if (toastHint) {
-        const fixName =
-          result.suggested_fix === 'QUAT_GIAY'
-            ? 'Quạt Giấy Xếp'
-            : result.suggested_fix === 'KHAN_RAN'
-            ? 'Khăn Rằn Nam Bộ'
-            : 'Nón Quai Thao';
-        toastHint.innerHTML = `💡 <strong>Gợi ý phục dựng:</strong> Chuyển về <strong>${fixName}</strong> để chuẩn mực nét duyên truyền thống.`;
+        badgeEl.innerHTML = `${renderIcon('alertTriangle', { size: 14 })} <span>Lệch sợi so với truyền thống</span>`;
       }
     } else {
       if (card) card.classList.remove('cultural-warning-border');
-      if (scrollBtn) scrollBtn.classList.remove('visible');
       if (badgeEl) {
         badgeEl.className = 'cultural-status-badge cultural-seal-safe';
-        badgeEl.innerHTML = '<span>✓ Việt Y Khớp Quy Chuẩn</span>';
+        badgeEl.innerHTML = `${renderIcon('circleCheck', { size: 14 })} <span>Đúng khung dệt cổ truyền</span>`;
       }
     }
   }

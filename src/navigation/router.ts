@@ -6,8 +6,8 @@ import { wardrobeManager } from '../discover/wardrobeManager.ts';
 import { garmentEngine } from '../workshop/garmentEngine.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 import { feedbackState } from '../services/feedbackState.ts';
-import { adminEngine } from '../admin/adminEngine.ts';
 import { compareEngine } from '../compare/compareEngine.ts';
+import { renderIcon, initLucideIcons } from '../icons/iconSystem.ts';
 
 export class AppRouter {
   private hasInitialWorkshopLoaded = false;
@@ -103,7 +103,6 @@ export class AppRouter {
     const backdrop = document.getElementById('nav-dropdown-backdrop');
     const dropdownMenu = document.getElementById('nav-mobile-dropdown-menu');
     const dropdownHome = document.getElementById('btn-dropdown-home');
-    const dropdownAdmin = document.getElementById('btn-open-admin-route');
     const dropdownItems = document.querySelectorAll('.nav-dropdown-item');
 
     toggleBtn?.addEventListener('click', () => {
@@ -155,13 +154,6 @@ export class AppRouter {
       });
     });
 
-    dropdownAdmin?.addEventListener('click', () => {
-      Sound.playClick();
-      this.closeMobileDropdown();
-      this.confirmExitWorkshopIfActive(() => {
-        adminEngine.openAdminScene();
-      });
-    });
   }
 
   public openMobileDropdown(): void {
@@ -225,8 +217,8 @@ export class AppRouter {
     if (tabName === 'create') {
       tabCreateBtn?.classList.add('active');
       createScene?.classList.add('scene-active');
-      if (mobileIcon) mobileIcon.textContent = '🎨';
-      if (mobileName) mobileName.textContent = 'Xưởng Phối';
+      if (mobileIcon) mobileIcon.innerHTML = renderIcon('palette', { size: 16 });
+      if (mobileName) mobileName.textContent = 'Khung Dệt';
 
       // Bất kì khi nào người dùng vào lại xưởng phối trừ khi là từ một bộ đồ quay lại xưởng phối (remix)
       // thì đều bắt người dùng chọn lại hết option
@@ -237,13 +229,13 @@ export class AppRouter {
     } else if (tabName === 'pattern') {
       tabPatternBtn?.classList.add('active');
       patternScene?.classList.add('scene-active');
-      if (mobileIcon) mobileIcon.textContent = '❖';
-      if (mobileName) mobileName.textContent = 'Hoa Văn';
+      if (mobileIcon) mobileIcon.innerHTML = renderIcon('sparkles', { size: 16 });
+      if (mobileName) mobileName.textContent = 'Thêu Hoa';
     } else if (tabName === 'discover') {
       tabDiscoverBtn?.classList.add('active');
       discoverScene?.classList.add('scene-active');
-      if (mobileIcon) mobileIcon.textContent = '📜';
-      if (mobileName) mobileName.textContent = 'Khám Phá';
+      if (mobileIcon) mobileIcon.innerHTML = renderIcon('compass', { size: 16 });
+      if (mobileName) mobileName.textContent = 'Dạo Chợ Vải';
 
       swipeEngine.currentDeck = preferenceEngine.sortDeckByPreference(
         swipeEngine.currentDeck.length > 0 ? swipeEngine.currentDeck : DISCOVERY_OUTFITS_POOL
@@ -252,16 +244,18 @@ export class AppRouter {
     } else if (tabName === 'lookbook') {
       tabLookbookBtn?.classList.add('active');
       lookbookScene?.classList.add('scene-active');
-      if (mobileIcon) mobileIcon.textContent = '📖';
-      if (mobileName) mobileName.textContent = 'Lookbook';
+      if (mobileIcon) mobileIcon.innerHTML = renderIcon('bookOpen', { size: 16 });
+      if (mobileName) mobileName.textContent = 'Rương Gấm';
 
       lookbookEngine.renderLookbook();
     } else if (tabName === 'compare') {
       tabLookbookBtn?.classList.add('active');
       compareScene?.classList.add('scene-active');
-      if (mobileIcon) mobileIcon.textContent = '📖';
-      if (mobileName) mobileName.textContent = 'Lookbook • So Sánh';
+      if (mobileIcon) mobileIcon.innerHTML = renderIcon('scale', { size: 16 });
+      if (mobileName) mobileName.textContent = 'Rương Gấm • So Sánh';
     }
+
+    initLucideIcons();
   }
 
   public openCompare(presetAId?: string, presetBId?: string): void {
@@ -274,15 +268,15 @@ export class AppRouter {
     Sound.playClick();
     this.isRemixing = true;
     feedbackState.showLoading({
-      message: 'Đang đưa tà lụa vào Xưởng Phối...',
-      submessage: `Chuẩn bị bộ "${outfit.title}" và nạp vào Xưởng Phối...`
+      message: 'Đang chuẩn bị sợi chỉ vào Khung Dệt...',
+      submessage: `Chuẩn bị tà áo "${outfit.title}" và nạp vào Khung Dệt...`
     });
 
     setTimeout(() => {
       feedbackState.hideLoading();
       this.switchTab('create');
       garmentEngine.loadRemixOutfit(outfit);
-      this.showToast(`✨ Đã nạp bộ "${outfit.title}" vào Xưởng Phối để bạn remix!`);
+      this.showToast(`Đã nạp bộ "${outfit.title}" vào Khung Dệt để bạn phối lại.`);
     }, 450);
   }
 
@@ -329,7 +323,7 @@ export class AppRouter {
           setTimeout(() => {
             feedbackState.hideLoading();
             Sound.playChime();
-            this.showToast('✨ Đã kết nối lại thành công không gian Lụa Thanh!');
+            this.showToast('Đã kết nối lại thành công không gian Lụa Thanh.');
           }, 1100);
         }
       });
@@ -547,7 +541,7 @@ export class AppRouter {
     const btnSaveProfile = document.getElementById('btn-save-profile');
     btnSaveProfile?.addEventListener('click', () => {
       const origHtml = btnSaveProfile.innerHTML;
-      btnSaveProfile.innerHTML = '<span>✓ Đã Lưu Thành Công!</span>';
+      btnSaveProfile.innerHTML = `${renderIcon('check', { size: 16 })} <span>Đã Lưu Thành Công</span>`;
       btnSaveProfile.classList.add('btn-saved-success');
 
       const profile = {
@@ -560,7 +554,7 @@ export class AppRouter {
       };
       localStorage.setItem('viet_y_user_profile', JSON.stringify(profile));
       Sound.playChime();
-      this.showToast(`✅ Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}! AI sẽ tư vấn phù hợp hơn.`);
+      this.showToast(`Đã lưu hồ sơ${profile.name ? ' của ' + profile.name : ''}. Trí tuệ di sản sẽ tự động điều chỉnh phù hợp vóc dáng.`);
 
       setTimeout(() => {
         closeProfile();

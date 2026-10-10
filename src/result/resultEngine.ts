@@ -226,7 +226,7 @@ export class ResultEngine {
           </div>
           <div style="margin-top: 2px;">
             <a href="${src.url}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600;">
-              🔗 Đọc tài liệu khảo cứu gốc ↗
+              Đọc tư liệu di sản gốc ↗
             </a>
           </div>
         </div>
@@ -236,7 +236,7 @@ export class ResultEngine {
     const definingFeaturesHtml = truth.definingFeatures && truth.definingFeatures.length > 0
       ? `
         <div style="margin-top: 10px; padding: 8px 12px; background: rgba(74, 133, 119, 0.06); border-radius: 8px; border-left: 3px solid #4A8577;">
-          <div style="font-weight: 700; color: #2A5A4E; font-size: 0.8rem; margin-bottom: 4px;">✂️ Quy chuẩn cấu trúc may mặc cốt lõi:</div>
+          <div style="font-weight: 700; color: #2A5A4E; font-size: 0.8rem; margin-bottom: 4px;">Quy chuẩn cấu trúc may mặc cốt lõi:</div>
           <ul style="margin: 0; padding-left: 18px; font-size: 0.78rem; color: #333; line-height: 1.5;">
             ${truth.definingFeatures.map(f => `<li>${f}</li>`).join('')}
           </ul>
@@ -251,7 +251,7 @@ export class ResultEngine {
     const citationHtml = `
       <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(201,166,107,0.4); font-size: 11px;">
         <div style="font-weight: 700; color: #4A8577; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-          <span>📜 Nguồn tư liệu khảo cứu xác thực (${allSources.length} nguồn):</span>
+          <span>Nguồn tư liệu di sản xác thực (${allSources.length} nguồn):</span>
           <span style="font-size: 10px; color: #888; font-weight: normal;">Đã kiểm chứng lịch sử</span>
         </div>
         ${citationItemsHtml}
@@ -372,7 +372,7 @@ export class ResultEngine {
         AO_BA_BA: 'Áo Bà Ba',
         AO_DAI_LEMUR: 'Áo Dài'
       };
-      const gName = garmentNames[outfitState.garment] || 'Việt Y';
+      const gName = garmentNames[outfitState.garment] || 'Việt Phục';
       const eventTag = outfitState.bestOccasion || outfitState.eventLabel || 'Dạo phố Tết';
       const allAcc = outfitState.accessories && outfitState.accessories.length > 0 
         ? outfitState.accessories 
@@ -447,7 +447,7 @@ export class ResultEngine {
         const btnText = document.getElementById('btn-save-lookbook-text');
         if (btnText) {
           const originalText = btnText.textContent;
-          btnText.textContent = '✓ Đã Lưu Vào Lookbook!';
+          btnText.textContent = 'Đã Lưu Vào Rương Gấm';
           btnSaveLookbook.style.transform = 'scale(0.97)';
           setTimeout(() => {
             btnSaveLookbook.style.transform = 'scale(1)';
@@ -462,7 +462,7 @@ export class ResultEngine {
         setTimeout(() => {
           this.hideResult();
           appRouter.switchTab('lookbook');
-          appRouter.showToast('📖 Đã lưu tà phục và chuyển sang Lookbook của bạn!');
+          appRouter.showToast('Đã lưu tà áo và chuyển sang Rương Gấm của bạn.');
         }, 450);
       }, 650);
     });
@@ -501,13 +501,13 @@ export class ResultEngine {
       try {
         await navigator.clipboard.writeText(fullPrompt);
         if (copyStatus) copyStatus.style.display = 'inline';
-        appRouter.showToast('✨ Đã sao chép prompt Gemini vào bộ nhớ tạm!');
+        appRouter.showToast('Đã sao chép prompt Gemini vào bộ nhớ tạm.');
       } catch {
         if (textarea) {
           textarea.select();
           document.execCommand('copy');
           if (copyStatus) copyStatus.style.display = 'inline';
-          appRouter.showToast('✨ Đã sao chép prompt Gemini!');
+          appRouter.showToast('Đã sao chép prompt Gemini.');
         }
       }
     };
@@ -566,7 +566,7 @@ export class ResultEngine {
         garmentEngine.hideSanityAlert();
         Sound.playClick();
         feedbackState.showLoading({
-          message: 'Đang thẩm định & tổng hợp Prompt AI chuyên sâu...',
+          message: 'Đang đối chiếu di sản & dệt nên bản phối...',
           submessage: 'Gemini AI đang tạo sinh mô tả vi mô cho dáng áo, màu lụa, độ phá cách, phụ kiện & kiểu tóc bạn đã duyệt...',
           allowCancel: true
         });

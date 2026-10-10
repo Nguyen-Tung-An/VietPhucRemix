@@ -1,5 +1,5 @@
 /**
- * VIỆT Y REMIX — QUẢN LÝ TRẠNG THÁI TẢI & LỖI DÙNG CHUNG
+ * VIỆT PHỤC REMIX — QUẢN LÝ TRẠNG THÁI TẢI & LỖI DÙNG CHUNG
  * Concept: "LỤA THANH"
  * 
  * Cung cấp 2 thành phần dùng chung cho toàn bộ app:
@@ -316,7 +316,7 @@ class FeedbackStateManager {
         <div class="lua-blob-loading-stage" aria-hidden="true">
           <div class="lua-silk-loading-blob">
             <div class="lua-blob-silk-sheen"></div>
-            <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/loading-icon.webp" alt="Đang xử lý" class="lua-blob-loading-img" />
+            <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" alt="Lụa Là Gấm Vóc Logo" class="lua-blob-loading-img seal-badge-img" />
           </div>
         </div>
 

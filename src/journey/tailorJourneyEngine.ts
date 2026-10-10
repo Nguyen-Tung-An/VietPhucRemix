@@ -200,7 +200,7 @@ export class TailorJourneyEngine {
     const targetBanner = document.getElementById('journey-target-garment-title');
     const targetSub = document.getElementById('journey-target-garment-sub');
     if (targetBanner) {
-      targetBanner.textContent = `🎯 Bộ bạn đang muốn sở hữu: ${this.currentGarmentName} (${this.currentColorName})`;
+      targetBanner.textContent = `Bộ bạn đang muốn may đo: ${this.currentGarmentName} (${this.currentColorName})`;
     }
     if (targetSub) {
       targetSub.textContent = `Hệ thống tự động kích hoạt bộ tìm kiếm Google Maps & Google Search giúp bạn kết nối trực tiếp với tiệm may đo phù hợp nhất.`;
@@ -318,7 +318,7 @@ export class TailorJourneyEngine {
             <div class="atelier-card-header">
               <div class="atelier-city-badge">${item.city}</div>
               <h4 class="atelier-name">${item.name}</h4>
-              <p class="atelier-address">📍 ${item.address}</p>
+              <p class="atelier-address">${item.address}</p>
             </div>
 
             <p class="atelier-desc">${item.description}</p>
@@ -336,15 +336,15 @@ export class TailorJourneyEngine {
             </div>
 
             <div class="atelier-tags">
-              ${item.tags.map((t) => `<span class="atelier-tag">✓ ${t}</span>`).join('')}
+              ${item.tags.map((t) => `<span class="atelier-tag">${t}</span>`).join('')}
             </div>
 
             <div class="atelier-actions-row">
               <a href="${mapsLink}" target="_blank" rel="noopener noreferrer" class="btn-atelier-map" title="Xem vị trí và chỉ đường trên Google Maps">
-                🗺️ Mở Google Maps ↗
+                Mở Google Maps ↗
               </a>
-              <a href="${searchLink}" target="_blank" rel="noopener noreferrer" class="btn-atelier-search" title="Tìm kiếm đánh giá và fanpage trên Google">
-                🔍 Tìm Review Google ↗
+              <a href="${searchLink}" target="_blank" rel="noopener noreferrer" class="btn-atelier-search" title="Tìm kiếm đánh giá và thông tin trên Google">
+                Tìm Đánh Giá Google ↗
               </a>
             </div>
           </div>

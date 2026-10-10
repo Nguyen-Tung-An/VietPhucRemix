@@ -238,7 +238,7 @@ export function getMockStylingSuggestions(context: {
       skin_tone_effect: '',
       silhouette_effect: '',
       tailoring_advice: '',
-      missing_profile_reminder: '💡 Bạn chưa lưu thông tin ngoại hình trong Hồ Sơ Cá Nhân. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn!'
+      missing_profile_reminder: 'Bạn chưa lưu thông tin ngoại hình trong Sợi Chỉ Của Tôi. Hãy mở hồ sơ để bổ sung chiều cao, cân nặng, tông da và chạm "Cập nhật gợi ý" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn nhé!'
     },
     cultural_guardrail: {
       is_safe: true,

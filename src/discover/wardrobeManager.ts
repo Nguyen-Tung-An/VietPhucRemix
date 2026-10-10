@@ -71,9 +71,9 @@ export class WardrobeManager {
         localStorage.setItem('viet_y_wardrobe', JSON.stringify(this.savedWardrobe));
       } catch {}
       this.updateWardrobeUI();
-      this.showToast(`❤️ Đã lưu "${outfit.title}" vào Tủ Đồ Yêu Thích!`);
+      this.showToast(`Đã dệt "${outfit.title}" vào Rương Gấm của bạn!`);
     } else {
-      this.showToast(`✨ "${outfit.title}" đã có sẵn trong Tủ Đồ.`);
+      this.showToast(`"${outfit.title}" đã nằm gọn trong Rương Gấm rồi.`);
     }
   }
 
@@ -133,7 +133,7 @@ export class WardrobeManager {
         <div class="wardrobe-card-thumb" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.08); border-radius: 8px; width: 64px; height: 80px; flex-shrink: 0;">
           ${resolvedThumb ? `<img src="${resolvedThumb}" data-fallback-src="${fallbackThumb}" alt="${item.title}" class="wardrobe-thumb-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.wardrobe-thumb-placeholder'); if (ph) ph.style.display='flex';" />` : ''}
           <div class="wardrobe-thumb-placeholder" style="display: ${resolvedThumb ? 'none' : 'flex'}; width: 100%; height: 100%; align-items: center; justify-content: center;">
-            <span style="font-size: 1.4rem; opacity: 0.45;">🏛️</span>
+            <div class="seal-badge" style="width: 28px; height: 28px;">L</div>
           </div>
         </div>
         <div class="wardrobe-card-info">
@@ -144,13 +144,13 @@ export class WardrobeManager {
             <span>•</span>
             <span>${shortGarmentName}</span>
           </div>
-          <div class="wardrobe-card-match">🎯 ${matchPct}% Hợp Gu</div>
+          <div class="wardrobe-card-match">${matchPct}% Hợp Vóc</div>
         </div>
         <div class="wardrobe-card-actions">
-          <button type="button" class="btn-wardrobe-remix" data-remix-id="${item.id}" title="Chuyển về Xưởng Phối">
-            <span>🔄</span> Remix
+          <button type="button" class="btn-wardrobe-remix" data-remix-id="${item.id}" title="Đưa về Khung Dệt">
+            Phối Lại
           </button>
-          <button type="button" class="btn-wardrobe-del" data-del-id="${item.id}" title="Xóa khỏi Tủ đồ">
+          <button type="button" class="btn-wardrobe-del" data-del-id="${item.id}" title="Gỡ khỏi Rương Gấm">
             Bỏ lưu
           </button>
         </div>

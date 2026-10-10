@@ -144,17 +144,17 @@ export class PatternEngine {
             <div class="pattern-card-art-wrap" style="position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
               <img src="${assetConfig.resolveAssetUrl(pat.imageUrl)}" alt="${pat.name}" class="pattern-card-img" style="width: 100%; height: 100%; object-fit: cover; display: block;" onload="this.style.display='block'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='none';" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.pattern-no-img-box'); if (ph) ph.style.display='flex';" />
               <div class="pattern-no-img-box" style="display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 12px; background: rgba(28,43,38,0.7);">
-                <span style="font-size: 1.8rem; opacity: 0.55;">🏛️</span>
-                <span style="font-family: var(--font-body); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.3;">Tổ hợp này chưa có ảnh minh họa demo</span>
+                <div class="seal-badge" style="width: 32px; height: 32px; font-size: 0.9rem;">H</div>
+                <span style="font-family: var(--font-body); font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.3;">Bản phối này chưa có ảnh minh họa demo</span>
               </div>
             </div>
-            <div class="pattern-card-badge">${pat.patternType === 'SEAMLESS_JACQUARD' ? '❖ Gấm Chìm' : '✹ Huy Hiệu'}</div>
+            <div class="pattern-card-badge">${pat.patternType === 'SEAMLESS_JACQUARD' ? 'Gấm Chìm' : 'Huy Hiệu'}</div>
           </div>
 
           <div class="pattern-card-content">
             <div class="pattern-dynasty">${pat.dynastyEra}</div>
             <h4 class="pattern-title">${pat.name}</h4>
-            <div class="pattern-technique">🪡 <em>Kỹ thuật:</em> ${pat.technique}</div>
+            <div class="pattern-technique"><em>Kỹ thuật:</em> ${pat.technique}</div>
             <p class="pattern-story">${pat.historicalStory}</p>
 
             <div class="pattern-compatibility">
@@ -164,10 +164,10 @@ export class PatternEngine {
 
             <div class="pattern-card-actions">
               <button type="button" class="btn-pattern-apply btn-pattern-apply-inactive" data-pattern-id="${pat.id}" title="Tính năng áp dụng lên áo đang được phát triển" aria-disabled="true">
-                🎨 Áp Dụng Lên Áo
+                Áp Dụng Lên Áo
               </button>
               <button type="button" class="btn-pattern-view-prompt" data-pattern-id="${pat.id}" title="Xem câu lệnh AI Prompt đầy đủ dùng để sinh ảnh">
-                🔍 Xem Prompt AI
+                Xem Prompt AI
               </button>
             </div>
           </div>
@@ -220,7 +220,7 @@ export class PatternEngine {
     setTimeout(() => {
       feedbackState.hideLoading();
       appRouter.switchTab('create');
-      appRouter.showToast(`✨ Đã gắn hoa văn "${patternEntry.name}" vào áo của bạn trong Xưởng Phối!`);
+      appRouter.showToast(`Đã thêu hoa văn "${patternEntry.name}" lên tà áo trong Khung Dệt.`);
     }, 400);
   }
 
@@ -258,7 +258,7 @@ export class PatternEngine {
         navigator.clipboard.writeText(promptText).then(() => {
           Sound.playChime();
           const orig = btnInlineCopy.innerHTML;
-          btnInlineCopy.innerHTML = '<span>✓ Đã Sao Chép Prompt!</span>';
+          btnInlineCopy.innerHTML = '<span>Đã sao chép prompt!</span>';
           setTimeout(() => {
             btnInlineCopy.innerHTML = orig;
           }, 2000);
@@ -296,7 +296,7 @@ export class PatternEngine {
     const sanity = validateUserInputSanity(userKeyword, 'pattern');
     if (!sanity.isValid) {
       Sound.playClick();
-      appRouter.showToast(`⚠️ ${sanity.reason || 'Từ khóa chứa từ ngữ nhạy cảm hoặc không phù hợp với thuần phong mỹ tục văn hóa Việt Nam.'}`);
+      appRouter.showToast(sanity.reason || 'Từ khóa chứa từ ngữ chưa phù hợp với thuần phong mỹ tục văn hóa Việt Nam.');
       if (inputKeyword) {
         inputKeyword.style.borderColor = '#C5534A';
         inputKeyword.focus();
@@ -350,7 +350,7 @@ export class PatternEngine {
           : `Hệ thống đã tự động chuyển hóa từ khóa "${userKeyword}" thành cấu trúc câu lệnh AI đồ họa chuyên sâu tương thích hoàn toàn với phom dáng ${this.selectedGarmentTarget}.`;
       }
 
-      appRouter.showToast('✨ Đã khởi tạo thành công Master Prompt hoa văn AI!');
+      appRouter.showToast('Đã khởi tạo thành công Prompt hoa văn AI.');
 
       // Mở modal thông cáo Quota và Prompt dành riêng cho Ban Giám khảo
       this.openPromptInspectModal(aiResult.pattern_title || `Hoa Văn Sáng Tạo: ${userKeyword}`, assembledPrompt, 'HOA_VAN');
@@ -361,7 +361,7 @@ export class PatternEngine {
       console.warn('Lỗi khi sinh Prompt hoa văn AI:', err);
       feedbackState.hideLoading();
       const errorMsg = err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau!';
-      appRouter.showToast(`⚠️ ${errorMsg}`);
+      appRouter.showToast(errorMsg);
     } finally {
       if (btnGenerate) {
         btnGenerate.classList.remove('loading-active');
@@ -399,7 +399,7 @@ export class PatternEngine {
         navigator.clipboard.writeText(promptText).then(() => {
           Sound.playChime();
           const origText = btnCopy.innerHTML;
-          btnCopy.innerHTML = '✓ Đã Sao Chép Prompt!';
+          btnCopy.innerHTML = 'Đã sao chép prompt!';
           setTimeout(() => {
             btnCopy.innerHTML = origText;
           }, 2000);
@@ -441,7 +441,7 @@ export class PatternEngine {
     if (titleEl) titleEl.textContent = title;
     if (contentEl) contentEl.textContent = promptContent;
     if (badgeEl) {
-      badgeEl.textContent = mode === 'HOA_VAN' ? '❖ Cấu Trúc Prompt Sinh Ảnh Hoa Văn' : '🎨 Cấu Trúc Prompt Sinh Ảnh Trang Phục';
+      badgeEl.textContent = mode === 'HOA_VAN' ? 'Cấu Trúc Prompt Sinh Ảnh Hoa Văn' : 'Cấu Trúc Prompt Sinh Ảnh Trang Phục';
     }
 
     modal.classList.add('modal-active');

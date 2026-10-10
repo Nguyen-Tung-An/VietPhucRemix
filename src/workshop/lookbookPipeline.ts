@@ -94,7 +94,7 @@ export class LookbookPipeline {
         document.getElementById('btn-mode-lookbook')?.classList.add('active');
 
         Sound.playChime();
-        this.showToast('✨ Ảnh Lookbook Thời Trang AI mài vóc hoàn mỹ!');
+        this.showToast('Ảnh thời trang AI đã hoàn tất trên Khung Dệt!');
       }, 800);
     } else {
       // 2. CƠ CHẾ DỰ PHÒNG (FALLBACK)
@@ -113,16 +113,14 @@ export class LookbookPipeline {
         if (modePills) modePills.style.display = 'none';
 
         Sound.playClick();
-        this.showToast('Tổ hợp hiện tại đã được ghi nhận trong xưởng phối');
+        this.showToast('Bản phối hiện tại đã được lưu vào Khung Dệt.');
       }, 400);
     }
 
     if (btnGen) {
       btnGen.disabled = false;
       btnGen.innerHTML = `
-        <span class="seal-badge seal-do" style="width:28px; height:28px; font-size:0.85rem; border-color:#E5A93C;">📸</span>
-        <span class="btn-ai-text">TẠO ẢNH LOOKBOOK AI</span>
-        <span class="btn-ai-sparkle">✨</span>
+        <span class="btn-ai-text">DỆT ẢNH THỜI TRANG AI</span>
       `;
     }
   }
@@ -184,11 +182,11 @@ export class LookbookPipeline {
         if (lookbookImg && lookbookImg.src) {
           const a = document.createElement('a');
           a.href = lookbookImg.src;
-          a.download = `viet-y-lookbook-${Date.now()}.jpg`;
+          a.download = `viet-phuc-lookbook-${Date.now()}.jpg`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          this.showToast('💾 Đã bắt đầu tải ảnh Lookbook AI!');
+          this.showToast('Đang tải ảnh thời trang AI về máy...');
         }
       });
     }

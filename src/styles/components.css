@@ -1,7 +1,14 @@
 /* ============================================================
-   VIỆT Y REMIX — CÁC THÀNH PHẦN BỔ TRỢ (COMPONENTS)
+   VIỆT PHỤC REMIX — CÁC THÀNH PHẦN BỔ TRỢ (COMPONENTS)
    Concept: "LỤA THANH"
    ============================================================ */
+
+/* Đồng bộ biểu tượng Lucide */
+.lucide-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
 
 /* Con dấu ấn triện Lụa Thanh */
 .seal-badge {
@@ -31,7 +38,7 @@
   position: relative;
 }
 
-/* Lưới an toàn văn hóa & Trát cảnh báo di sản */
+/* Lưới an toàn văn hóa & Nếp áo di sản */
 @keyframes goldLeafGlint {
   0%, 100% {
     box-shadow: 0 0 10px rgba(201, 166, 107, 0.3), inset 0 0 6px rgba(201, 166, 107, 0.2);
@@ -86,7 +93,7 @@
   color: var(--color-text-primary, #2B2B28);
 }
 
-/* Nút bấm dạng trát cuộn */
+/* Nút bấm cảnh báo văn hóa */
 .btn-scroll-warning {
   display: none;
   align-items: center;
@@ -114,35 +121,6 @@
   border-color: var(--color-accent-secondary);
 }
 
-/* TRÁT CẢNH BÁO DI SẢN MODAL (#cultural-warning-toast) */
-#cultural-warning-toast {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.94);
-  width: 90%;
-  max-width: 480px;
-  background: var(--color-card-bg, rgba(255, 255, 255, 0.95));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  color: var(--color-text-primary, #2B2B28);
-  border-radius: 20px;
-  border: 1.5px solid var(--color-accent-rare, #C9A66B);
-  box-shadow: 0 24px 50px rgba(28, 43, 38, 0.25), 0 0 20px rgba(201, 166, 107, 0.25);
-  padding: 24px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-#cultural-warning-toast.toast-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1);
-}
 
 .toast-backdrop {
   position: fixed;

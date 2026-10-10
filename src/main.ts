@@ -10,7 +10,7 @@ import { resultEngine } from './result/resultEngine.ts';
 import { lookbookEngine } from './lookbook/lookbookEngine.ts';
 import { feedbackState } from './services/feedbackState.ts';
 import { tailorJourneyEngine } from './journey/tailorJourneyEngine.ts';
-import { adminEngine } from './admin/adminEngine.ts';
+import { initLucideIcons } from './icons/iconSystem.ts';
 
 function initializeApp(): void {
   // 1. Khởi tạo 3D Lotus Seal Scene
@@ -44,11 +44,11 @@ function initializeApp(): void {
   feedbackState.init();
   (window as unknown as { feedbackState: typeof feedbackState }).feedbackState = feedbackState;
 
-  // 11. Khởi tạo Trang Quản Trị Hệ Thống Di Sản & Prompt Repository
-  adminEngine.init();
-
-  // 12. Khởi tạo Bộ điều hướng chuyển cảnh (Router)
+  // 11. Khởi tạo Bộ điều hướng chuyển cảnh (Router)
   appRouter.init();
+
+  // 12. Khởi tạo hệ thống biểu tượng Lucide thuần nhất
+  initLucideIcons();
 }
 
 if (document.readyState === 'loading') {

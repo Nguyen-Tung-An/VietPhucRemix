@@ -16,6 +16,7 @@ import {
 import { fetchStylingSuggestionsAPI, fetchSynthesizePromptPartsAPI } from '../services/api.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
 import { appRouter } from '../navigation/router.ts';
+import { renderIcon } from '../icons/iconSystem.ts';
 
 export class GarmentEngine {
   // 1. Dáng Áo (bắt đầu null khi reset)
@@ -223,7 +224,7 @@ export class GarmentEngine {
         btnViewResult.setAttribute('title', 'Phụ kiện hoặc kiểu tóc đã thay đổi — Vui lòng nhấn nhờ AI tư vấn lại trước khi thẩm định');
       }
       if (btnViewResultText) {
-        btnViewResultText.textContent = '🔄 Cần Nhờ AI Tư Vấn Lại';
+        btnViewResultText.textContent = 'Cần Cập Nhật Lại';
       }
       if (btnRestore && this.lastValidatedDraft) {
         btnRestore.style.display = 'inline-flex';
@@ -235,10 +236,10 @@ export class GarmentEngine {
       if (btnViewResult) {
         btnViewResult.classList.remove('btn-cta-pending');
         btnViewResult.classList.add('btn-cta-ready');
-        btnViewResult.setAttribute('title', 'Bấm để xem kết quả thẩm định hoàn chỉnh');
+        btnViewResult.setAttribute('title', 'Bấm để xem kết quả phối hoàn chỉnh');
       }
       if (btnViewResultText) {
-        btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+        btnViewResultText.textContent = 'Hoàn Tất & Xem Kết Quả';
       }
       if (btnRestore) {
         btnRestore.style.display = 'none';
@@ -251,33 +252,33 @@ export class GarmentEngine {
 
     if (isDifferentFromDraft) {
       if (elGuardrailStatusPill) {
-        elGuardrailStatusPill.textContent = '⚠️ Đã Đổi — Cần Thẩm Định Lại';
+        elGuardrailStatusPill.textContent = 'Đã Đổi — Cần Thẩm Định Lại';
         elGuardrailStatusPill.style.background = 'rgba(201, 166, 107, 0.25)';
         elGuardrailStatusPill.style.color = '#7A5338';
       }
     } else if (!tabooCheck.hasTaboo) {
       if (elGuardrailStatusPill) {
-        elGuardrailStatusPill.textContent = '✓ Chuẩn Mực Di Sản';
+        elGuardrailStatusPill.textContent = 'Chuẩn Mực Di Sản';
         elGuardrailStatusPill.style.color = '#4A8577';
         elGuardrailStatusPill.style.background = 'rgba(74, 133, 119, 0.14)';
       }
       if (elGuardrailFlag) {
-        elGuardrailFlag.textContent = '✓ An Toàn Di Sản';
+        elGuardrailFlag.textContent = 'An Toàn Di Sản';
         elGuardrailFlag.className = 'insight-taboo-flag flag-safe';
       }
       if (elGuardrailAdvice) {
         elGuardrailAdvice.textContent =
           this.aiStylingData?.cultural_guardrail?.advice ||
-          `Các phụ kiện đã chọn tương thích hài hòa với quy chuẩn di sản [${truth.originRegion}]. Sẵn sàng thẩm định & ghép Prompt cuối!`;
+          `Các phụ kiện đã chọn tương thích hài hòa với quy chuẩn di sản [${truth.originRegion}]. Sẵn sàng thẩm định & hoàn tất tà phục!`;
       }
     } else {
       if (elGuardrailStatusPill) {
-        elGuardrailStatusPill.textContent = '⚡ Cảnh Báo Phá Cách';
+        elGuardrailStatusPill.textContent = 'Cảnh Báo Phá Cách';
         elGuardrailStatusPill.style.color = '#D32F2F';
         elGuardrailStatusPill.style.background = 'rgba(211, 47, 47, 0.14)';
       }
       if (elGuardrailFlag) {
-        elGuardrailFlag.textContent = '⚠ Kiêng Kỵ Điển Lễ';
+        elGuardrailFlag.textContent = 'Lưu Ý Quy Thức';
         elGuardrailFlag.className = 'insight-taboo-flag flag-warn';
       }
       if (elGuardrailAdvice) {
@@ -336,7 +337,7 @@ export class GarmentEngine {
       if (this.hasGeneratedAISuggestions) {
         btnViewResult.classList.remove('btn-cta-pending');
         btnViewResult.classList.add('btn-cta-ready');
-        btnViewResult.setAttribute('title', 'Bấm để xem kết quả thẩm định hoàn chỉnh');
+        btnViewResult.setAttribute('title', 'Bấm để xem kết quả phối hoàn chỉnh');
       } else {
         btnViewResult.classList.add('btn-cta-pending');
         btnViewResult.classList.remove('btn-cta-ready');
@@ -366,16 +367,16 @@ export class GarmentEngine {
       if (btnViewResult) {
         btnViewResult.classList.add('btn-cta-pending');
         btnViewResult.classList.remove('btn-cta-ready');
-        btnViewResult.setAttribute('title', 'Phối đồ đã thay đổi — Vui lòng nhấn nhờ AI tư vấn lại trước khi thẩm định');
+        btnViewResult.setAttribute('title', 'Phối đồ đã thay đổi — Vui lòng cập nhật gợi ý AI trước khi xem kết quả');
       }
       if (btnViewResultText) {
-        btnViewResultText.textContent = '🔄 Cần Nhờ AI Tư Vấn Lại';
+        btnViewResultText.textContent = 'Cần Cập Nhật Lại';
       }
 
       // Đánh dấu trạng thái trong cột AI nếu đang mở
       const statusPill = document.getElementById('ai-guardrail-status-pill');
       if (statusPill) {
-        statusPill.textContent = '⚠️ Đã Đổi — Cần Thẩm Định Lại';
+        statusPill.textContent = 'Đã Đổi — Cần Cập Nhật Lại';
         statusPill.style.background = 'rgba(201, 166, 107, 0.25)';
         statusPill.style.color = '#7A5338';
       }
@@ -505,10 +506,10 @@ export class GarmentEngine {
     if (btnViewResult) {
       btnViewResult.classList.remove('btn-cta-pending');
       btnViewResult.classList.add('btn-cta-ready');
-      btnViewResult.setAttribute('title', 'Bấm để xem kết quả thẩm định hoàn chỉnh');
+      btnViewResult.setAttribute('title', 'Bấm để xem kết quả phối hoàn chỉnh');
     }
     if (btnViewResultText) {
-      btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+      btnViewResultText.textContent = 'Hoàn Tất & Xem Kết Quả';
     }
 
     const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
@@ -520,13 +521,13 @@ export class GarmentEngine {
 
     const statusPill = document.getElementById('ai-guardrail-status-pill');
     if (statusPill) {
-      statusPill.textContent = '✓ Chuẩn Mực Di Sản';
+      statusPill.textContent = 'Chuẩn Mực Di Sản';
       statusPill.style.background = 'rgba(74, 133, 119, 0.14)';
       statusPill.style.color = '#4A8577';
     }
 
     this.checkOptionsProgress();
-    appRouter.showToast('✨ Đã khôi phục thành công tổ hợp đã thẩm định! Bạn có thể xem kết quả ngay.');
+    appRouter.showToast('Đã khôi phục thành công bản phối trước đó. Bạn có thể xem kết quả ngay.');
   }
 
   /**
@@ -543,22 +544,22 @@ export class GarmentEngine {
     }
 
     if (!this.selectedColor) {
-      appRouter.showToast('🎨 Vui lòng chọn sắc lụa di sản hoặc màu tùy chỉnh trước khi thẩm định!');
+      appRouter.showToast('Vui lòng chọn sắc lụa di sản hoặc màu tùy chỉnh trước khi tiếp tục.');
       this.switchSheetTab('panel-colors');
       return false;
     }
 
     if (this.selectedStyles.length === 0) {
-      appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 phong cách phối đồ mong muốn!');
+      appRouter.showToast('Vui lòng chọn ít nhất 1 phong cách phối đồ mong muốn.');
       this.switchSheetTab('panel-styles');
       return false;
     }
 
     if (!this.hasGeneratedAISuggestions) {
       if (this.needsReappraisal) {
-        appRouter.showToast('⚠️ Bạn vừa chỉnh sửa phối đồ! Bắt buộc nhấn "Nhờ AI Tư Vấn Lại" để kiểm tra quy chuẩn trước khi xem kết quả.');
+        appRouter.showToast('Bạn vừa chỉnh sửa phối đồ. Vui lòng nhấn "Cập Nhật Lại" trước khi xem kết quả.');
       } else {
-        appRouter.showToast('🪭 Vui lòng nhấn "Xem Gợi Ý AI" để thẩm định bộ phụ kiện & quy chuẩn di sản trước!');
+        appRouter.showToast('Vui lòng nhấn "Xem Gợi Ý AI" để tham khảo gợi ý phụ kiện và nếp áo trước.');
       }
 
       this.switchSheetTab('panel-ai-styling');
@@ -579,7 +580,7 @@ export class GarmentEngine {
     // Kiểm tra tính hợp lệ của input tự nhập
     const sanity = this.validateCurrentInputs();
     if (!sanity.isValid) {
-      appRouter.showToast(`⚠️ ${sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập.'}`);
+      appRouter.showToast(sanity.reason || 'Vui lòng kiểm tra lại phụ kiện hoặc kiểu tóc tự nhập.');
       this.switchSheetTab('panel-ai-styling');
       return false;
     }
@@ -614,7 +615,7 @@ export class GarmentEngine {
 
     const btnViewResultText = document.getElementById('btn-view-result-text');
     if (btnViewResultText) {
-      btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+      btnViewResultText.textContent = 'Hoàn Tất & Xem Kết Quả';
     }
 
     // 1. Reset giao diện Dáng Áo
@@ -872,10 +873,10 @@ export class GarmentEngine {
             appRouter.showToast('Mẫu áo này đang được xem xét ra mắt cho các loại trang phục chưa có. Vui lòng chọn dáng áo đã ra mắt trước!');
             this.switchSheetTab('panel-garments');
           } else if (!this.selectedColor) {
-            appRouter.showToast('🎨 Vui lòng chọn Sắc Lụa trước khi chuyển qua Phụ Kiện!');
+            appRouter.showToast('Vui lòng chọn Sắc Lụa trước khi chuyển qua Phụ Kiện.');
             this.switchSheetTab('panel-colors');
           } else {
-            appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 Phong Cách trước khi chuyển qua Phụ Kiện!');
+            appRouter.showToast('Vui lòng chọn ít nhất 1 Phong Cách trước khi chuyển qua Phụ Kiện.');
             this.switchSheetTab('panel-styles');
           }
           return;
@@ -1177,7 +1178,7 @@ export class GarmentEngine {
       const badge = document.getElementById('custom-hair-active-badge');
       if (badge) {
         badge.style.display = 'block';
-        badge.innerHTML = `<span>✓ Đang áp dụng: "<strong>${text}</strong>"</span> <span style="margin-left: 8px; opacity: 0.8; font-size: 0.8em;">(✕ Bỏ áp dụng)</span>`;
+        badge.innerHTML = `${renderIcon('check', { size: 14 })} <span>Đang áp dụng: "<strong>${text}</strong>"</span> <span style="margin-left: 8px; opacity: 0.8; font-size: 0.8em;">(Bỏ áp dụng)</span>`;
         badge.style.cursor = 'pointer';
         badge.title = 'Bấm để gỡ bỏ kiểu tóc tự nhập';
         badge.onclick = () => {
@@ -1341,7 +1342,7 @@ export class GarmentEngine {
         btnViewResult.classList.add('btn-cta-ready');
       }
       if (btnViewResultText) {
-        btnViewResultText.textContent = '✨ Thẩm Định & Xem Kết Quả';
+        btnViewResultText.textContent = 'Hoàn Tất & Xem Kết Quả';
       }
       const retriggerBtn = document.getElementById('btn-ai-header-retrigger');
       if (retriggerBtn) {
@@ -1351,14 +1352,14 @@ export class GarmentEngine {
       if (centerTriggerBtn) {
         centerTriggerBtn.classList.remove('tab-highlight-pulse');
       }
-      appRouter.showToast('✓ Đã hoàn tất thẩm định AI! Bạn có thể xem kết quả ngay.');
+      appRouter.showToast('Bản phối đã sẵn sàng. Bạn có thể xem kết quả ngay.');
       this.checkOptionsProgress();
 
       Sound.playChime();
     } catch (err: any) {
       console.warn('Lỗi kích hoạt Mini Gemini Styling:', err);
       const errorMsg = err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau!';
-      appRouter.showToast(`⚠️ ${errorMsg}`);
+      appRouter.showToast(errorMsg);
       if (!this.hasGeneratedAISuggestions) {
         const centerTriggerWrap = document.getElementById('ai-styling-center-trigger-wrap');
         const resultsWrapper = document.getElementById('ai-styling-results-wrapper');
@@ -1385,7 +1386,7 @@ export class GarmentEngine {
     const truth = getCulturalTruth(this.selectedGarment || 'AO_NGU_THAN');
 
     // 1. Phân Tích Màu Sắc Động (Từ Gemini API)
-    let colorMeaning = 'Sắc phục nền nã, tôn vinh nét đẹp văn hóa.';
+    let colorMeaning = 'Sắc lụa nền nã, tôn vinh nét đẹp văn hóa.';
     let colorFiveElements = 'Thổ Hoàng Cúc';
     let colorHarmony = 'Hài Hòa Di Sản';
     let colorTone = 'Tông sáng tươi mới, bừng sáng diện mạo.';
@@ -1415,7 +1416,7 @@ export class GarmentEngine {
     if (elColorName) elColorName.textContent = `Mã Sắc: ${this.selectedColor || '#F4C9D6'} • ${this.selectedColorName || 'Sắc Lụa'}`;
     if (elColorHarmony) elColorHarmony.textContent = `Độ Hòa Sắc: ${colorHarmony}`;
     if (elColorMeaning) elColorMeaning.textContent = colorMeaning;
-    if (elColorTone) elColorTone.textContent = `🌸 Cảm giác thị giác: ${colorTone}`;
+    if (elColorTone) elColorTone.textContent = `Cảm giác thị giác: ${colorTone}`;
 
     // 3. Độ Tương Thích Cá Nhân Người Dùng (Personal Compatibility)
     const compatData = data.personal_compatibility;
@@ -1449,7 +1450,7 @@ export class GarmentEngine {
       if (elMissingMsg) {
         elMissingMsg.textContent =
           compatData?.missing_profile_reminder ||
-          'Bạn chưa lưu đặc điểm ngoại hình trong mục Hồ Sơ. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận tư vấn độ tương thích cá nhân chuyên sâu!';
+          'Bạn chưa lưu đặc điểm ngoại hình trong mục Sợi Chỉ Của Tôi. Hãy mở hồ sơ để bổ sung chiều cao, cân nặng, tông da và nhận tư vấn độ tương thích cá nhân chuyên sâu.';
       }
     }
 
@@ -1466,12 +1467,12 @@ export class GarmentEngine {
 
     if (isSafe) {
       if (elGuardrailStatusPill) {
-        elGuardrailStatusPill.textContent = '✓ Chuẩn Mực Di Sản';
+        elGuardrailStatusPill.textContent = 'Chuẩn Mực Di Sản';
         elGuardrailStatusPill.style.color = '#4A8577';
         elGuardrailStatusPill.style.background = 'rgba(74, 133, 119, 0.14)';
       }
       if (elGuardrailFlag) {
-        elGuardrailFlag.textContent = '✓ An Toàn Di Sản';
+        elGuardrailFlag.textContent = 'An Toàn Di Sản';
         elGuardrailFlag.className = 'insight-taboo-flag flag-safe';
       }
       if (elGuardrailAdvice) {
@@ -1481,17 +1482,17 @@ export class GarmentEngine {
       }
     } else {
       if (elGuardrailStatusPill) {
-        elGuardrailStatusPill.textContent = '⚡ Cảnh Báo Phá Cách';
+        elGuardrailStatusPill.textContent = 'Cảnh Báo Phá Cách';
         elGuardrailStatusPill.style.color = '#D32F2F';
         elGuardrailStatusPill.style.background = 'rgba(211, 47, 47, 0.14)';
       }
       if (elGuardrailFlag) {
-        elGuardrailFlag.textContent = '⚠ Kiêng Kỵ Điển Lễ';
+        elGuardrailFlag.textContent = 'Lưu Ý Quy Thức';
         elGuardrailFlag.className = 'insight-taboo-flag flag-warn';
       }
       const warningText = tabooCheck.hasTaboo
         ? tabooCheck.taboos.map((t) => t.historicalConflictReason).join(' ')
-        : guardrail?.warning_msg || 'Phát hiện sự kết hợp phụ kiện cần lưu ý về điển lễ.';
+        : guardrail?.warning_msg || 'Phát hiện sự kết hợp phụ kiện cần lưu ý về quy thức truyền thống.';
       if (elGuardrailAdvice) {
         elGuardrailAdvice.textContent = warningText;
       }
@@ -1511,12 +1512,12 @@ export class GarmentEngine {
       occasionsList.innerHTML = '';
       const occasions = data.recommended_occasions?.length
         ? data.recommended_occasions
-        : ['🌸 Dạo phố Tết truyền thống & du xuân', '🎓 Chụp kỷ yếu tốt nghiệp / thanh xuân', '🏛️ Đi lễ chùa đầu năm & hội làng'];
+        : ['Dạo phố Tết truyền thống & du xuân', 'Chụp kỷ yếu tốt nghiệp / thanh xuân', 'Đi lễ đầu năm & hội làng'];
 
       occasions.forEach((occ) => {
         const chip = document.createElement('span');
         chip.className = 'ai-occasion-chip';
-        chip.textContent = occ.startsWith('🌸') || occ.startsWith('🎓') || occ.startsWith('🏛️') ? occ : `🏮 ${occ}`;
+        chip.textContent = occ;
         occasionsList.appendChild(chip);
       });
     }
@@ -1552,7 +1553,7 @@ export class GarmentEngine {
 
       citationsPreview.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-          <span>📚 <strong>${cite.title}</strong> — <em>${cite.author_or_institution}</em></span>
+          <span><strong>${cite.title}</strong> — <em>${cite.author_or_institution}</em></span>
           <a href="${cite.url}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600; white-space: nowrap;">
             Nguồn gốc ↗
           </a>
@@ -1612,7 +1613,7 @@ export class GarmentEngine {
       const vibeLabel = this.formatVibeTag(item.vibe_tag);
 
       card.innerHTML = `
-        <div class="item-check-indicator">${isSelected ? '✓' : ''}</div>
+        <div class="item-check-indicator">${isSelected ? renderIcon('check', { size: 14 }) : ''}</div>
         <div class="styling-item-content">
           <div class="styling-item-top">
             <span class="styling-item-name">${item.name}</span>
@@ -1636,10 +1637,10 @@ export class GarmentEngine {
         const check = card.querySelector('.item-check-indicator');
         if (this.selectedAccessories.includes(id)) {
           card.classList.add('selected');
-          if (check) check.textContent = '✓';
+          if (check) check.innerHTML = renderIcon('check', { size: 14 });
         } else {
           card.classList.remove('selected');
-          if (check) check.textContent = '';
+          if (check) check.innerHTML = '';
         }
 
         this.updateSelectedAccessoriesCount();
@@ -1713,7 +1714,7 @@ export class GarmentEngine {
       chip.className = 'custom-chip-item';
       chip.innerHTML = `
         <span>${accName}</span>
-        <button type="button" class="custom-chip-remove" title="Xóa phụ kiện này" aria-label="Xóa ${accName}">✕</button>
+        <button type="button" class="custom-chip-remove" title="Xóa phụ kiện này" aria-label="Xóa ${accName}">${renderIcon('x', { size: 12 })}</button>
       `;
 
       chip.querySelector('.custom-chip-remove')?.addEventListener('click', (e) => {
@@ -1745,20 +1746,20 @@ export class GarmentEngine {
       return;
     }
     if (!this.selectedColor) {
-      appRouter.showToast('🎨 Vui lòng chọn sắc lụa di sản hoặc màu tùy chỉnh!');
+      appRouter.showToast('Vui lòng chọn sắc lụa di sản để tiếp tục dệt nhé.');
       this.switchSheetTab('panel-colors');
       return;
     }
     if (this.selectedStyles.length === 0) {
-      appRouter.showToast('🎭 Vui lòng chọn ít nhất 1 phong cách phối đồ mong muốn!');
+      appRouter.showToast('Vui lòng chọn ít nhất một phong thái cho tà áo.');
       this.switchSheetTab('panel-styles');
       return;
     }
     if (!this.hasGeneratedAISuggestions) {
       if (this.needsReappraisal) {
-        appRouter.showToast('⚠️ Bạn vừa chỉnh sửa phối đồ! Bắt buộc nhấn "Nhờ AI Tư Vấn Lại" trước khi xem kết quả.');
+        appRouter.showToast('Bản phối vừa có nét chỉ mới, bạn chạm vào "Cập Nhật Lại" để hoàn tất nhé.');
       } else {
-        appRouter.showToast('🪭 Vui lòng nhấn "Xem Gợi Ý AI" để hoàn tất thẩm định phụ kiện & quy chuẩn di sản!');
+        appRouter.showToast('Bạn chạm vào "Xem Gợi Ý AI" để kiểm tra tính hòa hợp cùng di sản nhé.');
       }
       this.switchSheetTab('panel-ai-styling');
       const centerTriggerBtn = document.getElementById('btn-trigger-mini-gemini');

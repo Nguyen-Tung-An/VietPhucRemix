@@ -83,7 +83,7 @@ function getLocalCulturalAnalysis(contextPayload: {
       dang_chup_anh:
         'Đứng thẳng đoan trang, một tay khẽ che quạt giấy thư pháp ngang ngực, tay kia buông tà năm thân ngay ngắn, mắt nhìn thẳng tự tin.',
       cau_chuyen_di_san:
-        'Áo ngũ thân lập lĩnh là đỉnh cao của nếp mặc Việt Y triều Nguyễn, với 5 cúc vàng tượng trưng cho ngũ thường: Nhân - Lễ - Nghĩa - Trí - Tín.',
+        'Áo ngũ thân lập lĩnh là đỉnh cao của nếp mặc Việt Phục triều Nguyễn, với 5 cúc vàng tượng trưng cho ngũ thường: Nhân - Lễ - Nghĩa - Trí - Tín.',
     };
   }
 
@@ -321,7 +321,7 @@ function generateEditorialLookbookDataUri(promptText: string): string {
 
     <!-- Header & Khung Chữ Editorial Mỹ Thuật -->
     <g transform="translate(40, 56)">
-      <text x="0" y="0" font-family="'Cinzel Decorative', 'Cinzel', serif, Georgia" font-size="12" font-weight="700" fill="#E5A93C" letter-spacing="4">VIỆT Y DI SẢN • EDITORIAL LOOKBOOK</text>
+      <text x="0" y="0" font-family="'Cinzel Decorative', 'Cinzel', serif, Georgia" font-size="12" font-weight="700" fill="#E5A93C" letter-spacing="4">VIỆT PHỤC DI SẢN • EDITORIAL LOOKBOOK</text>
       <text x="0" y="24" font-family="'Cinzel Decorative', 'Cinzel', serif, Georgia" font-size="22" font-weight="900" fill="#FFFFFF" letter-spacing="3">${isAoBaBa ? 'ÁO BÀ BA NAM BỘ' : 'ÁO NGŨ THÂN LẬP LĨNH'}</text>
       <text x="0" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="rgba(245,242,235,0.7)" letter-spacing="1.5">SẮC LỤA ${colorName.toUpperCase()} • TỎA SÁNG GEN Z</text>
     </g>

@@ -99,11 +99,11 @@ export class CompareEngine {
           const labelSpan = targetBtn.querySelector('span');
           if (labelSpan) {
             if (targetBtn.classList.contains('btn-toggle-matrix-history')) {
-              labelSpan.textContent = isHidden ? '▲ Thu Gọn Lịch Sử' : '📜 Xem Lịch Sử Sâu ▼';
+              labelSpan.textContent = isHidden ? 'Thu Gọn Lịch Sử' : 'Xem Lịch Sử Sâu';
             } else {
               const countMatch = labelSpan.textContent?.match(/\d+/);
               const countStr = countMatch ? ` ${countMatch[0]}` : '';
-              labelSpan.textContent = isHidden ? `▼ Thu gọn trích dẫn khảo cứu` : `► Xem${countStr} tài liệu trích dẫn khảo cứu`;
+              labelSpan.textContent = isHidden ? 'Thu gọn tư liệu trích dẫn' : `Xem${countStr} tư liệu trích dẫn`;
             }
           }
         }
@@ -281,14 +281,14 @@ export class CompareEngine {
     let optionsHtml = '';
 
     optionsHtml += `
-      <optgroup label="🎨 Đang Phối Trong Xưởng Phối">
-        <option value="current-workshop">✨ Bộ Đang Tinh Chỉnh Trong Xưởng (Hiện Tại)</option>
+      <optgroup label="Đang Thao Tác Trên Khung Dệt">
+        <option value="current-workshop">Bộ Đang Dệt Trên Khung (Hiện Tại)</option>
       </optgroup>
     `;
 
     if (lookbookItems.length > 0) {
       optionsHtml += `
-        <optgroup label="📖 Các Bộ Đã Lưu Trong Lookbook (${lookbookItems.length} bộ)">
+        <optgroup label="Tác Phẩm Đã Lưu Trong Rương Gấm (${lookbookItems.length} tác phẩm)">
           ${lookbookItems
             .map((item, idx) => `<option value="wardrobe-${item.id}">#${idx + 1} — ${item.title} (${item.colorName || 'Sắc Lụa'})</option>`)
             .join('')}
@@ -297,10 +297,10 @@ export class CompareEngine {
     }
 
     optionsHtml += `
-      <optgroup label="🏛️ Bộ Mẫu Khảo Cứu Di Sản">
+      <optgroup label="Bộ Mẫu Khảo Cứu Di Sản">
         ${DISCOVERY_OUTFITS_POOL
           .slice(0, 4)
-          .map((item) => `<option value="discovery-${item.id}">❖ ${item.title} (${item.colorName})</option>`)
+          .map((item) => `<option value="discovery-${item.id}">${item.title} (${item.colorName})</option>`)
           .join('')}
       </optgroup>
     `;
@@ -350,30 +350,30 @@ export class CompareEngine {
 
     if (sourceBadge) {
       const sourceMap = {
-        workshop: '🎨 Đang Phối',
-        lookbook: '📖 Lookbook',
-        discovery: '🏛️ Khám Phá'
+        workshop: 'Khung Dệt',
+        lookbook: 'Rương Gấm',
+        discovery: 'Chợ Vải'
       };
-      sourceBadge.textContent = sourceMap[outfit.sourceType] || 'Lookbook';
+      sourceBadge.textContent = sourceMap[outfit.sourceType] || 'Rương Gấm';
     }
 
     const eventNames: Record<string, string> = {
-      tet: '🌸 Tết & Hội Xuân',
-      grad: '🎓 Lễ Tốt Nghiệp',
-      temple: '🪷 Chiêm Bái Chùa',
-      wedding: '💍 Đại Lễ Cưới'
+      tet: 'Tết & Hội Xuân',
+      grad: 'Lễ Tốt Nghiệp',
+      temple: 'Chiêm Bái Chùa',
+      wedding: 'Đại Lễ Cưới'
     };
 
     if (occasionTag) {
-      occasionTag.textContent = eventNames[outfit.event] || '🏷️ Lễ Hội Cổ Truyền';
+      occasionTag.textContent = eventNames[outfit.event] || 'Lễ Hội Cổ Truyền';
     }
 
     if (statusBadge) {
       if (tabooCheck.hasTaboo) {
-        statusBadge.textContent = '⚡ Phá Cách / Kiêng Kỵ';
+        statusBadge.textContent = 'Phá Cách / Cần Lưu Tâm';
         statusBadge.className = 'compare-verdict-badge verdict-warn';
       } else {
-        statusBadge.textContent = '✓ Chuẩn Mực Di Sản';
+        statusBadge.textContent = 'Chuẩn Mực Di Sản';
         statusBadge.className = 'compare-verdict-badge verdict-safe';
       }
     }
@@ -429,7 +429,7 @@ export class CompareEngine {
 
     if (accListEl) {
       accListEl.innerHTML = outfit.accessories
-        .map((acc) => `<span class="matrix-badge-pill">❖ ${acc.replace(/_/g, ' ')}</span>`)
+        .map((acc) => `<span class="matrix-badge-pill">${acc.replace(/_/g, ' ')}</span>`)
         .join('');
     }
 
@@ -438,7 +438,7 @@ export class CompareEngine {
         const conflict = tabooCheck.taboos[0];
         tabooWarningEl.innerHTML = `
           <div class="compare-taboo-box warn" style="margin-top: 6px; padding: 6px 8px; border-radius: 6px; background: rgba(201,166,107,0.18); font-size: 0.74rem; color: #7A5338;">
-            ⚠ <strong>Lưu ý:</strong> ${conflict.historicalConflictReason}
+            <strong>Lưu ý:</strong> ${conflict.historicalConflictReason}
           </div>
         `;
       } else {
@@ -456,10 +456,10 @@ export class CompareEngine {
     const eventEl = document.getElementById(`${prefix}-event`);
     if (eventEl) {
       const eventMap: Record<string, string> = {
-        tet: '🌸 Tết Nguyên Đán & Hội Xuân Cổ Truyền',
-        grad: '🎓 Lễ Tốt Nghiệp & Tri Ân Trưởng Thành',
-        temple: '🪷 Đi Chùa & Chiêm Bái Thanh Tịnh',
-        wedding: '💍 Lễ Hằng Thuận & Đám Cưới Truyền Thống'
+        tet: 'Tết Nguyên Đán & Hội Xuân Cổ Truyền',
+        grad: 'Lễ Tốt Nghiệp & Tri Ân Trưởng Thành',
+        temple: 'Đi Chùa & Chiêm Bái Thanh Tịnh',
+        wedding: 'Lễ Hằng Thuận & Đám Cưới Truyền Thống'
       };
       eventEl.textContent = eventMap[outfit.event] || colorAnalysis.event_suitability || 'Sinh hoạt & Hội lễ truyền thống';
     }
@@ -469,7 +469,7 @@ export class CompareEngine {
     const citeSummary = document.getElementById(`${prefix}-citations-summary`);
 
     if (citeSummary) {
-      citeSummary.textContent = `► Xem ${citations.length} tài liệu trích dẫn khảo cứu`;
+      citeSummary.textContent = `► Xem ${citations.length} tư liệu trích dẫn`;
     }
 
     if (citeEl) {
@@ -585,7 +585,7 @@ export class CompareEngine {
     garmentEngine.callCulturalAI(outfit.event, outfit.color, outfit.garment, outfit.accessories[0]);
 
     appRouter.switchTab('create');
-    appRouter.showToast(`✨ Đã nạp phương án "${outfit.title}" vào Xưởng Phối để bạn tiếp tục tinh chỉnh!`);
+    appRouter.showToast(`Đã đưa "${outfit.title}" vào Khung Dệt để bạn tiếp tục may đo.`);
   }
 }
 

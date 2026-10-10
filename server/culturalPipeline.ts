@@ -1,5 +1,5 @@
 /**
- * VIỆT Y REMIX — TWO-ROUND CULTURAL AI PIPELINE & MINI STYLING SUGGESTIONS
+ * VIỆT PHỤC REMIX — TWO-ROUND CULTURAL AI PIPELINE & MINI STYLING SUGGESTIONS
  * 
  * 1. MINI GEMINI ROUND:
  *    - Nhận input: Loại áo, màu sắc (color picker), phong cách, tính cách.
@@ -129,7 +129,7 @@ const miniStylingSchema = {
   properties: {
     set_name: {
       type: Type.STRING,
-      description: 'Tên bộ trang phục di sản mỹ miều chuẩn phong vị Việt Y đương đại'
+      description: 'Tên bộ trang phục di sản mỹ miều chuẩn phong vị Việt Phục đương đại'
     },
     cau_chuyen_di_san: {
       type: Type.STRING,
@@ -552,7 +552,7 @@ export function getOfflineMiniStylingSuggestions(context: {
     skin_tone_effect: '',
     silhouette_effect: '',
     tailoring_advice: '',
-    missing_profile_reminder: '💡 Bạn chưa lưu thông tin ngoại hình trong Hồ Sơ Cá Nhân. Hãy mở Hồ Sơ để bổ sung chiều cao, cân nặng, tông da và nhấn "Cập nhật gợi ý AI" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn!'
+    missing_profile_reminder: 'Bạn chưa lưu thông tin ngoại hình trong Sợi Chỉ Của Tôi. Hãy mở hồ sơ để bổ sung chiều cao, cân nặng, tông da và chạm "Cập nhật gợi ý" để nhận phân tích độ tương thích chuyên sâu cho riêng bạn nhé!'
   };
 
   if (context.user_profile && (context.user_profile.skin || context.user_profile.height || context.user_profile.shape || context.user_profile.weight)) {
@@ -759,7 +759,7 @@ export async function runOnlineMiniStylingSuggestions(
   // ---------------------------------------------------------------------------
   // VÒNG 1: GROUNDED STYLIST & CULTURAL PROPOSAL GENERATOR (DỰA TRÊN GROUND TRUTH)
   // ---------------------------------------------------------------------------
-  const round1SystemPrompt = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Y đương đại.
+  const round1SystemPrompt = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Phục đương đại.
 
 BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
 ${groundTruthContext}
@@ -1365,7 +1365,7 @@ export async function runOnlineGeminiCulturalPipeline(
   // ---------------------------------------------------------------------------
   // VÒNG 1: GROUNDED RECOMMENDATION GENERATOR
   // ---------------------------------------------------------------------------
-  const round1SystemInstruction = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Y đương đại.
+  const round1SystemInstruction = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Phục đương đại.
 
 BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
 ${groundTruthContext}

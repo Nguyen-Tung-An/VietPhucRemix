@@ -102,8 +102,9 @@ export class LookbookEngine {
 
     // 2. Render từng ô bộ đồ đã lưu (Bo góc 16px, thẻ kính mờ)
     outfits.forEach((item: WardrobeItem) => {
+      const isWarning = (item as any).warning_level === 'WARNING' || (item as any).is_culturally_accurate === false;
       const card = document.createElement('article');
-      card.className = 'lookbook-card card-base';
+      card.className = `lookbook-card card-base ${isWarning ? 'cultural-warning' : ''}`;
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', `Xem chi tiết ${item.title}`);
@@ -119,12 +120,12 @@ export class LookbookEngine {
         </div>
 
         <div class="lookbook-card-thumb-box" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.06); border-radius: 12px; width: 100%; height: 180px;">
-          ${resolvedThumbUrl ? `
-            <img src="${resolvedThumbUrl}" data-fallback-src="${fallbackRawUrl}" alt="${item.title}" class="lookbook-card-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.lookbook-card-no-img'); if (ph) ph.style.display='flex';" />
+          ${item.imageUrl ? `
+            <img src="${item.imageUrl}" alt="${item.title}" class="lookbook-card-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.lookbook-card-no-img'); if (ph) ph.style.display='flex';" />
           ` : ''}
-          <div class="lookbook-card-no-img" style="display: ${resolvedThumbUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; width: 100%; height: 100%;">
-            <span style="font-size: 2.2rem; opacity: 0.4;">🏛️</span>
-            <span style="font-family: var(--font-body); font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.4;">Tổ hợp này chưa có ảnh minh họa demo</span>
+          <div class="lookbook-card-no-img" style="display: ${item.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; width: 100%; height: 100%;">
+            <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/empty-loom.webp" alt="Khung dệt" style="width: 72px; height: 72px; object-fit: contain; opacity: 0.8;" />
+            <span style="font-family: var(--font-body); font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.4;">Tổ hợp đang đợi dệt hình minh họa</span>
           </div>
         </div>
 

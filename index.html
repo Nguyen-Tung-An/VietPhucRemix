@@ -13,6 +13,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@600;700;900&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
   
+  <!-- FAVICON -->
+  <link rel="icon" type="image/webp" href="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" />
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" />
+  
   <!-- THREE.JS CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -36,7 +40,7 @@
   <header id="main-nav-bar">
     <div class="nav-inner-container">
       <div class="nav-brand-group" id="btn-nav-home" title="Về Tiền Sảnh Việt Y Remix">
-        <span class="seal-badge">印</span>
+        <img class="seal-badge seal-badge-img" src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" alt="Việt Y Remix Logo" />
         <span class="nav-logo-text">VIỆT Y REMIX</span>
       </div>
 
@@ -81,7 +85,7 @@
       <div class="nav-dropdown-backdrop" id="nav-dropdown-backdrop"></div>
       <div class="nav-dropdown-silk-sheet">
         <div class="nav-dropdown-header">
-          <span class="nav-dropdown-brand-seal">吉</span>
+          <img class="nav-dropdown-brand-seal nav-dropdown-brand-seal-img" src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp" alt="Việt Y Remix Logo" />
           <span class="nav-dropdown-title">KHÔNG GIAN DI SẢN</span>
         </div>
         <div class="nav-dropdown-items-list">
@@ -148,8 +152,16 @@
     <div class="landing-content-frame">
       <!-- Cột Trái (Desktop) / Cụm Trên (Mobile) -->
       <div class="landing-text-column">
-        <div class="landing-badge">
-          <span>Di sản mềm mại · Gen Z remix</span>
+        <div class="landing-brand-crest" aria-label="Biểu trưng Việt Y Remix">
+          <img
+            src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp"
+            alt="Việt Y Remix Hoàng Triều"
+            class="landing-brand-crest-logo"
+            title="Biểu trưng Việt Y Remix"
+          />
+          <div class="landing-badge">
+            <span>Di sản mềm mại · Gen Z remix</span>
+          </div>
         </div>
 
         <header class="landing-header">
@@ -177,10 +189,27 @@
         </div>
       </div>
 
-      <!-- Cột Phải (Desktop) / Khối Giữa (Mobile): Điểm nhấn thị giác chính duy nhất -->
+      <!-- Cột Phải (Desktop) / Khối Giữa (Mobile): Dải Lụa Bay Di Sản (CDN jsDelivr) -->
       <div class="landing-hero-center">
-        <div class="silk-blob-hero" role="img" aria-label="Điểm nhấn tơ lụa mềm mại">
-          <div class="silk-blob-inner-sheen"></div>
+        <div class="landing-silk-showcase" id="landing-silk-showcase" role="img" aria-label="Dải lụa bay mềm mại Việt Y Remix" title="Chạm để vào Xưởng Phối Đồ">
+          <div class="landing-silk-glow" aria-hidden="true"></div>
+          <video
+            id="landing-silk-video"
+            class="landing-silk-video"
+            autoplay
+            loop
+            muted
+            playsinline
+            preload="auto"
+            poster="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-static.webp"
+          >
+            <source src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-loop.webm" type="video/webm" />
+            <img
+              src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-static.webp"
+              alt="Dải lụa bay đương đại Việt Y Remix"
+              class="landing-silk-fallback"
+            />
+          </video>
         </div>
       </div>
 
@@ -1219,34 +1248,7 @@
       <!-- 5. TRẠNG THÁI RỖNG (Empty State) -->
       <div id="lookbook-empty-state" class="lookbook-empty-state" role="status" aria-label="Lookbook đang trống">
         <div class="empty-illustration-box">
-          <svg class="empty-loom-svg" viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="loom-silk-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#F4C9D6" />
-                <stop offset="100%" stop-color="#4A8577" />
-              </linearGradient>
-            </defs>
-            <!-- Vầng hào quang ngọc sương nhẹ -->
-            <ellipse cx="120" cy="110" rx="90" ry="75" fill="rgba(74, 133, 119, 0.07)" />
-            
-            <!-- Khung cửi gỗ truyền thống thanh mảnh -->
-            <rect x="45" y="30" width="150" height="150" rx="14" fill="none" stroke="#4A8577" stroke-width="2" stroke-dasharray="4 3" opacity="0.6" />
-            <line x1="45" y1="55" x2="195" y2="55" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
-            <line x1="45" y1="155" x2="195" y2="155" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
-            <line x1="60" y1="30" x2="60" y2="180" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
-            <line x1="180" y1="30" x2="180" y2="180" stroke="#4A8577" stroke-width="2.5" stroke-linecap="round" />
-
-            <!-- Các sợi tơ lụa mềm mại rủ xuống -->
-            <path d="M 80,55 Q 85,105 78,155" stroke="url(#loom-silk-gradient)" stroke-width="2" fill="none" opacity="0.85" />
-            <path d="M 100,55 Q 105,105 98,155" stroke="url(#loom-silk-gradient)" stroke-width="2.2" fill="none" opacity="0.9" />
-            <path d="M 120,55 Q 118,105 124,155" stroke="url(#loom-silk-gradient)" stroke-width="2.4" fill="none" />
-            <path d="M 140,55 Q 142,105 138,155" stroke="url(#loom-silk-gradient)" stroke-width="2.2" fill="none" opacity="0.9" />
-            <path d="M 160,55 Q 155,105 162,155" stroke="url(#loom-silk-gradient)" stroke-width="2" fill="none" opacity="0.85" />
-
-            <!-- Con thoi dệt bằng gỗ điểm chỉ vàng đất -->
-            <path d="M 90,105 Q 120,95 150,105 Q 120,115 90,105 Z" fill="#E8F3EE" stroke="#C9A66B" stroke-width="1.8" />
-            <circle cx="120" cy="105" r="4" fill="#C9A66B" />
-          </svg>
+          <img src="https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/empty-loom.webp" alt="Khung dệt đang chờ bạn" class="empty-loom-img" />
         </div>
 
         <div class="empty-text-wrap">

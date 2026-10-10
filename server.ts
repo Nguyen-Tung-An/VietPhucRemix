@@ -384,7 +384,7 @@ app.post('/api/gemini/suggest-styling', async (req, res) => {
   return res.json(offlineSuggestions);
 });
 
-// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Giữ Offline Ground Truth bảo toàn Quota đợi user review
+// Endpoint API Gemini Flash cho Xưởng Phối Đồ (#create-scene) - Chế độ 2 Vòng Thẩm Định Trực Tuyến Online
 app.post('/api/gemini/cultural-ai', async (req, res) => {
   const {
     event,
@@ -414,7 +414,22 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
     personality: personality || '',
   };
 
-  // Chế độ Ground Truth Deterministic Engine (Bảo vệ quota 100%, đợi review)
+  // 1. Thử gọi Pipeline 2 vòng Gemini Online khi có kết nối
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const onlineResult = await runOnlineGeminiCulturalPipeline(ai, contextPayload);
+      return res.json({
+        ...onlineResult.final_guardrail,
+        recommendation: onlineResult.recommendation,
+        audit: onlineResult.audit,
+        pipeline_metadata: onlineResult.pipeline_metadata,
+      });
+    } catch (err: any) {
+      console.warn('Lỗi gọi Online Gemini Cultural Pipeline, chuyển sang Offline Deterministic:', err?.message || err);
+    }
+  }
+
+  // 2. Chế độ Ground Truth Deterministic Engine dự phòng (Bảo vệ tính liên tục 100%)
   const offlineResult = runOfflineCulturalPipeline(contextPayload);
   return res.json({
     ...offlineResult.final_guardrail,
@@ -424,13 +439,44 @@ app.post('/api/gemini/cultural-ai', async (req, res) => {
   });
 });
 
-// Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI - Chế độ Mock Bảo Vệ Quota
+// Endpoint API Gemini Flash: Module Sáng Tạo Hoa Văn AI Vector Trực Tuyến
 app.post('/api/gemini/generate-pattern', async (req, res) => {
   const { keyword, overlay_mode } = req.body;
   const userKeyword = keyword || 'chiều mưa xứ Huế';
   const userMode = overlay_mode || 'SEAMLESS_JACQUARD';
 
-  // Trả về hoa văn di sản nội bộ theo từ khóa (Zero quota consumption)
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const patternPrompt = `Bạn là Chuyên gia Đồ họa Di sản Dệt may Cổ phục Việt Nam.
+Hãy sáng tạo 1 hoa văn mỹ thuật vector (SVG path) thuần Việt lấy cảm hứng từ từ khóa: "${userKeyword}".
+Chế độ hiển thị: ${userMode}.
+
+Yêu cầu định dạng JSON chuẩn:
+{
+  "pattern_name": "Tên hoa văn thuần Việt (ví dụ: Gấm Dệt Kim Liên Ngự Đạo)",
+  "pattern_type": "${userMode}",
+  "svg_path_data": "Chuỗi SVG path d attribute hợp lệ (ví dụ: M 10,20 Q 25,5 40,20 ...)",
+  "pattern_color": "#E5A93C",
+  "pattern_story": "Ý nghĩa văn hóa và câu chuyện di sản của hoa văn bằng tiếng Việt"
+}`;
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-lite',
+        contents: patternPrompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.4
+        }
+      });
+      const parsed = JSON.parse(response.text || '{}');
+      if (parsed.pattern_name && parsed.svg_path_data) {
+        return res.json(parsed);
+      }
+    } catch (err: any) {
+      console.warn('Lỗi gọi Gemini Pattern Generation Online, dùng fallback local:', err?.message || err);
+    }
+  }
+
+  // Trả về hoa văn di sản nội bộ theo từ khóa
   return res.json(getLocalPattern(userKeyword, userMode));
 });
 

@@ -342,7 +342,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: var(--border-radius-card, 16px);
+  border-radius: 0;
+  --frame-width: 24px;
+  --frame-slice: 280;
   background: var(--color-card-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -359,6 +361,35 @@
               opacity 0.25s ease,
               box-shadow 0.25s ease;
   will-change: transform, opacity;
+}
+
+/* Khung chạm khắc Cửa Võng bao bên ngoài thẻ (không che nội dung) */
+.discovery-card::before {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  pointer-events: none;
+  z-index: 2;
+  border: var(--frame-width) solid transparent;
+  border-image: var(--asset-cua-vong) var(--frame-slice) / var(--frame-width) round;
+  mix-blend-mode: multiply;
+  transition: filter .25s ease;
+}
+
+.discovery-card:hover::before {
+  filter: drop-shadow(0 6px 14px rgba(74, 133, 119, .25));
+}
+
+.discovery-card.swiping-like::before {
+  filter: drop-shadow(0 0 10px rgba(74, 133, 119, .6));
+}
+
+.discovery-card.swiping-dislike::before {
+  filter: grayscale(.8) opacity(.7);
+}
+
+.discovery-card.cultural-warning::before {
+  filter: sepia(.6) saturate(1.8) hue-rotate(-15deg) drop-shadow(0 0 8px rgba(201, 166, 107, .6));
 }
 
 .discovery-card:active {

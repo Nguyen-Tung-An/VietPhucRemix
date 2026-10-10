@@ -4,6 +4,8 @@ import { wardrobeManager } from './wardrobeManager.ts';
 import { assetConfig } from '../config/assetConfig.ts';
 import { CURATED_18_OUTFITS } from '../data/curatedOutfits.ts';
 import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
+import { getCulturalTruth, checkStrictTaboo } from '../data/culturalTruths.ts';
+
 
 export interface EventContext {
   key: string;
@@ -204,10 +206,14 @@ export class SwipeEngine {
     const visibleCards = this.currentDeck.slice(0, 3);
 
     visibleCards.forEach((outfit, index) => {
+      const truth = getCulturalTruth(outfit.garment);
+      const hasTaboo = outfit.accessories?.some((acc) => checkStrictTaboo(truth.id, acc).isTaboo);
+      const isCulturalWarning = hasTaboo || (outfit as any).warning_level === 'WARNING' || (outfit as any).is_culturally_accurate === false;
+
       const card = document.createElement('article');
       card.className = `discovery-card card-base ${
         index === 0 ? 'card-top' : index === 1 ? 'card-behind-1' : 'card-behind-2'
-      }`;
+      } ${isCulturalWarning ? 'cultural-warning' : ''}`;
       card.dataset.outfitId = outfit.id;
 
       const rawRelPath = outfit.cdn_image_path || outfit.imageUrl || '';
@@ -249,6 +255,9 @@ export class SwipeEngine {
             <button type="button" class="btn-card-inspect-detail" data-outfit-id="${outfit.id}" style="padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(74,133,119,0.3); background: rgba(255,255,255,0.92); color: #2A5A4E; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
               🔍 Xem Input & Prompt AI
             </button>
+            <button type="button" class="btn-card-remix-action" data-outfit-id="${outfit.id}" style="padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(74,133,119,0.35); background: rgba(74,133,119,0.1); color: #2A5A4E; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              🎨 Phối Mẫu Này
+            </button>
           </div>
         </div>
       `;
@@ -259,23 +268,19 @@ export class SwipeEngine {
         lookbookEngine.openOutfitDetailModal(outfit as any);
       });
 
+      card.querySelector('.btn-card-remix-action')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        Sound.playChime();
+        if (this.onRemixCallback) {
+          this.onRemixCallback(outfit);
+        }
+      });
+
       if (index === 0) {
         this.attachSwipeHandlers(card, outfit);
       } else {
-        card.style.cursor = 'pointer';
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('title', `Chạm để đưa ${outfit.title} vào Xưởng Phối`);
-        card.addEventListener('click', () => {
-          Sound.playChime();
-          card.style.transform = 'scale(0.96)';
-          setTimeout(() => {
-            card.style.transform = '';
-            if (this.onRemixCallback) {
-              this.onRemixCallback(outfit);
-            }
-          }, 120);
-        });
+        card.style.cursor = 'default';
       }
 
       container.appendChild(card);
@@ -304,17 +309,22 @@ export class SwipeEngine {
       cardEl.style.transform = `translate(${this.cardCurrentX}px, ${this.cardCurrentY}px) rotate(${rotateDeg}deg)`;
 
       if (this.cardCurrentX > 25) {
-        const ratio = Math.min((this.cardCurrentX - 25) / 60, 1);
-        if (stampLike) stampLike.style.opacity = ratio.toString();
-        if (stampDislike) stampDislike.style.opacity = '0';
-      } else if (this.cardCurrentX < -25) {
-        const ratio = Math.min((-this.cardCurrentX - 25) / 60, 1);
-        if (stampDislike) stampDislike.style.opacity = ratio.toString();
-        if (stampLike) stampLike.style.opacity = '0';
-      } else {
-        if (stampLike) stampLike.style.opacity = '0';
-        if (stampDislike) stampDislike.style.opacity = '0';
-      }
+      const ratio = Math.min((this.cardCurrentX - 25) / 60, 1);
+      if (stampLike) stampLike.style.opacity = ratio.toString();
+      if (stampDislike) stampDislike.style.opacity = '0';
+      cardEl.classList.add('swiping-like');
+      cardEl.classList.remove('swiping-dislike');
+    } else if (this.cardCurrentX < -25) {
+      const ratio = Math.min((-this.cardCurrentX - 25) / 60, 1);
+      if (stampDislike) stampDislike.style.opacity = ratio.toString();
+      if (stampLike) stampLike.style.opacity = '0';
+      cardEl.classList.add('swiping-dislike');
+      cardEl.classList.remove('swiping-like');
+    } else {
+      if (stampLike) stampLike.style.opacity = '0';
+      if (stampDislike) stampDislike.style.opacity = '0';
+      cardEl.classList.remove('swiping-like', 'swiping-dislike');
+    }
     };
 
     const onPointerUp = (e: PointerEvent) => {
@@ -326,25 +336,9 @@ export class SwipeEngine {
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerUp);
 
-      const dragDist = Math.hypot(this.cardCurrentX, this.cardCurrentY);
+      cardEl.classList.remove('swiping-like', 'swiping-dislike');
 
-      // Chạm nhẹ vào thẻ (< 15px di chuyển) -> Điều hướng trực tiếp sang màn Phối Đồ
-      if (dragDist < 15) {
-        Sound.playChime();
-        cardEl.style.transition = 'transform 0.16s ease';
-        cardEl.style.transform = 'scale(0.96)';
-        setTimeout(() => {
-          cardEl.style.transform = 'scale(1)';
-          if (this.onRemixCallback) {
-            this.onRemixCallback(outfit);
-          }
-        }, 120);
-
-        this.cardCurrentX = 0;
-        this.cardCurrentY = 0;
-        return;
-      }
-
+      // Vuốt sang phải > 90px: Yêu thích | Vuốt sang trái < -90px: Bỏ qua | Thả ra: Trở về vị trí cũ an toàn
       if (this.cardCurrentX > 90) {
         this.actionLike(outfit);
       } else if (this.cardCurrentX < -90) {
@@ -386,7 +380,7 @@ export class SwipeEngine {
     Sound.playChime();
 
     const card = this.activeCardElement;
-    card.classList.add('card-anim-like');
+    card.classList.add('card-anim-like', 'swiping-like');
 
     wardrobeManager.saveWardrobeOutfit(outfit);
 
@@ -407,7 +401,7 @@ export class SwipeEngine {
     Sound.playClick();
 
     const card = this.activeCardElement;
-    card.classList.add('card-anim-dislike');
+    card.classList.add('card-anim-dislike', 'swiping-dislike');
 
     setTimeout(() => {
       this.currentDeck.shift();
@@ -418,7 +412,7 @@ export class SwipeEngine {
 
   /**
    * Hành động XÁO LẠI (Reshuffle):
-   * Đảo thứ tự xấp thẻ và xoay nhẹ thẻ với phản hồi tức thì
+   * Tái cấu trúc xấp thẻ từ toàn bộ kho trang phục và xáo trộn ngẫu nhiên thực sự
    */
   public actionReshuffle(): void {
     if (this.isAnimating || !this.activeCardElement) return;
@@ -428,13 +422,32 @@ export class SwipeEngine {
     const card = this.activeCardElement;
     card.classList.add('card-anim-reshuffle');
 
-    // Xáo trộn mảng thẻ
-    const shuffled = [...this.currentDeck];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const currentTopId = this.currentDeck[0]?.id;
+
+    // 1. Lấy nguồn danh sách trang phục đầy đủ từ DISCOVERY_OUTFITS_POOL
+    let pool = [...DISCOVERY_OUTFITS_POOL];
+    if (this.selectedContext && this.selectedContext.key !== 'tet') {
+      const byContext = DISCOVERY_OUTFITS_POOL.filter(
+        (item) => item.event === this.selectedContext?.key || item.event === 'tet'
+      );
+      if (byContext.length >= 4) {
+        pool = [...byContext];
+      }
     }
-    this.currentDeck = shuffled;
+
+    // 2. Thuật toán Fisher-Yates xáo trộn ngẫu nhiên hoàn toàn
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    // 3. Đảm bảo thẻ trên cùng sau khi xáo LUÔN KHÁC với thẻ đang hiển thị trước đó
+    if (pool.length > 1 && pool[0].id === currentTopId) {
+      const swapIndex = 1 + Math.floor(Math.random() * (pool.length - 1));
+      [pool[0], pool[swapIndex]] = [pool[swapIndex], pool[0]];
+    }
+
+    this.currentDeck = pool;
 
     setTimeout(() => {
       this.isAnimating = false;

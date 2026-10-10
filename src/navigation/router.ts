@@ -285,6 +285,10 @@ export class AppRouter {
       btn.addEventListener('click', handleEnterWorkshop);
     });
 
+    // Chạm vào Dải lụa bay cũng dẫn thẳng vào Xưởng Phối Đồ
+    const silkShowcase = document.getElementById('landing-silk-showcase');
+    silkShowcase?.addEventListener('click', handleEnterWorkshop);
+
     // Bấm nút "Về Tiền Sảnh" từ topbar canvas
     btnBackLanding?.addEventListener('click', () => {
       Sound.playClick();

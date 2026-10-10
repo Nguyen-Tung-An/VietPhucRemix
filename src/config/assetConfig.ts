@@ -248,6 +248,41 @@ class AssetConfigManager {
     };
     img.src = primaryUrl;
   }
+
+  /**
+   * Đường dẫn video dải lụa bay Landing Page (CDN jsDelivr)
+   */
+  public getLandingSilkVideoUrl(): string {
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-loop.webm';
+  }
+
+  /**
+   * Đường dẫn ảnh tĩnh dải lụa bay Landing Page (CDN jsDelivr)
+   */
+  public getLandingSilkStaticUrl(): string {
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-static.webp';
+  }
+
+  /**
+   * Đường dẫn logo thương hiệu (CDN jsDelivr)
+   */
+  public getLogoUrl(): string {
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp';
+  }
+
+  /**
+   * Đường dẫn khung chạm khắc Cửa Võng (CDN jsDelivr)
+   */
+  public getCuaVongFrameUrl(): string {
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/cua-vong-frame.webp';
+  }
+
+  /**
+   * Đường dẫn minh họa khung dệt rỗng (CDN jsDelivr)
+   */
+  public getEmptyLoomUrl(): string {
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/empty-loom.webp';
+  }
 }
 
 export const assetConfig = new AssetConfigManager();

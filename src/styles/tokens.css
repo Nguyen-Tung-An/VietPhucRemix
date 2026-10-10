@@ -51,6 +51,11 @@
   --bottom-thumb-zone: 350px;
   --border-radius-card: 16px;
   --border-radius-pill: 9999px;
+
+  /* CDN Assets */
+  --asset-cua-vong: url('https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/cua-vong-frame.webp');
+  --asset-empty-loom: url('https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/empty-loom.webp');
+  --asset-logo: url('https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/logo.webp');
 }
 
 /* --------------------------------------------------------------------------

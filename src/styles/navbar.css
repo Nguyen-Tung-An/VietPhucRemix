@@ -57,6 +57,16 @@
   flex-shrink: 0;
 }
 
+.nav-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .nav-brand-group:hover {
   transform: translateY(-1px);
 }
@@ -65,8 +75,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
   background: rgba(74, 133, 119, 0.15);
   border: 1px solid var(--color-accent-secondary);
@@ -78,11 +88,27 @@
   box-shadow: 0 2px 6px rgba(74, 133, 119, 0.1);
 }
 
+.seal-badge.seal-badge-img {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(74, 133, 119, 0.22));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.nav-brand-group:hover .seal-badge.seal-badge-img {
+  transform: scale(1.08);
+  filter: drop-shadow(0 4px 12px rgba(74, 133, 119, 0.38));
+}
+
 .nav-logo-text {
   font-family: var(--font-title);
-  font-size: 1rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
   color: var(--color-text-primary);
   text-transform: none !important;
   white-space: nowrap;
@@ -255,6 +281,12 @@
   font-family: var(--font-title);
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+.nav-dropdown-brand-seal.nav-dropdown-brand-seal-img {
+  background: transparent;
+  border: none;
+  object-fit: contain;
 }
 
 .nav-dropdown-title {

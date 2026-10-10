@@ -656,3 +656,7 @@ export function validateUserInputSanity(
   };
 }
 
+// Runtime exports for Node ESM compatibility
+export const CulturalHeritageEntry = {};
+export const CitationSource = {};
+

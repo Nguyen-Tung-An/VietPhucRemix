@@ -112,6 +112,14 @@
   will-change: transform, border-radius;
 }
 
+.lua-blob-loading-img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
 /* Vệt sáng bóng tơ lụa lướt nhẹ trên khối mềm */
 .lua-blob-silk-sheen {
   position: absolute;

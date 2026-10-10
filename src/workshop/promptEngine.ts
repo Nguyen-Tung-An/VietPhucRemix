@@ -1,4 +1,4 @@
-import { CurrentOutfitState, PromptEnrichmentComponents } from '../types/index.ts';
+import type { CurrentOutfitState, PromptEnrichmentComponents } from '../types/index.ts';
 
 /**
  * BẢNG ÁNH XẠ TÊN MÀU TIẾNG VIỆT ĐẶC TRƯNG SANG MÔ TẢ LỤA TIẾNG ANH CHÍNH XÁC

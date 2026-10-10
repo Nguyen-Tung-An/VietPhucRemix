@@ -280,3 +280,23 @@ export interface UserPreferenceVector {
   garments: Record<string, number>;
   events: Record<string, number>;
 }
+
+// Runtime exports to satisfy Node.js native ESM loader during type stripping
+export const CitationSource = {};
+export const GarmentType = {};
+export const ColorCulturalAnalysis = {};
+export const CulturalGuardrailResult = {};
+export const StylingSuggestionItem = {};
+export const VisualReferenceItem = {};
+export const MiniStylingResponse = {};
+export const PatternPromptResponse = {};
+export const PromptEnrichmentComponents = {};
+export const CulturalRecommendationInput = {};
+export const GroundedRecommendationResult = {};
+export const CulturalAuditResult = {};
+export const TwoRoundCulturalResponse = {};
+export const PatternItem = {};
+export const CurrentOutfitState = {};
+export const DiscoveryOutfit = {};
+export const WardrobeItem = {};
+export const UserPreferenceVector = {};

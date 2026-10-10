@@ -253,14 +253,14 @@ class AssetConfigManager {
    * Đường dẫn video dải lụa bay Landing Page (CDN jsDelivr)
    */
   public getLandingSilkVideoUrl(): string {
-    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-loop.webm';
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-loop.webm?v=2';
   }
 
   /**
    * Đường dẫn ảnh tĩnh dải lụa bay Landing Page (CDN jsDelivr)
    */
   public getLandingSilkStaticUrl(): string {
-    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-static.webp';
+    return 'https://cdn.jsdelivr.net/gh/Nguyen-Tung-An/llgv-assets-demo@main/public/element/landing-page/silk-static.webp?v=2';
   }
 
   /**

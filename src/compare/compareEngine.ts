@@ -204,6 +204,7 @@ export class CompareEngine {
   }
 
   private convertWardrobeToModel(w: WardrobeItem): CompareOutfitModel {
+    const resolvedImg = assetConfig.resolveAssetUrl(w.cdn_image_path || w.imageUrl || '') || assetConfig.getGarmentImageUrl(w.garment);
     return {
       id: `wardrobe-${w.id}`,
       sourceType: 'lookbook',
@@ -212,14 +213,20 @@ export class CompareEngine {
       color: w.color,
       colorName: w.colorName,
       event: w.event,
-      accessories: w.accessories && w.accessories.length > 0 ? w.accessories : [w.accessory],
-      hairstyle: w.hairstyle || 'Tóc búi cao thanh thoát',
-      imageUrl: w.imageUrl || assetConfig.getGarmentImageUrl(w.garment),
+      accessories:
+        w.accessoryLabels && w.accessoryLabels.length > 0
+          ? w.accessoryLabels
+          : w.accessories && w.accessories.length > 0
+            ? w.accessories
+            : [w.accessory],
+      hairstyle: w.custom_hairstyle || w.hairstyle || 'Tóc búi cao thanh thoát',
+      imageUrl: resolvedImg,
       desc: `Lưu trong Lookbook cá nhân lúc ${w.savedAt || 'gần đây'}.`
     };
   }
 
   private convertDiscoveryToModel(d: DiscoveryOutfit): CompareOutfitModel {
+    const resolvedImg = assetConfig.resolveAssetUrl(d.cdn_image_path || d.imageUrl || '') || assetConfig.getGarmentImageUrl(d.garment);
     return {
       id: `discovery-${d.id}`,
       sourceType: 'discovery',
@@ -228,10 +235,15 @@ export class CompareEngine {
       color: d.color,
       colorName: d.colorName,
       event: d.event,
-      accessories: [d.accessory],
-      hairstyle: 'Tóc chuẩn mực di sản',
-      imageUrl: d.imageUrl || assetConfig.getGarmentImageUrl(d.garment),
-      desc: 'Bộ phục trang mẫu trong bộ sưu tập Khám Phá Di Sản.'
+      accessories:
+        d.accessoryLabels && d.accessoryLabels.length > 0
+          ? d.accessoryLabels
+          : d.accessories && d.accessories.length > 0
+            ? d.accessories
+            : [d.accessory],
+      hairstyle: d.hairstyle || 'Tóc chuẩn mực di sản',
+      imageUrl: resolvedImg,
+      desc: d.desc || 'Bộ phục trang mẫu trong bộ sưu tập Khám Phá Di Sản.'
     };
   }
 

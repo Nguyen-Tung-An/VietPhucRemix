@@ -3,7 +3,8 @@ import {
   PatternItem,
   MiniStylingResponse,
   CulturalRecommendationInput,
-  PatternPromptResponse
+  PatternPromptResponse,
+  PromptEnrichmentComponents
 } from '../types/index.ts';
 import {
   getMockCulturalAI,
@@ -168,4 +169,41 @@ export async function fetchFashionImageAPI(prompt: string, signal?: AbortSignal)
       });
     }
   });
+}
+
+export async function fetchSynthesizePromptPartsAPI(
+  payload: {
+    garment_type: string;
+    garment_label?: string;
+    primary_color: string;
+    color_name?: string;
+    styles?: string[];
+    creativity_level?: number;
+    accessories?: string[];
+    accessory_labels?: string[];
+    custom_accessories?: string[];
+    hairstyle?: string;
+    custom_hairstyle?: string;
+    pattern_name?: string;
+    pattern_story?: string;
+    event?: string;
+    best_occasion?: string;
+    user_profile?: any;
+  },
+  signal?: AbortSignal
+): Promise<PromptEnrichmentComponents | null> {
+  try {
+    const res = await fetch('/api/gemini/synthesize-prompt-parts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Lỗi fetch synthesize-prompt-parts, dùng bộ lắp ráp nội bộ:', err);
+  }
+  return null;
 }

@@ -1,5 +1,6 @@
 import { DiscoveryOutfit } from '../types/index.ts';
 import { assembleFashionPrompt } from '../workshop/promptEngine.ts';
+import { assetConfig } from '../config/assetConfig.ts';
 
 /**
  * BỘ 18 TRANG PHỤC KHÁM PHÁ & LOOKBOOK CHUẨN MỰC
@@ -24,7 +25,6 @@ interface RawCuratedOutfitDef {
   id: string;
   cdn_id: string;
   cdn_image_path: string;
-  fallback_image_url: string;
   title: string;
   creatorName: string;
   garment: 'AO_NGU_THAN' | 'AO_TAC' | 'AO_NHAT_BINH' | 'AO_TU_THAN' | 'AO_BA_BA' | 'AO_DAI_LEMUR';
@@ -60,7 +60,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ngu-than-01',
     cdn_id: 'garment_ngu_than_01',
     cdn_image_path: '/images/garments/curated/garment_ngu_than_01.webp',
-    fallback_image_url: '/images/garments/ao-ngu-than.png',
     title: 'Áo Ngũ Thân Lập Lĩnh Hoàng Cúc Cố Đô',
     creatorName: 'Minh Thảo @GenZ Huế',
     garment: 'AO_NGU_THAN',
@@ -91,7 +90,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ngu-than-02',
     cdn_id: 'garment_ngu_than_02',
     cdn_image_path: '/images/garments/curated/garment_ngu_than_02.webp',
-    fallback_image_url: '/images/garments/ao-ngu-than.jpg',
     title: 'Áo Ngũ Thân Lập Lĩnh Hồng Phấn Sen',
     creatorName: 'Bảo Trâm @HàThành',
     garment: 'AO_NGU_THAN',
@@ -122,7 +120,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ngu-than-03',
     cdn_id: 'garment_ngu_than_03',
     cdn_image_path: '/images/garments/curated/garment_ngu_than_03.webp',
-    fallback_image_url: '/images/garments/ao-ngu-than.png',
     title: 'Áo Ngũ Thân Tay Chẽn Nam Lam Khang',
     creatorName: 'Đăng Khoa @TràngAn',
     garment: 'AO_NGU_THAN',
@@ -157,7 +154,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tac-01',
     cdn_id: 'garment_tac_01',
     cdn_image_path: '/images/garments/curated/garment_tac_01.webp',
-    fallback_image_url: '/images/garments/ao-tac.png',
     title: 'Áo Tấc Đại Lễ Xanh Ngọc Bích',
     creatorName: 'Bảo Nghi @CốĐô',
     garment: 'AO_TAC',
@@ -188,7 +184,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tac-02',
     cdn_id: 'garment_tac_02',
     cdn_image_path: '/images/garments/curated/garment_tac_02.webp',
-    fallback_image_url: '/images/garments/ao-tac.jpg',
     title: 'Áo Tấc Đại Lễ Đỏ Huyết Dụ Song Hỷ',
     creatorName: 'Hoàng Long @DiSảnViệt',
     garment: 'AO_TAC',
@@ -219,7 +214,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tac-03',
     cdn_id: 'garment_tac_03',
     cdn_image_path: '/images/garments/curated/garment_tac_03.webp',
-    fallback_image_url: '/images/garments/ao-tac.png',
     title: 'Áo Tấc Bạch Lụa Sương Mai Tối Giản',
     creatorName: 'Hải Đăng @TriểnLãmNghệThuật',
     garment: 'AO_TAC',
@@ -254,7 +248,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-nhat-binh-01',
     cdn_id: 'garment_nhat_binh_01',
     cdn_image_path: '/images/garments/curated/garment_nhat_binh_01.webp',
-    fallback_image_url: '/images/garments/ao-nhat-binh.jpg',
     title: 'Áo Nhật Bình Hoàng Triều Ngũ Sắc',
     creatorName: 'Phương Anh @HoàngGiaHuế',
     garment: 'AO_NHAT_BINH',
@@ -285,7 +278,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-nhat-binh-02',
     cdn_id: 'garment_nhat_binh_02',
     cdn_image_path: '/images/garments/curated/garment_nhat_binh_02.webp',
-    fallback_image_url: '/images/garments/ao-nhat-binh.png',
     title: 'Áo Nhật Bình Tím Xứ Huế Trầm Mặc',
     creatorName: 'Khánh Vy @SôngHương',
     garment: 'AO_NHAT_BINH',
@@ -316,7 +308,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-nhat-binh-03',
     cdn_id: 'garment_nhat_binh_03',
     cdn_image_path: '/images/garments/curated/garment_nhat_binh_03.webp',
-    fallback_image_url: '/images/garments/ao-nhat-binh.jpg',
     title: 'Áo Nhật Bình Thiên Thanh Runway Remix',
     creatorName: 'Thiên Kim @HauteCouture',
     garment: 'AO_NHAT_BINH',
@@ -351,7 +342,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tu-than-01',
     cdn_id: 'garment_tu_than_01',
     cdn_image_path: '/images/garments/curated/garment_tu_than_01.webp',
-    fallback_image_url: '/images/garments/ao-tu-than.png',
     title: 'Áo Tứ Thân Kinh Bắc Yếm Thắm Đỏ Son',
     creatorName: 'Hải Yến @QuanHọKinhBắc',
     garment: 'AO_TU_THAN',
@@ -382,7 +372,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tu-than-02',
     cdn_id: 'garment_tu_than_02',
     cdn_image_path: '/images/garments/curated/garment_tu_than_02.webp',
-    fallback_image_url: '/images/garments/ao-tu-than.png',
     title: 'Áo Tứ Thân Củ Nâu Đồng Nội Làng Nghề',
     creatorName: 'Như Quỳnh @ĐồngQuê',
     garment: 'AO_TU_THAN',
@@ -413,7 +402,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-tu-than-03',
     cdn_id: 'garment_tu_than_03',
     cdn_image_path: '/images/garments/curated/garment_tu_than_03.webp',
-    fallback_image_url: '/images/garments/ao-tu-than.png',
     title: 'Áo Tứ Thân Lụa Xanh Cốm Mùa Thu',
     creatorName: 'Hà My @MùaThuHàNội',
     garment: 'AO_TU_THAN',
@@ -448,7 +436,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ba-ba-01',
     cdn_id: 'garment_ba_ba_01',
     cdn_image_path: '/images/garments/curated/garment_ba_ba_01.webp',
-    fallback_image_url: '/images/garments/ao-ba-ba.jpg',
     title: 'Áo Bà Ba Nam Bộ Xanh Ngọc Phù Sa',
     creatorName: 'Phương Nam @MiềnTâySôngNước',
     garment: 'AO_BA_BA',
@@ -479,7 +466,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ba-ba-02',
     cdn_id: 'garment_ba_ba_02',
     cdn_image_path: '/images/garments/curated/garment_ba_ba_02.webp',
-    fallback_image_url: '/images/garments/ao-ba-ba.png',
     title: 'Áo Bà Ba Lãnh Mỹ A Đen Mun Cúc Bạc',
     creatorName: 'Tuyết Mai @TânChâuAnGiang',
     garment: 'AO_BA_BA',
@@ -510,7 +496,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-ba-ba-03',
     cdn_id: 'garment_ba_ba_03',
     cdn_image_path: '/images/garments/curated/garment_ba_ba_03.webp',
-    fallback_image_url: '/images/garments/ao-ba-ba.jpg',
     title: 'Áo Bà Ba Sắc Vàng Nắng Sông Hậu',
     creatorName: 'Gia Hân @CầnThơGạoTrắng',
     garment: 'AO_BA_BA',
@@ -545,7 +530,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-lemur-01',
     cdn_id: 'garment_lemur_01',
     cdn_image_path: '/images/garments/curated/garment_lemur_01.webp',
-    fallback_image_url: '/images/garments/ao-dai-lemur.png',
     title: 'Áo Dài Lemur Tân Thời Bạch Ngọc 1930s',
     creatorName: 'Khánh An @HàThànhCổĐiển',
     garment: 'AO_DAI_LEMUR',
@@ -576,7 +560,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-lemur-02',
     cdn_id: 'garment_lemur_02',
     cdn_image_path: '/images/garments/curated/garment_lemur_02.webp',
-    fallback_image_url: '/images/garments/ao-dai-lemur.png',
     title: 'Áo Dài Lemur Nhung Đỏ Dạ Hội',
     creatorName: 'Hoài Thương @DạHộiHàNội',
     garment: 'AO_DAI_LEMUR',
@@ -607,7 +590,6 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
     id: 'outfit-lemur-03',
     cdn_id: 'garment_lemur_03',
     cdn_image_path: '/images/garments/curated/garment_lemur_03.webp',
-    fallback_image_url: '/images/garments/ao-dai-lemur.png',
     title: 'Áo Dài Lemur Xanh Bạc Hà Pastel Remix',
     creatorName: 'Ngọc Diệp @GenZMuse',
     garment: 'AO_DAI_LEMUR',
@@ -637,23 +619,26 @@ const RAW_CURATED_DEFS: RawCuratedOutfitDef[] = [
 ];
 
 /**
- * Tạo danh sách 18 bộ trang phục hoàn chỉnh với Prompt được tính toán chính xác
+ * Tạo danh sách 18 bộ trang phục hoàn chỉnh với Prompt được tính toán chính xác và liên kết CDN
  */
 export const CURATED_18_OUTFITS: DiscoveryOutfit[] = RAW_CURATED_DEFS.map((def) => {
   const assembledPrompt = assembleFashionPrompt(
     {
       garment: def.garment,
+      garmentLabel: def.garmentLabel,
       color: def.color,
       colorName: def.colorName,
       styles: def.styles,
       style_mode: def.styles.join(', '),
       accessories: def.accessories,
+      accessoryLabels: def.accessoryLabels,
       accessory: def.accessories[0] || 'QUAT_GIAY',
       hairstyle: def.hairstyle,
       creativityLevel: def.creativityLevel,
       event: def.event,
       bestOccasion: def.bestOccasion,
-      eventLabel: def.eventLabel
+      eventLabel: def.eventLabel,
+      patternName: def.patternName
     },
     {
       height: def.userProfile.height,
@@ -664,11 +649,14 @@ export const CURATED_18_OUTFITS: DiscoveryOutfit[] = RAW_CURATED_DEFS.map((def) 
     }
   );
 
+  // Giải quyết đường dẫn ảnh ưu tiên từ CDN GitHub (cdn_image_path)
+  const resolvedCdnUrl = assetConfig.resolveAssetUrl(def.cdn_image_path);
+
   return {
     id: def.id,
     cdn_id: def.cdn_id,
     cdn_image_path: def.cdn_image_path,
-    imageUrl: def.fallback_image_url,
+    imageUrl: resolvedCdnUrl,
     title: def.title,
     creatorName: def.creatorName,
     garment: def.garment,
@@ -694,3 +682,20 @@ export const CURATED_18_OUTFITS: DiscoveryOutfit[] = RAW_CURATED_DEFS.map((def) 
     assembledPrompt: assembledPrompt
   };
 });
+
+/**
+ * Helper lấy URL ảnh chuẩn từ CDN cho bất kỳ bộ trang phục nào (tự động ưu tiên cdn_image_path)
+ */
+export function resolveOutfitImageUrl(outfit: {
+  cdn_image_path?: string;
+  imageUrl?: string;
+  garment?: string;
+}): string {
+  if (outfit.cdn_image_path) {
+    return assetConfig.resolveAssetUrl(outfit.cdn_image_path);
+  }
+  if (outfit.imageUrl) {
+    return assetConfig.resolveAssetUrl(outfit.imageUrl);
+  }
+  return assetConfig.getGarmentImageUrl(outfit.garment || 'AO_NGU_THAN');
+}

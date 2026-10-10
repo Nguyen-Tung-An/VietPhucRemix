@@ -11,6 +11,8 @@ import {
   getOfflineMiniStylingSuggestions,
   generatePatternPromptWithGemini,
   getOfflinePatternPrompt,
+  synthesizePromptPartsWithGemini,
+  getOfflineSynthesizedPromptParts,
 } from './server/culturalPipeline.ts';
 import { getColorCulturalAnalysis } from './src/data/culturalTruths.ts';
 
@@ -455,6 +457,40 @@ app.post('/api/gemini/generate-pattern-prompt', async (req, res) => {
   return res.json(offlinePatternPrompt);
 });
 
+// Endpoint API Gemini: Tổng Hợp Vi Mô Từng Thành Phần Prompt Sau Khi Duyệt Phụ Kiện & Kiểu Tóc
+app.post('/api/gemini/synthesize-prompt-parts', async (req, res) => {
+  const payload = req.body || {};
+  const input = {
+    garment_type: payload.garment_type || 'AO_NGU_THAN',
+    garment_label: payload.garment_label || '',
+    primary_color: payload.primary_color || '#F4C9D6',
+    color_name: payload.color_name || '',
+    styles: Array.isArray(payload.styles) ? payload.styles : [],
+    creativity_level: typeof payload.creativity_level === 'number' ? payload.creativity_level : 35,
+    accessories: Array.isArray(payload.accessories) ? payload.accessories : [],
+    accessory_labels: Array.isArray(payload.accessory_labels) ? payload.accessory_labels : [],
+    custom_accessories: Array.isArray(payload.custom_accessories) ? payload.custom_accessories : [],
+    hairstyle: payload.hairstyle || '',
+    custom_hairstyle: payload.custom_hairstyle || '',
+    pattern_name: payload.pattern_name || '',
+    pattern_story: payload.pattern_story || '',
+    event: payload.event || 'tet',
+    best_occasion: payload.best_occasion || '',
+    user_profile: payload.user_profile || null,
+  };
+
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const enriched = await synthesizePromptPartsWithGemini(ai, input);
+      return res.json(enriched);
+    } catch (err: any) {
+      console.warn('Lỗi gọi Gemini Synthesize Prompt Parts, dùng bộ tổng hợp nội bộ:', err?.message || err);
+    }
+  }
+
+  return res.json(getOfflineSynthesizedPromptParts(input));
+});
+
 // Endpoint API Gemini/Imagen: Sinh Ảnh Lookbook Thời Trang AI - Chế độ Mock Bảo Vệ Quota
 app.post('/api/gemini/fashion-image', async (req, res) => {
   const { prompt } = req.body;
@@ -471,7 +507,11 @@ async function startServer() {
 
   if (!isProd) {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        watch: null,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -482,9 +522,27 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const httpServer = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server đang chạy tại http://0.0.0.0:${PORT}`);
   });
+
+  httpServer.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${PORT} đã đang được sử dụng bởi tiến trình dev server hiện hành.`);
+      process.exit(0);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
+  const gracefulShutdown = () => {
+    httpServer.close(() => {
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
 }
 
 startServer();

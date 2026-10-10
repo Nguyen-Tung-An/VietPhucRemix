@@ -1,6 +1,8 @@
 import { WardrobeItem, DiscoveryOutfit } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import { preferenceEngine } from './preferenceLearning.ts';
+import { assetConfig } from '../config/assetConfig.ts';
+import { CURATED_18_OUTFITS } from '../data/curatedOutfits.ts';
 
 export class WardrobeManager {
   public savedWardrobe: WardrobeItem[] = [];
@@ -15,7 +17,42 @@ export class WardrobeManager {
   public loadWardrobe(): void {
     try {
       const raw = localStorage.getItem('viet_y_wardrobe');
-      if (raw) this.savedWardrobe = JSON.parse(raw);
+      if (raw) {
+        const parsed: WardrobeItem[] = JSON.parse(raw);
+        // Đồng bộ lại URL ảnh CDN và Prompt mới nhất nếu bộ đồ thuộc danh sách 18 bộ Curated
+        this.savedWardrobe = parsed.map((item) => {
+          const matchingCurated = CURATED_18_OUTFITS.find(
+            (c) => c.id === item.id || (c.cdn_id && c.cdn_id === item.cdn_id)
+          );
+          if (matchingCurated) {
+            return {
+              ...item,
+              cdn_id: matchingCurated.cdn_id,
+              cdn_image_path: matchingCurated.cdn_image_path,
+              imageUrl: assetConfig.resolveAssetUrl(
+                matchingCurated.cdn_image_path || matchingCurated.imageUrl || ''
+              ),
+              assembledPrompt: matchingCurated.assembledPrompt,
+              garmentLabel: item.garmentLabel || matchingCurated.garmentLabel,
+              accessoryLabels: item.accessoryLabels || matchingCurated.accessoryLabels,
+              styles: item.styles || matchingCurated.styles,
+              hairstyle: item.hairstyle || matchingCurated.hairstyle,
+              creativityLevel:
+                typeof item.creativityLevel === 'number'
+                  ? item.creativityLevel
+                  : matchingCurated.creativityLevel
+            };
+          }
+          if (item.cdn_image_path) {
+            return {
+              ...item,
+              imageUrl: assetConfig.resolveAssetUrl(item.cdn_image_path)
+            };
+          }
+          return item;
+        });
+        localStorage.setItem('viet_y_wardrobe', JSON.stringify(this.savedWardrobe));
+      }
     } catch {
       this.savedWardrobe = [];
     }
@@ -75,11 +112,27 @@ export class WardrobeManager {
       card.className = 'wardrobe-card';
       const score = preferenceEngine.calculateOutfitScore(item);
       const matchPct = Math.min(99, Math.max(65, Math.round(70 + score * 4)));
+      const rawThumbPath = item.cdn_image_path || item.imageUrl || '';
+      const resolvedThumb = assetConfig.resolveAssetUrl(rawThumbPath);
+      const fallbackThumb = assetConfig.resolveRawGithubUrl(rawThumbPath);
+      const shortGarmentName =
+        item.garmentLabel ||
+        (item.garment === 'AO_NGU_THAN'
+          ? 'Áo Ngũ Thân'
+          : item.garment === 'AO_TAC'
+            ? 'Áo Tấc'
+            : item.garment === 'AO_NHAT_BINH'
+              ? 'Áo Nhật Bình'
+              : item.garment === 'AO_TU_THAN'
+                ? 'Áo Tứ Thân'
+                : item.garment === 'AO_DAI_LEMUR'
+                  ? 'Áo Dài Lemur'
+                  : 'Áo Bà Ba');
 
       card.innerHTML = `
         <div class="wardrobe-card-thumb" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.08); border-radius: 8px; width: 64px; height: 80px; flex-shrink: 0;">
-          ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" class="wardrobe-thumb-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.wardrobe-thumb-placeholder'); if (ph) ph.style.display='flex';" />` : ''}
-          <div class="wardrobe-thumb-placeholder" style="display: ${item.imageUrl ? 'none' : 'flex'}; width: 100%; height: 100%; align-items: center; justify-content: center;">
+          ${resolvedThumb ? `<img src="${resolvedThumb}" data-fallback-src="${fallbackThumb}" alt="${item.title}" class="wardrobe-thumb-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.wardrobe-thumb-placeholder'); if (ph) ph.style.display='flex';" />` : ''}
+          <div class="wardrobe-thumb-placeholder" style="display: ${resolvedThumb ? 'none' : 'flex'}; width: 100%; height: 100%; align-items: center; justify-content: center;">
             <span style="font-size: 1.4rem; opacity: 0.45;">🏛️</span>
           </div>
         </div>
@@ -89,7 +142,7 @@ export class WardrobeManager {
             <span class="wardrobe-card-color-dot" style="background:${item.color};"></span>
             <span>${item.colorName}</span>
             <span>•</span>
-            <span>${item.garment === 'AO_NGU_THAN' ? 'Ngũ Thân' : 'Bà Ba'}</span>
+            <span>${shortGarmentName}</span>
           </div>
           <div class="wardrobe-card-match">🎯 ${matchPct}% Hợp Gu</div>
         </div>

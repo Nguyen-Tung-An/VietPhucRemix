@@ -34,8 +34,10 @@ import {
   CulturalGuardrailResult,
   CitationSource,
   MiniStylingResponse,
-  StylingSuggestionItem
+  StylingSuggestionItem,
+  PromptEnrichmentComponents
 } from '../src/types/index.ts';
+import { analyzeHexColor } from '../src/workshop/promptEngine.ts';
 
 /**
  * THỰC THI GỌI GEMINI API VỚI CHIẾN LƯỢC DỰ PHÒNG CHUẨN XÁC:
@@ -1442,4 +1444,191 @@ Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định 
       latency_ms: Date.now() - startTime
     }
   };
+}
+
+// -----------------------------------------------------------------------------
+// 6. TỔNG HỢP VI MÔ CÁC THÀNH PHẦN PROMPT TỪ AI GEMINI (SAU KHI DUYỆT PHỤ KIỆN & TÓC)
+// -----------------------------------------------------------------------------
+export interface SynthesizePromptInput {
+  garment_type: string;
+  garment_label?: string;
+  primary_color: string;
+  color_name?: string;
+  styles?: string[];
+  creativity_level?: number;
+  accessories?: string[];
+  accessory_labels?: string[];
+  custom_accessories?: string[];
+  hairstyle?: string;
+  custom_hairstyle?: string;
+  pattern_name?: string;
+  pattern_story?: string;
+  event?: string;
+  best_occasion?: string;
+  user_profile?: {
+    name?: string;
+    height?: string;
+    weight?: string;
+    shape?: string;
+    skin?: string;
+    hair?: string;
+  } | null;
+}
+
+const promptSynthesisSchema = {
+  type: Type.OBJECT,
+  properties: {
+    model_persona_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of the Vietnamese fashion model incorporating exact height, weight, body shape, skin tone, and demeanor.'
+    },
+    garment_and_silhouette_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of the Vietnamese garment structure (collar, sleeves, panels) and how the exact Creativity Level % shapes its tailoring, layering, or modern runway reinterpretation.'
+    },
+    fabric_and_color_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of the exact Hex color, Vietnamese silk/textile weave, and surface jacquard or embroidered pattern.'
+    },
+    accessories_styling_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of ALL selected accessories and user custom accessories, and how the model holds or wears them.'
+    },
+    hair_and_makeup_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of the exact chosen or custom hairstyle (NO generic bun fallback if another style is chosen) and makeup matching the style tags and creativity %.'
+    },
+    creative_direction_and_style_en: {
+      type: Type.STRING,
+      description:
+        'Strong English art direction translating each selected Style Tag and Creativity % into lighting, camera angle, color grading, and fashion editorial mood.'
+    },
+    backdrop_and_location_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of a specific, cohesive architectural or scenic backdrop tailored to the occasion, style tags, and creativity level.'
+    },
+    pose_and_expression_en: {
+      type: Type.STRING,
+      description:
+        'Vivid English description of the model pose, hand placement with accessories, fabric movement, and facial expression.'
+    },
+    set_name_vi: {
+      type: Type.STRING,
+      description: 'Tên bộ phối Việt phục mỹ miều bằng tiếng Việt phản ánh đúng sắc áo, dáng áo và phong cách.'
+    },
+    heritage_story_vi: {
+      type: Type.STRING,
+      description: 'Câu chuyện cảm hứng di sản bằng tiếng Việt kết nối trang phục, phụ kiện và kiểu tóc đã chọn.'
+    },
+    hair_and_makeup_vi: {
+      type: Type.STRING,
+      description: 'Mô tả tóm tắt kiểu tóc và lối trang điểm bằng tiếng Việt cho thẻ Kết Quả.'
+    },
+    pose_vi: {
+      type: Type.STRING,
+      description: 'Gợi ý dáng chụp ảnh bằng tiếng Việt tương ứng với phụ kiện đã chọn.'
+    }
+  },
+  required: [
+    'model_persona_en',
+    'garment_and_silhouette_en',
+    'fabric_and_color_en',
+    'accessories_styling_en',
+    'hair_and_makeup_en',
+    'creative_direction_and_style_en',
+    'backdrop_and_location_en',
+    'pose_and_expression_en',
+    'set_name_vi',
+    'heritage_story_vi',
+    'hair_and_makeup_vi',
+    'pose_vi'
+  ]
+};
+
+export function getOfflineSynthesizedPromptParts(
+  input: SynthesizePromptInput
+): PromptEnrichmentComponents {
+  const truth = getCulturalTruth(input.garment_type);
+  const colorInfo = analyzeHexColor(input.primary_color, input.color_name);
+  const creativity = typeof input.creativity_level === 'number' ? input.creativity_level : 35;
+  const styles = input.styles && input.styles.length > 0 ? input.styles : ['Thanh tao cung đình'];
+  const chosenHair = (input.custom_hairstyle || input.hairstyle || 'Tóc búi cài trâm thanh nhã').trim();
+  const allAccNames = [
+    ...(input.accessory_labels && input.accessory_labels.length > 0
+      ? input.accessory_labels
+      : input.accessories || []),
+    ...(input.custom_accessories || [])
+  ].filter(Boolean);
+  const accDisplayVi = allAccNames.length > 0 ? allAccNames.join(', ') : 'Quạt giấy thủ công';
+
+  return {
+    set_name_vi: `${truth.name} • ${colorInfo.nameVi}`,
+    heritage_story_vi: `Bản phối ${truth.name} sắc ${colorInfo.nameVi} (${input.primary_color}) kết hợp cùng ${accDisplayVi} và kiểu tóc "${chosenHair}", tôn vinh trọn vẹn tinh thần ${styles.join(' & ')} với độ phá cách ${creativity}%.`,
+    hair_and_makeup_vi: `${chosenHair}; trang điểm hài hòa theo phong thái ${styles.join(', ')}.`,
+    pose_vi: `Tạo dáng tự nhiên tôn phom ${truth.name}, kết hợp uyển chuyển cùng ${accDisplayVi} trong không gian ${input.best_occasion || 'di sản Việt'}.`
+  };
+}
+
+export async function synthesizePromptPartsWithGemini(
+  ai: GoogleGenAI,
+  input: SynthesizePromptInput
+): Promise<PromptEnrichmentComponents> {
+  const truth = getCulturalTruth(input.garment_type);
+  const colorInfo = analyzeHexColor(input.primary_color, input.color_name);
+  const creativity = typeof input.creativity_level === 'number' ? input.creativity_level : 35;
+  const styles = input.styles && input.styles.length > 0 ? input.styles : ['Thanh tao cung đình'];
+  const chosenHair = (input.custom_hairstyle || input.hairstyle || 'Tóc búi cài trâm thanh nhã').trim();
+  const allAcc = [
+    ...(input.accessory_labels && input.accessory_labels.length > 0
+      ? input.accessory_labels
+      : input.accessories || []),
+    ...(input.custom_accessories || [])
+  ].filter(Boolean);
+
+  const systemInstruction = `Bạn là Giám đốc Sáng tạo Thời trang Di sản Việt Nam (Vietnamese Heritage Haute Couture Creative Director) kiêm Kỹ sư Prompt Nhiếp ảnh AI chuyên nghiệp.
+Nhiệm vụ của bạn là nhận TOÀN BỘ thông số trang phục mà người dùng đã chọn và duyệt (bao gồm cả phụ kiện và kiểu tóc từ gợi ý AI hoặc người dùng tự nhập), sau đó viết các đoạn mô tả vi mô bằng tiếng Anh (micro-descriptions) cực kỳ sắc nét, chính xác 100% với input để ghép thành Master Image Generation Prompt hoàn chỉnh.
+
+NGUYÊN TẮC BẮT BUỘC:
+1. KHÔNG BAO GIỜ HARDCODE HOẶC BỎ SÓT INPUT:
+   - Màu sắc: Phải mô tả đúng mã Hex (${input.primary_color}) và tên màu "${colorInfo.nameVi}" (${colorInfo.nameEn}). Tuyệt đối không dịch sai màu trắng ngà/bạch lụa thành cam đào hay màu khác.
+   - Độ phá cách (${creativity}%):
+     + Nếu <= 25%: Nhấn mạnh phom dáng phục dựng lịch sử chuẩn mực bảo tàng (strict archival museum-grade restoration).
+     + Nếu 26% - 55%: Nhấn mạnh sự giao thoa tinh tế giữa cổ truyền và nhiếp ảnh thời trang đương đại.
+     + Nếu >= 60%: PHẢI nhấn mạnh sự phá cách rõ rệt trên cách layering chất liệu, cấu trúc vai/tà, góc máy runway high-fashion, ánh sáng nghệ thuật táo bạo và thần thái Gen Z đột phá, trong khi vẫn giữ đúng cấu trúc cổ áo đặc trưng của ${truth.name}.
+   - Thẻ phong cách (${styles.join(', ')}): Phải biến các thẻ này thành chỉ dẫn ánh sáng, bối cảnh, ống kính và thần thái có sức nặng thực sự.
+   - Kiểu tóc ("${chosenHair}"): Phải dịch và mô tả chính xác kiểu tóc này sang tiếng Anh chi tiết. TUYỆT ĐỐI KHÔNG mặc định về "traditional neat hair bun with lotus hairpin" nếu người dùng chọn kiểu tóc khác (như tóc Bob, búi trễ lược đồi mồi, khăn vành, khăn đóng, xõa dài, đuôi ngựa, tết bím...).
+   - Phụ kiện (${JSON.stringify(allAcc)}): Mô tả đầy đủ từng phụ kiện được chọn và tự nhập.
+   - Bối cảnh / Địa điểm: Sáng tạo không gian chụp tương thích hoàn hảo với dịp "${input.best_occasion || input.event || 'Di sản đương đại'}", phong cách "${styles.join(', ')}" và mức độ phá cách ${creativity}%.`;
+
+  const userPrompt = `Hãy tạo sinh các thành phần mô tả vi mô (JSON) cho bộ trang phục đã duyệt sau:
+- Loại cổ phục: [${truth.id}] ${truth.name} (${input.garment_label || truth.name})
+- Đặc trưng cấu trúc bắt buộc của áo: ${truth.definingFeatures.join('; ')}
+- Màu sắc chủ đạo: ${input.primary_color} — Tên màu: "${colorInfo.nameVi}" (${colorInfo.visualDesc})
+- Hoa văn / Chất liệu dệt: ${input.pattern_name || 'Lụa tơ tằm dệt truyền thống'} (${input.pattern_story || ''})
+- Các thẻ phong cách (Style Tags): ${styles.join(', ')}
+- Độ phá cách sáng tạo (Creativity Level): ${creativity}%
+- Danh sách phụ kiện đã duyệt (chọn sẵn & tự nhập): ${allAcc.join(', ') || 'Quạt giấy thủ công'}
+- Kiểu tóc đã duyệt (chọn sẵn hoặc tự nhập): "${chosenHair}"
+- Dịp mặc / Bối cảnh sự kiện: "${input.best_occasion || input.event || 'Dạo phố & Nhiếp ảnh nghệ thuật'}"
+- Hồ sơ ngoại hình người mặc (User Profile): ${input.user_profile ? JSON.stringify(input.user_profile) : 'Người mẫu Việt Nam thanh lịch'}`;
+
+  const response = await callGeminiWithModelFallback(ai, {
+    contents: userPrompt,
+    config: {
+      systemInstruction,
+      responseMimeType: 'application/json',
+      responseSchema: promptSynthesisSchema,
+      temperature: 0.45
+    },
+    label: 'SynthesizePromptParts'
+  });
+
+  const parsed: PromptEnrichmentComponents = JSON.parse(response.text || '{}');
+  return parsed;
 }

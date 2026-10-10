@@ -15,6 +15,7 @@ import {
 import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
 import { assembleFashionPrompt } from '../workshop/promptEngine.ts';
 import { assetConfig } from '../config/assetConfig.ts';
+import { CURATED_18_OUTFITS } from '../data/curatedOutfits.ts';
 
 export class ResultEngine {
   private isKnowledgeRevealed: boolean = false;
@@ -37,10 +38,23 @@ export class ResultEngine {
 
     // Nạp dữ liệu phối đồ hiện tại
     const outfitState = garmentEngine.getCurrentOutfitState();
-    const allAccessories = outfitState.accessories?.length ? outfitState.accessories : [outfitState.accessory];
+    const displayAccessories =
+      outfitState.accessoryLabels && outfitState.accessoryLabels.length > 0
+        ? [
+            ...outfitState.accessoryLabels,
+            ...(outfitState.custom_accessories || [])
+          ]
+        : [
+            ...(outfitState.accessories?.length ? outfitState.accessories : [outfitState.accessory]),
+            ...(outfitState.custom_accessories || [])
+          ];
+    const rawAccessoriesForTaboo = [
+      ...(outfitState.accessories?.length ? outfitState.accessories : [outfitState.accessory]),
+      ...(outfitState.custom_accessories || [])
+    ];
     this.renderArtwork(outfitState.garment, outfitState.color, outfitState.accessory);
-    this.renderBadgeAndHeadlines(outfitState.garment, outfitState.colorName, allAccessories);
-    this.renderCulturalWarning(outfitState.garment, allAccessories);
+    this.renderBadgeAndHeadlines(outfitState.garment, outfitState.colorName, displayAccessories);
+    this.renderCulturalWarning(outfitState.garment, rawAccessoriesForTaboo);
     this.renderKnowledgeCard(outfitState.garment);
     this.renderColorEvaluation(outfitState.color, outfitState.colorName, outfitState.garment, outfitState.event);
 
@@ -91,14 +105,25 @@ export class ResultEngine {
     }
   }
 
-  private renderArtwork(garment: string, _colorHex: string, _accessory: string): void {
+  private renderArtwork(garment: string, colorHex: string, _accessory: string): void {
     const demoImg = document.getElementById('result-demo-image') as HTMLImageElement;
     const placeholder = document.getElementById('result-no-image-placeholder');
     const btnCopyPromptFooter = document.getElementById('btn-result-copy-prompt');
     if (!demoImg || !placeholder) return;
 
-    const demoSrc = assetConfig.getGarmentImageUrl(garment);
-    const localFallback = `/images/garments/${garment.toLowerCase().replace(/_/g, '-')}.png`;
+    // Ưu tiên tìm ảnh minh họa khớp tổ hợp Dáng áo + Màu sắc trong 18 bộ Curated trên CDN GitHub
+    const matchedCurated = CURATED_18_OUTFITS.find(
+      (c) =>
+        c.garment === garment &&
+        c.color.toLowerCase() === (colorHex || '').toLowerCase()
+    );
+
+    const primaryDemoSrc = matchedCurated?.cdn_image_path
+      ? assetConfig.resolveAssetUrl(matchedCurated.cdn_image_path)
+      : '';
+    const rawGithubFallbackSrc = matchedCurated?.cdn_image_path
+      ? assetConfig.resolveRawGithubUrl(matchedCurated.cdn_image_path)
+      : '';
 
     demoImg.onload = () => {
       demoImg.style.display = 'block';
@@ -110,8 +135,8 @@ export class ResultEngine {
 
     assetConfig.attachSafeImageLoad(
       demoImg,
-      demoSrc,
-      localFallback,
+      primaryDemoSrc,
+      rawGithubFallbackSrc,
       () => {
         demoImg.style.display = 'none';
         placeholder.style.display = 'flex';
@@ -352,24 +377,48 @@ export class ResultEngine {
       const allAcc = outfitState.accessories && outfitState.accessories.length > 0 
         ? outfitState.accessories 
         : [outfitState.accessory];
+      const allAccLabels =
+        outfitState.accessoryLabels && outfitState.accessoryLabels.length > 0
+          ? outfitState.accessoryLabels
+          : allAcc;
+      const matchedCurated = CURATED_18_OUTFITS.find(
+        (c) =>
+          c.garment === outfitState.garment &&
+          c.color.toLowerCase() === (outfitState.color || '').toLowerCase()
+      );
+      const resolvedOutfitImg = matchedCurated?.cdn_image_path
+        ? assetConfig.resolveAssetUrl(matchedCurated.cdn_image_path)
+        : '';
 
       const savedOutfit: any = {
         id: `custom-${Date.now()}`,
-        title: `${gName} ${outfitState.colorName}`,
+        cdn_id: matchedCurated?.cdn_id,
+        cdn_image_path: matchedCurated?.cdn_image_path,
+        title: garmentEngine.aiStylingData?.set_name || `${gName} ${outfitState.colorName}`,
         garment: outfitState.garment,
+        garmentLabel: outfitState.garmentLabel || truth.name,
         color: outfitState.color,
         colorName: outfitState.colorName,
+        styles: outfitState.styles || [],
+        style_mode: outfitState.style_mode || '',
+        creativityLevel: outfitState.creativityLevel,
+        userProfile: userProfile,
+        patternName: outfitState.pattern?.pattern_name || outfitState.patternName || 'Lụa Tơ Tằm Truyền Thống',
         event: outfitState.event,
         eventLabel: eventTag,
         bestOccasion: eventTag,
         accessory: outfitState.accessory,
         accessories: allAcc,
+        accessoryLabels: allAccLabels,
+        accessoryLabel: allAccLabels[0] || 'Phụ kiện di sản',
         custom_accessories: outfitState.custom_accessories || [],
         hairstyle: outfitState.hairstyle || 'Tóc búi cao thanh thoát',
         custom_hairstyle: outfitState.custom_hairstyle,
         seal: 'Lụa',
-        desc: `Bộ phối ${outfitState.colorName} hoàn chỉnh theo phong vị đương đại Lụa Thanh kết hợp ${allAcc.map(a => a.replace(/_/g, ' ')).join(', ')}.`,
-        imageUrl: assetConfig.getGarmentImageUrl(outfitState.garment),
+        desc:
+          garmentEngine.aiStylingData?.cau_chuyen_di_san ||
+          `Bộ phối ${outfitState.colorName} hoàn chỉnh theo phong vị đương đại Lụa Thanh kết hợp ${[...allAccLabels, ...(outfitState.custom_accessories || [])].map(a => a.replace(/_/g, ' ')).join(', ')}.`,
+        imageUrl: resolvedOutfitImg,
         assembledPrompt: fullPrompt,
         aiStylingData: garmentEngine.aiStylingData,
         colorCulturalAnalysis: colorAnalysis,
@@ -501,7 +550,7 @@ export class ResultEngine {
     ].filter(Boolean);
 
     triggerButtons.forEach((btn) => {
-      btn?.addEventListener('click', () => {
+      btn?.addEventListener('click', async () => {
         // Kiểm tra điều kiện luồng bắt buộc: đã chọn 3 options và đã tạo AI gợi ý
         if (!garmentEngine.canProceedToResult()) {
           return;
@@ -517,15 +566,27 @@ export class ResultEngine {
         garmentEngine.hideSanityAlert();
         Sound.playClick();
         feedbackState.showLoading({
-          message: 'Đang thẩm định & kết xuất tà lụa...',
-          submessage: 'Hệ thống đối chiếu chuẩn mực di sản Lụa Thanh...',
+          message: 'Đang thẩm định & tổng hợp Prompt AI chuyên sâu...',
+          submessage: 'Gemini AI đang tạo sinh mô tả vi mô cho dáng áo, màu lụa, độ phá cách, phụ kiện & kiểu tóc bạn đã duyệt...',
           allowCancel: true
         });
 
-        setTimeout(() => {
+        let userProfile = null;
+        try {
+          const raw = localStorage.getItem('viet_y_user_profile');
+          if (raw) userProfile = JSON.parse(raw);
+        } catch {}
+
+        try {
+          if (!garmentEngine.aiEnrichedComponents) {
+            await garmentEngine.finalizeAndSynthesizePrompt(userProfile);
+          }
+        } catch (err) {
+          console.warn('Tổng hợp vi mô Prompt AI fallback về deterministic engine:', err);
+        } finally {
           feedbackState.hideLoading();
           this.showResult();
-        }, 550);
+        }
       });
     });
   }

@@ -1,4 +1,11 @@
-import { CurrentOutfitState, MiniStylingResponse, StylingSuggestionItem, PatternItem, DiscoveryOutfit } from '../types/index.ts';
+import {
+  CurrentOutfitState,
+  MiniStylingResponse,
+  StylingSuggestionItem,
+  PatternItem,
+  DiscoveryOutfit,
+  PromptEnrichmentComponents
+} from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import {
   getCulturalTruth,
@@ -6,13 +13,14 @@ import {
   getColorCulturalAnalysis,
   checkMultipleStrictTaboos
 } from '../data/culturalTruths.ts';
-import { fetchStylingSuggestionsAPI } from '../services/api.ts';
+import { fetchStylingSuggestionsAPI, fetchSynthesizePromptPartsAPI } from '../services/api.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
 import { appRouter } from '../navigation/router.ts';
 
 export class GarmentEngine {
   // 1. Dáng Áo (bắt đầu null khi reset)
   public selectedGarment: string | null = null;
+  public selectedGarmentLabel: string = '';
 
   // 2. Màu Sắc (bắt đầu null khi reset)
   public selectedColor: string | null = null;
@@ -24,20 +32,24 @@ export class GarmentEngine {
 
   // 4. Phụ Kiện (Multiple select + custom inputs)
   public selectedAccessories: string[] = [];
+  public selectedAccessoryLabels: string[] = [];
   public customAccessories: string[] = [];
 
   // Kiểu Tóc (Single select + custom input)
   public selectedHairstyle: string = '';
   public customHairstyle: string = '';
 
-  // Họa tiết di sản đính kèm
+  // Họa tiết di sản đính kèm & thông tin bối cảnh Remix
   public currentPattern: PatternItem | null = null;
+  public remixPatternName: string = '';
+  public remixBestOccasion: string = '';
 
-  // Trạng thái AI Styling & Cột Tổng Hợp
+  // Trạng thái AI Styling, Cột Tổng Hợp & Mô tả vi mô Prompt (PromptEnrichmentComponents)
   public hasGeneratedAISuggestions: boolean = false;
   public needsReappraisal: boolean = false;
   public isGeneratingMiniStyling: boolean = false;
   public aiStylingData: MiniStylingResponse | null = null;
+  public aiEnrichedComponents: PromptEnrichmentComponents | null = null;
 
   // Bản lưu nháp snapshot đã thẩm định gần nhất để khôi phục tức thì
   public lastValidatedDraft: {
@@ -72,25 +84,142 @@ export class GarmentEngine {
   }
 
   public getCurrentOutfitState(): CurrentOutfitState {
+    // Giải quyết tên phụ kiện đầy đủ (accessoryLabels) từ danh sách gợi ý AI hoặc bộ Remix
+    const resolvedAccLabels: string[] = [];
+    this.selectedAccessories.forEach((accId, idx) => {
+      const foundInAi = this.aiStylingData?.accessories?.find((a) => a.id === accId);
+      if (foundInAi && foundInAi.name) {
+        resolvedAccLabels.push(foundInAi.name);
+      } else if (this.selectedAccessoryLabels[idx]) {
+        resolvedAccLabels.push(this.selectedAccessoryLabels[idx]);
+      } else {
+        resolvedAccLabels.push(accId);
+      }
+    });
+
+    // Giải quyết tên kiểu tóc đầy đủ từ danh sách gợi ý AI (tránh truyền mã ID thô như HAIR_1)
+    let resolvedHairstyle = this.selectedHairstyle || 'BUI_TRAM';
+    if (this.aiStylingData?.hairstyles?.length) {
+      const foundHair = this.aiStylingData.hairstyles.find(
+        (h) => h.id === this.selectedHairstyle || h.name === this.selectedHairstyle
+      );
+      if (foundHair && foundHair.name) {
+        resolvedHairstyle = foundHair.name;
+      }
+    }
+
     const allAccessories = [...this.selectedAccessories, ...this.customAccessories];
+    const bestOccasion =
+      this.aiStylingData?.best_occasion ||
+      this.remixBestOccasion ||
+      '';
+
     return {
       event: 'tet',
       color: this.selectedColor || '#F4C9D6',
       colorName: this.selectedColorName || 'Hồng Phấn Sen',
       garment: this.selectedGarment || 'AO_NGU_THAN',
+      garmentLabel: this.selectedGarmentLabel || undefined,
       accessory: allAccessories[0] || 'QUAT_GIAY',
-      accessories: allAccessories.length ? allAccessories : ['QUAT_GIAY'],
+      accessories: this.selectedAccessories.length ? this.selectedAccessories : ['QUAT_GIAY'],
+      accessoryLabels: resolvedAccLabels,
       custom_accessories: this.customAccessories,
-      hairstyle: this.customHairstyle || this.selectedHairstyle || 'BUI_TRAM',
+      hairstyle: this.customHairstyle || resolvedHairstyle,
       custom_hairstyle: this.customHairstyle,
       pattern: this.currentPattern,
+      patternName: this.currentPattern?.pattern_name || this.remixPatternName || undefined,
       genzActive: this.creativityLevel > 50,
       style: this.selectedStyles.join(', ') || 'THANH_TAO',
       style_mode: this.selectedStyles.join(', '),
       styles: this.selectedStyles,
       creativityLevel: this.creativityLevel,
-      personality: this.selectedStyles.join(', ') + ` (Độ phá cách sáng tạo: ${this.creativityLevel}%)`
+      personality: this.selectedStyles.join(', ') + ` (Độ phá cách sáng tạo: ${this.creativityLevel}%)`,
+      bestOccasion: bestOccasion || undefined,
+      aiEnrichedComponents: this.aiEnrichedComponents
     };
+  }
+
+  /**
+   * Tổng hợp vi mô các thành phần mô tả Prompt từ AI Gemini ngay khi người dùng nhấn
+   * "Thẩm Định & Xem Kết Quả" sau khi đã duyệt phụ kiện & kiểu tóc.
+   */
+  public async finalizeAndSynthesizePrompt(userProfile?: any): Promise<PromptEnrichmentComponents | null> {
+    const state = this.getCurrentOutfitState();
+    const enriched = await fetchSynthesizePromptPartsAPI({
+      garment_type: state.garment,
+      garment_label: state.garmentLabel,
+      primary_color: state.color,
+      color_name: state.colorName,
+      styles: state.styles,
+      creativity_level: state.creativityLevel,
+      accessories: state.accessories,
+      accessory_labels: state.accessoryLabels,
+      custom_accessories: state.custom_accessories,
+      hairstyle: state.hairstyle,
+      custom_hairstyle: state.custom_hairstyle,
+      pattern_name: state.pattern?.pattern_name || state.patternName,
+      pattern_story: state.pattern?.pattern_story,
+      event: state.event,
+      best_occasion: state.bestOccasion,
+      user_profile: userProfile
+    });
+
+    if (enriched) {
+      this.aiEnrichedComponents = enriched;
+      if (this.aiStylingData) {
+        if (enriched.set_name_vi) this.aiStylingData.set_name = enriched.set_name_vi;
+        if (enriched.heritage_story_vi) this.aiStylingData.cau_chuyen_di_san = enriched.heritage_story_vi;
+        if (enriched.pose_vi) this.aiStylingData.pose_suggestions = enriched.pose_vi;
+      }
+    }
+    return enriched;
+  }
+
+  /**
+   * Khi người dùng chọn/đổi phụ kiện hoặc kiểu tóc trong Bước 4 (sau khi đã có gợi ý AI),
+   * cập nhật trực tiếp trạng thái kiểm duyệt văn hóa mà không khóa nút Xem Kết Quả.
+   */
+  public onStylingDetailSelectionChanged(): void {
+    this.aiEnrichedComponents = null;
+    const truth = getCulturalTruth(this.selectedGarment || 'AO_NGU_THAN');
+    const allAccessories = [...this.selectedAccessories, ...this.customAccessories];
+    const tabooCheck = checkMultipleStrictTaboos(truth.id, allAccessories);
+
+    const elGuardrailStatusPill = document.getElementById('ai-guardrail-status-pill');
+    const elGuardrailFlag = document.getElementById('ai-guardrail-flag');
+    const elGuardrailAdvice = document.getElementById('ai-guardrail-advice');
+
+    if (!tabooCheck.hasTaboo) {
+      if (elGuardrailStatusPill) {
+        elGuardrailStatusPill.textContent = '✓ Chuẩn Mực Di Sản';
+        elGuardrailStatusPill.style.color = '#4A8577';
+        elGuardrailStatusPill.style.background = 'rgba(74, 133, 119, 0.14)';
+      }
+      if (elGuardrailFlag) {
+        elGuardrailFlag.textContent = '✓ An Toàn Di Sản';
+        elGuardrailFlag.className = 'insight-taboo-flag flag-safe';
+      }
+      if (elGuardrailAdvice) {
+        elGuardrailAdvice.textContent =
+          this.aiStylingData?.cultural_guardrail?.advice ||
+          `Các phụ kiện đã chọn tương thích hài hòa với quy chuẩn di sản [${truth.originRegion}]. Sẵn sàng thẩm định & ghép Prompt cuối!`;
+      }
+    } else {
+      if (elGuardrailStatusPill) {
+        elGuardrailStatusPill.textContent = '⚡ Cảnh Báo Phá Cách';
+        elGuardrailStatusPill.style.color = '#D32F2F';
+        elGuardrailStatusPill.style.background = 'rgba(211, 47, 47, 0.14)';
+      }
+      if (elGuardrailFlag) {
+        elGuardrailFlag.textContent = '⚠ Kiêng Kỵ Điển Lễ';
+        elGuardrailFlag.className = 'insight-taboo-flag flag-warn';
+      }
+      if (elGuardrailAdvice) {
+        elGuardrailAdvice.textContent = tabooCheck.taboos
+          .map((t) => t.historicalConflictReason)
+          .join(' ');
+      }
+    }
   }
 
   /**
@@ -362,17 +491,22 @@ export class GarmentEngine {
    */
   public resetWorkshopState(): void {
     this.selectedGarment = null;
+    this.selectedGarmentLabel = '';
     this.selectedColor = null;
     this.selectedColorName = '';
     this.selectedStyles = [];
     this.creativityLevel = 35;
     this.selectedAccessories = [];
+    this.selectedAccessoryLabels = [];
     this.customAccessories = [];
     this.selectedHairstyle = '';
     this.customHairstyle = '';
+    this.remixPatternName = '';
+    this.remixBestOccasion = '';
     this.hasGeneratedAISuggestions = false;
     this.needsReappraisal = false;
     this.aiStylingData = null;
+    this.aiEnrichedComponents = null;
 
     const btnViewResultText = document.getElementById('btn-view-result-text');
     if (btnViewResultText) {
@@ -444,11 +578,16 @@ export class GarmentEngine {
 
   /**
    * Nạp phục trang từ nguồn Remix (từ Lookbook hoặc Khám phá)
-   * Giữ nguyên và mở khóa đầy đủ quy trình
+   * Giữ nguyên 100% thông số gốc của bộ đồ (styles, creativityLevel, accessories, hairstyle, occasion)
    */
   public loadRemixOutfit(outfit: DiscoveryOutfit): void {
     // 1. Dáng áo
     this.selectedGarment = outfit.garment;
+    this.selectedGarmentLabel = outfit.garmentLabel || '';
+    this.remixPatternName = outfit.patternName || '';
+    this.remixBestOccasion = outfit.bestOccasion || outfit.eventLabel || '';
+    this.aiEnrichedComponents = null;
+
     document.querySelectorAll('[data-garment-select]').forEach((card) => {
       const el = card as HTMLElement;
       if (el.dataset.garmentSelect === outfit.garment) {
@@ -481,23 +620,59 @@ export class GarmentEngine {
     const checkColor = document.getElementById('badge-check-color');
     if (checkColor) checkColor.style.display = 'inline-flex';
 
-    // 3. Phong cách mặc định
-    this.selectedStyles = ['Thanh tao cung đình'];
+    // 3. Phong cách & Độ phá cách chuẩn theo bộ đồ gốc (không còn bị hardcode về 'Thanh tao cung đình')
+    this.selectedStyles =
+      Array.isArray(outfit.styles) && outfit.styles.length > 0
+        ? [...outfit.styles]
+        : outfit.style_mode
+          ? outfit.style_mode.split(',').map((s) => s.trim()).filter(Boolean)
+          : ['Thanh tao cung đình'];
+
     document.querySelectorAll('.style-bubble-chip').forEach((chip) => {
       const el = chip as HTMLElement;
-      if (el.dataset.style === 'Thanh tao cung đình') {
+      const st = el.dataset.style || '';
+      if (this.selectedStyles.includes(st)) {
         el.classList.add('selected');
       } else {
         el.classList.remove('selected');
       }
     });
     const styleCount = document.getElementById('style-selected-count');
-    if (styleCount) styleCount.textContent = 'Đã chọn: 1';
+    if (styleCount) styleCount.textContent = `Đã chọn: ${this.selectedStyles.length}`;
     const checkStyle = document.getElementById('badge-check-style');
     if (checkStyle) checkStyle.style.display = 'inline-flex';
 
-    // 4. Phụ kiện
-    this.selectedAccessories = [outfit.accessory];
+    // Đồng bộ Creativity Slider
+    this.creativityLevel = typeof outfit.creativityLevel === 'number' ? outfit.creativityLevel : 35;
+    const slider = document.getElementById('creativity-slider') as HTMLInputElement | null;
+    const sliderValBadge = document.getElementById('creativity-slider-val');
+    if (slider) slider.value = String(this.creativityLevel);
+    if (sliderValBadge) {
+      const val = this.creativityLevel;
+      if (val <= 20) sliderValBadge.textContent = `Thuần khiết di sản (${val}%)`;
+      else if (val <= 50) sliderValBadge.textContent = `Cân bằng di sản (${val}%)`;
+      else if (val <= 80) sliderValBadge.textContent = `Đương đại phá cách (${val}%)`;
+      else sliderValBadge.textContent = `Tiên phong siêu thực (${val}%)`;
+    }
+
+    // 4. Phụ kiện & Kiểu tóc gốc
+    this.selectedAccessories =
+      Array.isArray(outfit.accessories) && outfit.accessories.length > 0
+        ? [...outfit.accessories]
+        : outfit.accessory
+          ? [outfit.accessory]
+          : ['QUAT_GIAY'];
+    this.selectedAccessoryLabels =
+      Array.isArray(outfit.accessoryLabels) && outfit.accessoryLabels.length > 0
+        ? [...outfit.accessoryLabels]
+        : [];
+    this.customAccessories = Array.isArray((outfit as any).custom_accessories)
+      ? [...(outfit as any).custom_accessories]
+      : [];
+    this.selectedHairstyle = outfit.hairstyle || '';
+    this.customHairstyle = (outfit as any).custom_hairstyle || '';
+
+    this.renderCustomAccessoriesChips();
 
     // Cập nhật tiến độ -> Mở khóa tab 4
     this.checkOptionsProgress();
@@ -593,6 +768,7 @@ export class GarmentEngine {
         const garmentKey = el.dataset.garmentSelect || 'AO_NGU_THAN';
 
         this.selectedGarment = garmentKey;
+        this.selectedGarmentLabel = '';
         garmentCards.forEach((c) => c.classList.remove('active'));
         el.classList.add('active');
 
@@ -815,7 +991,7 @@ export class GarmentEngine {
         this.renderCustomAccessoriesChips();
         inputCustomAcc.value = '';
         this.updateSelectedAccessoriesCount();
-        this.onOutfitInputModified();
+        this.onStylingDetailSelectionChanged();
       }
     };
 
@@ -845,7 +1021,7 @@ export class GarmentEngine {
       this.hideSanityAlert();
       this.customHairstyle = text;
       Sound.playClick();
-      this.onOutfitInputModified();
+      this.onStylingDetailSelectionChanged();
 
       // Bỏ active trên danh sách card gợi ý
       document.querySelectorAll('#hairstyles-single-container .styling-item-card').forEach((c) => {
@@ -862,7 +1038,7 @@ export class GarmentEngine {
           this.customHairstyle = '';
           badge.style.display = 'none';
           Sound.playClick();
-          this.onOutfitInputModified();
+          this.onStylingDetailSelectionChanged();
         };
       }
     };
@@ -962,7 +1138,25 @@ export class GarmentEngine {
       });
 
       this.aiStylingData = data;
+      this.aiEnrichedComponents = null;
       this.hasGeneratedAISuggestions = true;
+
+      // Đảm bảo luôn có ít nhất 1 phụ kiện và 1 kiểu tóc hợp lệ được chọn từ gợi ý AI mới
+      if (data.accessories?.length) {
+        const validAccIds = data.accessories.map((a) => a.id);
+        const matchedExisting = this.selectedAccessories.filter((id) => validAccIds.includes(id));
+        if (matchedExisting.length > 0) {
+          this.selectedAccessories = matchedExisting;
+        } else {
+          this.selectedAccessories = [data.accessories[0].id];
+        }
+      }
+      if (data.hairstyles?.length && !this.customHairstyle) {
+        const validHairIds = data.hairstyles.map((h) => h.id);
+        if (!this.selectedHairstyle || !validHairIds.includes(this.selectedHairstyle)) {
+          this.selectedHairstyle = data.hairstyles[0].id;
+        }
+      }
 
       // Lưu snapshot nháp đã thẩm định thành công để khôi phục nhanh nếu người dùng bấm nhầm
       this.lastValidatedDraft = {
@@ -981,14 +1175,6 @@ export class GarmentEngine {
 
       const btnRestore = document.getElementById('btn-restore-validated-draft');
       if (btnRestore) btnRestore.style.display = 'none';
-
-      // Chọn mặc định món đầu tiên nếu chưa chọn món nào
-      if (this.selectedAccessories.length === 0 && data.accessories?.length) {
-        this.selectedAccessories = [data.accessories[0].id];
-      }
-      if (!this.selectedHairstyle && data.hairstyles?.length) {
-        this.selectedHairstyle = data.hairstyles[0].id;
-      }
 
       // 4. Render các lựa chọn phụ kiện và tóc đã được thẩm định
       this.renderAccessoriesList(data.accessories || []);
@@ -1311,7 +1497,7 @@ export class GarmentEngine {
         }
 
         this.updateSelectedAccessoriesCount();
-        this.onOutfitInputModified();
+        this.onStylingDetailSelectionChanged();
       });
 
       container.appendChild(card);
@@ -1364,7 +1550,7 @@ export class GarmentEngine {
         card.classList.add('selected');
         const check = card.querySelector('.item-check-indicator');
         if (check) check.textContent = '●';
-        this.onOutfitInputModified();
+        this.onStylingDetailSelectionChanged();
       });
 
       container.appendChild(card);
@@ -1390,7 +1576,7 @@ export class GarmentEngine {
         this.customAccessories = this.customAccessories.filter((x) => x !== accName);
         this.renderCustomAccessoriesChips();
         this.updateSelectedAccessoriesCount();
-        this.onOutfitInputModified();
+        this.onStylingDetailSelectionChanged();
       });
 
       container.appendChild(chip);

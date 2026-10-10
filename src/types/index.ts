@@ -99,6 +99,21 @@ export interface PatternPromptResponse {
   technique_used: string;
 }
 
+export interface PromptEnrichmentComponents {
+  model_persona_en?: string;
+  garment_and_silhouette_en?: string;
+  fabric_and_color_en?: string;
+  accessories_styling_en?: string;
+  hair_and_makeup_en?: string;
+  creative_direction_and_style_en?: string;
+  backdrop_and_location_en?: string;
+  pose_and_expression_en?: string;
+  set_name_vi?: string;
+  heritage_story_vi?: string;
+  hair_and_makeup_vi?: string;
+  pose_vi?: string;
+}
+
 export interface CulturalRecommendationInput {
   garment_type: string;
   event: string;
@@ -183,8 +198,10 @@ export interface CurrentOutfitState {
   color: string;
   colorName: string;
   garment: string;
+  garmentLabel?: string;
   accessory: string;
   accessories?: string[];
+  accessoryLabels?: string[];
   custom_accessories?: string[];
   hairstyle?: string;
   custom_hairstyle?: string;
@@ -194,9 +211,11 @@ export interface CurrentOutfitState {
   creativityLevel?: number;
   personality?: string;
   pattern?: PatternItem | null;
+  patternName?: string;
   genzActive?: boolean;
   bestOccasion?: string;
   eventLabel?: string;
+  aiEnrichedComponents?: PromptEnrichmentComponents | null;
 }
 
 export interface DiscoveryOutfit {

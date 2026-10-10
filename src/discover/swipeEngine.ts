@@ -138,7 +138,12 @@ export class SwipeEngine {
     if (colorName) colorName.textContent = outfit.colorName;
 
     // 2. Ô Phong Thái (Input Mood/Vibe)
-    if (moodEl) moodEl.textContent = outfit.mood || 'Thanh Tao Nhã Nhặn';
+    if (moodEl) {
+      moodEl.textContent =
+        outfit.styles && outfit.styles.length > 0
+          ? outfit.styles.join(' • ')
+          : outfit.style_mode || outfit.mood || 'Thanh tao cung đình';
+    }
 
     // 3. Ô Kiểu Dáng Cổ Phục
     if (garmentEl) garmentEl.textContent = outfit.garmentLabel || outfit.title;
@@ -151,7 +156,10 @@ export class SwipeEngine {
 
     // 6. Ô Phụ Kiện & Kiểu Tóc Phối Kèm
     if (stylingEl) {
-      const acc = outfit.accessoryLabel || (outfit.accessory === 'QUAT_GIAY' ? 'Quạt Giấy Xếp' : 'Phụ Kiện Di Sản');
+      const acc =
+        outfit.accessoryLabels && outfit.accessoryLabels.length > 0
+          ? outfit.accessoryLabels.join(', ')
+          : outfit.accessoryLabel || (outfit.accessory === 'QUAT_GIAY' ? 'Quạt Giấy Xếp' : 'Phụ Kiện Di Sản');
       const hair = outfit.hairstyle || 'Tóc Búi Cài Trâm';
       stylingEl.textContent = `${acc} • ${hair}`;
     }
@@ -202,6 +210,10 @@ export class SwipeEngine {
       }`;
       card.dataset.outfitId = outfit.id;
 
+      const rawRelPath = outfit.cdn_image_path || outfit.imageUrl || '';
+      const resolvedCardImg = assetConfig.resolveAssetUrl(rawRelPath);
+      const fallbackRawGithubImg = assetConfig.resolveRawGithubUrl(rawRelPath);
+
       card.innerHTML = `
         <div class="card-inner-top" style="justify-content: flex-end;">
           <span class="card-tag-subtle">📍 ${outfit.bestOccasion || outfit.eventLabel}</span>
@@ -209,10 +221,10 @@ export class SwipeEngine {
 
         <div class="card-illustration-box">
           <div class="card-image-wrap" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 16px;">
-            ${outfit.imageUrl ? `
-              <img src="${assetConfig.resolveAssetUrl(outfit.imageUrl)}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
+            ${resolvedCardImg ? `
+              <img src="${resolvedCardImg}" data-fallback-src="${fallbackRawGithubImg}" alt="${outfit.title}" class="card-garment-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.card-no-image-placeholder'); if (ph) ph.style.display='flex';" />
             ` : ''}
-            <div class="card-no-image-placeholder" style="display: ${outfit.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 16px; width: 100%; height: 100%; box-sizing: border-box;">
+            <div class="card-no-image-placeholder" style="display: ${resolvedCardImg ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px 16px; width: 100%; height: 100%; box-sizing: border-box;">
               <div style="font-size: 3rem; opacity: 0.4;">🏛️</div>
               <p style="font-family: var(--font-body); font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.5; max-width: 220px; margin: 0;">
                 Tổ hợp này chưa có ảnh minh họa demo.

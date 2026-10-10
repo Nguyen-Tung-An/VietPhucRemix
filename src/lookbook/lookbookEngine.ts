@@ -6,6 +6,7 @@ import { feedbackState } from '../services/feedbackState.ts';
 import { tailorJourneyEngine } from '../journey/tailorJourneyEngine.ts';
 import { getCulturalTruth, getColorCulturalAnalysis } from '../data/culturalTruths.ts';
 import { assetConfig } from '../config/assetConfig.ts';
+import { assembleFashionPrompt } from '../workshop/promptEngine.ts';
 
 export class LookbookEngine {
   public init(): void {
@@ -107,6 +108,10 @@ export class LookbookEngine {
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', `Xem chi tiết ${item.title}`);
 
+      const rawPath = item.cdn_image_path || item.imageUrl || '';
+      const resolvedThumbUrl = assetConfig.resolveAssetUrl(rawPath);
+      const fallbackRawUrl = assetConfig.resolveRawGithubUrl(rawPath);
+
       card.innerHTML = `
         <div class="lookbook-card-top-tag">
           <span>📍</span>
@@ -114,10 +119,10 @@ export class LookbookEngine {
         </div>
 
         <div class="lookbook-card-thumb-box" style="position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(74, 133, 119, 0.06); border-radius: 12px; width: 100%; height: 180px;">
-          ${item.imageUrl ? `
-            <img src="${item.imageUrl}" alt="${item.title}" class="lookbook-card-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'; const ph = this.parentElement.querySelector('.lookbook-card-no-img'); if (ph) ph.style.display='flex';" />
+          ${resolvedThumbUrl ? `
+            <img src="${resolvedThumbUrl}" data-fallback-src="${fallbackRawUrl}" alt="${item.title}" class="lookbook-card-img" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" onerror="if (this.dataset.fallbackSrc && this.src !== this.dataset.fallbackSrc) { this.src = this.dataset.fallbackSrc; return; } this.style.display='none'; const ph = this.parentElement.querySelector('.lookbook-card-no-img'); if (ph) ph.style.display='flex';" />
           ` : ''}
-          <div class="lookbook-card-no-img" style="display: ${item.imageUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; width: 100%; height: 100%;">
+          <div class="lookbook-card-no-img" style="display: ${resolvedThumbUrl ? 'none' : 'flex'}; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; width: 100%; height: 100%;">
             <span style="font-size: 2.2rem; opacity: 0.4;">🏛️</span>
             <span style="font-family: var(--font-body); font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.4;">Tổ hợp này chưa có ảnh minh họa demo</span>
           </div>
@@ -304,19 +309,25 @@ export class LookbookEngine {
     if (descEl) descEl.textContent = item.desc || `Bộ phối ${item.colorName || 'Sắc Lụa'} theo phong vị đương đại Lụa Thanh.`;
     if (occasionEl) occasionEl.textContent = `🏷️ ${item.bestOccasion || item.eventLabel || 'Dạo Phố Tết'}`;
 
-    // Hình ảnh
+    // Hình ảnh (Ưu tiên giải quyết qua CDN GitHub, dự phòng GitHub Raw nếu cache jsDelivr chưa cập nhật)
     const imgEl = document.getElementById('lookbook-detail-img') as HTMLImageElement | null;
     const phEl = document.getElementById('lookbook-detail-img-ph');
-    const imageSrc = item.imageUrl || assetConfig.getGarmentImageUrl(item.garment);
+    const rawDetailPath = item.cdn_image_path || item.imageUrl || '';
+    const primaryCdnSrc = assetConfig.resolveAssetUrl(rawDetailPath);
+    const fallbackRawSrc = assetConfig.resolveRawGithubUrl(rawDetailPath);
 
     if (imgEl) {
-      imgEl.src = imageSrc;
-      imgEl.style.display = 'block';
-      if (phEl) phEl.style.display = 'none';
-      imgEl.onerror = () => {
+      if (primaryCdnSrc) {
+        imgEl.style.display = 'block';
+        if (phEl) phEl.style.display = 'none';
+        assetConfig.attachSafeImageLoad(imgEl, primaryCdnSrc, fallbackRawSrc, () => {
+          imgEl.style.display = 'none';
+          if (phEl) phEl.style.display = 'flex';
+        });
+      } else {
         imgEl.style.display = 'none';
         if (phEl) phEl.style.display = 'flex';
-      };
+      }
     }
 
     // Sắc lụa & Ngũ hành
@@ -331,9 +342,20 @@ export class LookbookEngine {
     // Phụ kiện & Kiểu tóc
     const accListEl = document.getElementById('lookbook-detail-acc-list');
     const hairEl = document.getElementById('lookbook-detail-hair');
-    const allAcc = item.accessories && item.accessories.length > 0
-      ? item.accessories
-      : (item.accessory ? [item.accessory] : ['Quạt Giấy']);
+    const baseAccDisplay =
+      item.accessoryLabels && item.accessoryLabels.length > 0
+        ? item.accessoryLabels
+        : item.accessories && item.accessories.length > 0
+          ? item.accessories
+          : item.accessoryLabel
+            ? [item.accessoryLabel]
+            : item.accessory
+              ? [item.accessory]
+              : ['Quạt Giấy'];
+    const allAcc = [
+      ...baseAccDisplay,
+      ...(item.custom_accessories || [])
+    ];
 
     if (accListEl) {
       accListEl.innerHTML = allAcc
@@ -342,7 +364,7 @@ export class LookbookEngine {
     }
 
     if (hairEl) {
-      hairEl.textContent = item.hairstyle || item.custom_hairstyle || 'Tóc búi cao thanh thoát';
+      hairEl.textContent = item.custom_hairstyle || item.hairstyle || 'Tóc búi cao thanh thoát';
     }
 
     // Input cấu thành & Hồ sơ người mặc
@@ -410,15 +432,38 @@ export class LookbookEngine {
         .join('');
     }
 
-    // Khối Prompt AI (nếu bộ đồ có prompt được tạo từ AI)
+    // Khối Prompt AI (Luôn đảm bảo có Prompt chuẩn xác cho mọi bộ trang phục)
     const promptSection = document.getElementById('lookbook-detail-prompt-section');
     const promptTextarea = document.getElementById('lookbook-detail-prompt-textarea') as HTMLTextAreaElement | null;
 
-    if (item.assembledPrompt && promptSection && promptTextarea) {
+    const computedPrompt =
+      item.assembledPrompt ||
+      assembleFashionPrompt(
+        {
+          garment: item.garment,
+          garmentLabel: item.garmentLabel,
+          color: item.color,
+          colorName: item.colorName,
+          styles: item.styles,
+          style_mode: item.style_mode,
+          accessories: item.accessories,
+          accessoryLabels: item.accessoryLabels,
+          custom_accessories: item.custom_accessories,
+          accessory: item.accessory || 'QUAT_GIAY',
+          hairstyle: item.hairstyle,
+          custom_hairstyle: item.custom_hairstyle,
+          creativityLevel: item.creativityLevel,
+          event: item.event,
+          bestOccasion: item.bestOccasion,
+          eventLabel: item.eventLabel,
+          patternName: item.patternName
+        },
+        item.userProfile
+      );
+
+    if (promptSection && promptTextarea) {
       promptSection.style.display = 'block';
-      promptTextarea.value = item.assembledPrompt;
-    } else if (promptSection) {
-      promptSection.style.display = 'none';
+      promptTextarea.value = computedPrompt;
     }
 
     modal.style.display = 'flex';

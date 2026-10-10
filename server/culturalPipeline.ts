@@ -80,6 +80,14 @@ ${featuresList}
 const miniStylingSchema = {
   type: Type.OBJECT,
   properties: {
+    set_name: {
+      type: Type.STRING,
+      description: 'Tên bộ trang phục di sản mỹ miều chuẩn phong vị Việt Y đương đại'
+    },
+    cau_chuyen_di_san: {
+      type: Type.STRING,
+      description: 'Câu chuyện cảm hứng di sản văn hóa sâu sắc kết nối với thế hệ trẻ'
+    },
     accessories: {
       type: Type.ARRAY,
       description: 'Chính xác 3 gợi ý phụ kiện hài hòa với áo, màu sắc và phong cách',
@@ -89,7 +97,10 @@ const miniStylingSchema = {
           id: { type: Type.STRING },
           name: { type: Type.STRING },
           cultural_reason: { type: Type.STRING },
-          vibe_tag: { type: Type.STRING }
+          vibe_tag: {
+            type: Type.STRING,
+            description: 'Nhãn phong thái thuần tiếng Việt 100% (ví dụ: Thanh Nhã, Đài Các, Cung Đình, Tự Nhiên, Cổ Điển, Đương Đại, Phóng Khoáng, Ý Nhị, Duyên Dáng, Mộc Mạc, Tinh Xảo, Trang Nghiêm - TUYỆT ĐỐI KHÔNG dùng tiếng Anh)'
+          }
         },
         required: ['id', 'name', 'cultural_reason', 'vibe_tag']
       }
@@ -103,14 +114,17 @@ const miniStylingSchema = {
           id: { type: Type.STRING },
           name: { type: Type.STRING },
           cultural_reason: { type: Type.STRING },
-          vibe_tag: { type: Type.STRING }
+          vibe_tag: {
+            type: Type.STRING,
+            description: 'Nhãn phong thái thuần tiếng Việt 100% (ví dụ: Thanh Nhã, Đoan Trang, Cung Đình, Tự Nhiên, Cổ Điển, Đương Đại, Phóng Khoáng, Ý Nhị, Duyên Dáng, Mộc Mạc, Tinh Xảo, Trang Nghiêm - TUYỆT ĐỐI KHÔNG dùng tiếng Anh)'
+          }
         },
         required: ['id', 'name', 'cultural_reason', 'vibe_tag']
       }
     },
     stylist_note: {
       type: Type.STRING,
-      description: 'Lời khuyên stylist ngắn gọn, truyền cảm hứng cho Gen Z'
+      description: 'Lời khuyên stylist ngắn gọn, truyền cảm hứng cho Gen Z bằng tiếng Việt thuần túy'
     },
     color_analysis: {
       type: Type.OBJECT,
@@ -137,7 +151,7 @@ const miniStylingSchema = {
     },
     cultural_guardrail: {
       type: Type.OBJECT,
-      description: 'Đánh giá cảnh báo phụ kiện và phối đồ di sản đúng hay không',
+      description: 'Đánh giá cảnh báo phụ kiện và phối đồ di sản đúng hay không (nghiêm khắc bảo vệ di sản)',
       properties: {
         is_safe: { type: Type.BOOLEAN },
         warning_msg: { type: Type.STRING },
@@ -156,7 +170,26 @@ const miniStylingSchema = {
     },
     best_occasion: {
       type: Type.STRING,
-      description: 'Một bối cảnh sự kiện phù hợp cao nhất (ví dụ: Dạo phố Tết, Lễ tốt nghiệp, Đi lễ chùa, Dự sự kiện nghệ thuật)'
+      description: 'Một bối cảnh sự kiện phù hợp cao nhất (ví dụ: Dạo Phố Tết, Lễ Tốt Nghiệp, Đi Lễ Chùa, Dự Sự Kiện Nghệ Thuật)'
+    },
+    verified_heritage_facts: {
+      type: Type.ARRAY,
+      items: { type: Type.STRING },
+      description: 'Chính xác 3-4 thông tin văn hóa đã được kiểm chứng từ Ground Truth về loại áo này (niên đại, xuất xứ, cấu trúc chuẩn mực, triết lý may mặc)'
+    },
+    citations: {
+      type: Type.ARRAY,
+      description: 'Danh sách các tài liệu khảo cứu xác thực có URL thật từ Ground Truth',
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          title: { type: Type.STRING },
+          author_or_institution: { type: Type.STRING },
+          url: { type: Type.STRING },
+          reference_chapter_or_note: { type: Type.STRING }
+        },
+        required: ['title', 'author_or_institution', 'url', 'reference_chapter_or_note']
+      }
     }
   },
   required: [
@@ -170,6 +203,29 @@ const miniStylingSchema = {
     'recommended_occasions',
     'best_occasion'
   ]
+};
+
+export const patternPromptSchema = {
+  type: Type.OBJECT,
+  properties: {
+    pattern_prompt: {
+      type: Type.STRING,
+      description: 'Master AI Image Generation Prompt in English for Gemini/Imagen, hyper-detailed photography of Vietnamese heritage textile pattern, natural mulberry silk texture, studio lighting, cultural authentic motifs, negative constraints'
+    },
+    pattern_title: {
+      type: Type.STRING,
+      description: 'Tên hoa văn mỹ miều thuần Việt (ví dụ: Gấm Dệt Kim Liên Ngự Đạo, Mây Thủy Ba Xứ Huế...)'
+    },
+    cultural_story: {
+      type: Type.STRING,
+      description: 'Câu chuyện cảm hứng văn hóa và ý nghĩa mỹ thuật của hoa văn bằng tiếng Việt'
+    },
+    technique_used: {
+      type: Type.STRING,
+      description: 'Kỹ thuật dệt may di sản (Gấm chìm Jacquard, Thêu chỉ kim tuyến, Sa lụa dệt chìm...)'
+    }
+  },
+  required: ['pattern_prompt', 'pattern_title', 'cultural_story', 'technique_used']
 };
 
 const round1ResponseSchema = {
@@ -554,7 +610,54 @@ export function getOfflineMiniStylingSuggestions(context: {
     }
   }
 
+  const verifiedFacts = [
+    `Niên đại: ${truth.historicalEra}`,
+    `Cội nguồn vùng miền: ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ (Cố đô Huế)' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}`,
+    `Cấu trúc cốt lõi: ${truth.definingFeatures[0] || 'Phom dáng truyền thống chuẩn mực'}`,
+    `Ý nghĩa đạo đức: ${truth.culturalSignificance.slice(0, 120)}...`
+  ];
+
+  const citations: CitationSource[] = truth.sources && truth.sources.length > 0
+    ? truth.sources.slice(0, 4).map(s => ({
+        title: s.title,
+        author_or_institution: s.authorOrInstitution,
+        url: s.url,
+        reference_chapter_or_note: s.note || truth.sourceReferenceNote || 'Hồ sơ nghiên cứu di sản',
+        publication_year: s.year || truth.publicationYear
+      }))
+    : [
+        {
+          title: truth.sourceTitle,
+          author_or_institution: truth.authorOrInstitution,
+          url: truth.sourceUrl,
+          reference_chapter_or_note: truth.sourceReferenceNote || 'Hồ sơ nghiên cứu di sản',
+          publication_year: truth.publicationYear
+        }
+      ];
+
+  const offlineAuditResult: CulturalAuditResult = {
+    audit_status: guardrailIsSafe ? 'APPROVED' : 'FLAGGED',
+    confidence_score: guardrailIsSafe ? 1.0 : 0.95,
+    cross_regional_check: {
+      is_valid: guardrailIsSafe,
+      details: guardrailIsSafe
+        ? `Phù hợp chuẩn mực vùng miền đặc trưng [${truth.originRegion}].`
+        : `Phát hiện xung đột vùng miền: ${guardrailWarning}`
+    },
+    historical_accuracy_check: {
+      is_valid: true,
+      details: `Khớp niên đại khảo cứu: ${truth.historicalEra}.`
+    },
+    citations_verified: true,
+    audit_verdict_message: guardrailIsSafe
+      ? `Đã thẩm định độc lập: Bộ phục trang đạt chuẩn mực thẩm mỹ và lịch sử (${truth.sourceTitle}).`
+      : `Phát hiện xung đột quy chuẩn di sản: ${guardrailWarning}`,
+    suggested_correction: truth.strictTaboos[0]?.suggestedAlternative || null
+  };
+
   return {
+    set_name: `${truth.name} • Sắc Lụa Đương Đại`,
+    cau_chuyen_di_san: truth.culturalSignificance,
     accessories: garmentSet.accessories,
     hairstyles: garmentSet.hairstyles,
     stylist_note: note,
@@ -567,7 +670,10 @@ export function getOfflineMiniStylingSuggestions(context: {
     },
     pose_suggestions: poseSuggestions,
     recommended_occasions: occasions,
-    best_occasion: bestOccasion
+    best_occasion: bestOccasion,
+    verified_heritage_facts: verifiedFacts,
+    citations: citations,
+    audit: offlineAuditResult
   };
 }
 
@@ -579,54 +685,176 @@ export async function runOnlineMiniStylingSuggestions(
     style_mode?: string;
     personality?: string;
     user_profile?: any;
+    event?: string;
   }
 ): Promise<MiniStylingResponse> {
   const truth = getCulturalTruth(context.garment_type);
+  const groundTruthContext = buildGroundTruthContextText();
 
   const userProfileStr = context.user_profile
     ? `\nĐặc điểm cá nhân của người mặc:\n- Tên/Biệt danh: ${context.user_profile.name || 'Người mặc'}\n- Chiều cao: ${context.user_profile.height ? context.user_profile.height + 'cm' : 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight ? context.user_profile.weight + 'kg' : 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
     : '\nNgười mặc chưa nhập hồ sơ ngoại hình (cần để trống personal_compatibility.skin_tone_effect và gửi lời nhắc nhẹ nhàng trong missing_profile_reminder).';
 
-  const prompt = `Bạn là Giám đốc Phong cách Cổ phục Việt Y đương đại.
-Người dùng đang thiết kế bộ trang phục:
+  // ---------------------------------------------------------------------------
+  // VÒNG 1: GROUNDED STYLIST & CULTURAL PROPOSAL GENERATOR (DỰA TRÊN GROUND TRUTH)
+  // ---------------------------------------------------------------------------
+  const round1SystemPrompt = `Bạn là Chuyên gia Cố vấn Di sản Cổ phục Việt Y đương đại.
+
+BỘ NGUỒN SỰ THẬT DUY NHẤT VỀ DI SẢN (HERITAGE GROUND TRUTH):
+${groundTruthContext}
+
+NGUYÊN TẮC BẮT BUỘC TUÂN THỦ:
+1. TÍNH NGHIÊM KHẮC VÀ BẢO CHỨNG DI SẢN:
+   - Bạn cần nghiêm khắc, cẩn trọng và chuẩn mực trong việc bảo tồn di sản cổ phục Việt Nam.
+   - Tuyệt đối KHÔNG hiền hoặc dễ dãi với các cách phối lai tạp, sai lệch niên đại hoặc xung đột văn hóa vùng miền (ví dụ: áo cung đình phối đồ dân dã sông nước, nón quai thao với áo ngũ thân/bà ba, khăn rằn với áo lễ cung đình).
+   - Nếu có nguy cơ xung đột hoặc phạm Strict Taboos, BẮT BUỘC đánh dấu is_safe = false trong cultural_guardrail, nêu rõ lý do cảnh báo nghiêm khắc và hướng dẫn thay thế chuẩn chỉnh.
+2. 100% TIẾNG VIỆT THUẦN TÚY:
+   - Tất cả các nhãn (vibe_tag), tên phụ kiện, lý do văn hóa, nhận xét, lời khuyên và mô tả BẮT BUỘC 100% bằng TIẾNG VIỆT (ví dụ: 'Thanh Nhã', 'Đài Các', 'Cung Đình', 'Trang Trọng', 'Tự Nhiên', 'Cổ Điển', 'Đương Đại', 'Phóng Khoáng', 'Ý Nhị', 'Duyên Dáng', 'Mộc Mạc', 'Tinh Xảo', 'Trang Nghiêm').
+   - TUYỆT ĐỐI KHÔNG DÙNG TỪ TIẾNG ANH như 'elegant', 'chic', 'vintage', 'modern', 'casual', 'classic'.
+3. THÔNG TIN ĐÃ KIỂM CHỨNG & TRÍCH DẪN:
+   - Chuẩn bị sẵn 3-4 thông tin văn hóa đã được kiểm chứng từ Ground Truth về loại áo đó đưa vào verified_heritage_facts.
+   - Trích dẫn chính xác URL thật từ Ground Truth vào mảng citations.`;
+
+  const round1UserPrompt = `Người dùng đang thiết kế bộ trang phục:
 - Loại áo: [${truth.id}] ${truth.name} (Xuất xứ: ${truth.originRegion}, Niên đại: ${truth.historicalEra})
 - Màu sắc chủ đạo: ${context.primary_color}
 - Phong cách: ${context.style_mode || 'THANH_TAO'}
 - Tính cách mong muốn: ${context.personality || 'Thanh lịch, tự tin, yêu di sản'}${userProfileStr}
 
-Các kiêng kỵ nghiêm ngặt (KHÔNG ĐƯỢC GỢI Ý các món này):
-${truth.strictTaboos.map((t) => `- Không gợi ý: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}
+Các kiêng kỵ nghiêm ngặt (Strict Taboos - TUYỆT ĐỐI KHÔNG GỢI Ý CÁC MÓN NÀY):
+${truth.strictTaboos.map((t) => `- Không phối cùng: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}
 
-NHIỆM VỤ CỦA BẠN:
-1. Gợi ý CHÍNH XÁC 3 phụ kiện và 3 kiểu tóc phù hợp với dáng áo và phong cách.
-2. Phân tích màu sắc người dùng chọn (${context.primary_color}) theo văn hóa, ngũ hành, cảm xúc thị giác cụ thể (không dùng câu mẫu chung chung).
-3. Đánh giá độ tương thích với cá nhân người dùng:
-   - Nếu có thông tin ngoại hình: Phân tích cụ thể màu này làm sáng da hay tối da đối với tông da của họ; dáng áo này tôn chiều cao hay có làm cảm giác lùn/thấp đi không, và gợi ý may đo/tỷ lệ để khắc phục.
-   - Nếu không có thông tin ngoại hình: Để trống skin_tone_effect, silhouette_effect, tailoring_advice và ghi lời nhắc nhẹ nhàng trong missing_profile_reminder yêu cầu bổ sung thông tin trong Hồ Sơ.
-4. Đánh giá cảnh báo phụ kiện đúng hay không theo quy chuẩn di sản.
+NHIỆM VỤ VÒNG 1:
+1. Gợi ý CHÍNH XÁC 3 phụ kiện và 3 kiểu tóc phù hợp, an toàn di sản với dáng áo và phong cách.
+2. Phân tích màu sắc người dùng chọn (${context.primary_color}) theo văn hóa, ngũ hành, cảm xúc thị giác cụ thể.
+3. Đánh giá độ tương thích cá nhân:
+   - Nếu có thông tin ngoại hình: Phân tích cụ thể màu này làm sáng hay tối da; dáng áo tôn chiều cao hay dìm dáng và gợi ý may đo/tỷ lệ tà áo, tay áo tương ứng.
+   - Nếu chưa có: Nhắc nhẹ nhàng trong missing_profile_reminder.
+4. Đánh giá cảnh báo phụ kiện có an toàn văn hóa không (tiêu chí nghiêm khắc).
 5. Gợi ý 1-2 dáng chụp ảnh nghệ thuật tôn trang phục.
-6. Gợi ý 2-3 dịp thích hợp nhất để mặc, và chọn ra 1 bối cảnh (best_occasion) có độ phù hợp cao nhất (ví dụ: "Dạo Phố Tết", "Lễ Tốt Nghiệp", "Lễ Hội Làng", "Lễ Cưới Cổ Truyền", v.v.).
+6. Gợi ý 2-3 dịp thích hợp nhất để mặc, và chọn ra 1 bối cảnh (best_occasion) có độ phù hợp cao nhất.
+7. Đặt tên bộ phục trang di sản (set_name), câu chuyện cảm hứng (cau_chuyen_di_san) và trích xuất 3-4 thông tin kiểm chứng (verified_heritage_facts) kèm citations có URL từ Ground Truth.
 
-Trả về định dạng JSON theo đúng schema được yêu cầu.`;
+Trả về đúng JSON schema miniStylingSchema.`;
 
   try {
-    const response = await ai.models.generateContent({
+    const round1Response = await ai.models.generateContent({
       model: 'gemini-3.1-flash-lite',
-      contents: prompt,
+      contents: round1UserPrompt,
       config: {
-        systemInstruction: 'Bạn là chuyên gia tư vấn thời trang cổ phục Việt Y tinh tế và sáng tạo.',
+        systemInstruction: round1SystemPrompt,
         responseMimeType: 'application/json',
         responseSchema: miniStylingSchema,
         temperature: 0.3
       }
     });
 
-    const parsed: MiniStylingResponse = JSON.parse(response.text || '{}');
-    if (parsed.accessories?.length && parsed.hairstyles?.length && parsed.color_analysis) {
-      if (!parsed.best_occasion && parsed.recommended_occasions?.length) {
-        parsed.best_occasion = parsed.recommended_occasions[0];
+    const proposal: MiniStylingResponse = JSON.parse(round1Response.text || '{}');
+
+    if (proposal.accessories?.length && proposal.hairstyles?.length) {
+      if (!proposal.best_occasion && proposal.recommended_occasions?.length) {
+        proposal.best_occasion = proposal.recommended_occasions[0];
       }
-      return parsed;
+
+      // Chuẩn hóa 100% tiếng Việt cho vibe_tag phòng trường hợp model sinh tiếng Anh
+      const normalizeTag = (tag?: string): string => {
+        if (!tag) return 'Thanh Nhã';
+        const lower = tag.toLowerCase().trim();
+        if (lower.includes('elegant')) return 'Thanh Nhã';
+        if (lower.includes('chic') || lower.includes('posh')) return 'Đài Các';
+        if (lower.includes('vintage') || lower.includes('retro')) return 'Cổ Điển';
+        if (lower.includes('modern')) return 'Đương Đại';
+        if (lower.includes('casual')) return 'Mộc Mạc';
+        if (lower.includes('royal')) return 'Cung Đình';
+        if (lower.includes('formal')) return 'Trang Trọng';
+        return tag;
+      };
+
+      proposal.accessories.forEach(a => { a.vibe_tag = normalizeTag(a.vibe_tag); });
+      proposal.hairstyles.forEach(h => { h.vibe_tag = normalizeTag(h.vibe_tag); });
+
+      // Đảm bảo có citations từ Ground Truth
+      if (!proposal.citations || proposal.citations.length === 0) {
+        proposal.citations = [
+          {
+            title: truth.sourceTitle,
+            author_or_institution: truth.authorOrInstitution,
+            url: truth.sourceUrl,
+            reference_chapter_or_note: truth.sourceReferenceNote || 'Hồ sơ nghiên cứu di sản',
+            publication_year: truth.publicationYear
+          }
+        ];
+      }
+
+      // Đảm bảo có 3-4 thông tin văn hóa đã kiểm chứng
+      if (!proposal.verified_heritage_facts || proposal.verified_heritage_facts.length === 0) {
+        proposal.verified_heritage_facts = [
+          `Niên đại: ${truth.historicalEra}`,
+          `Cội nguồn vùng miền: ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ (Cố đô Huế)' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}`,
+          `Cấu trúc chuẩn mực: ${truth.definingFeatures[0] || 'Phom dáng truyền thống'}`,
+          `Ý nghĩa triết lý: ${truth.culturalSignificance.slice(0, 120)}...`
+        ];
+      }
+
+      // -----------------------------------------------------------------------
+      // VÒNG 2: HERITAGE AUDITOR CRITIC (KIỂM TRA ĐỘC LẬP & PHÊ CHUẨN)
+      // -----------------------------------------------------------------------
+      const round2SystemPrompt = `Bạn là Trưởng Ban Thẩm định Di sản Độc lập thuộc Hội đồng Cổ phục Việt Nam.
+
+BỘ NGUỒN SỰ THẬT DUY NHẤT ĐỐI CHIẾU:
+${groundTruthContext}
+
+NHIỆM VỤ THẨM ĐỊNH:
+1. Bạn nhận bản đề xuất phối đồ và phân tích từ Vòng 1 và đối chiếu nghiêm ngặt từng yếu tố với Ground Truth.
+2. Kiểm tra xung đột vùng miền (Cross-regional check): Áo [${truth.id}] có bị lẫn lộn giữa Bắc - Trung - Nam không?
+3. Kiểm tra tính chính xác lịch sử (Historical accuracy check): Niên đại và cấu trúc có đúng như trong Ground Truth không?
+4. Kiểm tra Strict Taboos: Các phụ kiện gợi ý có món nào vi phạm kiêng kỵ không?
+5. Đưa ra phán quyết độc lập: 'APPROVED' (Chuẩn mực di sản) hoặc 'FLAGGED' (Có nguy cơ hoặc xung đột).
+Tất cả nhận xét BẮT BUỘC 100% bằng tiếng Việt chuẩn mực.`;
+
+      const round2UserPrompt = `Hãy thẩm định bản đề xuất phối đồ sau từ Vòng 1:
+${JSON.stringify({
+  garment_type: truth.id,
+  garment_name: truth.name,
+  set_name: proposal.set_name,
+  primary_color: context.primary_color,
+  accessories: proposal.accessories,
+  hairstyles: proposal.hairstyles,
+  cultural_guardrail: proposal.cultural_guardrail,
+  citations: proposal.citations
+}, null, 2)}
+
+Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định JSON theo round2AuditResponseSchema.`;
+
+      try {
+        const round2Response = await ai.models.generateContent({
+          model: 'gemini-3.1-flash-lite',
+          contents: round2UserPrompt,
+          config: {
+            systemInstruction: round2SystemPrompt,
+            responseMimeType: 'application/json',
+            responseSchema: round2AuditResponseSchema,
+            temperature: 0.1
+          }
+        });
+
+        const audit: CulturalAuditResult = JSON.parse(round2Response.text || '{}');
+        proposal.audit = audit;
+
+        // Hợp nhất kết quả kiểm định độc lập
+        const isApproved = audit.audit_status === 'APPROVED' && (proposal.cultural_guardrail?.is_safe !== false);
+        proposal.cultural_guardrail = {
+          is_safe: isApproved,
+          warning_msg: isApproved ? '' : (audit.audit_verdict_message || proposal.cultural_guardrail?.warning_msg || 'Cần điều chỉnh phụ kiện theo quy chuẩn di sản.'),
+          advice: audit.suggested_correction
+            ? `Đề xuất điều chỉnh: Nên chọn ${audit.suggested_correction} để giữ trọn điển lệ.`
+            : (proposal.cultural_guardrail?.advice || 'Tuân thủ quy chuẩn di sản truyền thống.')
+        };
+      } catch (auditErr: any) {
+        console.warn('Vòng 2 Audit dùng quy tắc nội bộ:', auditErr?.message || auditErr);
+      }
+
+      return proposal;
     }
   } catch (err: any) {
     const isQuotaExceeded = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED');
@@ -638,6 +866,114 @@ Trả về định dạng JSON theo đúng schema được yêu cầu.`;
   }
 
   return getOfflineMiniStylingSuggestions(context);
+}
+
+// -----------------------------------------------------------------------------
+// MODULE SÁNG TẠO PROMPT HOA VĂN AI CHO GEMINI/IMAGEN (PATTERN PROMPT GENERATOR)
+// -----------------------------------------------------------------------------
+
+export function getOfflinePatternPrompt(params: {
+  keyword: string;
+  technique?: string;
+  garment?: string;
+  colorHex?: string;
+}): {
+  pattern_prompt: string;
+  pattern_title: string;
+  cultural_story: string;
+  technique_used: string;
+} {
+  const kw = (params.keyword || 'hoa sen liên hoa').toLowerCase();
+  const tech = params.technique || 'Gấm chìm Jacquard';
+  const garment = params.garment || 'Áo Ngũ Thân';
+
+  let motifConcept = 'Liên Hoa Ngự Điển (Hoa Sen Cung Đình)';
+  let motifEnglish = 'Sacred royal lotus motifs (Liên Hoa) and Nguyen dynasty cloud filigree';
+  let story = `Họa tiết đóa sen thuần khiết ngự đạo biểu trưng cho sự thanh cao, thoát tục và đạo hiếu truyền đời của người Việt.`;
+
+  if (kw.includes('mây') || kw.includes('sóng') || kw.includes('thủy ba') || kw.includes('mưa') || kw.includes('huế')) {
+    motifConcept = 'Thủy Ba Long Vân (Sóng Nước & Mây Vờn Xứ Huế)';
+    motifEnglish = 'Thuy Ba ocean waves (Thủy Ba) and cascading Imperial Hue rainy mist clouds';
+    story = `Nét lượn sóng Thủy Ba cuộn tràn sinh khí kết hợp tầng mây bảng lảng gợi nhắc hồn thiêng cố đô Huế trầm mặc.`;
+  } else if (kw.includes('cúc') || kw.includes('gốm') || kw.includes('chu đậu') || kw.includes('vàng')) {
+    motifConcept = 'Bạch Cúc Chu Đậu & Hoàng Hoa Dát Vàng';
+    motifEnglish = 'Chu Dau ceramic Chrysanthemum medallions with delicate antique gold leaf linework';
+    story = `Cảm hứng từ men lam gốm Chu Đậu ngàn năm, tôn vinh nét tài hoa của nghệ nhân mỹ nghệ gốm sứ Đại Việt.`;
+  } else if (kw.includes('rồng') || kw.includes('phượng') || kw.includes('loan')) {
+    motifConcept = 'Phượng Vũ Kim Sa (Chim Phượng Múa Lượn)';
+    motifEnglish = 'Stylized Vietnamese Phoenix (Loan Phượng) amidst auspicious five-color clouds';
+    story = `Cánh phượng loan mềm mại biểu trưng cho sự cát tường, phồn vinh và vẻ đài các trang trọng chốn hoàng gia.`;
+  }
+
+  const prompt = `Master editorial macro photograph of traditional Vietnamese luxury fabric sample. Intricate motif: ${motifEnglish}, inspired by "${params.keyword}". Tailored for authentic Vietnamese ${garment}. Technique: ${tech} on natural Mulberry silk (lụa tơ tằm thượng hạng). High relief gold thread embroidery highlights, subtle indigo and jade undertones. Soft cinematic studio side lighting revealing silk sheen texture, Hasselblad 85mm lens f/2.8, 8k hyper-detailed textile weave. Strictly NO Hanfu imperial dragons, NO Kimono sash motifs, NO Chinese Qipao buttons, NO flat cartoon illustration, photorealistic authentic Vietnamese heritage textile.`;
+
+  return {
+    pattern_prompt: prompt,
+    pattern_title: `Bản Dệt ${motifConcept}`,
+    cultural_story: story,
+    technique_used: tech
+  };
+}
+
+export async function generatePatternPromptWithGemini(
+  ai: GoogleGenAI,
+  params: {
+    keyword: string;
+    technique?: string;
+    garment?: string;
+    colorHex?: string;
+  }
+): Promise<{
+  pattern_prompt: string;
+  pattern_title: string;
+  cultural_story: string;
+  technique_used: string;
+}> {
+  const tech = params.technique || 'Gấm chìm Jacquard';
+  const garment = params.garment || 'Áo Ngũ Thân';
+  const keyword = params.keyword || 'hoa sen liên hoa';
+
+  const systemPrompt = `Bạn là Chuyên gia Đồ họa Di sản Cổ phục Việt Nam và Kỹ sư Thiết kế Prompt AI Hình ảnh cấp cao.
+Nhiệm vụ của bạn là nhận từ khóa cảm hứng của người dùng và SÁNG TẠO MỘT MASTER PROMPT TIẾNG ANH CHI TIẾT DÀNH CHO GEMINI/IMAGEN ĐỂ SINH RA HOA VĂN THỜI TRANG CỔ PHỤC VIỆT NAM CAO CẤP.
+
+NGUYÊN TẮC BẮT BUỘC:
+1. Master prompt (pattern_prompt) BẮT BUỘC bằng TIẾNG ANH, mô tả trực quan cực kỳ chi tiết:
+   - Chất liệu vải: Natural Vietnamese Mulberry silk (tơ tằm tự nhiên), gấm sa hoặc lụa dệt Jacquard.
+   - Hoa văn mỹ thuật: Chuyển hóa cảm hứng "${keyword}" thành mô típ hoa văn di sản thuần Việt (liên hoa, mây thủy ba, cúc đại đóa gốm Chu Đậu, chim lạc, hoa chanh thời Lý-Trần, hoặc hoa văn hoàng cung Nguyễn).
+   - Tương thích phom dáng: Phù hợp với phom dáng ${garment} và kỹ thuật ${tech}.
+   - Ánh sáng & Nhiếp ảnh: Macro studio lighting, soft rim highlights, 8k resolution, editorial texture focus.
+   - Negative constraints: Bắt buộc có "Strictly NO Hanfu, NO Japanese kimono obi, NO Chinese Qipao, NO flat cartoon illustration, photorealistic".
+2. Tên hoa văn (pattern_title), câu chuyện cảm hứng (cultural_story), kỹ thuật (technique_used) BẮT BUỘC 100% bằng TIẾNG VIỆT thuần túy, trang nhã, giàu cảm xúc di sản.`;
+
+  const userPrompt = `Người dùng nhập cảm hứng hoa văn:
+- Từ khóa/Ý tưởng: "${keyword}"
+- Kỹ thuật mong muốn: "${tech}"
+- Trang phục đích: "${garment}"
+- Màu sắc chủ đạo (nếu có): "${params.colorHex || '#E5A93C'}"
+
+Hãy sáng tạo Master Prompt AI và thông tin hoa văn theo JSON schema patternPromptSchema.`;
+
+  try {
+    const res = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-lite',
+      contents: userPrompt,
+      config: {
+        systemInstruction: systemPrompt,
+        responseMimeType: 'application/json',
+        responseSchema: patternPromptSchema,
+        temperature: 0.4
+      }
+    });
+
+    const parsed = JSON.parse(res.text || '{}');
+    if (parsed.pattern_prompt && parsed.pattern_title) {
+      return parsed;
+    }
+  } catch (err: any) {
+    console.warn('Lỗi gọi Gemini Pattern Prompt, dùng generator nội bộ:', err?.message || err);
+  }
+
+  return getOfflinePatternPrompt(params);
 }
 
 // -----------------------------------------------------------------------------

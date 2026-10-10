@@ -880,21 +880,52 @@ export class GarmentEngine {
     if (centerSpinner) centerSpinner.style.display = 'inline-block';
     if (centerText) centerText.textContent = 'AI Đang Phân Tích & Sáng Tạo...';
 
-    // Hiển thị giao diện Skeleton Shimmer trong khi chờ AI phản hồi
-    const accessoriesContainer = document.getElementById('accessories-list-container');
+    // 1. Chuyển đổi trạng thái giao diện NGAY LẬP TỨC:
+    // Ẩn nút giữa và hiện panel kết quả với hiệu ứng Skeleton Shimmer
+    const centerTriggerWrap = document.getElementById('ai-styling-center-trigger-wrap');
+    const resultsWrapper = document.getElementById('ai-styling-results-wrapper');
+    if (centerTriggerWrap) centerTriggerWrap.style.display = 'none';
+    if (resultsWrapper) resultsWrapper.style.display = 'block';
+
+    // 2. Mở Cột Tổng Hợp Thẩm Định & Gợi Ý AI bên cạnh Studio ngay lập tức với trạng thái loading
+    const aiColumn = document.getElementById('workshop-ai-column');
+    const workshopContainer = document.getElementById('workshop-container');
+    if (aiColumn) aiColumn.style.display = 'flex';
+    if (workshopContainer) workshopContainer.classList.add('has-ai-column');
+
+    // 3. Hiển thị Skeleton Shimmer trong các khung phụ kiện và kiểu tóc
+    const accessoriesContainer = document.getElementById('accessories-multi-container');
     const hairstylesContainer = document.getElementById('hairstyles-single-container');
+
+    const skeletonItemMarkup = `
+      <div class="skeleton-shimmer skeleton-card-item" style="height: 56px; display: flex; align-items: center; padding: 10px 12px; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 18px; height: 18px; border-radius: 50%; background: rgba(74, 133, 119, 0.22); flex-shrink: 0;"></div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <div style="width: 52%; height: 12px; border-radius: 4px; background: rgba(74, 133, 119, 0.28);"></div>
+          <div style="width: 86%; height: 10px; border-radius: 4px; background: rgba(74, 133, 119, 0.16);"></div>
+        </div>
+      </div>
+    `;
+
     if (accessoriesContainer) {
-      accessoriesContainer.innerHTML = `
-        <div class="skeleton-shimmer skeleton-card-item"></div>
-        <div class="skeleton-shimmer skeleton-card-item"></div>
-        <div class="skeleton-shimmer skeleton-card-item"></div>
-      `;
+      accessoriesContainer.innerHTML = skeletonItemMarkup + skeletonItemMarkup + skeletonItemMarkup;
     }
     if (hairstylesContainer) {
-      hairstylesContainer.innerHTML = `
-        <div class="skeleton-shimmer skeleton-card-item"></div>
-        <div class="skeleton-shimmer skeleton-card-item"></div>
-      `;
+      hairstylesContainer.innerHTML = skeletonItemMarkup + skeletonItemMarkup + skeletonItemMarkup;
+    }
+
+    // Hiển thị skeleton shimmer tạm thời trong Cột Tổng Hợp
+    const elColorMeaning = document.getElementById('ai-color-meaning');
+    const elGuardrailAdvice = document.getElementById('ai-guardrail-advice');
+    const elPose = document.getElementById('ai-pose-text');
+    if (elColorMeaning) {
+      elColorMeaning.innerHTML = '<span class="skeleton-shimmer" style="display: block; height: 14px; width: 88%; border-radius: 4px;"></span>';
+    }
+    if (elGuardrailAdvice) {
+      elGuardrailAdvice.innerHTML = '<span class="skeleton-shimmer" style="display: block; height: 14px; width: 92%; border-radius: 4px;"></span>';
+    }
+    if (elPose) {
+      elPose.innerHTML = '<span class="skeleton-shimmer" style="display: block; height: 14px; width: 78%; border-radius: 4px;"></span>';
     }
 
     try {
@@ -945,31 +976,15 @@ export class GarmentEngine {
         this.selectedHairstyle = data.hairstyles[0].id;
       }
 
-      // 1. Chuyển đổi trạng thái giao diện Tab 4: Ẩn nút giữa, hiện danh sách và nút dưới cùng
-      const centerTriggerWrap = document.getElementById('ai-styling-center-trigger-wrap');
-      const resultsWrapper = document.getElementById('ai-styling-results-wrapper');
-      if (centerTriggerWrap) centerTriggerWrap.style.display = 'none';
-      if (resultsWrapper) resultsWrapper.style.display = 'block';
-
-      // 2. Render các lựa chọn phụ kiện và tóc
+      // 4. Render các lựa chọn phụ kiện và tóc đã được thẩm định
       this.renderAccessoriesList(data.accessories || []);
       this.renderHairstylesList(data.hairstyles || []);
       this.renderStylistNote(data.stylist_note);
 
-      // 3. POP-UP CỘT TỔNG HỢP THẨM ĐỊNH & GỢI Ý AI XUẤT HIỆN BÊN CẠNH STUDIO
-      const aiColumn = document.getElementById('workshop-ai-column');
-      const workshopContainer = document.getElementById('workshop-container');
-      if (aiColumn) {
-        aiColumn.style.display = 'flex';
-      }
-      if (workshopContainer) {
-        workshopContainer.classList.add('has-ai-column');
-      }
-
-      // 4. Đồng bộ dữ liệu vào Cột Tổng Hợp
+      // 5. Đồng bộ dữ liệu vào Cột Tổng Hợp
       this.populateAISynthesisColumn(data, userProfile);
 
-      // 5. Cập nhật nút Thẩm Định sang trạng thái Sẵn Sàng (Ready)
+      // 6. Cập nhật nút Thẩm Định sang trạng thái Sẵn Sàng (Ready)
       this.hasGeneratedAISuggestions = true;
       this.needsReappraisal = false;
 
@@ -1147,6 +1162,45 @@ export class GarmentEngine {
         occasionsList.appendChild(chip);
       });
     }
+
+    // 7. Tri Thức Đã Kiểm Chứng & Trích Dẫn Bảo Chứng Di Sản (2 Vòng Duyệt Độc Lập)
+    const factsList = document.getElementById('ai-verified-facts-list');
+    const citationsPreview = document.getElementById('ai-citations-mini-preview');
+    if (factsList) {
+      const facts = data.verified_heritage_facts && data.verified_heritage_facts.length > 0
+        ? data.verified_heritage_facts
+        : [
+            `Niên đại lịch sử: ${truth.historicalEra}`,
+            `Cội nguồn vùng miền: ${truth.originRegion === 'BAC_BO' ? 'Bắc Bộ' : truth.originRegion === 'TRUNG_BO' ? 'Trung Bộ (Cố đô Huế)' : truth.originRegion === 'NAM_BO' ? 'Nam Bộ' : 'Toàn Quốc'}`,
+            `Cấu trúc chuẩn mực: ${truth.definingFeatures[0] || 'Phom dáng 5 thân truyền thống'}`,
+            `Ý nghĩa triết lý: ${truth.culturalSignificance.slice(0, 110)}...`
+          ];
+
+      factsList.innerHTML = `
+        <ul style="margin: 0; padding-left: 16px; color: #333; line-height: 1.55;">
+          ${facts.map(f => `<li style="margin-bottom: 3px;">${f}</li>`).join('')}
+        </ul>
+      `;
+    }
+
+    if (citationsPreview) {
+      const cite = data.citations && data.citations.length > 0
+        ? data.citations[0]
+        : {
+            title: truth.sourceTitle,
+            author_or_institution: truth.authorOrInstitution,
+            url: truth.sourceUrl
+          };
+
+      citationsPreview.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <span>📚 <strong>${cite.title}</strong> — <em>${cite.author_or_institution}</em></span>
+          <a href="${cite.url}" target="_blank" rel="noopener noreferrer" style="color: #4A8577; text-decoration: underline; font-weight: 600; white-space: nowrap;">
+            Nguồn gốc ↗
+          </a>
+        </div>
+      `;
+    }
   }
 
   private renderStylistNote(note?: string): void {
@@ -1162,6 +1216,29 @@ export class GarmentEngine {
   }
 
   /**
+   * Chuẩn hóa nhãn vibe_tag 100% tiếng Việt thuần túy, loại bỏ các từ tiếng Anh nếu AI sinh nhầm
+   */
+  private formatVibeTag(tag?: string): string {
+    if (!tag) return 'Thanh Nhã';
+    const clean = tag.trim();
+    const lower = clean.toLowerCase();
+    if (lower === 'elegent' || lower === 'elegant') return 'Thanh Nhã';
+    if (lower === 'chic' || lower === 'posh') return 'Đài Các';
+    if (lower === 'vintage' || lower === 'retro') return 'Cổ Điển';
+    if (lower === 'modern') return 'Đương Đại';
+    if (lower === 'casual') return 'Mộc Mạc';
+    if (lower === 'royal' || lower === 'imperial') return 'Cung Đình';
+    if (lower === 'formal') return 'Trang Trọng';
+    if (lower === 'traditional') return 'Truyền Thống';
+    if (lower === 'minimalist' || lower === 'simple') return 'Tinh Giản';
+    if (lower === 'gentle') return 'Dịu Dàng';
+    if (lower === 'graceful') return 'Duyên Dáng';
+    if (lower === 'exquisite') return 'Tinh Xảo';
+    if (lower === 'youthful') return 'Tươi Trẻ';
+    return clean;
+  }
+
+  /**
    * Render danh sách phụ kiện gợi ý (Multiple Select)
    */
   private renderAccessoriesList(items: StylingSuggestionItem[]): void {
@@ -1174,13 +1251,14 @@ export class GarmentEngine {
       const isSelected = this.selectedAccessories.includes(item.id);
       card.className = `styling-item-card ${isSelected ? 'selected' : ''}`;
       card.dataset.accId = item.id;
+      const vibeLabel = this.formatVibeTag(item.vibe_tag);
 
       card.innerHTML = `
         <div class="item-check-indicator">${isSelected ? '✓' : ''}</div>
         <div class="styling-item-content">
           <div class="styling-item-top">
             <span class="styling-item-name">${item.name}</span>
-            ${item.vibe_tag ? `<span class="styling-vibe-tag">${item.vibe_tag}</span>` : ''}
+            <span class="styling-vibe-tag">${vibeLabel}</span>
           </div>
           <span class="styling-item-reason">${item.cultural_reason}</span>
         </div>
@@ -1230,12 +1308,14 @@ export class GarmentEngine {
       card.className = `styling-item-card radio-card ${isSelected ? 'selected' : ''}`;
       card.dataset.hairId = item.id;
 
+      const vibeLabel = this.formatVibeTag(item.vibe_tag);
+
       card.innerHTML = `
         <div class="item-check-indicator">${isSelected ? '●' : ''}</div>
         <div class="styling-item-content">
           <div class="styling-item-top">
             <span class="styling-item-name">${item.name}</span>
-            ${item.vibe_tag ? `<span class="styling-vibe-tag">${item.vibe_tag}</span>` : ''}
+            <span class="styling-vibe-tag">${vibeLabel}</span>
           </div>
           <span class="styling-item-reason">${item.cultural_reason}</span>
         </div>

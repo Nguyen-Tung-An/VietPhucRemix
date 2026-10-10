@@ -132,18 +132,23 @@ export class ResultEngine {
     const subtitle = document.getElementById('result-outfit-subtitle');
 
     const truth = getCulturalTruth(garment);
+    const aiData = garmentEngine.aiStylingData;
     
     if (badgeText) {
       badgeText.textContent = `Chuẩn Quy Thức Di Sản • ${truth.name}`;
     }
 
     if (heading) {
-      heading.textContent = `${truth.name} • ${colorName}`;
+      heading.textContent = aiData?.set_name || `${truth.name} • ${colorName}`;
     }
 
     if (subtitle) {
-      const accListText = accessories.length > 0 ? ` kết hợp ${accessories.map(a => a.replace(/_/g, ' ')).join(', ')}` : '';
-      subtitle.textContent = `Bộ phục trang hoàn chỉnh theo phong vị đương đại concept Lụa Thanh${accListText}.`;
+      if (aiData?.cau_chuyen_di_san) {
+        subtitle.textContent = aiData.cau_chuyen_di_san;
+      } else {
+        const accListText = accessories.length > 0 ? ` kết hợp ${accessories.map(a => a.replace(/_/g, ' ')).join(', ')}` : '';
+        subtitle.textContent = `Bộ phục trang hoàn chỉnh theo phong vị đương đại concept Lụa Thanh${accListText}.`;
+      }
     }
   }
 

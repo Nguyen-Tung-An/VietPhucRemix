@@ -2,7 +2,8 @@ import {
   CulturalGuardrailResult,
   PatternItem,
   MiniStylingResponse,
-  CulturalRecommendationInput
+  CulturalRecommendationInput,
+  PatternPromptResponse
 } from '../types/index.ts';
 import {
   getMockCulturalAI,
@@ -97,6 +98,38 @@ export async function fetchPatternAI(keyword: string, mode: string): Promise<Pat
       resolve(getMockPattern(keyword, mode));
     }, 150);
   });
+}
+
+export async function fetchPatternPromptAI(params: {
+  keyword: string;
+  technique?: string;
+  garment?: string;
+  colorHex?: string;
+}): Promise<PatternPromptResponse> {
+  try {
+    const res = await fetch('/api/gemini/generate-pattern-prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Lỗi fetch generate-pattern-prompt, fallback client generator:', err);
+  }
+
+  // Fallback phong phú nếu offline
+  const kw = (params.keyword || 'hoa sen liên hoa').toLowerCase();
+  const tech = params.technique || 'Gấm chìm Jacquard';
+  const garment = params.garment || 'Áo Ngũ Thân';
+
+  return {
+    pattern_prompt: `Master editorial macro photograph of traditional Vietnamese luxury fabric sample. Intricate motif inspired by "${params.keyword}". Tailored for authentic Vietnamese ${garment}. Technique: ${tech} on natural Mulberry silk (lụa tơ tằm thượng hạng). High relief gold thread embroidery highlights, subtle indigo and jade undertones. Soft cinematic studio side lighting revealing silk sheen texture, Hasselblad 85mm lens f/2.8, 8k hyper-detailed textile weave. Strictly NO Hanfu imperial dragons, NO Kimono sash motifs, NO Chinese Qipao buttons, NO flat cartoon illustration, photorealistic authentic Vietnamese heritage textile.`,
+    pattern_title: `Bản Dệt Cổ Phong: ${params.keyword}`,
+    cultural_story: `Cảm hứng mỹ thuật cổ truyền từ "${params.keyword}", kết tinh nét tài hoa của nghệ nhân dệt lụa tơ tằm Việt Nam.`,
+    technique_used: tech
+  };
 }
 
 export async function fetchFashionImageAPI(prompt: string, signal?: AbortSignal): Promise<string | null> {

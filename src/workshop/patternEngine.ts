@@ -5,6 +5,7 @@ import { garmentEngine } from './garmentEngine.ts';
 import { appRouter } from '../navigation/router.ts';
 import { assembleFashionPrompt } from './promptEngine.ts';
 import { assetConfig } from '../config/assetConfig.ts';
+import { fetchPatternPromptAI } from '../services/api.ts';
 
 export interface HeritagePatternEntry {
   id: string;
@@ -266,24 +267,31 @@ export class PatternEngine {
   }
 
   /**
-   * Xử lý sinh ảnh hoa văn từ từ khóa người dùng (Inject vào Prompt & hiển thị Quota Notice cho BGK)
+   * Xử lý sinh ảnh hoa văn từ từ khóa người dùng (Gọi Gemini AI sinh Master Prompt & hiển thị Quota Notice cho BGK)
    */
-  public handleGenerateCreativePattern(userKeyword: string): void {
-    const assembledPrompt = this.constructPatternImagePrompt(
-      userKeyword,
-      this.selectedTechnique,
-      this.selectedGarmentTarget
-    );
-
+  public async handleGenerateCreativePattern(userKeyword: string): Promise<void> {
     feedbackState.showLoading({
-      message: 'Đang dệt ý tưởng hoa văn AI...',
-      submessage: `Tổng hợp Prompt kiến trúc AI từ cảm hứng: "${userKeyword}"...`,
+      message: 'Gemini AI đang sáng tạo Prompt hoa văn...',
+      submessage: `Chuyển hóa cảm hứng "${userKeyword}" thành Master Prompt dệt may di sản...`,
       allowCancel: true
     });
 
-    setTimeout(() => {
+    try {
+      const aiResult = await fetchPatternPromptAI({
+        keyword: userKeyword,
+        technique: this.selectedTechnique,
+        garment: this.selectedGarmentTarget,
+        colorHex: '#E5A93C'
+      });
+
       feedbackState.hideLoading();
       Sound.playChime();
+
+      const assembledPrompt = aiResult.pattern_prompt || this.constructPatternImagePrompt(
+        userKeyword,
+        this.selectedTechnique,
+        this.selectedGarmentTarget
+      );
 
       // Cập nhật khung kết quả trực quan
       const resultBox = document.getElementById('pattern-generated-result-box');
@@ -292,18 +300,25 @@ export class PatternEngine {
       const resultDesc = document.getElementById('gen-pattern-desc');
 
       if (resultBox) resultBox.classList.remove('box-hidden');
-      if (resultTitle) resultTitle.textContent = `Bản Thiết Kế: ${userKeyword} (${this.selectedTechnique})`;
+      if (resultTitle) resultTitle.textContent = `${aiResult.pattern_title || `Bản Thiết Kế: ${userKeyword}`} (${aiResult.technique_used || this.selectedTechnique})`;
       if (resultPromptEl) resultPromptEl.textContent = assembledPrompt;
       if (resultDesc) {
-        resultDesc.textContent = `Hệ thống đã tự động chuyển hóa từ khóa "${userKeyword}" thành cấu trúc câu lệnh AI đồ họa chuyên sâu tương thích hoàn toàn với phom dáng ${this.selectedGarmentTarget}.`;
+        resultDesc.textContent = aiResult.cultural_story
+          ? `${aiResult.cultural_story} (Prompt đồ họa đã được Gemini AI sáng tạo chuyên biệt cho phom dáng ${this.selectedGarmentTarget}).`
+          : `Hệ thống đã tự động chuyển hóa từ khóa "${userKeyword}" thành cấu trúc câu lệnh AI đồ họa chuyên sâu tương thích hoàn toàn với phom dáng ${this.selectedGarmentTarget}.`;
       }
 
       // Mở modal thông cáo Quota và Prompt dành riêng cho Ban Giám khảo
-      this.openPromptInspectModal(`Hoa Văn Sáng Tạo: ${userKeyword}`, assembledPrompt, 'HOA_VAN');
+      this.openPromptInspectModal(aiResult.pattern_title || `Hoa Văn Sáng Tạo: ${userKeyword}`, assembledPrompt, 'HOA_VAN');
 
       // Cuộn êm đến khung kết quả
       resultBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 700);
+    } catch (err) {
+      console.warn('Lỗi khi sinh Prompt hoa văn AI:', err);
+      feedbackState.hideLoading();
+      const fallbackPrompt = this.constructPatternImagePrompt(userKeyword, this.selectedTechnique, this.selectedGarmentTarget);
+      this.openPromptInspectModal(`Hoa Văn Sáng Tạo: ${userKeyword}`, fallbackPrompt, 'HOA_VAN');
+    }
   }
 
   /**

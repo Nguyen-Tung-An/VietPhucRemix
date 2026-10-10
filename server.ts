@@ -9,6 +9,8 @@ import {
   runOnlineGeminiCulturalPipeline,
   runOnlineMiniStylingSuggestions,
   getOfflineMiniStylingSuggestions,
+  generatePatternPromptWithGemini,
+  getOfflinePatternPrompt,
 } from './server/culturalPipeline.ts';
 import { getColorCulturalAnalysis } from './src/data/culturalTruths.ts';
 
@@ -427,6 +429,29 @@ app.post('/api/gemini/generate-pattern', async (req, res) => {
 
   // Trả về hoa văn di sản nội bộ theo từ khóa (Zero quota consumption)
   return res.json(getLocalPattern(userKeyword, userMode));
+});
+
+// Endpoint API Gemini Flash: Sáng Tạo Master Prompt Hoa Văn AI (Textile Motif Prompt Generator)
+app.post('/api/gemini/generate-pattern-prompt', async (req, res) => {
+  const { keyword, technique, garment, color_palette } = req.body;
+  const params = {
+    keyword: keyword || 'Hoa sen liên hoa, mây ngũ sắc thời Nguyễn',
+    technique: technique || 'Gấm chìm Jacquard',
+    garment: garment || 'Áo Ngũ Thân Lập Lĩnh',
+    colorHex: color_palette || '#E5A93C'
+  };
+
+  if (!AI_OFFLINE_MODE && ai) {
+    try {
+      const generated = await generatePatternPromptWithGemini(ai, params);
+      return res.json(generated);
+    } catch (err: any) {
+      console.warn('Lỗi gọi Gemini Pattern Prompt Generator, fallback offline:', err?.message || err);
+    }
+  }
+
+  const offlinePatternPrompt = getOfflinePatternPrompt(params);
+  return res.json(offlinePatternPrompt);
 });
 
 // Endpoint API Gemini/Imagen: Sinh Ảnh Lookbook Thời Trang AI - Chế độ Mock Bảo Vệ Quota

@@ -56,6 +56,8 @@ export interface VisualReferenceItem {
 }
 
 export interface MiniStylingResponse {
+  set_name?: string;
+  cau_chuyen_di_san?: string;
   accessories: StylingSuggestionItem[];
   hairstyles: StylingSuggestionItem[];
   stylist_note: string;
@@ -80,11 +82,21 @@ export interface MiniStylingResponse {
   pose_suggestions?: string;
   recommended_occasions?: string[];
   best_occasion?: string;
+  verified_heritage_facts?: string[];
+  citations?: CitationSource[];
+  audit?: CulturalAuditResult;
   visual_references?: {
     garment: VisualReferenceItem;
     hair: VisualReferenceItem;
     accessory: VisualReferenceItem;
   };
+}
+
+export interface PatternPromptResponse {
+  pattern_prompt: string;
+  pattern_title: string;
+  cultural_story: string;
+  technique_used: string;
 }
 
 export interface CulturalRecommendationInput {

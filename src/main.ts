@@ -10,6 +10,7 @@ import { resultEngine } from './result/resultEngine.ts';
 import { lookbookEngine } from './lookbook/lookbookEngine.ts';
 import { feedbackState } from './services/feedbackState.ts';
 import { tailorJourneyEngine } from './journey/tailorJourneyEngine.ts';
+import { compareEngine } from './compare/compareEngine.ts';
 import { initLucideIcons } from './icons/iconSystem.ts';
 
 function initializeApp(): void {
@@ -40,7 +41,10 @@ function initializeApp(): void {
   // 9. Khởi tạo Màn hình Lookbook Lụa Thanh
   lookbookEngine.init();
 
-  // 10. Khởi tạo Bộ quản lý trạng thái Tải & Lỗi dùng chung (Concept Lụa Thanh)
+  // 10. Khởi tạo Màn hình Đối Chiếu So Sánh
+  compareEngine.init();
+
+  // 11. Khởi tạo Bộ quản lý trạng thái Tải & Lỗi dùng chung (Concept Lụa Thanh)
   feedbackState.init();
   (window as unknown as { feedbackState: typeof feedbackState }).feedbackState = feedbackState;
 

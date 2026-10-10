@@ -323,9 +323,7 @@
   overflow: hidden;
   background: rgba(74, 133, 119, 0.08);
   border: 1px solid rgba(74, 133, 119, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   flex-shrink: 0;
   position: relative;
 }
@@ -333,7 +331,9 @@
 .matrix-thumb-img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 .matrix-hero-info {
@@ -652,10 +652,18 @@
 }
 
 .compare-source-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--border-radius-pill, 9999px);
+  background: rgba(201, 166, 107, 0.16);
+  color: #7A5338;
+  border: 1px solid rgba(201, 166, 107, 0.35);
   font-family: var(--font-body, 'Be Vietnam Pro', sans-serif);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  color: var(--color-accent-rare, #C9A66B);
+  letter-spacing: 0.01em;
+  width: fit-content;
 }
 
 .compare-hero-title {

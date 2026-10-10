@@ -46,43 +46,56 @@ export class CompareEngine {
     const mobileTabA = document.getElementById('btn-mobile-compare-slot-a');
     const mobileTabB = document.getElementById('btn-mobile-compare-slot-b');
 
-    selectA?.addEventListener('change', () => {
-      Sound.playClick();
-      const val = selectA.value;
-      this.outfitA = this.resolveOutfitById(val);
-      this.renderComparison();
-    });
+    if (selectA) {
+      selectA.onchange = () => {
+        Sound.playClick();
+        const val = selectA.value;
+        if (!val) return;
+        this.outfitA = this.resolveOutfitById(val);
+        this.renderComparison();
+      };
+    }
 
-    selectB?.addEventListener('change', () => {
-      Sound.playClick();
-      const val = selectB.value;
-      this.outfitB = this.resolveOutfitById(val);
-      this.renderComparison();
-    });
+    if (selectB) {
+      selectB.onchange = () => {
+        Sound.playClick();
+        const val = selectB.value;
+        if (!val) return;
+        this.outfitB = this.resolveOutfitById(val);
+        this.renderComparison();
+      };
+    }
 
-    btnSwap?.addEventListener('click', () => {
-      Sound.playChime();
-      const temp = this.outfitA;
-      this.outfitA = this.outfitB;
-      this.outfitB = temp;
-      this.syncSelectValues();
-      this.renderComparison();
-    });
+    if (btnSwap) {
+      btnSwap.onclick = () => {
+        Sound.playChime();
+        const temp = this.outfitA;
+        this.outfitA = this.outfitB;
+        this.outfitB = temp;
+        this.renderComparison();
+      };
+    }
 
-    btnClose?.addEventListener('click', () => {
-      Sound.playClick();
-      appRouter.switchTab('lookbook');
-    });
+    if (btnClose) {
+      btnClose.onclick = () => {
+        Sound.playClick();
+        appRouter.switchTab('lookbook');
+      };
+    }
 
-    mobileTabA?.addEventListener('click', () => {
-      Sound.playClick();
-      this.setMobileActiveSlot('a');
-    });
+    if (mobileTabA) {
+      mobileTabA.onclick = () => {
+        Sound.playClick();
+        this.setMobileActiveSlot('a');
+      };
+    }
 
-    mobileTabB?.addEventListener('click', () => {
-      Sound.playClick();
-      this.setMobileActiveSlot('b');
-    });
+    if (mobileTabB) {
+      mobileTabB.onclick = () => {
+        Sound.playClick();
+        this.setMobileActiveSlot('b');
+      };
+    }
   }
 
   private setupCollapsibles(): void {
@@ -146,9 +159,10 @@ export class CompareEngine {
    * Mở màn hình So Sánh: Linh hoạt hỗ trợ Lookbook, Xưởng Phối, hoặc Bộ Sưu Tập Di Sản
    */
   public openCompare(presetAId?: string, presetBId?: string): void {
+    this.setupUIEvents();
     const lookbookOutfits = wardrobeManager.savedWardrobe;
 
-    // Cập nhật danh sách dropdown
+    // Cập nhật danh sách dropdown (chỉ Khung Dệt và Rương Gấm)
     this.populateSelectDropdowns();
 
     // 1. Thiết lập slot A
@@ -166,16 +180,13 @@ export class CompareEngine {
     } else if (lookbookOutfits.length > 1) {
       const otherLookbook = lookbookOutfits.find((o) => `wardrobe-${o.id}` !== this.outfitA?.id) || lookbookOutfits[1];
       this.outfitB = this.convertWardrobeToModel(otherLookbook);
-    } else if (lookbookOutfits.length === 1 && this.outfitA?.id === 'current-workshop') {
+    } else if (lookbookOutfits.length === 1 && this.outfitA?.id !== `wardrobe-${lookbookOutfits[0].id}`) {
       this.outfitB = this.convertWardrobeToModel(lookbookOutfits[0]);
     } else {
-      // Fallback sang bộ mẫu từ Discovery Pool nếu Lookbook chưa đủ 2 bộ
-      const discoveryFallback = DISCOVERY_OUTFITS_POOL.find((d) => d.garment !== this.outfitA?.garment) || DISCOVERY_OUTFITS_POOL[1] || DISCOVERY_OUTFITS_POOL[0];
-      this.outfitB = this.convertDiscoveryToModel(discoveryFallback);
+      this.outfitB = this.getWorkshopCurrentOutfitModel();
     }
 
     // Đồng bộ lại value của 2 thẻ select
-    this.syncSelectValues();
     this.renderComparison();
     this.setMobileActiveSlot('a');
   }
@@ -252,16 +263,10 @@ export class CompareEngine {
       return this.getWorkshopCurrentOutfitModel();
     }
 
-    if (id.startsWith('wardrobe-')) {
+    if (id && id.startsWith('wardrobe-')) {
       const realId = id.replace('wardrobe-', '');
-      const found = wardrobeManager.savedWardrobe.find((w) => w.id === realId);
+      const found = wardrobeManager.savedWardrobe.find((w) => String(w.id) === String(realId));
       if (found) return this.convertWardrobeToModel(found);
-    }
-
-    if (id.startsWith('discovery-')) {
-      const realId = id.replace('discovery-', '');
-      const found = DISCOVERY_OUTFITS_POOL.find((d) => d.id === realId);
-      if (found) return this.convertDiscoveryToModel(found);
     }
 
     const lookbook = wardrobeManager.savedWardrobe;
@@ -296,17 +301,25 @@ export class CompareEngine {
       `;
     }
 
-    optionsHtml += `
-      <optgroup label="Bộ Mẫu Khảo Cứu Di Sản">
-        ${DISCOVERY_OUTFITS_POOL
-          .slice(0, 4)
-          .map((item) => `<option value="discovery-${item.id}">${item.title} (${item.colorName})</option>`)
-          .join('')}
-      </optgroup>
-    `;
-
     selectA.innerHTML = optionsHtml;
     selectB.innerHTML = optionsHtml;
+
+    // Gắn trực tiếp handler onchange
+    selectA.onchange = () => {
+      Sound.playClick();
+      const val = selectA.value;
+      if (!val) return;
+      this.outfitA = this.resolveOutfitById(val);
+      this.renderComparison();
+    };
+
+    selectB.onchange = () => {
+      Sound.playClick();
+      const val = selectB.value;
+      if (!val) return;
+      this.outfitB = this.resolveOutfitById(val);
+      this.renderComparison();
+    };
   }
 
   private syncSelectValues(): void {
@@ -323,6 +336,7 @@ export class CompareEngine {
     this.renderSlot('b', this.outfitB);
     this.highlightDifferences();
     this.updateStickyBar();
+    this.syncSelectValues();
   }
 
   private renderSlot(slot: 'a' | 'b', outfit: CompareOutfitModel): void {

@@ -683,6 +683,7 @@ export async function runOnlineMiniStylingSuggestions(
     garment_type: string;
     primary_color: string;
     style_mode?: string;
+    creativity_level?: number;
     personality?: string;
     user_profile?: any;
     event?: string;
@@ -690,6 +691,7 @@ export async function runOnlineMiniStylingSuggestions(
 ): Promise<MiniStylingResponse> {
   const truth = getCulturalTruth(context.garment_type);
   const groundTruthContext = buildGroundTruthContextText();
+  const creativityLevel = context.creativity_level ?? 35;
 
   const userProfileStr = context.user_profile
     ? `\nĐặc điểm cá nhân của người mặc:\n- Tên/Biệt danh: ${context.user_profile.name || 'Người mặc'}\n- Chiều cao: ${context.user_profile.height ? context.user_profile.height + 'cm' : 'Chưa rõ'}\n- Cân nặng: ${context.user_profile.weight ? context.user_profile.weight + 'kg' : 'Chưa rõ'}\n- Dáng người: ${context.user_profile.shape || 'Chưa rõ'}\n- Màu da: ${context.user_profile.skin || 'Chưa rõ'}\n- Màu tóc: ${context.user_profile.hair || 'Chưa rõ'}`
@@ -718,8 +720,9 @@ NGUYÊN TẮC BẮT BUỘC TUÂN THỦ:
   const round1UserPrompt = `Người dùng đang thiết kế bộ trang phục:
 - Loại áo: [${truth.id}] ${truth.name} (Xuất xứ: ${truth.originRegion}, Niên đại: ${truth.historicalEra})
 - Màu sắc chủ đạo: ${context.primary_color}
-- Phong cách: ${context.style_mode || 'THANH_TAO'}
-- Tính cách mong muốn: ${context.personality || 'Thanh lịch, tự tin, yêu di sản'}${userProfileStr}
+- Phong cách (Style Tags): ${context.style_mode || 'Thanh tao cung đình'}
+- Mức độ phá cách sáng tạo (Creativity Level): ${creativityLevel}% (${creativityLevel <= 50 ? 'Bám sát tuyệt đối nguyên bản cổ điển, bảo tồn bảo tàng' : 'Cho phép dung hòa tinh tế giữa cổ điển và đương đại, gợi ý phụ kiện giao thoa hiện đại nhưng vẫn đảm bảo an toàn văn hóa'})
+- Tính cách/Mong muốn: ${context.personality || 'Trang trọng, tinh tế'}${userProfileStr}
 
 Các kiêng kỵ nghiêm ngặt (Strict Taboos - TUYỆT ĐỐI KHÔNG GỢI Ý CÁC MÓN NÀY):
 ${truth.strictTaboos.map((t) => `- Không phối cùng: ${t.incompatibleName} (Lý do: ${t.historicalConflictReason})`).join('\n')}

@@ -162,7 +162,7 @@ export class PatternEngine {
             </div>
 
             <div class="pattern-card-actions">
-              <button type="button" class="btn-pattern-apply" data-pattern-id="${pat.id}" title="Áp dụng hoa văn này vào trang phục trong Xưởng Phối">
+              <button type="button" class="btn-pattern-apply btn-pattern-apply-inactive" data-pattern-id="${pat.id}" title="Tính năng áp dụng lên áo đang được phát triển" aria-disabled="true">
                 🎨 Áp Dụng Lên Áo
               </button>
               <button type="button" class="btn-pattern-view-prompt" data-pattern-id="${pat.id}" title="Xem câu lệnh AI Prompt đầy đủ dùng để sinh ảnh">
@@ -176,12 +176,10 @@ export class PatternEngine {
 
     // Gắn sự kiện cho các nút hành động trong từng thẻ
     grid.querySelectorAll('.btn-pattern-apply').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-pattern-id');
-        const found = SIX_PLACEHOLDER_HERITAGE_PATTERNS.find((p) => p.id === id);
-        if (found) {
-          this.applyToWorkshopAndNavigate(found);
-        }
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        Sound.playClick();
+        appRouter.showToast('Tính năng áp dụng hoa văn lên áo đang được phát triển và sẽ ra mắt trong phiên bản tiếp theo, vui lòng thử lại sau!');
       });
     });
 
@@ -313,11 +311,11 @@ export class PatternEngine {
 
       // Cuộn êm đến khung kết quả
       resultBox?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Lỗi khi sinh Prompt hoa văn AI:', err);
       feedbackState.hideLoading();
-      const fallbackPrompt = this.constructPatternImagePrompt(userKeyword, this.selectedTechnique, this.selectedGarmentTarget);
-      this.openPromptInspectModal(`Hoa Văn Sáng Tạo: ${userKeyword}`, fallbackPrompt, 'HOA_VAN');
+      const errorMsg = err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau!';
+      appRouter.showToast(`⚠️ ${errorMsg}`);
     }
   }
 

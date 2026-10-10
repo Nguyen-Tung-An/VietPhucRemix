@@ -354,12 +354,14 @@ app.post('/api/gemini/suggest-styling', async (req, res) => {
   } = req.body;
 
   const styleList = Array.isArray(styles) && styles.length ? styles.join(', ') : (style_mode || 'THANH_TAO');
+  const numCreativity = typeof creativity_level === 'number' ? creativity_level : 35;
 
   const context = {
     garment_type: garment_type || 'AO_NGU_THAN',
     primary_color: primary_color || '#F4C9D6',
     style_mode: styleList,
-    personality: personality || (styleList + (creativity_level !== undefined ? ` (Độ phá cách sáng tạo: ${creativity_level}%)` : '')),
+    creativity_level: numCreativity,
+    personality: personality || styleList,
     user_profile: user_profile || null,
   };
 

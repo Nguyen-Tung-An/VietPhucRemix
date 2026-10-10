@@ -653,6 +653,17 @@
     border-radius: 0;
     border: none;
     box-shadow: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 133, 119, 0.25) transparent;
+  }
+
+  .workshop-sheet-tier::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .workshop-sheet-tier::-webkit-scrollbar-thumb {
+    background: rgba(74, 133, 119, 0.25);
+    border-radius: 4px;
   }
 }
 
@@ -808,29 +819,32 @@
 }
 
 /* --------------------------------------------------------------------------
-   NHÓM 0: DÁNG ÁO (ÁO NGŨ THÂN / ÁO BÀ BA)
+   NHÓM 0: DÁNG ÁO (CÁC NHÓM CỔ PHỤC & DÂN GIAN - CHẢY TỰ NHIÊN, KHÔNG TẠO SCROLLBAR KÉP)
    -------------------------------------------------------------------------- */
 #panel-garments {
   display: none;
   width: 100%;
   max-width: 100%;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   box-sizing: border-box;
 }
 
 #panel-garments.active-panel {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 8px;
-  max-height: 275px;
-  overflow-y: auto;
-  padding: 4px 6px 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: none;
+  overflow-y: visible;
+  padding: 4px 2px;
 }
 
 @media (min-width: 768px) {
   #panel-garments.active-panel {
-    grid-template-columns: repeat(2, 1fr);
-    max-height: 380px;
+    display: flex;
+    flex-direction: column;
+    max-height: none;
+    overflow-y: visible;
   }
 }
 
@@ -1073,6 +1087,43 @@
   margin-bottom: 6px;
 }
 
+.garment-group-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(74, 133, 119, 0.05);
+  border: 1px solid rgba(74, 133, 119, 0.14);
+  cursor: pointer;
+  transition: all 0.16s ease;
+  user-select: none;
+}
+
+.garment-group-toggle-btn:hover {
+  background: rgba(74, 133, 119, 0.12);
+  border-color: rgba(74, 133, 119, 0.28);
+}
+
+.garment-group-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.garment-group-arrow {
+  font-size: 0.82rem;
+  color: var(--color-accent-secondary, #4A8577);
+  transition: transform 0.2s ease;
+  font-weight: 700;
+}
+
+.garment-group-collapse {
+  margin-top: 6px;
+  animation: fadeInStep 0.2s ease-out;
+}
+
 .garment-group-header {
   display: flex;
   align-items: center;
@@ -1095,29 +1146,22 @@
   width: 100%;
 }
 
-/* Accordion Cổ phục sắp ra mắt */
-.garment-upcoming-accordion {
+/* Accordion Cổ phục sắp ra mắt - Đồng bộ hoàn toàn với 3 nhóm trên, không có đường gạch đứt phân cách */
+.garment-upcoming-accordion,
+section#create-scene:nth-of-type(2) > div#workshop-container:nth-of-type(1) > footer#workshop-studio-column:nth-of-type(1) > div:nth-of-type(2) > div#panel-garments:nth-of-type(1) > div:nth-of-type(4) {
   width: 100%;
-  margin-top: 4px;
-  border-top: 1px dashed var(--color-card-border);
-  padding-top: 6px;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  box-shadow: none !important;
 }
 
 .garment-upcoming-toggle-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: rgba(74, 133, 119, 0.06);
-  border: 1px dashed rgba(74, 133, 119, 0.25);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 0.74rem;
-  font-weight: 600;
+  background: rgba(74, 133, 119, 0.05);
+  border: 1px solid rgba(74, 133, 119, 0.14);
   color: var(--color-text-muted);
-  transition: all 0.16s ease;
 }
 
 .garment-upcoming-toggle-btn:hover {

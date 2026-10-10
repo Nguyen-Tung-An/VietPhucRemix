@@ -249,83 +249,98 @@
             
             <!-- Nhóm 1: Cung đình (Ngũ Thân, Nhật Bình) -->
             <div class="garment-group-block">
-              <div class="garment-group-header">
-                <span class="garment-group-title">👑 Cung Đình Triều Nguyễn</span>
-              </div>
-              <div class="garment-group-grid">
-                <button type="button" class="sheet-option-card active" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
-                  <span class="sheet-option-icon">👘</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Ngũ Thân</span>
-                    <span class="sheet-option-sub">Lập lĩnh • Tay chẽn quý phái</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-garment-select="AO_NHAT_BINH" aria-label="Áo Nhật Bình">
-                  <span class="sheet-option-icon">👑</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Nhật Bình</span>
-                    <span class="sheet-option-sub">Viền cổ ngũ sắc • Hậu phi cung đình</span>
-                  </div>
-                </button>
+              <button type="button" class="garment-group-toggle-btn" id="btn-toggle-garment-group-1" aria-expanded="true" aria-controls="garment-group-1-collapse">
+                <div class="garment-group-title-wrap">
+                  <span class="garment-group-title">👑 Cung Đình Triều Nguyễn</span>
+                </div>
+                <span class="garment-group-arrow" id="garment-group-1-arrow">▴</span>
+              </button>
+              <div class="garment-group-collapse" id="garment-group-1-collapse">
+                <div class="garment-group-grid">
+                  <button type="button" class="sheet-option-card active" data-garment-select="AO_NGU_THAN" aria-label="Áo Ngũ Thân Lập Lĩnh">
+                    <span class="sheet-option-icon">👘</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Ngũ Thân</span>
+                      <span class="sheet-option-sub">Lập lĩnh • Tay chẽn quý phái</span>
+                    </div>
+                  </button>
+                  <button type="button" class="sheet-option-card" data-garment-select="AO_NHAT_BINH" aria-label="Áo Nhật Bình">
+                    <span class="sheet-option-icon">👑</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Nhật Bình</span>
+                      <span class="sheet-option-sub">Viền cổ ngũ sắc • Hậu phi cung đình</span>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Nhóm 2: Dân gian (Tứ Thân, Bà Ba) -->
             <div class="garment-group-block">
-              <div class="garment-group-header">
-                <span class="garment-group-title">🌾 Dân Gian & Sông Nước</span>
-              </div>
-              <div class="garment-group-grid">
-                <button type="button" class="sheet-option-card" data-garment-select="AO_TU_THAN" aria-label="Áo Tứ Thân">
-                  <span class="sheet-option-icon">🪭</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Tứ Thân</span>
-                    <span class="sheet-option-sub">Yếm thắm dải lụa • Xứ Kinh Bắc</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-garment-select="AO_BA_BA" aria-label="Áo Bà Ba Nam Bộ">
-                  <span class="sheet-option-icon">🌾</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Bà Ba</span>
-                    <span class="sheet-option-sub">Xẻ tà hai hông • Mộc mạc sông nước</span>
-                  </div>
-                </button>
+              <button type="button" class="garment-group-toggle-btn" id="btn-toggle-garment-group-2" aria-expanded="true" aria-controls="garment-group-2-collapse">
+                <div class="garment-group-title-wrap">
+                  <span class="garment-group-title">🌾 Dân Gian & Sông Nước</span>
+                </div>
+                <span class="garment-group-arrow" id="garment-group-2-arrow">▴</span>
+              </button>
+              <div class="garment-group-collapse" id="garment-group-2-collapse">
+                <div class="garment-group-grid">
+                  <button type="button" class="sheet-option-card" data-garment-select="AO_TU_THAN" aria-label="Áo Tứ Thân">
+                    <span class="sheet-option-icon">🪭</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Tứ Thân</span>
+                      <span class="sheet-option-sub">Yếm thắm dải lụa • Xứ Kinh Bắc</span>
+                    </div>
+                  </button>
+                  <button type="button" class="sheet-option-card" data-garment-select="AO_BA_BA" aria-label="Áo Bà Ba Nam Bộ">
+                    <span class="sheet-option-icon">🌾</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Bà Ba</span>
+                      <span class="sheet-option-sub">Xẻ tà hai hông • Mộc mạc sông nước</span>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Nhóm 3: Cổ phục và cận đại (Giao Lĩnh, Dài Lemur) -->
             <div class="garment-group-block">
-              <div class="garment-group-header">
-                <span class="garment-group-title">✨ Cổ Phục & Cận Đại</span>
-              </div>
-              <div class="garment-group-grid">
-                <button type="button" class="sheet-option-card" data-garment-select="AO_GIAO_LINH" aria-label="Áo Giao Lĩnh Cổ Phục">
-                  <span class="sheet-option-icon">🏛️</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Giao Lĩnh</span>
-                    <span class="sheet-option-sub">Cổ chéo giao vạt • Thời Hậu Lê</span>
-                  </div>
-                </button>
-                <button type="button" class="sheet-option-card" data-garment-select="AO_DAI_LEMUR" aria-label="Áo Dài Lemur Cổ Điển">
-                  <span class="sheet-option-icon">✨</span>
-                  <div class="sheet-option-texts">
-                    <span class="sheet-option-label">Áo Dài Lemur</span>
-                    <span class="sheet-option-sub">Tân thời cổ điển • Thập niên 1930s</span>
-                  </div>
-                </button>
+              <button type="button" class="garment-group-toggle-btn" id="btn-toggle-garment-group-3" aria-expanded="true" aria-controls="garment-group-3-collapse">
+                <div class="garment-group-title-wrap">
+                  <span class="garment-group-title">✨ Cổ Phục & Cận Đại</span>
+                </div>
+                <span class="garment-group-arrow" id="garment-group-3-arrow">▴</span>
+              </button>
+              <div class="garment-group-collapse" id="garment-group-3-collapse">
+                <div class="garment-group-grid">
+                  <button type="button" class="sheet-option-card" data-garment-select="AO_GIAO_LINH" aria-label="Áo Giao Lĩnh Cổ Phục">
+                    <span class="sheet-option-icon">🏛️</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Giao Lĩnh</span>
+                      <span class="sheet-option-sub">Cổ chéo giao vạt • Thời Hậu Lê</span>
+                    </div>
+                  </button>
+                  <button type="button" class="sheet-option-card" data-garment-select="AO_DAI_LEMUR" aria-label="Áo Dài Lemur Cổ Điển">
+                    <span class="sheet-option-icon">✨</span>
+                    <div class="sheet-option-texts">
+                      <span class="sheet-option-label">Áo Dài Lemur</span>
+                      <span class="sheet-option-sub">Tân thời cổ điển • Thập niên 1930s</span>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- PHẦN SẮP RA MẮT: TOGGLE COLLAPSE (MẶC ĐỊNH THU GỌN ĐỂ TRÁNH QUÁ TẢI) -->
-            <div class="garment-upcoming-accordion">
-              <button type="button" class="garment-upcoming-toggle-btn" id="btn-toggle-upcoming-garments" aria-expanded="false">
-                <div class="upcoming-toggle-title-wrap">
+            <!-- Nhóm 4: Cổ phục đang khảo cứu di sản (Mặc định thu gọn) -->
+            <div class="garment-group-block garment-upcoming-accordion">
+              <button type="button" class="garment-group-toggle-btn garment-upcoming-toggle-btn" id="btn-toggle-upcoming-garments" aria-expanded="false" aria-controls="garment-upcoming-collapse">
+                <div class="garment-group-title-wrap upcoming-toggle-title-wrap">
                   <span class="upcoming-toggle-icon">📜</span>
-                  <span>Cổ phục đang khảo cứu di sản (3 mẫu)</span>
+                  <span class="garment-group-title">Cổ phục đang khảo cứu di sản (3 mẫu)</span>
                 </div>
-                <span class="upcoming-toggle-arrow" id="upcoming-toggle-arrow">▾</span>
+                <span class="garment-group-arrow upcoming-toggle-arrow" id="upcoming-toggle-arrow">▾</span>
               </button>
-              <div class="garment-upcoming-collapse" id="garment-upcoming-collapse" style="display: none;">
+              <div class="garment-group-collapse garment-upcoming-collapse" id="garment-upcoming-collapse" style="display: none;">
                 <div class="garment-group-grid">
                   <button type="button" class="sheet-option-card sheet-option-card-inactive" data-inactive="true" aria-disabled="true" title="Áo Tấc đang khảo cứu di sản • Ra mắt sau">
                     <span class="sheet-option-icon" style="opacity: 0.65;">🏛️</span>

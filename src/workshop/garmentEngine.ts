@@ -614,16 +614,30 @@ export class GarmentEngine {
       });
     });
 
-    // Toggle thu gọn/mở rộng danh sách cổ phục đang nghiên cứu di sản
-    const toggleUpcomingBtn = document.getElementById('btn-toggle-upcoming-garments');
-    const upcomingCollapse = document.getElementById('garment-upcoming-collapse');
-    const upcomingArrow = document.getElementById('upcoming-toggle-arrow');
-    toggleUpcomingBtn?.addEventListener('click', () => {
-      Sound.playClick();
-      const isClosed = upcomingCollapse?.style.display === 'none' || !upcomingCollapse?.style.display;
-      if (upcomingCollapse) upcomingCollapse.style.display = isClosed ? 'block' : 'none';
-      toggleUpcomingBtn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
-      if (upcomingArrow) upcomingArrow.textContent = isClosed ? '▴' : '▾';
+    // Toggle thu gọn/mở rộng cho cả 4 nhóm phân loại dáng áo
+    const groupToggleConfigs = [
+      { btnId: 'btn-toggle-garment-group-1', collapseId: 'garment-group-1-collapse', arrowId: 'garment-group-1-arrow' },
+      { btnId: 'btn-toggle-garment-group-2', collapseId: 'garment-group-2-collapse', arrowId: 'garment-group-2-arrow' },
+      { btnId: 'btn-toggle-garment-group-3', collapseId: 'garment-group-3-collapse', arrowId: 'garment-group-3-arrow' },
+      { btnId: 'btn-toggle-upcoming-garments', collapseId: 'garment-upcoming-collapse', arrowId: 'upcoming-toggle-arrow' },
+    ];
+
+    groupToggleConfigs.forEach(({ btnId, collapseId, arrowId }) => {
+      const btn = document.getElementById(btnId);
+      const collapseEl = document.getElementById(collapseId);
+      const arrowEl = document.getElementById(arrowId);
+
+      btn?.addEventListener('click', () => {
+        Sound.playClick();
+        const isClosed = collapseEl?.style.display === 'none';
+        if (collapseEl) {
+          collapseEl.style.display = isClosed ? 'block' : 'none';
+        }
+        btn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
+        if (arrowEl) {
+          arrowEl.textContent = isClosed ? '▴' : '▾';
+        }
+      });
     });
   }
 
@@ -1009,8 +1023,20 @@ export class GarmentEngine {
       this.checkOptionsProgress();
 
       Sound.playChime();
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Lỗi kích hoạt Mini Gemini Styling:', err);
+      const errorMsg = err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau!';
+      appRouter.showToast(`⚠️ ${errorMsg}`);
+      if (!this.hasGeneratedAISuggestions) {
+        const centerTriggerWrap = document.getElementById('ai-styling-center-trigger-wrap');
+        const resultsWrapper = document.getElementById('ai-styling-results-wrapper');
+        const aiColumn = document.getElementById('workshop-ai-column');
+        const workshopContainer = document.getElementById('workshop-container');
+        if (centerTriggerWrap) centerTriggerWrap.style.display = 'flex';
+        if (resultsWrapper) resultsWrapper.style.display = 'none';
+        if (aiColumn) aiColumn.style.display = 'none';
+        if (workshopContainer) workshopContainer.classList.remove('has-ai-column');
+      }
     } finally {
       this.isGeneratingMiniStyling = false;
       if (btnCenter) btnCenter.disabled = false;

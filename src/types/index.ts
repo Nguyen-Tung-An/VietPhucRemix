@@ -201,23 +201,39 @@ export interface CurrentOutfitState {
 
 export interface DiscoveryOutfit {
   id: string;
+  cdn_id?: string;
+  cdn_image_path?: string;
   title: string;
   garment: string;
   garmentLabel?: string;
   color: string;
   colorName: string;
+  styles?: string[];
+  style_mode?: string;
+  accessories?: string[];
+  accessoryLabels?: string[];
+  accessory: string;
+  accessoryLabel?: string;
+  hairstyle?: string;
+  creativityLevel?: number;
+  userProfile?: {
+    height?: string;
+    weight?: string;
+    shape?: string;
+    skin?: string;
+    hair?: string;
+  } | null;
   event: string;
   eventLabel: string;
   bestOccasion?: string;
-  accessory: string;
-  accessoryLabel?: string;
   seal: string;
   desc: string;
   imageUrl?: string;
   creatorName?: string;
   patternName?: string;
   mood?: string;
-  hairstyle?: string;
+  assembledPrompt?: string;
+  historicalStory?: string;
 }
 
 export interface WardrobeItem extends DiscoveryOutfit {

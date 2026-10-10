@@ -370,12 +370,11 @@ app.post('/api/gemini/suggest-styling', async (req, res) => {
       const suggestions = await runOnlineMiniStylingSuggestions(ai, context);
       return res.json(suggestions);
     } catch (err: any) {
-      const isQuotaExceeded = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED');
-      if (isQuotaExceeded) {
-        console.log('Gemini API Quota 429: Chuyển sang Offline Generator.');
-      } else {
-        console.warn('Lỗi gọi Gemini Mini Styling Suggestions, dùng Offline Generator:', err?.message || err);
-      }
+      console.warn('Lỗi gọi Gemini Mini Styling Suggestions sau khi thử fallback cả 2 model:', err?.message || err);
+      return res.status(429).json({
+        error: err?.message || 'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu. Vui lòng thử lại sau ít phút!',
+        isQuotaExceeded: true
+      });
     }
   }
 

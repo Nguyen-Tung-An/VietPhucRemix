@@ -37,6 +37,51 @@ import {
   StylingSuggestionItem
 } from '../src/types/index.ts';
 
+/**
+ * THỰC THI GỌI GEMINI API VỚI CHIẾN LƯỢC DỰ PHÒNG CHUẨN XÁC:
+ * - Ưu tiên Model chính: 'gemini-3.1-flash-lite'
+ * - Khi chạm hạn mức Quota (429 / RESOURCE_EXHAUSTED) hoặc lỗi: Fallback sang 'gemini-3.5-flash-lite'
+ * - Nếu cả 2 model đều không thành công: Ném lỗi có thông điệp báo người dùng thử lại sau ít phút.
+ */
+export async function callGeminiWithModelFallback(
+  ai: GoogleGenAI,
+  options: {
+    contents: any;
+    config?: any;
+    label?: string;
+  }
+): Promise<any> {
+  const primaryModel = 'gemini-3.1-flash-lite';
+  const fallbackModel = 'gemini-3.5-flash-lite';
+  const label = options.label || 'API';
+
+  try {
+    return await ai.models.generateContent({
+      model: primaryModel,
+      contents: options.contents,
+      config: options.config,
+    });
+  } catch (err1: any) {
+    console.warn(`[Gemini Fallback - ${label}] Model chính ${primaryModel} gặp sự cố (${err1?.status || ''} ${err1?.message || err1}). Đang chuyển sang dự phòng ${fallbackModel}...`);
+
+    try {
+      return await ai.models.generateContent({
+        model: fallbackModel,
+        contents: options.contents,
+        config: options.config,
+      });
+    } catch (err2: any) {
+      console.error(`[Gemini Fallback - ${label}] Cả hai model ${primaryModel} & ${fallbackModel} đều không khả dụng:`, err2?.message || err2);
+      const quotaError: any = new Error(
+        'Hệ thống AI hiện đang quá tải hoặc tạm thời hết lượt yêu cầu (Quota). Vui lòng thử lại sau ít phút!'
+      );
+      quotaError.status = 429;
+      quotaError.isExhausted = true;
+      throw quotaError;
+    }
+  }
+}
+
 // -----------------------------------------------------------------------------
 // 1. CHUYỂN ĐỔI BỘ CULTURAL DATABASE THÀNH SYSTEM CONTEXT ĐẦY ĐỦ CÓ NGUỒN XÁC THỰC
 // -----------------------------------------------------------------------------
@@ -741,15 +786,15 @@ NHIỆM VỤ VÒNG 1:
 Trả về đúng JSON schema miniStylingSchema.`;
 
   try {
-    const round1Response = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-lite',
+    const round1Response = await callGeminiWithModelFallback(ai, {
       contents: round1UserPrompt,
       config: {
         systemInstruction: round1SystemPrompt,
         responseMimeType: 'application/json',
         responseSchema: miniStylingSchema,
         temperature: 0.3
-      }
+      },
+      label: 'MiniStyling-Round1'
     });
 
     const proposal: MiniStylingResponse = JSON.parse(round1Response.text || '{}');
@@ -830,15 +875,15 @@ ${JSON.stringify({
 Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định JSON theo round2AuditResponseSchema.`;
 
       try {
-        const round2Response = await ai.models.generateContent({
-          model: 'gemini-3.1-flash-lite',
+        const round2Response = await callGeminiWithModelFallback(ai, {
           contents: round2UserPrompt,
           config: {
             systemInstruction: round2SystemPrompt,
             responseMimeType: 'application/json',
             responseSchema: round2AuditResponseSchema,
             temperature: 0.1
-          }
+          },
+          label: 'MiniStyling-Round2'
         });
 
         const audit: CulturalAuditResult = JSON.parse(round2Response.text || '{}');
@@ -957,15 +1002,15 @@ NGUYÊN TẮC BẮT BUỘC:
 Hãy sáng tạo Master Prompt AI và thông tin hoa văn theo JSON schema patternPromptSchema.`;
 
   try {
-    const res = await ai.models.generateContent({
-      model: 'gemini-3.1-flash-lite',
+    const res = await callGeminiWithModelFallback(ai, {
       contents: userPrompt,
       config: {
         systemInstruction: systemPrompt,
         responseMimeType: 'application/json',
         responseSchema: patternPromptSchema,
         temperature: 0.4
-      }
+      },
+      label: 'PatternPrompt'
     });
 
     const parsed = JSON.parse(res.text || '{}');
@@ -1307,15 +1352,15 @@ Hãy áp dụng Chain-of-Thought (CoT):
 3. Sinh gợi ý makeup, dáng chụp ảnh và thông điệp di sản độc đáo theo bối cảnh.
 4. Trích xuất chính xác nguồn tư liệu uy tín có kèm 'url' từ Ground Truth vào danh sách 'citations'.`;
 
-  const round1Response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+  const round1Response = await callGeminiWithModelFallback(ai, {
     contents: round1Prompt,
     config: {
       systemInstruction: round1SystemInstruction,
       responseMimeType: 'application/json',
       responseSchema: round1ResponseSchema,
       temperature: 0.3
-    }
+    },
+    label: 'OnlineCultural-Round1'
   });
 
   const recommendation: GroundedRecommendationResult = JSON.parse(round1Response.text || '{}');
@@ -1354,15 +1399,15 @@ ${JSON.stringify(recommendation, null, 2)}
 
 Hãy đối chiếu với Ground Truth và đưa ra kết luận thẩm định JSON.`;
 
-  const round2Response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+  const round2Response = await callGeminiWithModelFallback(ai, {
     contents: round2Prompt,
     config: {
       systemInstruction: round2SystemInstruction,
       responseMimeType: 'application/json',
       responseSchema: round2AuditResponseSchema,
       temperature: 0.1
-    }
+    },
+    label: 'OnlineCultural-Round2'
   });
 
   const audit: CulturalAuditResult = JSON.parse(round2Response.text || '{}');

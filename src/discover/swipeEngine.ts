@@ -2,6 +2,8 @@ import { DiscoveryOutfit } from '../types/index.ts';
 import { Sound } from '../audio/sound.ts';
 import { wardrobeManager } from './wardrobeManager.ts';
 import { assetConfig } from '../config/assetConfig.ts';
+import { CURATED_18_OUTFITS } from '../data/curatedOutfits.ts';
+import { lookbookEngine } from '../lookbook/lookbookEngine.ts';
 
 export interface EventContext {
   key: string;
@@ -10,134 +12,14 @@ export interface EventContext {
 }
 
 export const DISCOVERY_CONTEXTS: EventContext[] = [
+  { key: 'all', name: 'Tất cả 18 bộ', icon: '✨' },
   { key: 'tet', name: 'Dạo phố Tết', icon: '🌸' },
+  { key: 'festival', name: 'Lễ hội & Cung đình', icon: '🏮' },
   { key: 'grad', name: 'Lễ tốt nghiệp', icon: '🎓' },
-  { key: 'festival', name: 'Lễ hội làng', icon: '🏮' },
-  { key: 'yearbook', name: 'Chụp kỷ yếu', icon: '📷' }
+  { key: 'yearbook', name: 'Kỷ yếu & Nghệ thuật', icon: '📷' }
 ];
 
-export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = [
-  {
-    id: 'outfit-1',
-    title: 'Áo Ngũ Thân Lập Lĩnh Hồng Sen',
-    creatorName: 'Minh Thảo @GenZ Huế',
-    garment: 'AO_NGU_THAN',
-    garmentLabel: 'Áo Ngũ Thân Lập Lĩnh',
-    color: '#F4C9D6',
-    colorName: 'Hồng Phấn Sen',
-    event: 'tet',
-    eventLabel: 'Dạo phố Tết',
-    bestOccasion: 'Dạo Phố Du Xuân & Check-in Phố Cổ',
-    patternName: 'Lụa Tơ Tằm Hà Đông',
-    mood: 'Thanh Tao Nhã Nhặn',
-    hairstyle: 'Búi Tóc Cài Trâm Bạc',
-    accessory: 'QUAT_GIAY',
-    accessoryLabel: 'Quạt Giấy Xếp Trúc',
-    seal: 'Lụa',
-    desc: 'Tà ngũ thân năm thân lụa mềm mại dệt thủ công sắc hồng phấn sen, tôn phong thái tao nhã đón nắng mai.',
-    imageUrl: '/images/garments/ao-ngu-than.jpg'
-  },
-  {
-    id: 'outfit-2',
-    title: 'Áo Nhật Bình Hoàng Triều Ngũ Sắc',
-    creatorName: 'Hoàng Long @DiSảnViệt',
-    garment: 'AO_NHAT_BINH',
-    garmentLabel: 'Áo Nhật Bình Cung Đình',
-    color: '#C9A66B',
-    colorName: 'Vàng Đất Cố Đô',
-    event: 'festival',
-    eventLabel: 'Đại Lễ Cung Đình',
-    bestOccasion: 'Đại Lễ Cung Đình & Sự Kiện Trọng Thể',
-    patternName: 'Gấm Hoa Mây Ngũ Sắc',
-    mood: 'Vương Giả Quý Tộc',
-    hairstyle: 'Khăn Vành Dây Ngũ Sắc',
-    accessory: 'TRAM_GOM',
-    accessoryLabel: 'Trâm Cài Gốm Mạ Vàng',
-    seal: 'Vương',
-    desc: 'Viền cổ ngũ sắc thêu hoa mẫu đơn và phượng hoàng, phong vị hoàng gia triều Nguyễn uy nghi.',
-    imageUrl: '/images/garments/ao-nhat-binh.jpg'
-  },
-  {
-    id: 'outfit-3',
-    title: 'Áo Tấc Đại Lễ Xanh Chàm',
-    creatorName: 'Bảo Nghi @CốĐô',
-    garment: 'AO_TAC',
-    garmentLabel: 'Áo Tấc Tay Thụng',
-    color: '#1D3557',
-    colorName: 'Xanh Chàm Đêm',
-    event: 'grad',
-    eventLabel: 'Lễ Trọng Thể',
-    bestOccasion: 'Lễ Tốt Nghiệp & Nghi Lễ Trưởng Thành',
-    patternName: 'Sa Nam Dệt Chìm',
-    mood: 'Trang Nghiêm Trí Tuệ',
-    hairstyle: 'Khăn Đóng Truyền Thống',
-    accessory: 'QUAT_GIAY',
-    accessoryLabel: 'Quạt Xếp Gỗ Trầm',
-    seal: 'Trọng',
-    desc: 'Tay thụng rộng trang nghiêm tôn phong thái uy nghiêm, nho nhã và tri thức truyền đời.',
-    imageUrl: '/images/garments/ao-tac.jpg'
-  },
-  {
-    id: 'outfit-4',
-    title: 'Áo Tứ Thân Kinh Bắc Yếm Đào',
-    creatorName: 'Hải Yến @QuanHọ',
-    garment: 'AO_TU_THAN',
-    garmentLabel: 'Áo Tứ Thân Kinh Bắc',
-    color: '#B22222',
-    colorName: 'Đỏ Son Đại Triều',
-    event: 'festival',
-    eventLabel: 'Lễ Hội Quan Họ',
-    bestOccasion: 'Lễ Hội Dân Gian & Hát Trống Quân',
-    patternName: 'Tơ Tằm Nhuộm Củ Nâu & Son',
-    mood: 'Duyên Dáng Dân Gian',
-    hairstyle: 'Khăn Mỏ Quạ & Vấn Độn',
-    accessory: 'NON_QUAI_THAO',
-    accessoryLabel: 'Nón Quai Thao Quai Dệt',
-    seal: 'Hội',
-    desc: 'Bốn vạt lụa buông rủ thắt nút duyên dáng trước bụng cùng nón quai thao trứ danh xứ Kinh Bắc.',
-    imageUrl: '/images/garments/ao-tu-than.png'
-  },
-  {
-    id: 'outfit-5',
-    title: 'Áo Bà Ba Nam Bộ Phù Sa',
-    creatorName: 'Phương Nam @MiềnTây',
-    garment: 'AO_BA_BA',
-    garmentLabel: 'Áo Bà Ba Nam Bộ',
-    color: '#4A8577',
-    colorName: 'Xanh Ngọc Phù Sa',
-    event: 'tet',
-    eventLabel: 'Du Xuân Sông Nước',
-    bestOccasion: 'Du Xuân Sông Nước & Dã Ngoại',
-    patternName: 'Vải Ú Lụa Mộc Nam Bộ',
-    mood: 'Khoáng Đạt Mộc Mạc',
-    hairstyle: 'Tóc Buộc Nửa Đầu Dịu Dàng',
-    accessory: 'KHAN_RAN',
-    accessoryLabel: 'Khăn Rằn Sọc Nam Bộ',
-    seal: 'Mộc',
-    desc: 'Chất liệu lụa tơ mềm mát, xẻ tà phóng khoáng cùng khăn rằn mộc mạc sông nước phương Nam.',
-    imageUrl: '/images/garments/ao-ba-ba.jpg'
-  },
-  {
-    id: 'outfit-6',
-    title: 'Áo Dài Lemur Thập Niên 1930',
-    creatorName: 'Khánh An @HàThành',
-    garment: 'AO_DAI_LEMUR',
-    garmentLabel: 'Áo Dài Lemur Tân Thời',
-    color: '#E8F3EE',
-    colorName: 'Ngọc Sương Ban Mai',
-    event: 'yearbook',
-    eventLabel: 'Chụp Kỷ Yếu & Nghệ Thuật',
-    bestOccasion: 'Chụp Kỷ Yếu Nghệ Thuật & Dạ Tiệc',
-    patternName: 'Lụa Voan Thêu Hoa Nhỏ',
-    mood: 'Tân Thời Quý Phái',
-    hairstyle: 'Tóc Uốn Sóng Cổ Điển 1930s',
-    accessory: 'CHUOI_NGOC',
-    accessoryLabel: 'Chuỗi Ngọc Trai Cổ',
-    seal: 'Tân',
-    desc: 'Âm hưởng tân thời đầu thế kỷ 20 với bờ vai bồng thanh lịch, chiết eo nhẹ tôn vóc dáng thiếu nữ.',
-    imageUrl: '/images/garments/ao-dai-lemur.png'
-  }
-];
+export const DISCOVERY_OUTFITS_POOL: DiscoveryOutfit[] = CURATED_18_OUTFITS;
 
 export class SwipeEngine {
   public currentDeck: DiscoveryOutfit[] = [];
@@ -284,6 +166,14 @@ export class SwipeEngine {
         adviceEl.textContent = `Thiết kế ${outfit.garmentLabel || outfit.title} buông rủ phóng khoáng, thích hợp mix cùng guốc mộc thanh hoặc túi gấm cho dịp ${outfit.eventLabel.toLowerCase()}.`;
       }
     }
+
+    // Nút xem chi tiết input & Prompt AI trên Desktop Dossier
+    const btnViewPrompt = document.getElementById('btn-dossier-view-prompt');
+    if (btnViewPrompt) {
+      btnViewPrompt.onclick = () => {
+        lookbookEngine.openOutfitDetailModal(outfit as any);
+      };
+    }
   }
 
   /**
@@ -338,10 +228,24 @@ export class SwipeEngine {
         </div>
 
         <div class="card-inner-bottom">
-          <h3 class="card-garment-name">${outfit.title}</h3>
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+            <h3 class="card-garment-name" style="margin: 0;">${outfit.title}</h3>
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 9999px; background: rgba(74,133,119,0.14); color: #2A5A4E; font-weight: 700; white-space: nowrap; flex-shrink: 0;">${outfit.creativityLevel || 35}% Phá cách</span>
+          </div>
           <p class="card-short-desc">${outfit.desc}</p>
+          <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+            <button type="button" class="btn-card-inspect-detail" data-outfit-id="${outfit.id}" style="padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(74,133,119,0.3); background: rgba(255,255,255,0.92); color: #2A5A4E; font-size: 0.76rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+              🔍 Xem Input & Prompt AI
+            </button>
+          </div>
         </div>
       `;
+
+      card.querySelector('.btn-card-inspect-detail')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        lookbookEngine.openOutfitDetailModal(outfit as any);
+      });
 
       if (index === 0) {
         this.attachSwipeHandlers(card, outfit);

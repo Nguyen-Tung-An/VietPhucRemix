@@ -1166,6 +1166,9 @@
               <button type="button" id="btn-dossier-remix-now" class="btn-primary btn-dossier-action">
                 <span>🎨 Đưa Vào Xưởng Phối Ngay</span>
               </button>
+              <button type="button" id="btn-dossier-view-prompt" class="btn-secondary btn-dossier-action" style="margin-top: 6px; width: 100%; border: 1px solid rgba(74,133,119,0.3); background: rgba(74,133,119,0.08); color: #2A5A4E; font-weight: 700; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>✨ Xem Cấu Trúc Input & Prompt AI Đầy Đủ</span>
+              </button>
               <div class="desktop-keyboard-shortcuts">
                 <span>Phím tắt: <strong>←</strong> Bỏ qua &nbsp;•&nbsp; <strong>Phím Cách</strong> Xáo lại &nbsp;•&nbsp; <strong>→</strong> Thích</span>
               </div>
@@ -1847,8 +1850,8 @@
         <div class="admin-stat-card">
           <div class="stat-icon">📜</div>
           <div>
-            <div class="stat-value" id="admin-count-outfits">12 Bộ Phối</div>
-            <div class="stat-label">Bộ phối Khám Phá có sẵn Prompt</div>
+            <div class="stat-value" id="admin-count-outfits">18 Bộ Trang Phục</div>
+            <div class="stat-label">6 Dáng Áo × 3 Tổ Hợp (Kèm Input & Prompt)</div>
           </div>
         </div>
       </div>
@@ -2178,6 +2181,29 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 0.8rem; color: #666; width: 80px; flex-shrink: 0;">• Kiểu tóc:</span>
               <span id="lookbook-detail-hair" class="matrix-badge-pill badge-hair">Tóc búi cao thanh thoát</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cụm Input Cấu Thành Tổ Hợp (Styling Inputs & User Profile) -->
+        <div id="lookbook-detail-inputs-section" style="background: rgba(74,133,119,0.05); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(74,133,119,0.18);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #2A5A4E; margin-bottom: 8px;">⚙️ INPUTS CẤU THÀNH NÊN TỔ HỢP</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; font-size: 0.8rem;">
+            <div>
+              <span style="color: #666;">• Thẻ phong cách:</span>
+              <strong id="lookbook-detail-style-tags" style="color: #2B2B28; margin-left: 4px;">Thanh tao cung đình</strong>
+            </div>
+            <div>
+              <span style="color: #666;">• Độ phá cách:</span>
+              <strong id="lookbook-detail-creativity" style="color: #C9A66B; margin-left: 4px;">35%</strong>
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <span style="color: #666;">• Hồ sơ người mặc:</span>
+              <span id="lookbook-detail-profile" style="color: #2B2B28; margin-left: 4px;">Cao 165cm, Nặng 50kg, Sáng hồng</span>
+            </div>
+            <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; padding-top: 6px; border-top: 1px dashed rgba(74,133,119,0.2);">
+              <span style="color: #666; font-size: 0.76rem;">• Mã CDN: <code id="lookbook-detail-cdn-id" style="color: #4A8577; background: rgba(74,133,119,0.08); padding: 2px 6px; border-radius: 4px; font-weight: 700;">garment_ngu_than_01</code></span>
+              <span style="color: #777; font-size: 0.74rem; font-family: monospace;" id="lookbook-detail-cdn-path">/images/garments/curated/garment_ngu_than_01.webp</span>
             </div>
           </div>
         </div>

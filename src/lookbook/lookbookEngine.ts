@@ -345,6 +345,40 @@ export class LookbookEngine {
       hairEl.textContent = item.hairstyle || item.custom_hairstyle || 'Tóc búi cao thanh thoát';
     }
 
+    // Input cấu thành & Hồ sơ người mặc
+    const styleTagsEl = document.getElementById('lookbook-detail-style-tags');
+    const creativityEl = document.getElementById('lookbook-detail-creativity');
+    const profileEl = document.getElementById('lookbook-detail-profile');
+    const cdnIdEl = document.getElementById('lookbook-detail-cdn-id');
+    const cdnPathEl = document.getElementById('lookbook-detail-cdn-path');
+
+    if (styleTagsEl) {
+      const styles = (item.styles && item.styles.length > 0)
+        ? item.styles.join(', ')
+        : (item.style_mode || item.mood || 'Thanh tao cung đình');
+      styleTagsEl.textContent = styles;
+    }
+
+    if (creativityEl) {
+      creativityEl.textContent = `${item.creativityLevel || 35}%`;
+    }
+
+    if (profileEl) {
+      if (item.userProfile) {
+        profileEl.textContent = `Chiều cao: ${item.userProfile.height || '165cm'}, Cân nặng: ${item.userProfile.weight || '50kg'}, Dáng: ${item.userProfile.shape || 'Thon thả'}, Da: ${item.userProfile.skin || 'Sáng hồng'}`;
+      } else {
+        profileEl.textContent = 'Phom dáng thiếu nữ Việt thanh thoát, tôn nét duyên tự nhiên';
+      }
+    }
+
+    if (cdnIdEl) {
+      cdnIdEl.textContent = item.cdn_id || item.id || 'garment_curated_01';
+    }
+
+    if (cdnPathEl) {
+      cdnPathEl.textContent = item.cdn_image_path || `/images/garments/curated/${item.cdn_id || item.id}.webp`;
+    }
+
     // Tri thức văn hóa & Lịch sử
     const storyEl = document.getElementById('lookbook-detail-cultural-story');
     const citationsEl = document.getElementById('lookbook-detail-citations');

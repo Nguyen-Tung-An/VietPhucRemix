@@ -38,8 +38,16 @@ export async function fetchStylingSuggestionsAPI(
     });
     if (res.ok) {
       return await res.json();
+    } else {
+      const errJson = await res.json().catch(() => null);
+      if (errJson?.error) {
+        throw new Error(errJson.error);
+      }
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.message?.includes('quá tải') || err?.message?.includes('hết lượt')) {
+      throw err;
+    }
     console.warn('Lỗi fetch suggest-styling, sử dụng offline generator:', err);
   }
   return getMockStylingSuggestions(context);
